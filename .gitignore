@@ -9,3 +9,6 @@ __pycache__/
 # Ignore virtual environments
 venv/
 .venv/
+
+# SQLite
+sloths_inventory/db.sqlite3
