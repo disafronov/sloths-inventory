@@ -41,7 +41,6 @@ configs:
     content: |
       #!/usr/bin/env sh
 
-      python3 manage.py makemigrations
       python3 manage.py migrate
 
       export DJANGO_SUPERUSER_EMAIL=admin@example.com
