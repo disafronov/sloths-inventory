@@ -1,5 +1,18 @@
 FROM ubuntu:latest AS base
 
+# ENVs
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    DEBIAN_FRONTEND=noninteractive \
+    TZ=Etc/UTC
+
+# Base dependencies
+RUN apt-get update && \
+    apt-get install -y \
+        tzdata && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
 # Change the working directory to the `app` directory
 WORKDIR /app
 
@@ -36,8 +49,11 @@ COPY --from=builder --chown=app:app /app/ /app/
 
 ENV PATH="/app/.venv/bin:$PATH"
 
+# Change the working directory to the `django project` directory
+WORKDIR /app/sloths_inventory
+
 #! <MVP ONLY!
-ENTRYPOINT [ "python3", "sloths_inventory/manage.py", "runserver", "0.0.0.0:8000", "--noreload" ]
+ENTRYPOINT [ "python3", "manage.py", "runserver", "0.0.0.0:8000", "--noreload" ]
 #! MVP ONLY!>
 
 EXPOSE 8000
