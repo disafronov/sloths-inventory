@@ -1,5 +1,5 @@
 services:
-  web:
+  django:
     # Build the image from the Dockerfile in the current directory
     build: .
 
@@ -13,13 +13,40 @@ services:
       watch:
         # Sync the working directory with the `/app` directory in the container
         - action: sync
-          path: .
-          target: /app
+          path: sloths_inventory
+          target: /app/sloths_inventory
           # Exclude the project virtual environment — it could be for a
           # different platform in the container
-          ignore:
-            - .venv/
+          # ignore:
+          #   - .venv/
+          #   - .dockerignore
+          #   - .gitignore
+          #   - .python-version
+          #   - .compose.yml
+          #   - Dockerfile
+          #   - pyproject.toml
+          #   - README.md
 
         # Rebuild the image if dependencies change by checking uv.lock
         - action: rebuild
           path: ./uv.lock
+
+    entrypoint: ["/usr/bin/env", "sh", "/entrypoint"]
+    configs:
+      - source: django_entrypoint
+        target: /entrypoint
+
+configs:
+  django_entrypoint:
+    content: |
+      #!/usr/bin/env sh
+
+      python3 manage.py makemigrations
+      python3 manage.py migrate
+
+      export DJANGO_SUPERUSER_EMAIL=admin@example.com
+      export DJANGO_SUPERUSER_USERNAME=admin
+      export DJANGO_SUPERUSER_PASSWORD=password
+      python3 manage.py createsuperuser --noinput
+
+      python3 manage.py runserver 0.0.0.0:8000 --noreload
