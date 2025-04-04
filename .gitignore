@@ -10,4 +10,4 @@ __pycache__/
 .venv/
 
 # SQLite
-sloths_inventory/db.sqlite3
+/src/db.sqlite3
