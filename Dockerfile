@@ -28,7 +28,7 @@ RUN --mount=from=ghcr.io/astral-sh/uv,source=/uv,target=/bin/uv \
     uv sync --frozen --no-install-project --link-mode=copy --no-editable --no-dev
 
 # Copy the project into the image
-COPY ./sloths_inventory/ /app/sloths_inventory/
+COPY ./src/ /app/src/
 
 # Sync the project
 RUN --mount=from=ghcr.io/astral-sh/uv,source=/uv,target=/bin/uv \
@@ -50,7 +50,7 @@ COPY --from=builder --chown=app:app /app/ /app/
 ENV PATH="/app/.venv/bin:$PATH"
 
 # Change the working directory to the `django project` directory
-WORKDIR /app/sloths_inventory
+WORKDIR /app/src
 
 #! <MVP ONLY!
 ENTRYPOINT [ "python3", "manage.py", "runserver", "0.0.0.0:8000", "--noreload" ]
