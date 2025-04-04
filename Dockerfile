@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM ubuntu:latest
 
 # Change the working directory to the `app` directory
 WORKDIR /app
@@ -11,11 +11,13 @@ RUN --mount=from=ghcr.io/astral-sh/uv,source=/uv,target=/bin/uv \
     uv sync --frozen --no-install-project --link-mode=copy
 
 # Copy the project into the image
-ADD . /app
+COPY ./sloths_inventory/ /app/sloths_inventory/
 
 # Sync the project
 RUN --mount=from=ghcr.io/astral-sh/uv,source=/uv,target=/bin/uv \
     --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
     uv sync --frozen --link-mode=copy
 
 ENV PATH="/app/.venv/bin:$PATH"
