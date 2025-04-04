@@ -3,7 +3,7 @@ services:
     # Build the image from the Dockerfile in the current directory
     build: .
 
-    # Host the FastAPI application on port 8000
+    # Host the web application on port 8000
     ports:
       - "8000:8000"
 
@@ -11,21 +11,10 @@ services:
       # Create a `watch` configuration to update the app
       # https://docs.docker.com/compose/file-watch/#compose-watch-versus-bind-mounts
       watch:
-        # Sync the working directory with the `/app` directory in the container
+        # Sync the working directory `src` with the `/app/src` directory in the container
         - action: sync
-          path: sloths_inventory
-          target: /app/sloths_inventory
-          # Exclude the project virtual environment — it could be for a
-          # different platform in the container
-          # ignore:
-          #   - .venv/
-          #   - .dockerignore
-          #   - .gitignore
-          #   - .python-version
-          #   - .compose.yml
-          #   - Dockerfile
-          #   - pyproject.toml
-          #   - README.md
+          path: src
+          target: /app/src
 
         # Rebuild the image if dependencies change by checking uv.lock
         - action: rebuild
