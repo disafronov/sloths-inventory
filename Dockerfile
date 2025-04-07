@@ -13,8 +13,11 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# Drop privileges
+USER ubuntu:ubuntu
+
 # Change the working directory to the `app` directory
-WORKDIR /app
+WORKDIR /home/ubuntu/app
 
 ##########################
 
@@ -28,7 +31,7 @@ RUN --mount=from=ghcr.io/astral-sh/uv,source=/uv,target=/bin/uv \
     uv sync --frozen --no-install-project --link-mode=copy --no-editable --no-dev
 
 # Copy the project into the image
-COPY ./src/ /app/src/
+COPY ./src/ /home/ubuntu/app/src/
 
 # Sync the project
 RUN --mount=from=ghcr.io/astral-sh/uv,source=/uv,target=/bin/uv \
@@ -42,15 +45,15 @@ RUN --mount=from=ghcr.io/astral-sh/uv,source=/uv,target=/bin/uv \
 FROM base AS runtime
 
 # Use python from UV
-COPY --from=builder /root/.local/share/uv/python/ /root/.local/share/uv/python/
+COPY --from=builder /home/ubuntu/.local/share/uv/python/ /home/ubuntu/.local/share/uv/python/
 
 # Copy app directory from builder
-COPY --from=builder --chown=app:app /app/ /app/
+COPY --from=builder --chown=app:app /home/ubuntu/app/ /home/ubuntu/app/
 
-ENV PATH="/app/.venv/bin:$PATH"
+ENV PATH="/home/ubuntu/app/.venv/bin:$PATH"
 
 # Change the working directory to the `django project` directory
-WORKDIR /app/src
+WORKDIR /home/ubuntu/app/src
 
 #! <MVP ONLY!
 ENTRYPOINT [ "python3", "manage.py", "runserver", "0.0.0.0:8000", "--noreload" ]
