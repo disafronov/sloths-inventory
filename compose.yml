@@ -23,9 +23,17 @@ services:
         mode: 0644
     environment:
       DATABASE_HOST: postgres
+      ALLOWED_HOSTS: "*"
     depends_on:
       postgres:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "bash", "-c", "echo -n '' > /dev/tcp/127.0.0.1/8000"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
   postgres:
     image: 'postgres:latest'
     ports:
@@ -36,13 +44,32 @@ services:
       POSTGRES_DB: database
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-      - ${PWD}/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
       interval: 30s
       timeout: 60s
       retries: 5
-      start_period: 80s
+      start_period: 60s
+
+  postgres-loader:
+    image: 'postgres:latest'
+    depends_on:
+      django:
+        condition: service_healthy
+    entrypoint: >
+      sh -c "
+        find /docker-entrypoint-initdb.d -iname "*.sql" | while read f
+        do
+            psql -h postgres -f "${f}"
+        done
+      "
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: database
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d:ro
+
 
 configs:
   django_entrypoint:
