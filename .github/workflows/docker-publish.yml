@@ -76,11 +76,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-multi-buildx
 
-      # .npmrc
-      - name: Create .npmrc
-        run: |
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
-
       # Build and push Docker image with Buildx
       # https://github.com/docker/build-push-action
       - name: Build and push Docker image
@@ -96,14 +91,6 @@ jobs:
           # More: https://github.com/moby/buildkit#--export-cache-options
           # And: https://github.com/docker/buildx#--cache-tonametypetypekeyvalue
           cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
-          #
-          secret-files: |
-            npmrc=.npmrc
-
-      # .npmrc
-      - name: Delete .npmrc
-        run: |
-          rm -f .npmrc
 
       # Temp fix / Disabled on self-hosted runner
       # https://github.com/docker/build-push-action/issues/252
