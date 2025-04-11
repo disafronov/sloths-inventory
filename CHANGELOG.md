@@ -2,11 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.1] - 2025-04-11
+
+### 🐛 Bug Fixes
+
+- CSRF parenthesis
+
 ## [0.1.0] - 2025-04-11
 
 ### 🚀 Features
 
 - CSRF_TRUSTED_ORIGINS
+
+### 📚 Documentation
+
+- Update changelog for v0.1.0
 
 ## [0.0.0] - 2025-04-09
 
