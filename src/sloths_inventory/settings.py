@@ -34,7 +34,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [env("ALLOWED_HOSTS", default="")]
 
-CSRF_TRUSTED_ORIGINS = [env("CSRF_TRUSTED_ORIGINS", default=""]
+CSRF_TRUSTED_ORIGINS = [env("CSRF_TRUSTED_ORIGINS", default="")]
 
 
 # Application definition
