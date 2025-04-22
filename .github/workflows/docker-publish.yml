@@ -76,6 +76,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-multi-buildx
 
+      - name: Cache uv packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/uv
+          key: ${{ runner.os }}-uv-${{ hashFiles('uv.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-uv-
+
       # Build and push Docker image with Buildx
       # https://github.com/docker/build-push-action
       - name: Build and push Docker image

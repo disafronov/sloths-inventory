@@ -25,7 +25,7 @@ FROM base AS builder
 
 # Install dependencies
 RUN --mount=from=ghcr.io/astral-sh/uv,source=/uv,target=/bin/uv \
-    --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=~/.cache/uv,target=/root/.cache/uv,rw \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
     uv sync --frozen --no-install-project --link-mode=copy --no-editable --no-dev
@@ -35,7 +35,7 @@ COPY ./src/ /home/ubuntu/app/src/
 
 # Sync the project
 RUN --mount=from=ghcr.io/astral-sh/uv,source=/uv,target=/bin/uv \
-    --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=~/.cache/uv,target=/root/.cache/uv,rw \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
     uv sync --frozen --link-mode=copy --no-editable --no-dev
