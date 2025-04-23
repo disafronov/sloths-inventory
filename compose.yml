@@ -16,19 +16,20 @@ services:
         # Rebuild the image if dependencies change by checking uv.lock
         - action: rebuild
           path: ./uv.lock
-    entrypoint: ["/usr/bin/env", "sh", "/home/ubuntu/entrypoint"]
+    entrypoint: [ "/usr/bin/env", "sh", "/home/ubuntu/entrypoint" ]
     configs:
       - source: django_entrypoint
         target: /home/ubuntu/entrypoint
-        mode: 0644
+        mode: 644
     environment:
       DATABASE_HOST: postgres
       ALLOWED_HOSTS: "*"
+      CSRF_TRUSTED_ORIGINS: "http://*"
     depends_on:
       postgres:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "bash", "-c", "echo -n '' > /dev/tcp/127.0.0.1/8000"]
+      test: [ "CMD", "bash", "-c", "echo -n '' > /dev/tcp/127.0.0.1/8000" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -45,7 +46,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}" ]
       interval: 30s
       timeout: 60s
       retries: 5
@@ -69,7 +70,6 @@ services:
       POSTGRES_DB: database
     volumes:
       - ./sql:/docker-entrypoint-initdb.d:ro
-
 
 configs:
   django_entrypoint:
