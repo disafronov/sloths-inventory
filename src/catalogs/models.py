@@ -27,3 +27,19 @@ class Model(models.Model):
 
     def __str__(self):
         return self.name
+
+class Device(models.Model):
+    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, verbose_name="Поставщик")
+    model = models.ForeignKey(Model, on_delete=models.CASCADE, verbose_name="Модель")
+    serial_number = models.CharField(max_length=255, unique=True, verbose_name="Серийный номер")
+    description = models.TextField(blank=True, verbose_name="Описание")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
+
+    class Meta:
+        verbose_name = "Устройство"
+        verbose_name_plural = "Устройства"
+        ordering = ['vendor', 'model', 'serial_number']
+
+    def __str__(self):
+        return f"{self.vendor} {self.model} {self.serial_number}"
