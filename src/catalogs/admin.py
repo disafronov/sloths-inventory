@@ -31,8 +31,8 @@ class TypeAdmin(admin.ModelAdmin):
 
 @admin.register(Device)
 class DeviceAdmin(admin.ModelAdmin):
-    list_display = ("catalog_number", "category", "type", "manufacturer", "model", "description", "updated_at", "created_at")
-    list_display_links = ("catalog_number", "category", "type", "manufacturer", "model", "description")
-    search_fields = ("catalog_number", "description")
+    list_display = ("category", "type", "manufacturer", "model", "description", "updated_at", "created_at")
+    list_display_links = ("category", "type", "manufacturer", "model", "description")
+    search_fields = ("description",)
     list_filter = ("category", "type", "manufacturer", "model", "updated_at", "created_at")
     autocomplete_fields = ["category", "type", "manufacturer", "model"]
