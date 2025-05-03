@@ -43,9 +43,9 @@ class Model(models.Model):
         return self.name
 
 class Device(models.Model):
-    category = models.ForeignKey('Category', on_delete=models.CASCADE, verbose_name="Категория")
-    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, verbose_name="Поставщик")
-    model = models.ForeignKey(Model, on_delete=models.CASCADE, verbose_name="Модель")
+    category = models.ForeignKey('Category', on_delete=models.PROTECT, verbose_name="Категория")
+    vendor = models.ForeignKey(Vendor, on_delete=models.PROTECT, verbose_name="Поставщик")
+    model = models.ForeignKey(Model, on_delete=models.PROTECT, verbose_name="Модель")
     catalog_number = models.CharField(max_length=255, unique=True, verbose_name="Номенклатурный номер")
     description = models.TextField(blank=True, verbose_name="Описание")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
