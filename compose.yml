@@ -1,21 +1,8 @@
 services:
   django:
-    # Build the image from the Dockerfile in the current directory
     build: .
-    # Host the web application on port 8000
     ports:
       - "8000:8000"
-    develop:
-      # Create a `watch` configuration to update the app
-      # https://docs.docker.com/compose/file-watch/#compose-watch-versus-bind-mounts
-      watch:
-        # Sync the working directory `src` with the `/home/ubuntu/app/src` directory in the container
-        - action: sync
-          path: src
-          target: /home/ubuntu/app/src
-        # Rebuild the image if dependencies change by checking uv.lock
-        - action: rebuild
-          path: ./uv.lock
     entrypoint: [ "/usr/bin/env", "sh", "/home/ubuntu/entrypoint" ]
     configs:
       - source: django_entrypoint
