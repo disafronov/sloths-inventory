@@ -3,6 +3,19 @@ services:
     build: .
     ports:
       - "8000:8000"
+    develop:
+      # Create a `watch` configuration to update the app
+      # https://docs.docker.com/compose/file-watch/#compose-watch-versus-bind-mounts
+      watch:
+        # Rebuild the image if dependencies change by checking uv.lock
+        - action: rebuild
+          path: ./uv.lock
+        # Rebuild the image if compose changes by checking compose.yml
+        - action: rebuild
+          path: ./compose.yml
+        # Rebuild the image if sources change
+        - action: rebuild
+          path: ./src
     entrypoint: [ "/usr/bin/env", "sh", "/home/ubuntu/entrypoint" ]
     configs:
       - source: django_entrypoint
