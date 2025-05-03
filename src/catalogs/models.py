@@ -72,4 +72,4 @@ class Device(models.Model):
         unique_together = ['category', 'type', 'manufacturer', 'model']
 
     def __str__(self):
-        return f"{self.category} {self.type} {self.manufacturer} {self.model}"
+        return f"{self.category} | {self.type} | {self.manufacturer} | {self.model}"
