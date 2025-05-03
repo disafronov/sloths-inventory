@@ -26,8 +26,7 @@ services:
       ALLOWED_HOSTS: "*"
       CSRF_TRUSTED_ORIGINS: "http://*"
     depends_on:
-      postgres:
-        condition: service_healthy
+      - makemigrations
     healthcheck:
       test: [ "CMD", "bash", "-c", "echo -n '' > /dev/tcp/127.0.0.1/8000" ]
       interval: 10s
@@ -70,6 +69,19 @@ services:
       POSTGRES_DB: database
     volumes:
       - ./sql:/docker-entrypoint-initdb.d:ro
+
+  makemigrations:
+    build: .
+    entrypoint: [ "python", "manage.py", "makemigrations" ]
+    environment:
+      DATABASE_HOST: postgres
+      ALLOWED_HOSTS: "*"
+      CSRF_TRUSTED_ORIGINS: "http://*"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./src:/home/ubuntu/app/src
 
 configs:
   django_entrypoint:
