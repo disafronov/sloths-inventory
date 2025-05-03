@@ -26,7 +26,8 @@ services:
       ALLOWED_HOSTS: "*"
       CSRF_TRUSTED_ORIGINS: "http://*"
     depends_on:
-      - makemigrations
+      postgres:
+        condition: service_healthy
     healthcheck:
       test: [ "CMD", "bash", "-c", "echo -n '' > /dev/tcp/127.0.0.1/8000" ]
       interval: 10s
