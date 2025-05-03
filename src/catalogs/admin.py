@@ -28,3 +28,4 @@ class DeviceAdmin(admin.ModelAdmin):
     list_display_links = ("catalog_number", "category", "manufacturer", "model", "description")
     search_fields = ("catalog_number", "description")
     list_filter = ("category", "manufacturer", "model", "updated_at", "created_at")
+    autocomplete_fields = ["category", "manufacturer", "model"]
