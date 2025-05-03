@@ -1,5 +1,12 @@
 from django.contrib import admin
-from .models import Vendor, Model, Device
+from .models import Category, Vendor, Model, Device
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ("name", "description", "updated_at", "created_at")
+    list_display_links = ("name", "description")
+    search_fields = ("name", "description")
+    list_filter = ("updated_at", "created_at")
 
 @admin.register(Vendor)
 class VendorAdmin(admin.ModelAdmin):
@@ -17,7 +24,7 @@ class ModelAdmin(admin.ModelAdmin):
 
 @admin.register(Device)
 class DeviceAdmin(admin.ModelAdmin):
-    list_display = ("vendor", "model", "serial_number", "description", "updated_at", "created_at")
-    list_display_links = ("vendor", "model", "serial_number", "description")
+    list_display = ("category", "vendor", "model", "serial_number", "description", "updated_at", "created_at")
+    list_display_links = ("category", "vendor", "model", "serial_number", "description")
     search_fields = ("serial_number", "description")
-    list_filter = ("vendor", "model", "updated_at", "created_at")
+    list_filter = ("category", "vendor", "model", "updated_at", "created_at")
