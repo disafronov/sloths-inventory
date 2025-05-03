@@ -55,6 +55,7 @@ class Device(models.Model):
         verbose_name = "Устройство"
         verbose_name_plural = "Устройства"
         ordering = ['catalog_number', 'category', 'manufacturer', 'model']
+        unique_together = ['category', 'manufacturer', 'model']
 
     def __str__(self):
         return f"{self.catalog_number} {self.category} {self.manufacturer} {self.model}"
