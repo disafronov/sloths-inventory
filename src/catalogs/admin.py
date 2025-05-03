@@ -24,7 +24,7 @@ class ModelAdmin(admin.ModelAdmin):
 
 @admin.register(Device)
 class DeviceAdmin(admin.ModelAdmin):
-    list_display = ("category", "vendor", "model", "serial_number", "description", "updated_at", "created_at")
-    list_display_links = ("category", "vendor", "model", "serial_number", "description")
-    search_fields = ("serial_number", "description")
+    list_display = ("category", "vendor", "model", "catalog_number", "description", "updated_at", "created_at")
+    list_display_links = ("category", "vendor", "model", "catalog_number", "description")
+    search_fields = ("catalog_number", "description")
     list_filter = ("category", "vendor", "model", "updated_at", "created_at")
