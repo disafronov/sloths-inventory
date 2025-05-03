@@ -3,8 +3,8 @@ from django.db import models
 class Vendor(models.Model):
     name = models.CharField(max_length=255, unique=True, verbose_name="Название")
     description = models.TextField(blank=True, verbose_name="Описание")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
 
     class Meta:
         verbose_name = "Поставщик"
@@ -17,8 +17,8 @@ class Vendor(models.Model):
 class Model(models.Model):
     name = models.CharField(max_length=255, unique=True, verbose_name="Название")
     description = models.TextField(blank=True, verbose_name="Описание")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
 
     class Meta:
         verbose_name = "Модель"
@@ -33,8 +33,8 @@ class Device(models.Model):
     model = models.ForeignKey(Model, on_delete=models.CASCADE, verbose_name="Модель")
     serial_number = models.CharField(max_length=255, unique=True, verbose_name="Серийный номер")
     description = models.TextField(blank=True, verbose_name="Описание")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
 
     class Meta:
         verbose_name = "Устройство"
