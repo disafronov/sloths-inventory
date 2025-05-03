@@ -14,15 +14,15 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
-class Vendor(models.Model):
+class Manufacturer(models.Model):
     name = models.CharField(max_length=255, unique=True, verbose_name="Название")
     description = models.TextField(blank=True, verbose_name="Описание")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
 
     class Meta:
-        verbose_name = "Поставщик"
-        verbose_name_plural = "Поставщики"
+        verbose_name = "Производитель"
+        verbose_name_plural = "Производители"
         ordering = ['name']
 
     def __str__(self):
@@ -43,10 +43,10 @@ class Model(models.Model):
         return self.name
 
 class Device(models.Model):
-    category = models.ForeignKey('Category', on_delete=models.PROTECT, verbose_name="Категория")
-    vendor = models.ForeignKey(Vendor, on_delete=models.PROTECT, verbose_name="Поставщик")
-    model = models.ForeignKey(Model, on_delete=models.PROTECT, verbose_name="Модель")
     catalog_number = models.CharField(max_length=255, unique=True, verbose_name="Номенклатурный номер")
+    category = models.ForeignKey('Category', on_delete=models.PROTECT, verbose_name="Категория")
+    manufacturer = models.ForeignKey(Manufacturer, on_delete=models.PROTECT, verbose_name="Производитель")
+    model = models.ForeignKey(Model, on_delete=models.PROTECT, verbose_name="Модель")
     description = models.TextField(blank=True, verbose_name="Описание")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
@@ -54,7 +54,7 @@ class Device(models.Model):
     class Meta:
         verbose_name = "Устройство"
         verbose_name_plural = "Устройства"
-        ordering = ['category', 'vendor', 'model', 'catalog_number']
+        ordering = ['catalog_number', 'category', 'manufacturer', 'model']
 
     def __str__(self):
-        return f"{self.category} {self.vendor} {self.model} {self.catalog_number}"
+        return f"{self.catalog_number} {self.category} {self.manufacturer} {self.model}"
