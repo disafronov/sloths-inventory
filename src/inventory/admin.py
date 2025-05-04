@@ -3,8 +3,8 @@ from .models import Item, Operation
 
 @admin.register(Operation)
 class OperationAdmin(admin.ModelAdmin):
-    list_display = ('item', 'status', 'responsible', 'location', 'updated_at', 'created_at')
-    list_display_links = ('item', 'status', 'location')
+    list_display = ('item', 'status', 'get_responsible_display', 'location', 'updated_at', 'created_at')
+    list_display_links = ('item', 'status', 'get_responsible_display', 'location')
     list_filter = ('status', 'responsible', 'item__device__category', 'item__device__type', 'item__device__manufacturer', 'updated_at', 'created_at')
     search_fields = (
         'item__inventory_number',
@@ -29,6 +29,13 @@ class OperationAdmin(admin.ModelAdmin):
             'fields': ('item', 'status', 'responsible', 'location', 'notes', 'updated_at', 'created_at')
         }),
     )
+
+    def get_responsible_display(self, obj):
+        if not obj.responsible:
+            return '-'
+        full_name = obj.responsible.get_full_name()
+        return full_name if full_name else obj.responsible.username
+    get_responsible_display.short_description = 'Ответственный'
 
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
