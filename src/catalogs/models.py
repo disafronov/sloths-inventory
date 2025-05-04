@@ -55,6 +55,7 @@ class Responsible(models.Model):
         blank=True,
         verbose_name="Пользователь",
     )
+    notes = models.TextField(blank=True, verbose_name="Примечания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
 
