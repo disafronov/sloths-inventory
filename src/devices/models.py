@@ -3,7 +3,7 @@ from django.db import models
 
 class Category(models.Model):
     name = models.CharField(max_length=255, unique=True, verbose_name="Название")
-    description = models.TextField(blank=True, verbose_name="Описание")
+    notes = models.TextField(blank=True, verbose_name="Примечания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
 
@@ -18,7 +18,7 @@ class Category(models.Model):
 
 class Manufacturer(models.Model):
     name = models.CharField(max_length=255, unique=True, verbose_name="Название")
-    description = models.TextField(blank=True, verbose_name="Описание")
+    notes = models.TextField(blank=True, verbose_name="Примечания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
 
@@ -33,7 +33,7 @@ class Manufacturer(models.Model):
 
 class Model(models.Model):
     name = models.CharField(max_length=255, unique=True, verbose_name="Название")
-    description = models.TextField(blank=True, verbose_name="Описание")
+    notes = models.TextField(blank=True, verbose_name="Примечания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
 
@@ -48,7 +48,7 @@ class Model(models.Model):
 
 class Type(models.Model):
     name = models.CharField(max_length=255, unique=True, verbose_name="Название")
-    description = models.TextField(blank=True, verbose_name="Описание")
+    notes = models.TextField(blank=True, verbose_name="Примечания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
 
