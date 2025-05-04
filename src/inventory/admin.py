@@ -32,7 +32,7 @@ class OperationAdmin(admin.ModelAdmin):
 
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
-    list_display = ('inventory_number', 'device', 'serial_number', 'current_status', 'current_responsible', 'current_location', 'updated_at', 'created_at')
+    list_display = ('inventory_number', 'device', 'serial_number', 'updated_at', 'created_at')
     list_display_links = ('inventory_number', 'device', 'serial_number')
     list_filter = ('device__category', 'device__type', 'device__manufacturer', 'updated_at', 'created_at')
     search_fields = (
@@ -59,13 +59,22 @@ class ItemAdmin(admin.ModelAdmin):
     )
 
     def current_status(self, obj):
-        return obj.status
+        operation = obj.current_operation
+        if operation:
+            return operation.get_status_display()
+        return '-'
     current_status.short_description = 'Статус'
 
     def current_location(self, obj):
-        return obj.location
+        operation = obj.current_operation
+        if operation:
+            return operation.location
+        return '-'
     current_location.short_description = 'Местоположение'
 
     def current_responsible(self, obj):
-        return obj.responsible
+        operation = obj.current_operation
+        if operation:
+            return operation.responsible
+        return '-'
     current_responsible.short_description = 'Ответственный'
