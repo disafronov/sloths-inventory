@@ -1,6 +1,5 @@
 from django.db import models
 
-# Create your models here.
 
 class Category(models.Model):
     name = models.CharField(max_length=255, unique=True, verbose_name="Название")
@@ -11,10 +10,11 @@ class Category(models.Model):
     class Meta:
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
-        ordering = ['name']
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
+
 
 class Manufacturer(models.Model):
     name = models.CharField(max_length=255, unique=True, verbose_name="Название")
@@ -25,10 +25,11 @@ class Manufacturer(models.Model):
     class Meta:
         verbose_name = "Производитель"
         verbose_name_plural = "Производители"
-        ordering = ['name']
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
+
 
 class Model(models.Model):
     name = models.CharField(max_length=255, unique=True, verbose_name="Название")
@@ -39,10 +40,11 @@ class Model(models.Model):
     class Meta:
         verbose_name = "Модель"
         verbose_name_plural = "Модели"
-        ordering = ['name']
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
+
 
 class Type(models.Model):
     name = models.CharField(max_length=255, unique=True, verbose_name="Название")
@@ -53,7 +55,7 @@ class Type(models.Model):
     class Meta:
         verbose_name = "Тип"
         verbose_name_plural = "Типы"
-        ordering = ['name']
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
