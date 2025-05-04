@@ -16,6 +16,7 @@ class ItemAdmin(admin.ModelAdmin):
         "serial_number",
     )
     readonly_fields = ("updated_at", "created_at")
+    autocomplete_fields = ["device"]
     fieldsets = (
         (None, {"fields": ("inventory_number", "device", "serial_number", "updated_at", "created_at")}),
     )
