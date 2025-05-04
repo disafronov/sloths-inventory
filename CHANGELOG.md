@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.0] - 2025-05-04
+
+### 🚀 Features
+
+- Восстановить отображение поля location в админке OperationAdmin
+
 ## [0.4.0] - 2025-05-04
 
 ### 🚀 Features
@@ -12,6 +18,10 @@ All notable changes to this project will be documented in this file.
 ### 🐛 Bug Fixes
 
 - Улучшить отображение текущего статуса, местоположения и ответственного в админке ItemAdmin
+
+### 📚 Documentation
+
+- Update changelog for v0.4.0
 
 ## [0.3.0] - 2025-05-04
 
