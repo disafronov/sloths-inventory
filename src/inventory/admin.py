@@ -1,5 +1,20 @@
 from django.contrib import admin
-from .models import Item, Operation
+from .models import Item, Operation, Responsible
+
+@admin.register(Responsible)
+class ResponsibleAdmin(admin.ModelAdmin):
+    list_display = ('get_full_name', 'employee_id', 'user', 'updated_at', 'created_at')
+    list_display_links = ('get_full_name',)
+    search_fields = ('last_name', 'first_name', 'middle_name', 'employee_id', 'user__username')
+    list_filter = ('updated_at', 'created_at')
+    readonly_fields = ('created_at', 'updated_at')
+    autocomplete_fields = ['user']
+    ordering = ['last_name', 'first_name', 'middle_name']
+    fieldsets = (
+        (None, {
+            'fields': ('last_name', 'first_name', 'middle_name', 'employee_id', 'user', 'updated_at', 'created_at')
+        }),
+    )
 
 @admin.register(Operation)
 class OperationAdmin(admin.ModelAdmin):
@@ -11,9 +26,9 @@ class OperationAdmin(admin.ModelAdmin):
         'item__serial_number',
         'location',
         'notes',
-        'responsible__username',
         'responsible__first_name',
         'responsible__last_name',
+        'responsible__middle_name',
         'item__device__category__name',
         'item__device__type__name',
         'item__device__manufacturer__name',
@@ -33,8 +48,7 @@ class OperationAdmin(admin.ModelAdmin):
     def get_responsible_display(self, obj):
         if not obj.responsible:
             return '-'
-        full_name = obj.responsible.get_full_name()
-        return full_name if full_name else obj.responsible.username
+        return obj.responsible.get_full_name()
     get_responsible_display.short_description = 'Ответственный'
 
 @admin.register(Item)
