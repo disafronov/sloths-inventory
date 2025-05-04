@@ -9,9 +9,7 @@ class CategoryAdmin(admin.ModelAdmin):
     search_fields = ("name",)
     list_filter = ("updated_at", "created_at")
     readonly_fields = ("created_at", "updated_at")
-    fieldsets = (
-        (None, {"fields": ("name", "updated_at", "created_at")}),
-    )
+    fieldsets = ((None, {"fields": ("name", "notes", "updated_at", "created_at")}),)
 
 
 @admin.register(Manufacturer)
@@ -21,9 +19,7 @@ class ManufacturerAdmin(admin.ModelAdmin):
     search_fields = ("name",)
     list_filter = ("updated_at", "created_at")
     readonly_fields = ("created_at", "updated_at")
-    fieldsets = (
-        (None, {"fields": ("name", "updated_at", "created_at")}),
-    )
+    fieldsets = ((None, {"fields": ("name", "notes", "updated_at", "created_at")}),)
 
 
 @admin.register(Model)
@@ -33,9 +29,7 @@ class ModelAdmin(admin.ModelAdmin):
     search_fields = ("name",)
     list_filter = ("updated_at", "created_at")
     readonly_fields = ("created_at", "updated_at")
-    fieldsets = (
-        (None, {"fields": ("name", "updated_at", "created_at")}),
-    )
+    fieldsets = ((None, {"fields": ("name", "notes", "updated_at", "created_at")}),)
 
 
 @admin.register(Type)
@@ -45,6 +39,4 @@ class TypeAdmin(admin.ModelAdmin):
     search_fields = ("name",)
     list_filter = ("updated_at", "created_at")
     readonly_fields = ("created_at", "updated_at")
-    fieldsets = (
-        (None, {"fields": ("name", "updated_at", "created_at")}),
-    )
+    fieldsets = ((None, {"fields": ("name", "notes", "updated_at", "created_at")}),)

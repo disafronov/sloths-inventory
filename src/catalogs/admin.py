@@ -2,18 +2,49 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 from .models import Device, Location, Responsible, Status
-from devices.models import Category, Manufacturer, Model, Type
 
 
 @admin.register(Device)
 class DeviceAdmin(admin.ModelAdmin):
-    list_display = ("category", "type", "manufacturer", "model", "updated_at", "created_at")
+    list_display = (
+        "category",
+        "type",
+        "manufacturer",
+        "model",
+        "updated_at",
+        "created_at",
+    )
     list_display_links = ("category", "type", "manufacturer", "model")
-    list_filter = ("category", "type", "manufacturer", "model", "updated_at", "created_at")
-    search_fields = ("category__name", "type__name", "manufacturer__name", "model__name")
+    list_filter = (
+        "category",
+        "type",
+        "manufacturer",
+        "model",
+        "updated_at",
+        "created_at",
+    )
+    search_fields = (
+        "category__name",
+        "type__name",
+        "manufacturer__name",
+        "model__name",
+    )
     readonly_fields = ("updated_at", "created_at")
     fieldsets = (
-        (None, {"fields": ("category", "type", "manufacturer", "model", "updated_at", "created_at")}),
+        (
+            None,
+            {
+                "fields": (
+                    "category",
+                    "type",
+                    "manufacturer",
+                    "model",
+                    "notes",
+                    "updated_at",
+                    "created_at",
+                )
+            },
+        ),
     )
     autocomplete_fields = ["category", "type", "manufacturer", "model"]
 
@@ -26,9 +57,7 @@ class LocationAdmin(admin.ModelAdmin):
     list_filter = ("updated_at", "created_at")
     readonly_fields = ("created_at", "updated_at")
     ordering = ["name"]
-    fieldsets = (
-        (None, {"fields": ("name", "updated_at", "created_at")}),
-    )
+    fieldsets = ((None, {"fields": ("name", "notes", "updated_at", "created_at")}),)
 
 
 @admin.register(Responsible)
@@ -56,6 +85,7 @@ class ResponsibleAdmin(admin.ModelAdmin):
                     "middle_name",
                     "employee_id",
                     "user",
+                    "notes",
                     "updated_at",
                     "created_at",
                 )
@@ -78,9 +108,7 @@ class StatusAdmin(admin.ModelAdmin):
     list_filter = ("updated_at", "created_at")
     readonly_fields = ("created_at", "updated_at")
     ordering = ["name"]
-    fieldsets = (
-        (None, {"fields": ("name", "updated_at", "created_at")}),
-    )
+    fieldsets = ((None, {"fields": ("name", "notes", "updated_at", "created_at")}),)
 
 
 class ResponsibleInline(admin.StackedInline):
