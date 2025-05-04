@@ -4,9 +4,22 @@ from .models import Item, Operation
 
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
-    list_display = ("inventory_number", "device", "serial_number", "updated_at", "created_at")
+    list_display = (
+        "inventory_number",
+        "device",
+        "serial_number",
+        "updated_at",
+        "created_at",
+    )
     list_display_links = ("inventory_number", "device")
-    list_filter = ("device__category", "device__type", "device__manufacturer", "device__model", "updated_at", "created_at")
+    list_filter = (
+        "device__category",
+        "device__type",
+        "device__manufacturer",
+        "device__model",
+        "updated_at",
+        "created_at",
+    )
     search_fields = (
         "inventory_number",
         "device__category__name",
@@ -18,7 +31,19 @@ class ItemAdmin(admin.ModelAdmin):
     readonly_fields = ("updated_at", "created_at")
     autocomplete_fields = ["device"]
     fieldsets = (
-        (None, {"fields": ("inventory_number", "device", "serial_number", "updated_at", "created_at")}),
+        (
+            None,
+            {
+                "fields": (
+                    "inventory_number",
+                    "device",
+                    "serial_number",
+                    "notes",
+                    "updated_at",
+                    "created_at",
+                )
+            },
+        ),
     )
 
     def current_status(self, obj):
@@ -69,6 +94,22 @@ class OperationAdmin(admin.ModelAdmin):
     )
     autocomplete_fields = ["item", "status", "location", "responsible"]
     readonly_fields = ("created_at", "updated_at")
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    "item",
+                    "status",
+                    "location",
+                    "responsible",
+                    "notes",
+                    "updated_at",
+                    "created_at",
+                )
+            },
+        ),
+    )
 
     def get_responsible_display(self, obj):
         return obj.responsible.get_full_name()
