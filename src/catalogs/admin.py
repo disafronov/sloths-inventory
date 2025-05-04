@@ -7,54 +7,27 @@ from devices.models import Category, Manufacturer, Model, Type
 
 @admin.register(Device)
 class DeviceAdmin(admin.ModelAdmin):
-    list_display = (
-        "category",
-        "type",
-        "manufacturer",
-        "model",
-        "notes",
-        "updated_at",
-        "created_at",
-    )
-    list_display_links = ("category", "type", "manufacturer", "model", "notes")
-    search_fields = (
-        "category__name",
-        "type__name",
-        "manufacturer__name",
-        "model__name",
-        "notes",
-    )
-    list_filter = ("category", "type", "manufacturer", "model")
-    autocomplete_fields = ["category", "type", "manufacturer", "model"]
-    readonly_fields = ("created_at", "updated_at")
+    list_display = ("category", "type", "manufacturer", "model", "updated_at", "created_at")
+    list_display_links = ("category", "type", "manufacturer", "model")
+    list_filter = ("category", "type", "manufacturer", "model", "updated_at", "created_at")
+    search_fields = ("category__name", "type__name", "manufacturer__name", "model__name")
+    readonly_fields = ("updated_at", "created_at")
     fieldsets = (
-        (
-            None,
-            {
-                "fields": (
-                    "category",
-                    "type",
-                    "manufacturer",
-                    "model",
-                    "notes",
-                    "updated_at",
-                    "created_at",
-                )
-            },
-        ),
+        (None, {"fields": ("category", "type", "manufacturer", "model", "updated_at", "created_at")}),
     )
+    autocomplete_fields = ["category", "type", "manufacturer", "model"]
 
 
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
-    list_display = ("name", "notes", "updated_at", "created_at")
-    list_display_links = ("name", "notes")
-    search_fields = ("name", "notes")
+    list_display = ("name", "updated_at", "created_at")
+    list_display_links = ("name",)
+    search_fields = ("name",)
     list_filter = ("updated_at", "created_at")
     readonly_fields = ("created_at", "updated_at")
     ordering = ["name"]
     fieldsets = (
-        (None, {"fields": ("name", "notes", "updated_at", "created_at")}),
+        (None, {"fields": ("name", "updated_at", "created_at")}),
     )
 
 
@@ -99,14 +72,14 @@ class ResponsibleAdmin(admin.ModelAdmin):
 
 @admin.register(Status)
 class StatusAdmin(admin.ModelAdmin):
-    list_display = ("name", "notes", "updated_at", "created_at")
-    list_display_links = ("name", "notes")
-    search_fields = ("name", "notes")
+    list_display = ("name", "updated_at", "created_at")
+    list_display_links = ("name",)
+    search_fields = ("name",)
     list_filter = ("updated_at", "created_at")
     readonly_fields = ("created_at", "updated_at")
     ordering = ["name"]
     fieldsets = (
-        (None, {"fields": ("name", "notes", "updated_at", "created_at")}),
+        (None, {"fields": ("name", "updated_at", "created_at")}),
     )
 
 
