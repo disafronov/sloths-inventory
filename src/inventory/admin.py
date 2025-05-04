@@ -2,71 +2,6 @@ from django.contrib import admin
 from .models import Item, Operation
 
 
-@admin.register(Operation)
-class OperationAdmin(admin.ModelAdmin):
-    list_display = (
-        "item",
-        "status",
-        "get_responsible_display",
-        "location",
-        "updated_at",
-        "created_at",
-    )
-    list_display_links = ("item", "status", "get_responsible_display", "location")
-    list_filter = (
-        "status",
-        "responsible",
-        "location",
-        "item__device__category",
-        "item__device__type",
-        "item__device__manufacturer",
-        "updated_at",
-        "created_at",
-    )
-    search_fields = (
-        "item__inventory_number",
-        "item__serial_number",
-        "location__name",
-        "notes",
-        "responsible__first_name",
-        "responsible__last_name",
-        "responsible__middle_name",
-        "status__name",
-        "item__device__category__name",
-        "item__device__type__name",
-        "item__device__manufacturer__name",
-        "item__device__model__name",
-        "item__device__description",
-    )
-    readonly_fields = ("created_at", "updated_at")
-    raw_id_fields = ["item"]
-    autocomplete_fields = ["responsible", "status", "location"]
-    ordering = ["-updated_at"]
-    fieldsets = (
-        (
-            None,
-            {
-                "fields": (
-                    "item",
-                    "status",
-                    "responsible",
-                    "location",
-                    "notes",
-                    "updated_at",
-                    "created_at",
-                )
-            },
-        ),
-    )
-
-    def get_responsible_display(self, obj):
-        if not obj.responsible:
-            return "-"
-        return obj.responsible.get_full_name()
-
-    get_responsible_display.short_description = "Ответственный"
-
-
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
     list_display = (
@@ -150,3 +85,68 @@ class ItemAdmin(admin.ModelAdmin):
         return "-"
 
     current_responsible.short_description = "Ответственный"
+
+
+@admin.register(Operation)
+class OperationAdmin(admin.ModelAdmin):
+    list_display = (
+        "item",
+        "status",
+        "get_responsible_display",
+        "location",
+        "updated_at",
+        "created_at",
+    )
+    list_display_links = ("item", "status", "get_responsible_display", "location")
+    list_filter = (
+        "status",
+        "responsible",
+        "location",
+        "item__device__category",
+        "item__device__type",
+        "item__device__manufacturer",
+        "updated_at",
+        "created_at",
+    )
+    search_fields = (
+        "item__inventory_number",
+        "item__serial_number",
+        "location__name",
+        "notes",
+        "responsible__first_name",
+        "responsible__last_name",
+        "responsible__middle_name",
+        "status__name",
+        "item__device__category__name",
+        "item__device__type__name",
+        "item__device__manufacturer__name",
+        "item__device__model__name",
+        "item__device__description",
+    )
+    readonly_fields = ("created_at", "updated_at")
+    raw_id_fields = ["item"]
+    autocomplete_fields = ["responsible", "status", "location"]
+    ordering = ["-updated_at"]
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    "item",
+                    "status",
+                    "responsible",
+                    "location",
+                    "notes",
+                    "updated_at",
+                    "created_at",
+                )
+            },
+        ),
+    )
+
+    def get_responsible_display(self, obj):
+        if not obj.responsible:
+            return "-"
+        return obj.responsible.get_full_name()
+
+    get_responsible_display.short_description = "Ответственный"
