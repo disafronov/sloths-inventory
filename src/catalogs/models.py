@@ -12,7 +12,7 @@ class Device(models.Model):
         Manufacturer, on_delete=models.PROTECT, verbose_name="Производитель"
     )
     model = models.ForeignKey(Model, on_delete=models.PROTECT, verbose_name="Модель")
-    description = models.TextField(blank=True, verbose_name="Описание")
+    notes = models.TextField(blank=True, verbose_name="Примечания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
 
@@ -28,7 +28,7 @@ class Device(models.Model):
 
 class Location(models.Model):
     name = models.CharField(max_length=255, verbose_name="Название")
-    description = models.TextField(blank=True, verbose_name="Описание")
+    notes = models.TextField(blank=True, verbose_name="Примечания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
 
@@ -75,7 +75,7 @@ class Responsible(models.Model):
 
 class Status(models.Model):
     name = models.CharField(max_length=100, verbose_name="Название")
-    description = models.TextField(blank=True, verbose_name="Описание")
+    notes = models.TextField(blank=True, verbose_name="Примечания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
 
