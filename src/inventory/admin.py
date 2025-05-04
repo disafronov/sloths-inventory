@@ -57,17 +57,17 @@ class ItemAdmin(admin.ModelAdmin):
     )
 
     def current_status(self, obj):
-        return obj.current_status
+        return obj.current_status or "-"
 
     current_status.short_description = "Статус"
 
     def current_location(self, obj):
-        return obj.current_location
+        return obj.current_location or "-"
 
     current_location.short_description = "Местоположение"
 
     def current_responsible(self, obj):
-        return obj.current_responsible
+        return obj.current_responsible or "-"
 
     current_responsible.short_description = "Ответственный"
 
