@@ -18,7 +18,7 @@ class ItemAdmin(admin.ModelAdmin):
         'device__description'
     )
     readonly_fields = ('created_at', 'updated_at')
-    raw_id_fields = ['device']
+    autocomplete_fields = ['device']
     ordering = ['inventory_number']
     fieldsets = (
         (None, {
