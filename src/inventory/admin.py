@@ -1,122 +1,152 @@
 from django.contrib import admin
-from .models import Item, Operation, Responsible, Status
+from .models import Item, Operation
 
-@admin.register(Status)
-class StatusAdmin(admin.ModelAdmin):
-    list_display = ('name', 'updated_at', 'created_at')
-    list_display_links = ('name',)
-    search_fields = ('name', 'description')
-    list_filter = ('updated_at', 'created_at')
-    readonly_fields = ('created_at', 'updated_at')
-    ordering = ['name']
-    fieldsets = (
-        (None, {
-            'fields': ('name', 'description', 'updated_at', 'created_at')
-        }),
-    )
-
-@admin.register(Responsible)
-class ResponsibleAdmin(admin.ModelAdmin):
-    list_display = ('get_full_name', 'employee_id', 'user', 'updated_at', 'created_at')
-    list_display_links = ('get_full_name',)
-    search_fields = ('last_name', 'first_name', 'middle_name', 'employee_id', 'user__username')
-    list_filter = ('updated_at', 'created_at')
-    readonly_fields = ('created_at', 'updated_at')
-    autocomplete_fields = ['user']
-    ordering = ['last_name', 'first_name', 'middle_name']
-    fieldsets = (
-        (None, {
-            'fields': ('last_name', 'first_name', 'middle_name', 'employee_id', 'user', 'updated_at', 'created_at')
-        }),
-    )
-
-    def get_full_name(self, obj):
-        return obj.get_full_name()
-    get_full_name.short_description = 'Полное имя'
-    get_full_name.admin_order_field = 'last_name'
 
 @admin.register(Operation)
 class OperationAdmin(admin.ModelAdmin):
-    list_display = ('item', 'status', 'get_responsible_display', 'location', 'updated_at', 'created_at')
-    list_display_links = ('item', 'status', 'get_responsible_display', 'location')
-    list_filter = ('status', 'responsible', 'item__device__category', 'item__device__type', 'item__device__manufacturer', 'updated_at', 'created_at')
-    search_fields = (
-        'item__inventory_number',
-        'item__serial_number',
-        'location',
-        'notes',
-        'responsible__first_name',
-        'responsible__last_name',
-        'responsible__middle_name',
-        'status__name',
-        'item__device__category__name',
-        'item__device__type__name',
-        'item__device__manufacturer__name',
-        'item__device__model__name',
-        'item__device__description'
+    list_display = (
+        "item",
+        "status",
+        "get_responsible_display",
+        "location",
+        "updated_at",
+        "created_at",
     )
-    readonly_fields = ('created_at', 'updated_at')
-    raw_id_fields = ['item']
-    autocomplete_fields = ['responsible', 'status']
-    ordering = ['-updated_at']
+    list_display_links = ("item", "status", "get_responsible_display", "location")
+    list_filter = (
+        "status",
+        "responsible",
+        "location",
+        "item__device__category",
+        "item__device__type",
+        "item__device__manufacturer",
+        "updated_at",
+        "created_at",
+    )
+    search_fields = (
+        "item__inventory_number",
+        "item__serial_number",
+        "location__name",
+        "notes",
+        "responsible__first_name",
+        "responsible__last_name",
+        "responsible__middle_name",
+        "status__name",
+        "item__device__category__name",
+        "item__device__type__name",
+        "item__device__manufacturer__name",
+        "item__device__model__name",
+        "item__device__description",
+    )
+    readonly_fields = ("created_at", "updated_at")
+    raw_id_fields = ["item"]
+    autocomplete_fields = ["responsible", "status", "location"]
+    ordering = ["-updated_at"]
     fieldsets = (
-        (None, {
-            'fields': ('item', 'status', 'responsible', 'location', 'notes', 'updated_at', 'created_at')
-        }),
+        (
+            None,
+            {
+                "fields": (
+                    "item",
+                    "status",
+                    "responsible",
+                    "location",
+                    "notes",
+                    "updated_at",
+                    "created_at",
+                )
+            },
+        ),
     )
 
     def get_responsible_display(self, obj):
         if not obj.responsible:
-            return '-'
+            return "-"
         return obj.responsible.get_full_name()
-    get_responsible_display.short_description = 'Ответственный'
+
+    get_responsible_display.short_description = "Ответственный"
+
 
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
-    list_display = ('inventory_number', 'device', 'serial_number', 'updated_at', 'created_at')
-    list_display_links = ('inventory_number', 'device', 'serial_number')
-    list_filter = ('device__category', 'device__type', 'device__manufacturer', 'updated_at', 'created_at')
-    search_fields = (
-        'inventory_number',
-        'serial_number',
-        'notes',
-        'device__category__name',
-        'device__type__name',
-        'device__manufacturer__name',
-        'device__model__name',
-        'device__description'
+    list_display = (
+        "inventory_number",
+        "device",
+        "serial_number",
+        "updated_at",
+        "created_at",
     )
-    readonly_fields = ('created_at', 'updated_at', 'current_status', 'current_location', 'current_responsible')
-    autocomplete_fields = ['device']
-    ordering = ['inventory_number']
+    list_display_links = ("inventory_number", "device", "serial_number")
+    list_filter = (
+        "device__category",
+        "device__type",
+        "device__manufacturer",
+        "updated_at",
+        "created_at",
+    )
+    search_fields = (
+        "inventory_number",
+        "serial_number",
+        "notes",
+        "device__category__name",
+        "device__type__name",
+        "device__manufacturer__name",
+        "device__model__name",
+        "device__description",
+    )
+    readonly_fields = (
+        "created_at",
+        "updated_at",
+        "current_status",
+        "current_location",
+        "current_responsible",
+    )
+    autocomplete_fields = ["device"]
+    ordering = ["inventory_number"]
     fieldsets = (
-        (None, {
-            'fields': ('inventory_number', 'device', 'serial_number', 'notes', 'updated_at', 'created_at')
-        }),
-        ('Текущая эксплуатация', {
-            'fields': ('current_status', 'current_responsible', 'current_location'),
-            'classes': ('collapse',)
-        }),
+        (
+            None,
+            {
+                "fields": (
+                    "inventory_number",
+                    "device",
+                    "serial_number",
+                    "notes",
+                    "updated_at",
+                    "created_at",
+                )
+            },
+        ),
+        (
+            "Текущая эксплуатация",
+            {
+                "fields": ("current_status", "current_responsible", "current_location"),
+                "classes": ("collapse",),
+            },
+        ),
     )
 
     def current_status(self, obj):
         operation = obj.current_operation
         if operation:
             return operation.get_status_display()
-        return '-'
-    current_status.short_description = 'Статус'
+        return "-"
+
+    current_status.short_description = "Статус"
 
     def current_location(self, obj):
         operation = obj.current_operation
         if operation:
             return operation.location
-        return '-'
-    current_location.short_description = 'Местоположение'
+        return "-"
+
+    current_location.short_description = "Местоположение"
 
     def current_responsible(self, obj):
         operation = obj.current_operation
         if operation and operation.responsible:
             full_name = operation.responsible.get_full_name()
             return full_name if full_name else operation.responsible.username
-        return '-'
-    current_responsible.short_description = 'Ответственный'
+        return "-"
+
+    current_responsible.short_description = "Ответственный"
