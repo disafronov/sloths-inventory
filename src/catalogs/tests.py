@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
+from django.db.utils import IntegrityError
 from .models import Device, Location, Responsible, Status
 from devices.models import Category, Manufacturer, Model, Type
 
@@ -33,7 +33,7 @@ class DeviceModelTest(TestCase):
 
     def test_device_unique_together(self):
         """Тест уникальности комбинации полей"""
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(IntegrityError):
             Device.objects.create(
                 category=self.category,
                 type=self.type,
