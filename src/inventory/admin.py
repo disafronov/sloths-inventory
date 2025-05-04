@@ -30,6 +30,11 @@ class ResponsibleAdmin(admin.ModelAdmin):
         }),
     )
 
+    def get_full_name(self, obj):
+        return obj.get_full_name()
+    get_full_name.short_description = 'Полное имя'
+    get_full_name.admin_order_field = 'last_name'
+
 @admin.register(Operation)
 class OperationAdmin(admin.ModelAdmin):
     list_display = ('item', 'status', 'get_responsible_display', 'location', 'updated_at', 'created_at')
@@ -53,7 +58,7 @@ class OperationAdmin(admin.ModelAdmin):
     readonly_fields = ('created_at', 'updated_at')
     raw_id_fields = ['item']
     autocomplete_fields = ['responsible', 'status']
-    ordering = ['-created_at']
+    ordering = ['-updated_at']
     fieldsets = (
         (None, {
             'fields': ('item', 'status', 'responsible', 'location', 'notes', 'updated_at', 'created_at')
