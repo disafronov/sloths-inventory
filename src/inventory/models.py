@@ -51,7 +51,7 @@ class Operation(models.Model):
     class Meta:
         verbose_name = "Эксплуатация"
         verbose_name_plural = "Эксплуатация"
-        ordering = ['-created_at']
+        ordering = ['-updated_at']
 
     def __str__(self):
         return f"{self.item} - {self.status}"
