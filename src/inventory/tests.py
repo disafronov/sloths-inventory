@@ -18,7 +18,7 @@ class ItemModelTest(TestCase):
             type=self.type,
             manufacturer=self.manufacturer,
             model=self.model,
-            description="Описание тестового устройства",
+            notes="Примечания тестового устройства",
         )
 
         self.item = Item.objects.create(
@@ -60,12 +60,12 @@ class OperationModelTest(TestCase):
             type=self.type,
             manufacturer=self.manufacturer,
             model=self.model,
-            description="Описание тестового устройства",
+            notes="Примечания тестового устройства",
         )
 
         self.item = Item.objects.create(inventory_number="TEST-001", device=self.device)
         self.status = Status.objects.create(
-            name="В эксплуатации", description="Устройство находится в эксплуатации"
+            name="В эксплуатации", notes="Устройство находится в эксплуатации"
         )
         self.responsible = Responsible.objects.create(
             last_name="Иванов",
@@ -74,7 +74,7 @@ class OperationModelTest(TestCase):
             employee_id="12345",
         )
         self.location = Location.objects.create(
-            name="Кабинет 101", description="Тестовое расположение"
+            name="Кабинет 101", notes="Тестовое расположение"
         )
         self.operation = Operation.objects.create(
             item=self.item,
