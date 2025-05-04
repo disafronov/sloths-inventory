@@ -25,16 +25,23 @@ class Responsible(models.Model):
     def get_full_name(self):
         return str(self)
 
-class Operation(models.Model):
-    STATUS_CHOICES = (
-        ('in_use', 'В эксплуатации'),
-        ('in_repair', 'В ремонте'),
-        ('in_storage', 'На хранении'),
-        ('written_off', 'Списан'),
-    )
+class Status(models.Model):
+    name = models.CharField(max_length=100, verbose_name="Название")
+    description = models.TextField(blank=True, verbose_name="Описание")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
 
+    class Meta:
+        verbose_name = "Статус"
+        verbose_name_plural = "Статусы"
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+class Operation(models.Model):
     item = models.ForeignKey('Item', on_delete=models.CASCADE, verbose_name="Экземпляр")
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, verbose_name="Статус")
+    status = models.ForeignKey(Status, on_delete=models.PROTECT, verbose_name="Статус")
     responsible = models.ForeignKey(Responsible, on_delete=models.PROTECT, verbose_name="Ответственный")
     location = models.CharField(max_length=255, verbose_name="Местоположение")
     notes = models.TextField(blank=True, verbose_name="Примечания")
@@ -47,7 +54,10 @@ class Operation(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f"{self.item} - {self.get_status_display()}"
+        return f"{self.item} - {self.status}"
+
+    def get_status_display(self):
+        return self.status.name
 
 class Item(models.Model):
     inventory_number = models.CharField(max_length=50, unique=True, verbose_name="Инвентарный номер")
