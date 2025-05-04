@@ -4,35 +4,21 @@ from .models import Item, Operation
 
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
-    list_display = (
-        "inventory_number",
-        "device",
-        "serial_number",
-        "notes",
-        "updated_at",
-        "created_at",
-    )
+    list_display = ("inventory_number", "device", "serial_number", "updated_at", "created_at")
     list_display_links = ("inventory_number", "device")
+    list_filter = ("device__category", "device__type", "device__manufacturer", "device__model", "updated_at", "created_at")
     search_fields = (
         "inventory_number",
         "device__category__name",
         "device__type__name",
         "device__manufacturer__name",
         "device__model__name",
-        "device__notes",
         "serial_number",
-        "notes",
     )
-    list_filter = (
-        "device__category",
-        "device__type",
-        "device__manufacturer",
-        "device__model",
-        "updated_at",
-        "created_at",
+    readonly_fields = ("updated_at", "created_at")
+    fieldsets = (
+        (None, {"fields": ("inventory_number", "device", "serial_number", "updated_at", "created_at")}),
     )
-    autocomplete_fields = ["device"]
-    readonly_fields = ("created_at", "updated_at")
 
     def current_status(self, obj):
         return obj.current_status
@@ -57,7 +43,6 @@ class OperationAdmin(admin.ModelAdmin):
         "status",
         "location",
         "responsible",
-        "notes",
         "updated_at",
         "created_at",
     )
@@ -68,13 +53,11 @@ class OperationAdmin(admin.ModelAdmin):
         "item__device__type__name",
         "item__device__manufacturer__name",
         "item__device__model__name",
-        "item__device__notes",
         "status__name",
         "location__name",
         "responsible__last_name",
         "responsible__first_name",
         "responsible__middle_name",
-        "notes",
     )
     list_filter = (
         "status",
