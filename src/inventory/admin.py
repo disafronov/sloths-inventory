@@ -77,8 +77,8 @@ class OperationAdmin(admin.ModelAdmin):
     list_display = (
         "item",
         "status",
-        "location",
         "responsible",
+        "location",
         "updated_at",
         "created_at",
     )
@@ -90,15 +90,15 @@ class OperationAdmin(admin.ModelAdmin):
         "item__device__manufacturer__name",
         "item__device__model__name",
         "status__name",
-        "location__name",
         "responsible__last_name",
         "responsible__first_name",
         "responsible__middle_name",
+        "location__name",
     )
     list_filter = (
         "status",
-        "location",
         "responsible",
+        "location",
         "updated_at",
         "created_at",
     )
@@ -111,8 +111,8 @@ class OperationAdmin(admin.ModelAdmin):
                 "fields": (
                     "item",
                     "status",
-                    "location",
                     "responsible",
+                    "location",
                     "notes",
                     "updated_at",
                     "created_at",
