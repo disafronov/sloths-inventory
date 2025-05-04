@@ -74,7 +74,8 @@ class ItemAdmin(admin.ModelAdmin):
 
     def current_responsible(self, obj):
         operation = obj.current_operation
-        if operation:
-            return operation.responsible
+        if operation and operation.responsible:
+            full_name = operation.responsible.get_full_name()
+            return full_name if full_name else operation.responsible.username
         return '-'
     current_responsible.short_description = 'Ответственный'
