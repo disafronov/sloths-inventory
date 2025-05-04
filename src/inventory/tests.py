@@ -1,15 +1,26 @@
 from django.test import TestCase
-from django.core.exceptions import ValidationError
+from django.db.utils import IntegrityError
 from .models import Item, Operation
 from catalogs.models import Device, Location, Responsible, Status
+from devices.models import Category, Manufacturer, Model, Type
 
 
 class ItemModelTest(TestCase):
     def setUp(self):
         # Создаем необходимые объекты для тестов
+        self.category = Category.objects.create(name="Тестовая категория")
+        self.type = Type.objects.create(name="Тестовый тип")
+        self.manufacturer = Manufacturer.objects.create(name="Тестовый производитель")
+        self.model = Model.objects.create(name="Тестовая модель")
+
         self.device = Device.objects.create(
-            name="Тестовое устройство", description="Описание тестового устройства"
+            category=self.category,
+            type=self.type,
+            manufacturer=self.manufacturer,
+            model=self.model,
+            description="Описание тестового устройства",
         )
+
         self.item = Item.objects.create(
             inventory_number="TEST-001",
             device=self.device,
@@ -28,7 +39,7 @@ class ItemModelTest(TestCase):
 
     def test_item_unique_inventory_number(self):
         """Тест уникальности инвентарного номера"""
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(IntegrityError):
             Item.objects.create(inventory_number="TEST-001", device=self.device)
 
     def test_item_str_representation(self):
@@ -39,15 +50,28 @@ class ItemModelTest(TestCase):
 class OperationModelTest(TestCase):
     def setUp(self):
         # Создаем необходимые объекты для тестов
+        self.category = Category.objects.create(name="Тестовая категория")
+        self.type = Type.objects.create(name="Тестовый тип")
+        self.manufacturer = Manufacturer.objects.create(name="Тестовый производитель")
+        self.model = Model.objects.create(name="Тестовая модель")
+
         self.device = Device.objects.create(
-            name="Тестовое устройство", description="Описание тестового устройства"
+            category=self.category,
+            type=self.type,
+            manufacturer=self.manufacturer,
+            model=self.model,
+            description="Описание тестового устройства",
         )
+
         self.item = Item.objects.create(inventory_number="TEST-001", device=self.device)
         self.status = Status.objects.create(
             name="В эксплуатации", description="Устройство находится в эксплуатации"
         )
         self.responsible = Responsible.objects.create(
-            name="Иванов И.И.", description="Тестовый ответственный"
+            last_name="Иванов",
+            first_name="Иван",
+            middle_name="Иванович",
+            employee_id="12345",
         )
         self.location = Location.objects.create(
             name="Кабинет 101", description="Тестовое расположение"
