@@ -3,11 +3,11 @@ from django.core.exceptions import ValidationError
 from django.db.models.deletion import ProtectedError
 from .models import Category, Manufacturer, Model, Type, Device
 
+
 class CategoryModelTest(TestCase):
     def setUp(self):
         self.category = Category.objects.create(
-            name="Тестовая категория",
-            description="Описание тестовой категории"
+            name="Тестовая категория", description="Описание тестовой категории"
         )
 
     def test_category_creation(self):
@@ -23,31 +23,36 @@ class CategoryModelTest(TestCase):
         with self.assertRaises(ValidationError):
             category.full_clean()
 
+
 class ManufacturerModelTest(TestCase):
     def setUp(self):
         self.manufacturer = Manufacturer.objects.create(
             name="Тестовый производитель",
-            description="Описание тестового производителя"
+            description="Описание тестового производителя",
         )
 
     def test_manufacturer_creation(self):
         """Проверка создания производителя"""
         self.assertEqual(self.manufacturer.name, "Тестовый производитель")
-        self.assertEqual(self.manufacturer.description, "Описание тестового производителя")
+        self.assertEqual(
+            self.manufacturer.description, "Описание тестового производителя"
+        )
         self.assertTrue(isinstance(self.manufacturer, Manufacturer))
         self.assertEqual(str(self.manufacturer), "Тестовый производитель")
 
     def test_manufacturer_unique_name(self):
         """Проверка уникальности названия производителя"""
-        manufacturer = Manufacturer(name="Тестовый производитель", description="Другое описание")
+        manufacturer = Manufacturer(
+            name="Тестовый производитель", description="Другое описание"
+        )
         with self.assertRaises(ValidationError):
             manufacturer.full_clean()
+
 
 class ModelModelTest(TestCase):
     def setUp(self):
         self.model = Model.objects.create(
-            name="Тестовая модель",
-            description="Описание тестовой модели"
+            name="Тестовая модель", description="Описание тестовой модели"
         )
 
     def test_model_creation(self):
@@ -63,11 +68,11 @@ class ModelModelTest(TestCase):
         with self.assertRaises(ValidationError):
             model.full_clean()
 
+
 class TypeModelTest(TestCase):
     def setUp(self):
         self.type = Type.objects.create(
-            name="Тестовый тип",
-            description="Описание тестового типа"
+            name="Тестовый тип", description="Описание тестового типа"
         )
 
     def test_type_creation(self):
@@ -83,30 +88,27 @@ class TypeModelTest(TestCase):
         with self.assertRaises(ValidationError):
             type_obj.full_clean()
 
+
 class DeviceModelTest(TestCase):
     def setUp(self):
         self.category = Category.objects.create(
-            name="Категория для устройства",
-            description="Описание категории"
+            name="Категория для устройства", description="Описание категории"
         )
         self.type = Type.objects.create(
-            name="Тип для устройства",
-            description="Описание типа"
+            name="Тип для устройства", description="Описание типа"
         )
         self.manufacturer = Manufacturer.objects.create(
-            name="Производитель для устройства",
-            description="Описание производителя"
+            name="Производитель для устройства", description="Описание производителя"
         )
         self.model = Model.objects.create(
-            name="Модель для устройства",
-            description="Описание модели"
+            name="Модель для устройства", description="Описание модели"
         )
         self.device = Device.objects.create(
             category=self.category,
             type=self.type,
             manufacturer=self.manufacturer,
             model=self.model,
-            description="Описание устройства"
+            description="Описание устройства",
         )
 
     def test_device_creation(self):
@@ -119,7 +121,7 @@ class DeviceModelTest(TestCase):
         self.assertTrue(isinstance(self.device, Device))
         self.assertEqual(
             str(self.device),
-            f"{self.category} | {self.type} | {self.manufacturer} | {self.model}"
+            f"{self.category} | {self.type} | {self.manufacturer} | {self.model}",
         )
 
     def test_device_unique_together(self):
@@ -129,7 +131,7 @@ class DeviceModelTest(TestCase):
             type=self.type,
             manufacturer=self.manufacturer,
             model=self.model,
-            description="Другое описание"
+            description="Другое описание",
         )
         with self.assertRaises(ValidationError):
             device.full_clean()
@@ -138,12 +140,12 @@ class DeviceModelTest(TestCase):
         """Проверка защиты от каскадного удаления"""
         with self.assertRaises(ProtectedError):
             self.category.delete()
-        
+
         with self.assertRaises(ProtectedError):
             self.type.delete()
-        
+
         with self.assertRaises(ProtectedError):
             self.manufacturer.delete()
-        
+
         with self.assertRaises(ProtectedError):
             self.model.delete()
