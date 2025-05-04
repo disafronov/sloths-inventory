@@ -4,7 +4,7 @@ from catalogs.models import Device
 class Item(models.Model):
     inventory_number = models.CharField(max_length=255, unique=True, verbose_name="Инвентарный номер")
     device = models.ForeignKey(Device, on_delete=models.PROTECT, verbose_name="Устройство")
-    serial_number = models.CharField(max_length=255, unique=True, verbose_name="Серийный номер")
+    serial_number = models.CharField(max_length=255, unique=True, null=True, blank=True, verbose_name="Серийный номер")
     status = models.CharField(
         max_length=20,
         choices=[
