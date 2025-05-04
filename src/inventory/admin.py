@@ -11,7 +11,7 @@ class ItemAdmin(admin.ModelAdmin):
         "updated_at",
         "created_at",
     )
-    list_display_links = ("inventory_number", "device")
+    list_display_links = ("inventory_number", "device", "serial_number")
     list_filter = (
         "device__category",
         "device__type",
