@@ -1,5 +1,5 @@
 from django.test import TestCase
-from django.core.exceptions import ValidationError
+from django.db.utils import IntegrityError
 from .models import Category, Manufacturer, Model, Type
 
 
@@ -18,7 +18,7 @@ class CategoryModelTest(TestCase):
 
     def test_category_unique_name(self):
         """Тест уникальности имени категории"""
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(IntegrityError):
             Category.objects.create(name="Тестовая категория")
 
 
@@ -40,7 +40,7 @@ class ManufacturerModelTest(TestCase):
 
     def test_manufacturer_unique_name(self):
         """Тест уникальности имени производителя"""
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(IntegrityError):
             Manufacturer.objects.create(name="Тестовый производитель")
 
 
@@ -59,7 +59,7 @@ class ModelModelTest(TestCase):
 
     def test_model_unique_name(self):
         """Тест уникальности имени модели"""
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(IntegrityError):
             Model.objects.create(name="Тестовая модель")
 
 
@@ -78,5 +78,5 @@ class TypeModelTest(TestCase):
 
     def test_type_unique_name(self):
         """Тест уникальности имени типа"""
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(IntegrityError):
             Type.objects.create(name="Тестовый тип")
