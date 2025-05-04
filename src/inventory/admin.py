@@ -1,5 +1,19 @@
 from django.contrib import admin
-from .models import Item, Operation, Responsible
+from .models import Item, Operation, Responsible, Status
+
+@admin.register(Status)
+class StatusAdmin(admin.ModelAdmin):
+    list_display = ('name', 'updated_at', 'created_at')
+    list_display_links = ('name',)
+    search_fields = ('name', 'description')
+    list_filter = ('updated_at', 'created_at')
+    readonly_fields = ('created_at', 'updated_at')
+    ordering = ['name']
+    fieldsets = (
+        (None, {
+            'fields': ('name', 'description', 'updated_at', 'created_at')
+        }),
+    )
 
 @admin.register(Responsible)
 class ResponsibleAdmin(admin.ModelAdmin):
@@ -29,6 +43,7 @@ class OperationAdmin(admin.ModelAdmin):
         'responsible__first_name',
         'responsible__last_name',
         'responsible__middle_name',
+        'status__name',
         'item__device__category__name',
         'item__device__type__name',
         'item__device__manufacturer__name',
@@ -37,7 +52,7 @@ class OperationAdmin(admin.ModelAdmin):
     )
     readonly_fields = ('created_at', 'updated_at')
     raw_id_fields = ['item']
-    autocomplete_fields = ['responsible']
+    autocomplete_fields = ['responsible', 'status']
     ordering = ['-created_at']
     fieldsets = (
         (None, {
