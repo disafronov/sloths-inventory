@@ -28,7 +28,7 @@ class ItemAdmin(admin.ModelAdmin):
         "device__model__name",
         "serial_number",
     )
-    readonly_fields = ("updated_at", "created_at")
+    readonly_fields = ("updated_at", "created_at", "current_status", "current_location", "current_responsible")
     autocomplete_fields = ["device"]
     fieldsets = (
         (
@@ -41,6 +41,16 @@ class ItemAdmin(admin.ModelAdmin):
                     "notes",
                     "updated_at",
                     "created_at",
+                )
+            },
+        ),
+        (
+            "Эксплуатация",
+            {
+                "fields": (
+                    "current_status",
+                    "current_responsible",
+                    "current_location",
                 )
             },
         ),
