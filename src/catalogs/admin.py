@@ -33,6 +33,12 @@ class TypeAdmin(admin.ModelAdmin):
 class DeviceAdmin(admin.ModelAdmin):
     list_display = ("category", "type", "manufacturer", "model", "description", "updated_at", "created_at")
     list_display_links = ("category", "type", "manufacturer", "model", "description")
-    search_fields = ("description",)
+    search_fields = (
+        "description",
+        "category__name",
+        "type__name",
+        "manufacturer__name",
+        "model__name"
+    )
     list_filter = ("category", "type", "manufacturer", "model", "updated_at", "created_at")
     autocomplete_fields = ["category", "type", "manufacturer", "model"]
