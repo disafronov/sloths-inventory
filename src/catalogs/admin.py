@@ -2,16 +2,50 @@ from django.contrib import admin
 from .models import Device, Location, Responsible, Status
 
 
-@admin.register(Status)
-class StatusAdmin(admin.ModelAdmin):
-    list_display = ("name", "updated_at", "created_at")
-    list_display_links = ("name",)
-    search_fields = ("name", "description")
-    list_filter = ("updated_at", "created_at")
+@admin.register(Device)
+class DeviceAdmin(admin.ModelAdmin):
+    list_display = (
+        "category",
+        "type",
+        "manufacturer",
+        "model",
+        "description",
+        "updated_at",
+        "created_at",
+    )
+    list_display_links = ("category", "type", "manufacturer", "model", "description")
+    search_fields = (
+        "description",
+        "category__name",
+        "type__name",
+        "manufacturer__name",
+        "model__name",
+    )
+    list_filter = (
+        "category",
+        "type",
+        "manufacturer",
+        "model",
+        "updated_at",
+        "created_at",
+    )
+    autocomplete_fields = ["category", "type", "manufacturer", "model"]
     readonly_fields = ("created_at", "updated_at")
-    ordering = ["name"]
     fieldsets = (
-        (None, {"fields": ("name", "description", "updated_at", "created_at")}),
+        (
+            None,
+            {
+                "fields": (
+                    "category",
+                    "type",
+                    "manufacturer",
+                    "model",
+                    "description",
+                    "updated_at",
+                    "created_at",
+                )
+            },
+        ),
     )
 
 
@@ -67,48 +101,14 @@ class ResponsibleAdmin(admin.ModelAdmin):
     get_full_name.admin_order_field = "last_name"
 
 
-@admin.register(Device)
-class DeviceAdmin(admin.ModelAdmin):
-    list_display = (
-        "category",
-        "type",
-        "manufacturer",
-        "model",
-        "description",
-        "updated_at",
-        "created_at",
-    )
-    list_display_links = ("category", "type", "manufacturer", "model", "description")
-    search_fields = (
-        "description",
-        "category__name",
-        "type__name",
-        "manufacturer__name",
-        "model__name",
-    )
-    list_filter = (
-        "category",
-        "type",
-        "manufacturer",
-        "model",
-        "updated_at",
-        "created_at",
-    )
-    autocomplete_fields = ["category", "type", "manufacturer", "model"]
+@admin.register(Status)
+class StatusAdmin(admin.ModelAdmin):
+    list_display = ("name", "updated_at", "created_at")
+    list_display_links = ("name",)
+    search_fields = ("name", "description")
+    list_filter = ("updated_at", "created_at")
     readonly_fields = ("created_at", "updated_at")
+    ordering = ["name"]
     fieldsets = (
-        (
-            None,
-            {
-                "fields": (
-                    "category",
-                    "type",
-                    "manufacturer",
-                    "model",
-                    "description",
-                    "updated_at",
-                    "created_at",
-                )
-            },
-        ),
+        (None, {"fields": ("name", "description", "updated_at", "created_at")}),
     )
