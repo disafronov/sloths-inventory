@@ -1,5 +1,8 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import User
 from .models import Device, Location, Responsible, Status
+from devices.models import Category, Manufacturer, Model, Type
 
 
 @admin.register(Device)
@@ -9,26 +12,19 @@ class DeviceAdmin(admin.ModelAdmin):
         "type",
         "manufacturer",
         "model",
-        "description",
+        "notes",
         "updated_at",
         "created_at",
     )
-    list_display_links = ("category", "type", "manufacturer", "model", "description")
+    list_display_links = ("category", "type", "manufacturer", "model", "notes")
     search_fields = (
-        "description",
         "category__name",
         "type__name",
         "manufacturer__name",
         "model__name",
+        "notes",
     )
-    list_filter = (
-        "category",
-        "type",
-        "manufacturer",
-        "model",
-        "updated_at",
-        "created_at",
-    )
+    list_filter = ("category", "type", "manufacturer", "model")
     autocomplete_fields = ["category", "type", "manufacturer", "model"]
     readonly_fields = ("created_at", "updated_at")
     fieldsets = (
@@ -40,7 +36,7 @@ class DeviceAdmin(admin.ModelAdmin):
                     "type",
                     "manufacturer",
                     "model",
-                    "description",
+                    "notes",
                     "updated_at",
                     "created_at",
                 )
@@ -51,14 +47,14 @@ class DeviceAdmin(admin.ModelAdmin):
 
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
-    list_display = ("name", "updated_at", "created_at")
-    list_display_links = ("name",)
-    search_fields = ("name", "description")
+    list_display = ("name", "notes", "updated_at", "created_at")
+    list_display_links = ("name", "notes")
+    search_fields = ("name", "notes")
     list_filter = ("updated_at", "created_at")
     readonly_fields = ("created_at", "updated_at")
     ordering = ["name"]
     fieldsets = (
-        (None, {"fields": ("name", "description", "updated_at", "created_at")}),
+        (None, {"fields": ("name", "notes", "updated_at", "created_at")}),
     )
 
 
@@ -103,12 +99,34 @@ class ResponsibleAdmin(admin.ModelAdmin):
 
 @admin.register(Status)
 class StatusAdmin(admin.ModelAdmin):
-    list_display = ("name", "updated_at", "created_at")
-    list_display_links = ("name",)
-    search_fields = ("name", "description")
+    list_display = ("name", "notes", "updated_at", "created_at")
+    list_display_links = ("name", "notes")
+    search_fields = ("name", "notes")
     list_filter = ("updated_at", "created_at")
     readonly_fields = ("created_at", "updated_at")
     ordering = ["name"]
     fieldsets = (
-        (None, {"fields": ("name", "description", "updated_at", "created_at")}),
+        (None, {"fields": ("name", "notes", "updated_at", "created_at")}),
     )
+
+
+class ResponsibleInline(admin.StackedInline):
+    model = Responsible
+    can_delete = False
+    verbose_name_plural = "Ответственный"
+    fk_name = "user"
+
+
+class CustomUserAdmin(UserAdmin):
+    inlines = (ResponsibleInline,)
+
+    def get_full_name(self, obj):
+        if hasattr(obj, "responsible"):
+            return obj.responsible.get_full_name()
+        return super().get_full_name(obj)
+
+    get_full_name.short_description = "Полное имя"
+
+
+admin.site.unregister(User)
+admin.site.register(User, CustomUserAdmin)

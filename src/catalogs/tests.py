@@ -18,7 +18,7 @@ class DeviceModelTest(TestCase):
             type=self.type,
             manufacturer=self.manufacturer,
             model=self.model,
-            description="Тестовое описание",
+            notes="Тестовые примечания",
         )
 
     def test_device_creation(self):
@@ -27,7 +27,7 @@ class DeviceModelTest(TestCase):
         self.assertEqual(self.device.type, self.type)
         self.assertEqual(self.device.manufacturer, self.manufacturer)
         self.assertEqual(self.device.model, self.model)
-        self.assertEqual(self.device.description, "Тестовое описание")
+        self.assertEqual(self.device.notes, "Тестовые примечания")
         self.assertTrue(self.device.created_at)
         self.assertTrue(self.device.updated_at)
 
@@ -39,6 +39,7 @@ class DeviceModelTest(TestCase):
                 type=self.type,
                 manufacturer=self.manufacturer,
                 model=self.model,
+                notes="Другие примечания",
             )
 
     def test_device_str_representation(self):
@@ -52,13 +53,13 @@ class DeviceModelTest(TestCase):
 class LocationModelTest(TestCase):
     def setUp(self):
         self.location = Location.objects.create(
-            name="Тестовое расположение", description="Тестовое описание"
+            name="Тестовое расположение", notes="Тестовые примечания"
         )
 
     def test_location_creation(self):
         """Тест создания расположения"""
         self.assertEqual(self.location.name, "Тестовое расположение")
-        self.assertEqual(self.location.description, "Тестовое описание")
+        self.assertEqual(self.location.notes, "Тестовые примечания")
         self.assertTrue(self.location.created_at)
         self.assertTrue(self.location.updated_at)
 
@@ -107,13 +108,13 @@ class ResponsibleModelTest(TestCase):
 class StatusModelTest(TestCase):
     def setUp(self):
         self.status = Status.objects.create(
-            name="Тестовый статус", description="Тестовое описание"
+            name="Тестовый статус", notes="Тестовые примечания"
         )
 
     def test_status_creation(self):
         """Тест создания статуса"""
         self.assertEqual(self.status.name, "Тестовый статус")
-        self.assertEqual(self.status.description, "Тестовое описание")
+        self.assertEqual(self.status.notes, "Тестовые примечания")
         self.assertTrue(self.status.created_at)
         self.assertTrue(self.status.updated_at)
 
