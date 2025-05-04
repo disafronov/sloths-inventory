@@ -3,21 +3,6 @@ from django.contrib.auth.models import User
 from devices.models import Category, Manufacturer, Model, Type
 
 
-class Status(models.Model):
-    name = models.CharField(max_length=100, verbose_name="Название")
-    description = models.TextField(blank=True, verbose_name="Описание")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
-
-    class Meta:
-        verbose_name = "Статус"
-        verbose_name_plural = "Статусы"
-        ordering = ["name"]
-
-    def __str__(self):
-        return self.name
-
-
 class Device(models.Model):
     category = models.ForeignKey(
         Category, on_delete=models.PROTECT, verbose_name="Категория"
@@ -86,3 +71,18 @@ class Responsible(models.Model):
 
     def get_full_name(self):
         return str(self)
+
+
+class Status(models.Model):
+    name = models.CharField(max_length=100, verbose_name="Название")
+    description = models.TextField(blank=True, verbose_name="Описание")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+
+    class Meta:
+        verbose_name = "Статус"
+        verbose_name_plural = "Статусы"
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
