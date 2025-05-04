@@ -7,6 +7,12 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display_links = ("name", "description")
     search_fields = ("name", "description")
     list_filter = ("updated_at", "created_at")
+    readonly_fields = ('created_at', 'updated_at')
+    fieldsets = (
+        (None, {
+            'fields': ('name', 'description', 'updated_at', 'created_at')
+        }),
+    )
 
 @admin.register(Manufacturer)
 class ManufacturerAdmin(admin.ModelAdmin):
@@ -14,6 +20,12 @@ class ManufacturerAdmin(admin.ModelAdmin):
     list_display_links = ("name", "description")
     search_fields = ("name", "description")
     list_filter = ("updated_at", "created_at")
+    readonly_fields = ('created_at', 'updated_at')
+    fieldsets = (
+        (None, {
+            'fields': ('name', 'description', 'updated_at', 'created_at')
+        }),
+    )
 
 @admin.register(Model)
 class ModelAdmin(admin.ModelAdmin):
@@ -21,6 +33,12 @@ class ModelAdmin(admin.ModelAdmin):
     list_display_links = ("name", "description")
     search_fields = ("name", "description")
     list_filter = ("updated_at", "created_at")
+    readonly_fields = ('created_at', 'updated_at')
+    fieldsets = (
+        (None, {
+            'fields': ('name', 'description', 'updated_at', 'created_at')
+        }),
+    )
 
 @admin.register(Type)
 class TypeAdmin(admin.ModelAdmin):
@@ -28,6 +46,12 @@ class TypeAdmin(admin.ModelAdmin):
     list_display_links = ("name", "description")
     search_fields = ("name", "description")
     list_filter = ("updated_at", "created_at")
+    readonly_fields = ('created_at', 'updated_at')
+    fieldsets = (
+        (None, {
+            'fields': ('name', 'description', 'updated_at', 'created_at')
+        }),
+    )
 
 @admin.register(Device)
 class DeviceAdmin(admin.ModelAdmin):
@@ -42,3 +66,9 @@ class DeviceAdmin(admin.ModelAdmin):
     )
     list_filter = ("category", "type", "manufacturer", "model", "updated_at", "created_at")
     autocomplete_fields = ["category", "type", "manufacturer", "model"]
+    readonly_fields = ('created_at', 'updated_at')
+    fieldsets = (
+        (None, {
+            'fields': ('category', 'type', 'manufacturer', 'model', 'description', 'updated_at', 'created_at')
+        }),
+    )

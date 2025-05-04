@@ -22,14 +22,10 @@ class ItemAdmin(admin.ModelAdmin):
     ordering = ['inventory_number']
     fieldsets = (
         (None, {
-            'fields': ('inventory_number', 'device', 'serial_number', 'status')
+            'fields': ('inventory_number', 'device', 'serial_number', 'status', 'updated_at', 'created_at')
         }),
         ('Дополнительная информация', {
             'fields': ('location', 'notes'),
-            'classes': ('collapse',)
-        }),
-        ('Системная информация', {
-            'fields': ('created_at', 'updated_at'),
             'classes': ('collapse',)
         })
     )
