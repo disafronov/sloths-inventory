@@ -1,4 +1,4 @@
-name: "PR: tests"
+name: "Tests"
 
 on:
   pull_request:
@@ -59,4 +59,4 @@ jobs:
 
   docker-publish:
     needs: test
-    uses: ./.github/workflows/docker-publish.yml
+    uses: ./.github/workflows/docker.yaml
