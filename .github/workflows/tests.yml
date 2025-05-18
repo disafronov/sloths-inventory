@@ -32,7 +32,7 @@ jobs:
       - name: "Cache uv dependencies"
         uses: actions/cache@v4
         with:
-          path: /home/runner/.cache/uv
+          path: /tmp/setup-uv-cache
           key: ${{ runner.os }}-uv-${{ hashFiles('**/pyproject.toml', '**/uv.lock') }}
           restore-keys: |
             ${{ runner.os }}-uv-
