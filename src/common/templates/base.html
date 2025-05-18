@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sloths Inventory{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'admin/css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'admin/css/nav_sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'admin/css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'admin/css/forms.css' %}">
+    <link rel="stylesheet" href="{% static 'admin/css/responsive.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="{% block bodyclass %}{% endblock %}">
+    <div id="container">
+        <header id="header">
+            <div id="branding">
+                <h1 id="site-name">
+                    <a href="{% url 'admin:index' %}">Sloths Inventory</a>
+                </h1>
+            </div>
+            {% block header %}{% endblock %}
+        </header>
+        
+        <div id="content" class="{% block coltype %}colM{% endblock %}">
+            {% if messages %}
+            <ul class="messagelist">
+                {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            
+            {% block content %}
+            {% endblock %}
+        </div>
+        
+        <footer id="footer">
+            {% block footer %}{% endblock %}
+        </footer>
+    </div>
+    
+    <script src="{% static 'admin/js/core.js' %}"></script>
+    <script src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
+    <script src="{% static 'admin/js/jquery.init.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html> 
