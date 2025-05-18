@@ -20,65 +20,32 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  test:
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: sloths_inventory_test
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Cache uv dependencies
-        uses: actions/cache@v4
-        with:
-          path: /tmp/setup-uv-cache
-          key: ${{ runner.os }}-uv-${{ hashFiles('**/pyproject.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-uv-
-      - name: "Install uv"
-        uses: astral-sh/setup-uv@v1
-      - name: "Install tests dependencies"
-        run: uv sync --extra test
-        env:
-          UV_FROZEN: true
-          UV_NO_EDITABLE: true
-          UV_MANAGED_PYTHON: true
-      - name: "Run tests"
-        env:
-          DATABASE_NAME: sloths_inventory_test
-          DATABASE_USER: postgres
-          DATABASE_PASSWORD: postgres
-          DATABASE_HOST: localhost
-          DATABASE_PORT: 5432
-          PATH: ${{ env.UV_PYTHON_PATH }}:$PATH
-        run: uv run src/manage.py test
   build:
     runs-on: ubuntu-latest
-    needs: ${{ github.event_name == 'pull_request' && 'test' || '' }}
-    if: github.event_name == 'pull_request' || github.event_name == 'push'
     permissions:
       contents: read
       packages: write
       # This is used to complete the identity challenge
       # with sigstore/fulcio when running outside of PRs.
       id-token: write
+      actions: write
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Sideload tests
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            await github.rest.actions.createWorkflowDispatch({
+              owner,
+              repo,
+              workflow_id: 'tests.yml',
+              ref: context.ref
+            });
 
       # Workaround: https://github.com/docker/build-push-action/issues/461
       - name: Setup Docker buildx
