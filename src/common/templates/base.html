@@ -24,9 +24,57 @@
             margin-bottom: 20px;
             padding-bottom: 10px;
             border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 {
+            margin: 0;
+        }
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .button {
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            line-height: 1.5;
+            display: inline-block;
+            transition: background 0.2s;
+        }
+        .button:hover {
+            background-color: #0056b3;
         }
         .content {
             min-height: 400px;
+        }
+        .form-container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        .form-container p {
+            margin-bottom: 15px;
+        }
+        .form-container label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-container input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .form-container button[type="submit"] {
+            width: 100%;
         }
     </style>
     {% block extrahead %}{% endblock %}
@@ -35,6 +83,18 @@
     <div class="container">
         <div class="header">
             <h1>{% block heading %}Sloths Inventory{% endblock %}</h1>
+            <div class="user-menu">
+                {% if user.is_authenticated %}
+                    <span>{{ user.username }}</span>
+                    <a href="{% url 'admin:index' %}" class="button">Админка</a>
+                    <form method="post" action="{% url 'common:logout' %}?next=/" style="margin: 0; display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="button">Выйти</button>
+                    </form>
+                {% elif request.resolver_match.url_name != 'login' %}
+                    <a href="{% url 'common:login' %}" class="button">Войти</a>
+                {% endif %}
+            </div>
         </div>
         <div class="content">
             {% block content %}{% endblock %}
