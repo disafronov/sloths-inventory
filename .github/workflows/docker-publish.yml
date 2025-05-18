@@ -19,10 +19,8 @@ env:
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
 
-
 jobs:
   build:
-
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -34,6 +32,27 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: PR tests: Install uv
+        if: github.event_name == 'pull_request'
+        uses: astral-sh/setup-uv@v1
+
+      - name: PR tests: Cache uv dependencies
+        if: github.event_name == 'pull_request'
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/uv
+          key: ${{ runner.os }}-uv-${{ hashFiles('**/pyproject.toml', '**/uv.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-uv-
+
+      - name: PR tests: Install tests dependencies
+        if: github.event_name == 'pull_request'
+        run: uv sync
+
+      - name: PR tests: Run
+        if: github.event_name == 'pull_request'
+        run: uv run src/manage.py test
 
       # Workaround: https://github.com/docker/build-push-action/issues/461
       - name: Setup Docker buildx
