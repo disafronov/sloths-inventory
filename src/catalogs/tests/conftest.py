@@ -5,8 +5,8 @@ import pytest
 from factory import Faker, SubFactory
 from factory.django import DjangoModelFactory
 from django.contrib.auth.models import User
-from catalogs.models import Device, Location, Responsible, Status
-from devices.models import Category, Manufacturer, Model, Type
+from catalogs.models import Device, Location, Responsible, Status, Category, Manufacturer, Model, Type
+from devices.models import Category as DeviceCategory, Manufacturer as DeviceManufacturer, Model as DeviceModel, Type as DeviceType
 from devices.tests.conftest import (
     CategoryFactory,
     ManufacturerFactory,

@@ -3,8 +3,7 @@
 """
 import factory
 from factory.django import DjangoModelFactory
-from catalogs.models import Device
-from devices.models import Category, Manufacturer, Model, Type
+from catalogs.models import Device, Category, Manufacturer, Model, Type
 
 
 class CategoryFactory(DjangoModelFactory):

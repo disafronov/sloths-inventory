@@ -2,24 +2,6 @@ from django.db import models
 from common.models import NamedModel
 
 
-class BaseModelMixin(models.Model):
-    """
-    Базовый миксин для моделей каталогов.
-    Предоставляет общие поля и поведение для всех моделей каталогов.
-    """
-    name = models.CharField(max_length=255, unique=True, verbose_name="Название")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
-    notes = models.TextField(blank=True, verbose_name="Примечания")
-
-    class Meta:
-        abstract = True
-        ordering = ["name"]
-
-    def __str__(self):
-        return self.name
-
-
 class Category(NamedModel):
     """
     Модель категории устройства.

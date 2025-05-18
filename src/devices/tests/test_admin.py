@@ -2,7 +2,7 @@ import pytest
 from django.contrib import admin
 from django.urls import reverse
 from django.test import Client
-from devices.models import Category, Manufacturer, Model, Type
+from catalogs.models import Category, Manufacturer, Model, Type
 from devices.admin import CategoryAdmin, ManufacturerAdmin, ModelAdmin, TypeAdmin
 from devices.tests.factories import CategoryFactory, ManufacturerFactory, ModelFactory, TypeFactory
 
