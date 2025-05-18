@@ -25,9 +25,7 @@
             </div>
             <div id="user-tools">
                 {% if user.is_authenticated %}
-                    <span>{% trans "Welcome," %} {{ user.username }}.</span>
-                    <a href="/" class="button">{% trans "Open site" %}</a>
-                    <form action="{% url 'common:set_language' %}" method="post" class="language-form" style="display:inline;">
+                    <form action="{% url 'common:set_language' %}" method="post" class="language-form">
                         {% csrf_token %}
                         <input name="next" type="hidden" value="{{ request.path }}">
                         <select name="language" onchange="this.form.submit()">
@@ -38,10 +36,16 @@
                             {% endfor %}
                         </select>
                     </form>
-                    <form method="post" action="{% url 'common:logout' %}?next=/" style="margin: 0; display: inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="button">{% trans "Logout" %}</button>
-                    </form>
+                    <div id="user-tools-menu" class="user-tools">
+                        <form id="user-menu-form" method="post" action="{% url 'common:logout' %}?next=/">
+                            {% csrf_token %}
+                            <select id="user-menu-select" name="user_menu" onchange="handleUserMenu(this)">
+                                <option selected disabled>{{ user.username }}</option>
+                                <option value="admin">{% trans "Admin Panel" %}</option>
+                                <option value="logout">{% trans "Logout" %}</option>
+                            </select>
+                        </form>
+                    </div>
                 {% elif request.resolver_match.url_name != 'login' %}
                     <a href="{% url 'common:login' %}" class="button">{% trans "Login" %}</a>
                 {% endif %}
@@ -61,5 +65,14 @@
     <script src="{% static 'admin/js/urlify.js' %}"></script>
     <script src="{% static 'admin/js/prepopulate.js' %}"></script>
     <script src="{% static 'admin/js/vendor/xregexp/xregexp.min.js' %}"></script>
+    <script>
+    function handleUserMenu(sel) {
+        if(sel.value === 'admin') {
+            window.location.href = '{% url 'admin:index' %}';
+        } else if(sel.value === 'logout') {
+            sel.form.submit();
+        }
+    }
+    </script>
 </body>
 </html> 
