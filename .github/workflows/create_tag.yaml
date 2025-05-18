@@ -1,4 +1,4 @@
-name: "Push: create tag"
+name: "Create tag"
 
 "on":
   push:
