@@ -140,3 +140,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Test runner
 TEST_RUNNER = 'sloths_inventory.tests.runner.PytestTestRunner'
+
+LOGIN_URL = 'common:login'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = 'common:login'
