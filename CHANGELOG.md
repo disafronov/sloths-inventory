@@ -2,11 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.0] - 2025-05-18
+
+### 🚀 Features
+
+- Оптимизация кода + тесты
+
 ## [0.5.0] - 2025-05-04
 
 ### 🚀 Features
 
 - Восстановить отображение поля location в админке OperationAdmin
+
+### 📚 Documentation
+
+- Update changelog for v0.5.0
 
 ## [0.4.0] - 2025-05-04
 
