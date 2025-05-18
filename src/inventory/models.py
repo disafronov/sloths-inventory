@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 from devices.models import Device
 from catalogs.models import Location, Responsible, Status
 from common.models import BaseModel
@@ -9,20 +10,20 @@ class Item(BaseModel):
     inventory_number = models.CharField(
         max_length=50,
         unique=True,
-        verbose_name="Инвентарный номер"
+        verbose_name=_("Inventory number")
     )
     device = models.ForeignKey(
-        Device, on_delete=models.PROTECT, verbose_name="Устройство"
+        Device, on_delete=models.PROTECT, verbose_name=_("Device")
     )
     serial_number = models.CharField(
         max_length=50,
         blank=True,
-        verbose_name="Серийный номер"
+        verbose_name=_("Serial number")
     )
 
     class Meta:
-        verbose_name = "Экземпляр"
-        verbose_name_plural = "Экземпляры"
+        verbose_name = _("Item")
+        verbose_name_plural = _("Items")
         ordering = ["inventory_number"]
 
     def __str__(self):
@@ -34,7 +35,7 @@ class Item(BaseModel):
     def clean(self):
         """Валидация модели."""
         if not self.inventory_number:
-            raise ValidationError({"inventory_number": "Инвентарный номер не может быть пустым"})
+            raise ValidationError({"inventory_number": _("Inventory number cannot be empty")})
 
     @property
     def current_operation(self):
@@ -63,18 +64,18 @@ class Item(BaseModel):
 
 
 class Operation(BaseModel):
-    item = models.ForeignKey("Item", on_delete=models.CASCADE, verbose_name="Экземпляр")
-    status = models.ForeignKey(Status, on_delete=models.PROTECT, verbose_name="Статус")
+    item = models.ForeignKey("Item", on_delete=models.CASCADE, verbose_name=_("Item"))
+    status = models.ForeignKey(Status, on_delete=models.PROTECT, verbose_name=_("Status"))
     responsible = models.ForeignKey(
-        Responsible, on_delete=models.PROTECT, verbose_name="Ответственный"
+        Responsible, on_delete=models.PROTECT, verbose_name=_("Responsible")
     )
     location = models.ForeignKey(
-        Location, on_delete=models.PROTECT, verbose_name="Расположение"
+        Location, on_delete=models.PROTECT, verbose_name=_("Location")
     )
 
     class Meta:
-        verbose_name = "Эксплуатация"
-        verbose_name_plural = "Эксплуатация"
+        verbose_name = _("Operation")
+        verbose_name_plural = _("Operations")
         ordering = ["-updated_at"]
 
     def __str__(self):
