@@ -8,7 +8,7 @@
     {% csrf_token %}
     <div class="submit-row">
         <input type="submit" value="{% trans 'Yes, delete' %}" class="default" />
-        <a href="{% url 'device_list' %}" class="button">{% trans "No, cancel" %}</a>
+        <a href="{% url 'devices:device-list' %}" class="button">{% trans "No, cancel" %}</a>
     </div>
 </form>
 {% endblock %} 
