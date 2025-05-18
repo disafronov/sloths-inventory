@@ -67,7 +67,7 @@ jobs:
         run: uv run src/manage.py test
   build:
     runs-on: ubuntu-latest
-    needs: [test]
+    needs: ${{ github.event_name == 'pull_request' && 'test' || '' }}
     if: github.event_name == 'pull_request' || github.event_name == 'push'
     permissions:
       contents: read
