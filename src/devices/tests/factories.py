@@ -2,10 +2,12 @@
 Фабрики для тестов приложения devices.
 """
 import factory
-from ..models import Category, Manufacturer, Model, Type
+from factory.django import DjangoModelFactory
+from catalogs.models import Device
+from devices.models import Category, Manufacturer, Model, Type
 
 
-class CategoryFactory(factory.django.DjangoModelFactory):
+class CategoryFactory(DjangoModelFactory):
     """Фабрика для создания категорий."""
     class Meta:
         model = Category
@@ -14,7 +16,7 @@ class CategoryFactory(factory.django.DjangoModelFactory):
     notes = factory.Faker('text', max_nb_chars=200)
 
 
-class ManufacturerFactory(factory.django.DjangoModelFactory):
+class ManufacturerFactory(DjangoModelFactory):
     """Фабрика для создания производителей."""
     class Meta:
         model = Manufacturer
@@ -23,7 +25,7 @@ class ManufacturerFactory(factory.django.DjangoModelFactory):
     notes = factory.Faker('text', max_nb_chars=200)
 
 
-class ModelFactory(factory.django.DjangoModelFactory):
+class ModelFactory(DjangoModelFactory):
     """Фабрика для создания моделей."""
     class Meta:
         model = Model
@@ -32,10 +34,21 @@ class ModelFactory(factory.django.DjangoModelFactory):
     notes = factory.Faker('text', max_nb_chars=200)
 
 
-class TypeFactory(factory.django.DjangoModelFactory):
+class TypeFactory(DjangoModelFactory):
     """Фабрика для создания типов."""
     class Meta:
         model = Type
 
     name = factory.Sequence(lambda n: f'Type {n}')
-    notes = factory.Faker('text', max_nb_chars=200) 
+    notes = factory.Faker('text', max_nb_chars=200)
+
+
+class DeviceFactory(DjangoModelFactory):
+    class Meta:
+        model = Device
+
+    category = factory.SubFactory(CategoryFactory)
+    type = factory.SubFactory(TypeFactory)
+    manufacturer = factory.SubFactory(ManufacturerFactory)
+    model = factory.SubFactory(ModelFactory)
+    notes = factory.Sequence(lambda n: f'Notes {n}') 

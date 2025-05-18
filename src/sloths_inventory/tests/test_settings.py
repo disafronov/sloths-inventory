@@ -1,4 +1,4 @@
-"""Тесты настроек Django."""
+"""Тесты для проверки настроек проекта."""
 
 import os
 from pathlib import Path
@@ -33,9 +33,7 @@ def test_csrf_trusted_origins():
 
 
 def test_installed_apps():
-    """Тест установленных приложений."""
-    assert hasattr(settings, 'INSTALLED_APPS')
-    assert isinstance(settings.INSTALLED_APPS, list)
+    """Тест наличия необходимых приложений в INSTALLED_APPS."""
     required_apps = [
         'django.contrib.admin',
         'django.contrib.auth',
@@ -44,8 +42,8 @@ def test_installed_apps():
         'django.contrib.messages',
         'django.contrib.staticfiles',
         'common',
-        'catalogs',
         'devices',
+        'catalogs',
         'inventory',
     ]
     for app in required_apps:
@@ -53,9 +51,7 @@ def test_installed_apps():
 
 
 def test_middleware():
-    """Тест установленных middleware."""
-    assert hasattr(settings, 'MIDDLEWARE')
-    assert isinstance(settings.MIDDLEWARE, list)
+    """Тест наличия необходимых middleware."""
     required_middleware = [
         'django.middleware.security.SecurityMiddleware',
         'django.contrib.sessions.middleware.SessionMiddleware',
@@ -114,16 +110,27 @@ def test_default_auto_field():
 
 
 def test_test_runner():
-    """Тест настройки тестового раннера."""
+    """Тест настройки кастомного тестового раннера."""
     assert hasattr(settings, 'TEST_RUNNER')
-    assert settings.TEST_RUNNER == 'sloths_inventory.tests.runner.CustomTestRunner'
+    assert settings.TEST_RUNNER == 'sloths_inventory.tests.runner.PytestTestRunner'
 
 
 def test_templates():
-    """Тест настроек шаблонов."""
+    """Тест конфигурации шаблонов."""
     assert hasattr(settings, 'TEMPLATES')
     assert isinstance(settings.TEMPLATES, list)
-    assert len(settings.TEMPLATES) > 0
+    assert len(settings.TEMPLATES) == 1
+    template_settings = settings.TEMPLATES[0]
+    assert template_settings["BACKEND"] == "django.template.backends.django.DjangoTemplates"
+    assert "templates" in template_settings["DIRS"]
+    assert template_settings["APP_DIRS"] is True
+    required_processors = [
+        "django.template.context_processors.request",
+        "django.contrib.auth.context_processors.auth",
+        "django.contrib.messages.context_processors.messages",
+    ]
+    for processor in required_processors:
+        assert processor in template_settings["OPTIONS"]["context_processors"]
 
 
 def test_auth_password_validators():
@@ -138,22 +145,23 @@ def test_auth_password_validators():
         assert any(v["NAME"] == validator for v in settings.AUTH_PASSWORD_VALIDATORS)
 
 
-def test_test_runner():
-    """Тест настройки кастомного тестового раннера."""
-    assert settings.TEST_RUNNER == "sloths_inventory.tests.runner.PytestTestRunner"
+def test_database_config():
+    """Тест конфигурации базы данных."""
+    assert 'default' in settings.DATABASES
+    assert 'ENGINE' in settings.DATABASES['default']
+    assert 'NAME' in settings.DATABASES['default']
 
 
-def test_templates():
-    """Тест конфигурации шаблонов."""
-    assert len(settings.TEMPLATES) == 1
-    template_settings = settings.TEMPLATES[0]
-    assert template_settings["BACKEND"] == "django.template.backends.django.DjangoTemplates"
-    assert "templates" in template_settings["DIRS"]
-    assert template_settings["APP_DIRS"] is True
-    required_processors = [
-        "django.template.context_processors.request",
-        "django.contrib.auth.context_processors.auth",
-        "django.contrib.messages.context_processors.messages",
-    ]
-    for processor in required_processors:
-        assert processor in template_settings["OPTIONS"]["context_processors"] 
+def test_security_settings():
+    """Тест настроек безопасности."""
+    assert hasattr(settings, 'SECRET_KEY')
+    assert hasattr(settings, 'DEBUG')
+    assert hasattr(settings, 'ALLOWED_HOSTS')
+    assert isinstance(settings.ALLOWED_HOSTS, list)
+
+
+def test_static_files_settings():
+    """Тест настроек статических файлов."""
+    assert hasattr(settings, 'STATIC_URL')
+    assert hasattr(settings, 'STATIC_ROOT')
+    assert hasattr(settings, 'STATICFILES_DIRS') 
