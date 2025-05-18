@@ -44,6 +44,8 @@ jobs:
         uses: astral-sh/setup-uv@v1
         with:
           enable-cache: true
+          cache-dir: /tmp/setup-uv-cache
+          cache-backend: gha
       - name: "Install tests dependencies"
         run: uv sync --extra test
         env:
