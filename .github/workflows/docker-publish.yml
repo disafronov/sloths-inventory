@@ -10,8 +10,8 @@ on:
     # branches: [ "main" ]
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
-  pull_request:
-    branches: [ "main" ]
+  repository_dispatch:
+    types: [docker-publish-trigger]
 
 env:
   # Use docker.io for Docker Hub if empty
