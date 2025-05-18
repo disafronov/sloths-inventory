@@ -50,6 +50,10 @@ msgid "Admin"
 msgstr "Админка"
 
 #: common/templates/base.html:116
+msgid "Admin Panel"
+msgstr "Панель управления"
+
+#: common/templates/base.html:119
 msgid "Logout"
 msgstr "Выйти"
 
