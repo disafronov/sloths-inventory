@@ -136,6 +136,10 @@ LANGUAGES = [
 
 LOCALE_PATHS = [
     BASE_DIR / 'common' / 'locale',
+    BASE_DIR / 'devices' / 'locale',
+    BASE_DIR / 'catalogs' / 'locale',
+    BASE_DIR / 'inventory' / 'locale',
+    BASE_DIR / 'health' / 'locale',
 ]
 
 # Настройки для определения языка

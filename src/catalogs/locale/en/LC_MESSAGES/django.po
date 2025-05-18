@@ -1,0 +1,60 @@
+# English translations for catalogs package.
+# Copyright (C) 2024
+# This file is distributed under the same license as the catalogs package.
+msgid ""
+msgstr ""
+"Project-Id-Version: catalogs\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-03-19 00:28+0300\n"
+"PO-Revision-Date: 2024-03-19 00:28+0300\n"
+"Last-Translator: \n"
+"Language-Team: English\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: models.py:6
+msgid "Location"
+msgstr "Location"
+
+#: models.py:7
+msgid "Locations"
+msgstr "Locations"
+
+#: models.py:12
+msgid "Last name"
+msgstr "Last name"
+
+#: models.py:13
+msgid "First name"
+msgstr "First name"
+
+#: models.py:14
+msgid "Middle name"
+msgstr "Middle name"
+
+#: models.py:16
+msgid "Employee ID"
+msgstr "Employee ID"
+
+#: models.py:21
+msgid "User"
+msgstr "User"
+
+#: models.py:25
+msgid "Responsible"
+msgstr "Responsible"
+
+#: models.py:26
+msgid "Responsibles"
+msgstr "Responsibles"
+
+#: models.py:42
+msgid "Status"
+msgstr "Status"
+
+#: models.py:43
+msgid "Statuses"
+msgstr "Statuses" 

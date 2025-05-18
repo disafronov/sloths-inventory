@@ -1,0 +1,56 @@
+# English translations for devices package.
+# Copyright (C) 2024
+# This file is distributed under the same license as the devices package.
+msgid ""
+msgstr ""
+"Project-Id-Version: devices\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-03-19 00:24+0300\n"
+"PO-Revision-Date: 2024-03-19 00:24+0300\n"
+"Last-Translator: \n"
+"Language-Team: English\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: models.py:6
+msgid "Category"
+msgstr "Category"
+
+#: models.py:7
+msgid "Categories"
+msgstr "Categories"
+
+#: models.py:9
+msgid "Type"
+msgstr "Type"
+
+#: models.py:10
+msgid "Types"
+msgstr "Types"
+
+#: models.py:12
+msgid "Manufacturer"
+msgstr "Manufacturer"
+
+#: models.py:13
+msgid "Manufacturers"
+msgstr "Manufacturers"
+
+#: models.py:15
+msgid "Model"
+msgstr "Model"
+
+#: models.py:16
+msgid "Models"
+msgstr "Models"
+
+#: models.py:19
+msgid "Device"
+msgstr "Device"
+
+#: models.py:20
+msgid "Devices"
+msgstr "Devices" 

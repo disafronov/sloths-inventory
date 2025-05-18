@@ -1,32 +1,33 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.translation import gettext_lazy as _
 from common.models import BaseModel, NamedModel
 
 
 class Location(NamedModel):
     class Meta:
-        verbose_name = "Расположение"
-        verbose_name_plural = "Расположения"
+        verbose_name = _("Location")
+        verbose_name_plural = _("Locations")
 
 
 class Responsible(BaseModel):
-    last_name = models.CharField(max_length=150, verbose_name="Фамилия")
-    first_name = models.CharField(max_length=150, verbose_name="Имя")
-    middle_name = models.CharField(max_length=150, null=True, blank=True, verbose_name="Отчество")
+    last_name = models.CharField(max_length=150, verbose_name=_("Last name"))
+    first_name = models.CharField(max_length=150, verbose_name=_("First name"))
+    middle_name = models.CharField(max_length=150, null=True, blank=True, verbose_name=_("Middle name"))
     employee_id = models.CharField(
-        max_length=50, blank=True, verbose_name="Табельный номер"
+        max_length=50, blank=True, verbose_name=_("Employee ID")
     )
     user = models.OneToOneField(
         User,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        verbose_name="Пользователь",
+        verbose_name=_("User"),
     )
 
     class Meta:
-        verbose_name = "Ответственный"
-        verbose_name_plural = "Ответственные"
+        verbose_name = _("Responsible")
+        verbose_name_plural = _("Responsibles")
         ordering = ["last_name", "first_name", "middle_name"]
 
     def __str__(self):
@@ -41,5 +42,5 @@ class Responsible(BaseModel):
 
 class Status(NamedModel):
     class Meta:
-        verbose_name = "Статус"
-        verbose_name_plural = "Статусы"
+        verbose_name = _("Status")
+        verbose_name_plural = _("Statuses")
