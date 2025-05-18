@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-19 00:13+0400\n"
+"POT-Creation-Date: 2025-05-19 00:36+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
 #: common/admin.py:13
 msgid "Additional information"
 msgstr ""
@@ -35,4 +36,20 @@ msgstr ""
 
 #: common/models.py:23
 msgid "Name"
+msgstr ""
+
+#: common/templates/base.html:7 common/templates/base.html:96
+msgid "Sloths Inventory"
+msgstr ""
+
+#: common/templates/base.html:113
+msgid "Admin"
+msgstr ""
+
+#: common/templates/base.html:116
+msgid "Logout"
+msgstr ""
+
+#: common/templates/base.html:119
+msgid "Login"
 msgstr ""

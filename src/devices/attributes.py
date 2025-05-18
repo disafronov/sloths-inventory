@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 from common.models import NamedModel
 
 
@@ -8,8 +9,8 @@ class Category(NamedModel):
     Используется для классификации устройств по их назначению или типу.
     """
     class Meta:
-        verbose_name = "Категория"
-        verbose_name_plural = "Категории"
+        verbose_name = _("Category")
+        verbose_name_plural = _("Categories")
 
 
 class Manufacturer(NamedModel):
@@ -18,8 +19,8 @@ class Manufacturer(NamedModel):
     Содержит информацию о компаниях-производителях оборудования.
     """
     class Meta:
-        verbose_name = "Производитель"
-        verbose_name_plural = "Производители"
+        verbose_name = _("Manufacturer")
+        verbose_name_plural = _("Manufacturers")
 
 
 class Model(NamedModel):
@@ -28,8 +29,8 @@ class Model(NamedModel):
     Представляет конкретную модель устройства от производителя.
     """
     class Meta:
-        verbose_name = "Модель"
-        verbose_name_plural = "Модели"
+        verbose_name = _("Model")
+        verbose_name_plural = _("Models")
 
 
 class Type(NamedModel):
@@ -38,5 +39,5 @@ class Type(NamedModel):
     Используется для дополнительной классификации устройств.
     """
     class Meta:
-        verbose_name = "Тип"
-        verbose_name_plural = "Типы" 
+        verbose_name = _("Type")
+        verbose_name_plural = _("Types") 
