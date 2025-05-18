@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.translation import gettext as _
 from common.admin import BaseAdmin
 from .models import Item, Operation
 
@@ -9,15 +10,15 @@ class CurrentFieldMixin:
 
     def current_status(self, obj):
         return self.get_current_field(obj, 'status')
-    current_status.short_description = "Статус"
+    current_status.short_description = _("Status")
 
     def current_location(self, obj):
         return self.get_current_field(obj, 'location')
-    current_location.short_description = "Местоположение"
+    current_location.short_description = _("Location")
 
     def current_responsible(self, obj):
         return self.get_current_field(obj, 'responsible')
-    current_responsible.short_description = "Ответственный"
+    current_responsible.short_description = _("Responsible Person")
 
 
 class DeviceFieldsMixin:
@@ -67,12 +68,12 @@ class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
     def get_fieldsets(self, request, obj=None):
         fieldsets = super().get_fieldsets(request, obj)
         fieldsets = list(fieldsets)
-        # Перемещаем секцию "Дополнительная информация" в начало
+        # Move "Additional Information" section to the beginning
         additional_info = fieldsets.pop(1)
         fieldsets.insert(1, additional_info)
-        # Добавляем секцию "Эксплуатация" после
+        # Add "Operation" section after
         fieldsets.insert(2, (
-            "Эксплуатация",
+            _("Operation"),
             {
                 "fields": (
                     "current_status",
@@ -123,4 +124,4 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
 
     def get_responsible_display(self, obj):
         return obj.responsible.get_full_name()
-    get_responsible_display.short_description = "Ответственный"
+    get_responsible_display.short_description = _("Responsible Person")

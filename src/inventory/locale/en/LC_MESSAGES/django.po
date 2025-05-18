@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventory\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-19 00:41+0400\n"
+"POT-Creation-Date: 2025-05-19 01:39+0400\n"
 "PO-Revision-Date: 2024-03-19 00:40+0300\n"
 "Last-Translator: \n"
 "Language-Team: English\n"
@@ -14,6 +14,22 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: inventory/admin.py:13 inventory/models.py:68
+msgid "Status"
+msgstr "Status"
+
+#: inventory/admin.py:17 inventory/models.py:73
+msgid "Location"
+msgstr "Location"
+
+#: inventory/admin.py:21 inventory/admin.py:127 inventory/models.py:70
+msgid "Responsible Person"
+msgstr "Responsible Person"
+
+#: inventory/admin.py:76 inventory/models.py:77
+msgid "Operation"
+msgstr "Operation"
 
 #: inventory/models.py:13
 msgid "Inventory number"
@@ -38,22 +54,6 @@ msgstr "Items"
 #: inventory/models.py:38
 msgid "Inventory number cannot be empty"
 msgstr "Inventory number cannot be empty"
-
-#: inventory/models.py:68
-msgid "Status"
-msgstr "Status"
-
-#: inventory/models.py:70
-msgid "Responsible"
-msgstr "Responsible"
-
-#: inventory/models.py:73
-msgid "Location"
-msgstr "Location"
-
-#: inventory/models.py:77
-msgid "Operation"
-msgstr "Operation"
 
 #: inventory/models.py:78
 msgid "Operations"
