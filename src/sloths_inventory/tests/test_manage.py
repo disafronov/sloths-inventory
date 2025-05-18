@@ -1,4 +1,4 @@
-"""Tests for manage.py."""
+"""Тесты для manage.py."""
 
 import importlib
 import os
@@ -10,14 +10,14 @@ import pytest
 
 
 def test_manage_py_import_and_main():
-    """Test that manage.py can be imported and main() function exists."""
+    """Тест импорта manage.py и наличия функции main()."""
     manage = importlib.import_module('manage')
     assert hasattr(manage, 'main')
     assert callable(manage.main)
 
 
 def test_main_function_raises_import_error():
-    """Test that main() raises ImportError when Django is not installed."""
+    """Тест выброса ImportError при отсутствии Django."""
     with patch('builtins.__import__', side_effect=ImportError):
         with pytest.raises(ImportError) as exc_info:
             importlib.import_module('manage').main()
@@ -25,7 +25,7 @@ def test_main_function_raises_import_error():
 
 
 def test_main_function_calls_execute_from_command_line():
-    """Test that main() calls execute_from_command_line with sys.argv."""
+    """Тест вызова execute_from_command_line с sys.argv."""
     with patch('django.core.management.execute_from_command_line') as mock_execute:
         with patch('sys.argv', ['manage.py', 'test']):
             importlib.import_module('manage').main()
@@ -33,7 +33,7 @@ def test_main_function_calls_execute_from_command_line():
 
 
 def test_manage_py_environment():
-    """Test environment variables setup."""
+    """Тест установки переменных окружения."""
     with patch.dict(os.environ, clear=True):
         with patch('sys.argv', ['manage.py', 'nonexistentcommand']):
             import manage

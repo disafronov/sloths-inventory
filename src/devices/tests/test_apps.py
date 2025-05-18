@@ -1,4 +1,4 @@
-"""Tests for devices app configuration."""
+"""Тесты конфигурации приложения devices."""
 
 import os
 from pathlib import Path
@@ -10,7 +10,7 @@ from devices.apps import DevicesConfig
 
 
 def test_devices_config():
-    """Test DevicesConfig configuration."""
+    """Тест конфигурации DevicesConfig."""
     app_config = apps.get_app_config("devices")
     assert isinstance(app_config, DevicesConfig)
     assert app_config.name == "devices"
