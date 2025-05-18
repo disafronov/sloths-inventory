@@ -33,11 +33,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: PR tests: Install uv
+      - name: "PR tests: Install uv"
         if: github.event_name == 'pull_request'
         uses: astral-sh/setup-uv@v1
 
-      - name: PR tests: Cache uv dependencies
+      - name: "PR tests: Cache uv dependencies"
         if: github.event_name == 'pull_request'
         uses: actions/cache@v4
         with:
@@ -46,11 +46,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-uv-
 
-      - name: PR tests: Install tests dependencies
+      - name: "PR tests: Install tests dependencies"
         if: github.event_name == 'pull_request'
         run: uv sync --extras test
 
-      - name: PR tests: Run
+      - name: "PR tests: Run"
         if: github.event_name == 'pull_request'
         services:
           postgres:
