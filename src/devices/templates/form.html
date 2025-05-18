@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% if form.instance.pk %}Редактирование устройства{% else %}Новое устройство{% endif %} - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="module">
+    <h2>{% if form.instance.pk %}Редактирование устройства{% else %}Новое устройство{% endif %}</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-row">
+            {{ form.as_p }}
+        </div>
+        <div class="submit-row">
+            <input type="submit" value="{% trans 'Сохранить' %}" class="default" />
+            <a href="{% url 'devices:list' %}" class="button">{% trans "Отмена" %}</a>
+        </div>
+    </form>
+</div>
+{% endblock %} 

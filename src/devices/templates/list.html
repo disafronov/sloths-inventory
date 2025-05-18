@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Устройства - {{ block.super }}{% endblock %}
+
+{% block bodyclass %}devices-list{% endblock %}
+
+{% block header %}
+<div id="user-tools">
+    {% if user.is_authenticated %}
+        <strong>{{ user.get_username }}</strong> /
+        <a href="{% url 'admin:logout' %}">Выйти</a>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="module">
+    <h2>Список устройств</h2>
+    
+    <div class="object-tools">
+        <a href="{% url 'devices:create' %}" class="addlink">Добавить устройство</a>
+    </div>
+
+    {% if devices %}
+    <table>
+        <thead>
+            <tr>
+                <th>Категория</th>
+                <th>Тип</th>
+                <th>Производитель</th>
+                <th>Модель</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for device in devices %}
+            <tr class="{% cycle 'row1' 'row2' %}">
+                <td>{{ device.category }}</td>
+                <td>{{ device.type }}</td>
+                <td>{{ device.manufacturer }}</td>
+                <td>{{ device.model }}</td>
+                <td>
+                    <a href="{% url 'devices:update' device.id %}" class="changelink">Изменить</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="paginator">Нет доступных устройств</p>
+    {% endif %}
+</div>
+{% endblock %} 
