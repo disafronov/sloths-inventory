@@ -1,35 +1,16 @@
-{% extends "base.html" %}
+{% extends "common/base.html" %}
+{% load i18n %}
 
-{% block title %}
-    {% if object %}Изменить устройство{% else %}Добавить устройство{% endif %} - {{ block.super }}
-{% endblock %}
-
-{% block header %}
-    {% if object %}Изменить устройство{% else %}Добавить устройство{% endif %}
-{% endblock %}
-
-{% block content %}
+{% block page_content %}
+<h2>{% if form.instance.pk %}{% trans "Edit Device" %}{% else %}{% trans "New Device" %}{% endif %}</h2>
 <form method="post">
     {% csrf_token %}
-    {% for field in form %}
-    <div class="form-group">
-        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-        {{ field }}
-        {% if field.errors %}
-        <div class="message message-error">
-            {{ field.errors }}
-        </div>
-        {% endif %}
-        {% if field.help_text %}
-        <div style="color: #666; font-size: 0.875rem; margin-top: 0.25rem;">
-            {{ field.help_text }}
-        </div>
-        {% endif %}
+    <div class="form-row">
+        {{ form.as_p }}
     </div>
-    {% endfor %}
-    <div style="margin-top: 1rem;">
-        <button type="submit" class="btn">Сохранить</button>
-        <a href="{% url 'devices:device-list' %}" class="btn" style="margin-left: 0.5rem;">Отмена</a>
+    <div class="submit-row">
+        <input type="submit" value="{% trans 'Save' %}" class="default" />
+        <a href="{% url 'device_list' %}" class="button">{% trans "Cancel" %}</a>
     </div>
 </form>
 {% endblock %} 
