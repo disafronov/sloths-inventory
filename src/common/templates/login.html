@@ -5,9 +5,9 @@
 {% block heading %}Вход в систему{% endblock %}
 
 {% block content %}
-<form method="post">
+<form method="post" class="form-container">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Войти</button>
+    <button type="submit" class="button">Войти</button>
 </form>
 {% endblock %} 
