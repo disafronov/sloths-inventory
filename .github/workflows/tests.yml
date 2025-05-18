@@ -32,7 +32,7 @@ jobs:
           enable-cache: true
 
       - name: "Install tests dependencies"
-        run: uv sync --extra test
+        run: uv sync --frozen --extra test
 
       - name: "Run tests"
         env:
