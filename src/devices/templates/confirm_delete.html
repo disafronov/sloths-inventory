@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}Удаление устройства - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="module">
+    <h2>Удаление устройства</h2>
+    <p>Вы уверены, что хотите удалить это устройство?</p>
+    <form method="post">
+        {% csrf_token %}
+        <div class="submit-row">
+            <input type="submit" value="{% trans 'Да, удалить' %}" class="default" />
+            <a href="{% url 'devices:list' %}" class="button">{% trans "Нет, отмена" %}</a>
+        </div>
+    </form>
+</div>
+{% endblock %} 

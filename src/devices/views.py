@@ -7,16 +7,16 @@ from django.contrib import messages
 
 class DeviceListView(LoginRequiredMixin, ListView):
     model = Device
-    template_name = 'device_list.html'
-    context_object_name = 'devices'
-    ordering = ['category', 'type', 'manufacturer', 'model']
+    template_name = "list.html"
+    context_object_name = "devices"
+    ordering = ["category", "type", "manufacturer", "model"]
 
 
 class DeviceCreateView(LoginRequiredMixin, CreateView):
     model = Device
-    template_name = 'device_form.html'
-    fields = ['category', 'type', 'manufacturer', 'model', 'notes']
-    success_url = reverse_lazy('devices:device-list')
+    template_name = "form.html"
+    fields = ["category", "type", "manufacturer", "model", "notes"]
+    success_url = reverse_lazy("devices:list")
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -26,9 +26,9 @@ class DeviceCreateView(LoginRequiredMixin, CreateView):
 
 class DeviceUpdateView(LoginRequiredMixin, UpdateView):
     model = Device
-    template_name = 'device_form.html'
-    fields = ['category', 'type', 'manufacturer', 'model', 'notes']
-    success_url = reverse_lazy('devices:device-list')
+    template_name = "form.html"
+    fields = ["category", "type", "manufacturer", "model", "notes"]
+    success_url = reverse_lazy("devices:list")
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -38,8 +38,8 @@ class DeviceUpdateView(LoginRequiredMixin, UpdateView):
 
 class DeviceDeleteView(LoginRequiredMixin, DeleteView):
     model = Device
-    template_name = 'device_confirm_delete.html'
-    success_url = reverse_lazy('devices:device-list')
+    template_name = "confirm_delete.html"
+    success_url = reverse_lazy("devices:list")
 
     def delete(self, request, *args, **kwargs):
         obj = self.get_object()
