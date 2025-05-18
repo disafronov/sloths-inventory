@@ -1,9 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
 from devices.models import Category, Manufacturer, Model, Type
+from common.models import BaseModel, NamedModel
 
 
-class Device(models.Model):
+class Device(BaseModel):
     category = models.ForeignKey(
         Category, on_delete=models.PROTECT, verbose_name="Категория"
     )
@@ -12,9 +13,6 @@ class Device(models.Model):
         Manufacturer, on_delete=models.PROTECT, verbose_name="Производитель"
     )
     model = models.ForeignKey(Model, on_delete=models.PROTECT, verbose_name="Модель")
-    notes = models.TextField(blank=True, verbose_name="Примечания")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
 
     class Meta:
         verbose_name = "Устройство"
@@ -26,25 +24,16 @@ class Device(models.Model):
         return f"{self.category} | {self.type} | {self.manufacturer} | {self.model}"
 
 
-class Location(models.Model):
-    name = models.CharField(max_length=255, verbose_name="Название")
-    notes = models.TextField(blank=True, verbose_name="Примечания")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
-
+class Location(NamedModel):
     class Meta:
         verbose_name = "Расположение"
         verbose_name_plural = "Расположения"
-        ordering = ["name"]
-
-    def __str__(self):
-        return self.name
 
 
-class Responsible(models.Model):
+class Responsible(BaseModel):
     last_name = models.CharField(max_length=150, verbose_name="Фамилия")
     first_name = models.CharField(max_length=150, verbose_name="Имя")
-    middle_name = models.CharField(max_length=150, blank=True, verbose_name="Отчество")
+    middle_name = models.CharField(max_length=150, null=True, blank=True, verbose_name="Отчество")
     employee_id = models.CharField(
         max_length=50, blank=True, verbose_name="Табельный номер"
     )
@@ -55,9 +44,6 @@ class Responsible(models.Model):
         blank=True,
         verbose_name="Пользователь",
     )
-    notes = models.TextField(blank=True, verbose_name="Примечания")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
 
     class Meta:
         verbose_name = "Ответственный"
@@ -74,16 +60,7 @@ class Responsible(models.Model):
         return str(self)
 
 
-class Status(models.Model):
-    name = models.CharField(max_length=100, verbose_name="Название")
-    notes = models.TextField(blank=True, verbose_name="Примечания")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
-
+class Status(NamedModel):
     class Meta:
         verbose_name = "Статус"
         verbose_name_plural = "Статусы"
-        ordering = ["name"]
-
-    def __str__(self):
-        return self.name

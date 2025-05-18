@@ -18,5 +18,21 @@ def main():
     execute_from_command_line(sys.argv)
 
 
+def test_manage_py_import_and_main():
+    import importlib
+    import sys
+    import types
+    manage = importlib.import_module('manage')
+    assert hasattr(manage, 'main')
+    # Проверяем, что main можно вызвать без аргументов (упадёт на execute_from_command_line, но не раньше)
+    try:
+        manage.main()
+    except SystemExit:
+        pass
+    except Exception as e:
+        # Ожидаем ImportError или SystemExit, но не AttributeError
+        assert isinstance(e, (ImportError, SystemExit))
+
+
 if __name__ == '__main__':
     main()

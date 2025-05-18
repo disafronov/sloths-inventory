@@ -124,7 +124,7 @@ class CustomUserAdmin(UserAdmin):
     def get_full_name(self, obj):
         if hasattr(obj, "responsible"):
             return obj.responsible.get_full_name()
-        return super().get_full_name(obj)
+        return obj.get_full_name()
 
     get_full_name.short_description = "Полное имя"
 
