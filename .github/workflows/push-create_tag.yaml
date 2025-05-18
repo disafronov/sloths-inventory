@@ -1,16 +1,20 @@
 name: "Push: create tag"
+
 "on":
   push:
     branches:
       - main
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
+
 jobs:
   merge:
     name: Push [create tag]
     runs-on: ubuntu-latest
     steps:
+
       - name: Checkout
         if: "${{ ! startsWith(github.event.head_commit.message, 'docs: update changelog for ') }}"
         uses: actions/checkout@v4.1.6
