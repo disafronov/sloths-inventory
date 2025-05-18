@@ -1,22 +1,28 @@
 from django.contrib import admin
+from common.admin import BaseAdmin, NamedModelAdmin
 from .models import Location, Responsible, Status
 
 
 @admin.register(Location)
-class LocationAdmin(admin.ModelAdmin):
-    list_display = ["name"]
-    search_fields = ["name"]
+class LocationAdmin(NamedModelAdmin):
+    pass
 
 
 @admin.register(Responsible)
-class ResponsibleAdmin(admin.ModelAdmin):
-    list_display = ["last_name", "first_name", "middle_name", "employee_id"]
-    list_filter = ["last_name", "first_name"]
-    search_fields = ["last_name", "first_name", "middle_name", "employee_id"]
-    ordering = ["last_name", "first_name", "middle_name"]
+class ResponsibleAdmin(BaseAdmin):
+    list_display = ["last_name", "first_name", "middle_name", "employee_id", "user", "updated_at", "created_at"]
+    list_filter = ["last_name", "first_name", "user", "updated_at", "created_at"]
+    search_fields = ["last_name", "first_name", "middle_name", "employee_id", "user__username", "user__email"]
+    autocomplete_fields = ["user"]
+    main_fields = (
+        "last_name",
+        "first_name",
+        "middle_name",
+        "employee_id",
+        "user",
+    )
 
 
 @admin.register(Status)
-class StatusAdmin(admin.ModelAdmin):
-    list_display = ["name"]
-    search_fields = ["name"]
+class StatusAdmin(NamedModelAdmin):
+    pass
