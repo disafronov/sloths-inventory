@@ -23,6 +23,9 @@ class BaseAdmin(admin.ModelAdmin):
         fieldsets[0] = (None, {"fields": self.get_main_fields()})
         return fieldsets
 
+    def _format_empty_value(self, value):
+        return value or "-"
+
 
 class NamedModelAdmin(BaseAdmin):
     list_display = ["name", "updated_at", "created_at"]

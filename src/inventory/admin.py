@@ -57,9 +57,6 @@ class ItemAdmin(BaseAdmin):
         ))
         return fieldsets
 
-    def _format_empty_value(self, value):
-        return value or "-"
-
     def current_status(self, obj):
         return self._format_empty_value(obj.current_status)
     current_status.short_description = "Статус"
