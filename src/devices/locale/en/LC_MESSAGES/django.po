@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: devices\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-05-19 00:36+0400\n"
-"PO-Revision-Date: 2024-03-19 00:24+0300\n"
+"PO-Revision-Date: 2024-03-19 00:23+0300\n"
 "Last-Translator: \n"
 "Language-Team: English\n"
 "Language: en\n"
@@ -14,6 +14,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: devices/apps.py:9
+msgid "Devices"
+msgstr "Devices"
 
 #: devices/attributes.py:12 devices/models.py:9
 msgid "Category"
@@ -50,7 +54,3 @@ msgstr "Types"
 #: devices/models.py:18
 msgid "Device"
 msgstr "Device"
-
-#: devices/models.py:19
-msgid "Devices"
-msgstr "Devices"
