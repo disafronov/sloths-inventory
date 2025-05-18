@@ -31,4 +31,4 @@ class DeviceAdmin(BaseAdmin):
     list_filter = ["category", "type", "manufacturer"]
     search_fields = ["category__name", "type__name", "manufacturer__name", "model__name", "notes", "created_at", "updated_at"]
     ordering = ["category", "type", "manufacturer", "model"]
-    main_fields = ("category", "type", "manufacturer", "model")
+    main_fields = ["category", "type", "manufacturer", "model"]
