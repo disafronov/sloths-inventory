@@ -1,0 +1,19 @@
+#user-tools {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+#header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#branding {
+    flex: 1;
+}
+
+.language-form {
+    margin-right: 1rem;
+} 
