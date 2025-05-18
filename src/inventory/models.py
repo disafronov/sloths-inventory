@@ -1,5 +1,7 @@
 from django.db import models
-from catalogs.models import Device, Location, Responsible, Status
+from django.core.exceptions import ValidationError
+from devices.models import Device
+from catalogs.models import Location, Responsible, Status
 from common.models import BaseModel
 
 
@@ -28,6 +30,11 @@ class Item(BaseModel):
 
     def get_display_name(self):
         return f"{self.inventory_number} - {self.device}"
+
+    def clean(self):
+        """Валидация модели."""
+        if not self.inventory_number:
+            raise ValidationError({"inventory_number": "Инвентарный номер не может быть пустым"})
 
     @property
     def current_operation(self):
@@ -72,3 +79,7 @@ class Operation(BaseModel):
 
     def __str__(self):
         return f"{self.item} - {self.status} ({self.location})"
+
+    def get_responsible_display(self):
+        """Возвращает строковое представление ответственного."""
+        return str(self.responsible)
