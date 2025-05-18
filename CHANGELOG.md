@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.3] - 2025-05-18
+
+### 🐛 Bug Fixes
+
+- Rename
+
 ## [0.6.2] - 2025-05-18
 
 ### 🐛 Bug Fixes
@@ -9,6 +15,10 @@ All notable changes to this project will be documented in this file.
 - Rename
 - Rename
 - Test
+
+### 📚 Documentation
+
+- Update changelog for v0.6.2
 
 ### ⚙️ Miscellaneous Tasks
 
