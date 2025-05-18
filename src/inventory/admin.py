@@ -3,8 +3,25 @@ from common.admin import BaseAdmin
 from .models import Item, Operation
 
 
+class CurrentFieldMixin:
+    def get_current_field(self, obj, field_name):
+        return self._format_empty_value(getattr(obj, f'current_{field_name}'))
+
+    def current_status(self, obj):
+        return self.get_current_field(obj, 'status')
+    current_status.short_description = "Статус"
+
+    def current_location(self, obj):
+        return self.get_current_field(obj, 'location')
+    current_location.short_description = "Местоположение"
+
+    def current_responsible(self, obj):
+        return self.get_current_field(obj, 'responsible')
+    current_responsible.short_description = "Ответственный"
+
+
 @admin.register(Item)
-class ItemAdmin(BaseAdmin):
+class ItemAdmin(BaseAdmin, CurrentFieldMixin):
     list_display = (
         "inventory_number",
         "device",
@@ -56,18 +73,6 @@ class ItemAdmin(BaseAdmin):
             },
         ))
         return fieldsets
-
-    def current_status(self, obj):
-        return self._format_empty_value(obj.current_status)
-    current_status.short_description = "Статус"
-
-    def current_location(self, obj):
-        return self._format_empty_value(obj.current_location)
-    current_location.short_description = "Местоположение"
-
-    def current_responsible(self, obj):
-        return self._format_empty_value(obj.current_responsible)
-    current_responsible.short_description = "Ответственный"
 
 
 @admin.register(Operation)
