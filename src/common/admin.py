@@ -4,6 +4,7 @@ from django.contrib import admin
 class BaseAdmin(admin.ModelAdmin):
     readonly_fields = ["created_at", "updated_at"]
     list_display = ["updated_at", "created_at"]
+    search_fields = ["created_at", "updated_at", "notes"]
     fieldsets = (
         (None, {
             "fields": ()  # Будет переопределено в дочерних классах
@@ -25,5 +26,5 @@ class BaseAdmin(admin.ModelAdmin):
 
 class NamedModelAdmin(BaseAdmin):
     list_display = ["name", "updated_at", "created_at"]
-    search_fields = ["name"]
+    search_fields = ["name", "created_at", "updated_at", "notes"]
     main_fields = ("name",)
