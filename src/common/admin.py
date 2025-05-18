@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.translation import gettext_lazy as _
 
 
 class BaseAdmin(admin.ModelAdmin):
@@ -9,7 +10,7 @@ class BaseAdmin(admin.ModelAdmin):
         (None, {
             "fields": ()  # Будет переопределено в дочерних классах
         }),
-        ("Дополнительная информация", {
+        (_("Additional information"), {
             "fields": ("notes", "updated_at", "created_at")
         }),
     )
