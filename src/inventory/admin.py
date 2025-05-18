@@ -27,6 +27,7 @@ class ItemAdmin(admin.ModelAdmin):
         "device__manufacturer__name",
         "device__model__name",
         "serial_number",
+        "notes",
     )
     readonly_fields = ("updated_at", "created_at", "current_status", "current_location", "current_responsible")
     autocomplete_fields = ["device"]
@@ -38,6 +39,13 @@ class ItemAdmin(admin.ModelAdmin):
                     "inventory_number",
                     "device",
                     "serial_number",
+                )
+            },
+        ),
+        (
+            "Дополнительная информация",
+            {
+                "fields": (
                     "notes",
                     "updated_at",
                     "created_at",
@@ -115,6 +123,13 @@ class OperationAdmin(admin.ModelAdmin):
                     "status",
                     "responsible",
                     "location",
+                )
+            },
+        ),
+        (
+            "Дополнительная информация",
+            {
+                "fields": (
                     "notes",
                     "updated_at",
                     "created_at",
