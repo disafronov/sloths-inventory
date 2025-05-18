@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Sloths Inventory{% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'admin/css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'admin/css/dashboard.css' %}">
     {% block dark-mode-vars %}
         <link rel="stylesheet" href="{% static 'admin/css/dark_mode.css' %}">
         <script src="{% static 'admin/js/theme.js' %}"></script>
@@ -26,46 +27,64 @@
 
 <body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}" data-admin-utc-offset="{% now 'Z' %}">
     <a href="#content-start" class="skip-to-content-link">{% translate 'Skip to main content' %}</a>
+    
     <div id="container">
-        {% if not is_popup %}
-            <header id="header">
-                <div id="branding">
-                    {% block branding %}
-                        <h1 id="site-name">
-                            <a href="{% url 'admin:index' %}">Sloths Inventory</a>
-                        </h1>
-                    {% endblock %}
-                </div>
-                {% block usertools %}
-                    {% if user.is_authenticated %}
-                        <div id="user-tools">
-                            {% block welcome-msg %}
-                                {% translate 'Welcome,' %}
-                                <strong>{% firstof user.get_short_name user.get_username %}</strong>.
-                            {% endblock %}
-                            {% block userlinks %}
-                                <form id="logout-form" method="post" action="{% url 'admin:logout' %}">
-                                    {% csrf_token %}
-                                    <button type="submit">{% translate 'Log out' %}</button>
-                                </form>
-                                {% include "admin/color_theme_toggle.html" %}
-                            {% endblock %}
-                        </div>
-                    {% endif %}
+        <header id="header">
+            <div id="branding">
+                {% block branding %}
+                    <h1 id="site-name">
+                        <a href="{% url 'admin:index' %}">Sloths Inventory</a>
+                    </h1>
                 {% endblock %}
-                {% block nav-global %}{% endblock %}
-            </header>
-            {% block nav-breadcrumbs %}
-                <nav aria-label="{% translate 'Breadcrumbs' %}">
-                    {% block breadcrumbs %}
-                        <div class="breadcrumbs">
-                            <a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
-                            {% if title %} &rsaquo; {{ title }}{% endif %}
-                        </div>
-                    {% endblock %}
-                </nav>
+            </div>
+            {% block usertools %}
+                {% if user.is_authenticated %}
+                    <div id="user-tools">
+                        {% block welcome-msg %}
+                            {% translate 'Welcome,' %}
+                            <strong>{% firstof user.get_short_name user.get_username %}</strong>.
+                        {% endblock %}
+                        {% block userlinks %}
+                            <form id="logout-form" method="post" action="{% url 'admin:logout' %}">
+                                {% csrf_token %}
+                                <button type="submit">{% translate 'Log out' %}</button>
+                            </form>
+                            {% include "admin/color_theme_toggle.html" %}
+                        {% endblock %}
+                    </div>
+                {% endif %}
             {% endblock %}
-        {% endif %}
+            {% block nav-global %}{% endblock %}
+        </header>
+
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'devices:list' %}">Устройства</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admin:index' %}">Админка</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        {% block nav-breadcrumbs %}
+            <nav aria-label="{% translate 'Breadcrumbs' %}">
+                {% block breadcrumbs %}
+                    <div class="breadcrumbs">
+                        <a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
+                        {% if title %} &rsaquo; {{ title }}{% endif %}
+                    </div>
+                {% endblock %}
+            </nav>
+        {% endblock %}
 
         <div class="main" id="main">
             {% if not is_popup and is_nav_sidebar_enabled %}
@@ -98,29 +117,8 @@
         </div>
         <footer id="footer">{% block footer %}{% endblock %}</footer>
     </div>
+
+    <script src="{% static 'admin/js/core.js' %}"></script>
     {% block extrabody %}{% endblock %}
-
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="{% url 'common:home' %}">Sloths Inventory</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'devices:list' %}">Устройства</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <div class="container mt-4">
-        {% block content %}
-        {% endblock %}
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html> 
