@@ -1,4 +1,4 @@
-"""Tests for inventory app configuration."""
+"""Тесты конфигурации приложения inventory."""
 
 import os
 from pathlib import Path
@@ -10,7 +10,7 @@ from inventory.apps import InventoryConfig
 
 
 def test_inventory_config():
-    """Test InventoryConfig configuration."""
+    """Тест конфигурации InventoryConfig."""
     app_config = apps.get_app_config("inventory")
     assert isinstance(app_config, InventoryConfig)
     assert app_config.name == "inventory"
