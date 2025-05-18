@@ -1,9 +1,10 @@
 from django.contrib import admin
+from common.admin import BaseAdmin
 from .models import Item, Operation
 
 
 @admin.register(Item)
-class ItemAdmin(admin.ModelAdmin):
+class ItemAdmin(BaseAdmin):
     list_display = (
         "inventory_number",
         "device",
@@ -29,27 +30,18 @@ class ItemAdmin(admin.ModelAdmin):
         "serial_number",
         "notes",
     )
-    readonly_fields = ("updated_at", "created_at", "current_status", "current_location", "current_responsible")
+    readonly_fields = list(BaseAdmin.readonly_fields) + ["current_status", "current_location", "current_responsible"]
     autocomplete_fields = ["device"]
+    main_fields = (
+        "inventory_number",
+        "device",
+        "serial_number",
+    )
     fieldsets = (
         (
             None,
             {
-                "fields": (
-                    "inventory_number",
-                    "device",
-                    "serial_number",
-                )
-            },
-        ),
-        (
-            "Дополнительная информация",
-            {
-                "fields": (
-                    "notes",
-                    "updated_at",
-                    "created_at",
-                )
+                "fields": main_fields
             },
         ),
         (
@@ -64,24 +56,24 @@ class ItemAdmin(admin.ModelAdmin):
         ),
     )
 
-    def current_status(self, obj):
-        return obj.current_status or "-"
+    def _format_empty_value(self, value):
+        return value or "-"
 
+    def current_status(self, obj):
+        return self._format_empty_value(obj.current_status)
     current_status.short_description = "Статус"
 
     def current_location(self, obj):
-        return obj.current_location or "-"
-
+        return self._format_empty_value(obj.current_location)
     current_location.short_description = "Местоположение"
 
     def current_responsible(self, obj):
-        return obj.current_responsible or "-"
-
+        return self._format_empty_value(obj.current_responsible)
     current_responsible.short_description = "Ответственный"
 
 
 @admin.register(Operation)
-class OperationAdmin(admin.ModelAdmin):
+class OperationAdmin(BaseAdmin):
     list_display = (
         "item",
         "status",
@@ -113,32 +105,13 @@ class OperationAdmin(admin.ModelAdmin):
         "created_at",
     )
     autocomplete_fields = ["item", "status", "location", "responsible"]
-    readonly_fields = ("created_at", "updated_at")
-    fieldsets = (
-        (
-            None,
-            {
-                "fields": (
-                    "item",
-                    "status",
-                    "responsible",
-                    "location",
-                )
-            },
-        ),
-        (
-            "Дополнительная информация",
-            {
-                "fields": (
-                    "notes",
-                    "updated_at",
-                    "created_at",
-                )
-            },
-        ),
+    main_fields = (
+        "item",
+        "status",
+        "responsible",
+        "location",
     )
 
     def get_responsible_display(self, obj):
         return obj.responsible.get_full_name()
-
     get_responsible_display.short_description = "Ответственный"

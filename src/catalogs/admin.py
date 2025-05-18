@@ -15,13 +15,13 @@ class ResponsibleAdmin(BaseAdmin):
     list_filter = ["last_name", "first_name", "user", "updated_at", "created_at"]
     search_fields = ["last_name", "first_name", "middle_name", "employee_id", "user__username", "user__email"]
     autocomplete_fields = ["user"]
-    main_fields = (
+    main_fields = [
         "last_name",
         "first_name",
         "middle_name",
         "employee_id",
         "user",
-    )
+    ]
 
 
 @admin.register(Status)
