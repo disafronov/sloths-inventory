@@ -50,6 +50,7 @@ jobs:
 
       - name: "Run tests"
         env:
+          CSRF_TRUSTED_ORIGINS: http://localhost
           DATABASE_NAME: sloths_inventory_test
           DATABASE_USER: postgres
           DATABASE_PASSWORD: postgres
