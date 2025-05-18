@@ -89,11 +89,13 @@ class OperationAdmin(admin.ModelAdmin):
         "item__device__type__name",
         "item__device__manufacturer__name",
         "item__device__model__name",
+        "item__serial_number",
         "status__name",
         "responsible__last_name",
         "responsible__first_name",
         "responsible__middle_name",
         "location__name",
+        "notes",
     )
     list_filter = (
         "status",
