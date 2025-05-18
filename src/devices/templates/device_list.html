@@ -7,23 +7,23 @@
     <table id="result_list">
         <thead>
             <tr>
-                <th>{% trans "Name" %}</th>
+                <th>{% trans "Category" %}</th>
                 <th>{% trans "Type" %}</th>
-                <th>{% trans "Status" %}</th>
-                <th>{% trans "Location" %}</th>
+                <th>{% trans "Manufacturer" %}</th>
+                <th>{% trans "Model" %}</th>
                 <th>{% trans "Actions" %}</th>
             </tr>
         </thead>
         <tbody>
             {% for device in devices %}
             <tr class="{% cycle 'row1' 'row2' %}">
-                <td>{{ device.name }}</td>
+                <td>{{ device.category }}</td>
                 <td>{{ device.type }}</td>
-                <td>{{ device.status }}</td>
-                <td>{{ device.location }}</td>
+                <td>{{ device.manufacturer }}</td>
+                <td>{{ device.model }}</td>
                 <td>
-                    <a href="{% url 'device_update' device.pk %}" class="button">{% trans "Edit" %}</a>
-                    <a href="{% url 'device_delete' device.pk %}" class="button">{% trans "Delete" %}</a>
+                    <a href="{% url 'devices:device-update' device.pk %}" class="button">{% trans "Edit" %}</a>
+                    <a href="{% url 'devices:device-delete' device.pk %}" class="button">{% trans "Delete" %}</a>
                 </td>
             </tr>
             {% endfor %}
