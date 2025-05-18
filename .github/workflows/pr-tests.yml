@@ -29,15 +29,12 @@ jobs:
         uses: actions/cache@v4
         with:
           path: /tmp/setup-uv-cache
-          key: ${{ runner.os }}-uv-${{ hashFiles('**/pyproject.toml') }}
+          key: ${{ runner.os }}-uv-${{ hashFiles('**/pyproject.toml', '**/uv.lock') }}
           restore-keys: |
             ${{ runner.os }}-uv-
 
       - name: "Install uv"
         uses: astral-sh/setup-uv@v1
-        with:
-          enable-cache: true
-          cache-dependency-glob: "**/pyproject.toml"
 
       - name: "Install tests dependencies"
         run: uv sync --extra test
@@ -54,4 +51,4 @@ jobs:
           DATABASE_HOST: localhost
           DATABASE_PORT: 5432
           PATH: ${{ env.UV_PYTHON_PATH }}:$PATH
-        run: uv run src/manage.py test 
+        run: uv run src/manage.py test
