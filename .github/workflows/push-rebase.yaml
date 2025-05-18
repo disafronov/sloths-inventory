@@ -1,4 +1,4 @@
-name: Push [rebase]
+name: "Push: rebase"
 "on":
   push:
     branches:
