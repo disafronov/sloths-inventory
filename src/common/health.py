@@ -1,4 +1,4 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden
 from django.db import connection
 
 def check_database():
@@ -10,10 +10,15 @@ def check_database():
     except Exception as e:
         return False, f"Database error: {str(e)}"
 
+def is_local_request(request):
+    return request.META.get('REMOTE_ADDR') in ('127.0.0.1', '::1')
+
 def liveness(request):
     """
     Liveness probe проверяет, что процесс приложения работает.
     """
+    if not is_local_request(request):
+        return HttpResponseForbidden('Access allowed only from localhost')
     return JsonResponse({'status': 'ok'})
 
 def readiness(request):
@@ -21,6 +26,8 @@ def readiness(request):
     Readiness probe проверяет, что приложение готово принимать трафик.
     Проверяет доступность критических компонентов.
     """
+    if not is_local_request(request):
+        return HttpResponseForbidden('Access allowed only from localhost')
     checks = {
         'database': check_database()
     }
