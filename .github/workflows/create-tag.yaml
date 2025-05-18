@@ -10,8 +10,8 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  merge:
-    name: Push [create tag]
+  create-tag:
+    name: "Create tag"
     runs-on: ubuntu-latest
     steps:
 
