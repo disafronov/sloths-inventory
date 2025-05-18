@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if object %}Изменить устройство{% else %}Добавить устройство{% endif %} - {{ block.super }}
+{% endblock %}
+
+{% block header %}
+    {% if object %}Изменить устройство{% else %}Добавить устройство{% endif %}
+{% endblock %}
+
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="form-group">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}
+        <div class="message message-error">
+            {{ field.errors }}
+        </div>
+        {% endif %}
+        {% if field.help_text %}
+        <div style="color: #666; font-size: 0.875rem; margin-top: 0.25rem;">
+            {{ field.help_text }}
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+    <div style="margin-top: 1rem;">
+        <button type="submit" class="btn">Сохранить</button>
+        <a href="{% url 'devices:device-list' %}" class="btn" style="margin-left: 0.5rem;">Отмена</a>
+    </div>
+</form>
+{% endblock %} 
