@@ -47,4 +47,5 @@ jobs:
           DATABASE_PASSWORD: postgres
           DATABASE_HOST: localhost
           DATABASE_PORT: 5432
+          PATH: ${{ env.UV_PYTHON_PATH }}:${{ env.PATH }}
         run: uv run src/manage.py test 
