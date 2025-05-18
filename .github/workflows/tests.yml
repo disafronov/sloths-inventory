@@ -32,7 +32,7 @@ jobs:
           enable-cache: true
 
       - name: "Install tests dependencies"
-        run: uv sync --frozen --extra test
+        run: uv sync --frozen --managed-python --cache-dir /tmp/setup-uv-cache --extra test
 
       - name: "Run tests"
         env:
