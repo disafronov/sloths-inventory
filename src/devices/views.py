@@ -1,8 +1,8 @@
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from .models import Device
 from django.contrib import messages
-from catalogs.models import Device
 
 
 class DeviceListView(LoginRequiredMixin, ListView):
