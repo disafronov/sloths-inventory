@@ -38,7 +38,8 @@ RUN --mount=from=ghcr.io/astral-sh/uv,source=/uv,target=/bin/uv \
     --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
-    uv sync --frozen --link-mode=copy --no-editable --no-dev
+    uv sync --frozen --link-mode=copy --no-editable --no-dev && \
+    uv run src/manage.py collectstatic --noinput
 
 ##########################
 
