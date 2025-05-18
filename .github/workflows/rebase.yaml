@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   rebase:
-    name: Push [rebase]
+    name: "Rebase"
     runs-on: ubuntu-latest
     steps:
 
