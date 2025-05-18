@@ -43,6 +43,7 @@ def test_installed_apps():
         'django.contrib.sessions',
         'django.contrib.messages',
         'django.contrib.staticfiles',
+        'common',
         'catalogs',
         'devices',
         'inventory',
