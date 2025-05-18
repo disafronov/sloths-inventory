@@ -7,6 +7,8 @@
     <title>{% block title %}Sloths Inventory{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'admin/css/base.css' %}">
     <link rel="stylesheet" href="{% static 'admin/css/dashboard.css' %}">
+    <style>
+    </style>
     {% block dark-mode-vars %}
         <link rel="stylesheet" href="{% static 'admin/css/dark_mode.css' %}">
         <script src="{% static 'admin/js/theme.js' %}"></script>
@@ -33,7 +35,7 @@
             <div id="branding">
                 {% block branding %}
                     <h1 id="site-name">
-                        <a href="{% url 'admin:index' %}">Sloths Inventory</a>
+                        <a href="{% url 'common:home' %}">Sloths Inventory</a>
                     </h1>
                 {% endblock %}
             </div>
@@ -45,7 +47,7 @@
                             <strong>{% firstof user.get_short_name user.get_username %}</strong>.
                         {% endblock %}
                         {% block userlinks %}
-                            <form id="logout-form" method="post" action="{% url 'admin:logout' %}">
+                            <form id="logout-form" method="post" action="{% url 'common:logout' %}">
                                 {% csrf_token %}
                                 <button type="submit">{% translate 'Log out' %}</button>
                             </form>
@@ -57,6 +59,7 @@
             {% block nav-global %}{% endblock %}
         </header>
 
+        {% comment %}
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container">
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -68,23 +71,22 @@
                             <a class="nav-link" href="{% url 'devices:list' %}">Устройства</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'admin:index' %}">Админка</a>
+                            <a class="nav-link" href="{% url 'common:home' %}">{% translate 'Home' %}</a>
                         </li>
                     </ul>
                 </div>
             </div>
         </nav>
+        {% endcomment %}
 
-        {% block nav-breadcrumbs %}
-            <nav aria-label="{% translate 'Breadcrumbs' %}">
-                {% block breadcrumbs %}
-                    <div class="breadcrumbs">
-                        <a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
-                        {% if title %} &rsaquo; {{ title }}{% endif %}
-                    </div>
-                {% endblock %}
-            </nav>
-        {% endblock %}
+        <nav aria-label="{% translate 'Breadcrumbs' %}">
+            {% block breadcrumbs %}
+                <div class="breadcrumbs">
+                    <a href="{% url 'common:home' %}">{% translate 'Home' %}</a>
+                    {% if title %} &rsaquo; {{ title }}{% endif %}
+                </div>
+            {% endblock %}
+        </nav>
 
         <div class="main" id="main">
             {% if not is_popup and is_nav_sidebar_enabled %}
