@@ -20,8 +20,23 @@ class CurrentFieldMixin:
     current_responsible.short_description = "Ответственный"
 
 
+class DeviceFieldsMixin:
+    device_search_fields = (
+        "device__category__name",
+        "device__type__name",
+        "device__manufacturer__name",
+        "device__model__name",
+    )
+    device_list_filter = (
+        "device__category",
+        "device__type",
+        "device__manufacturer",
+        "device__model",
+    )
+
+
 @admin.register(Item)
-class ItemAdmin(BaseAdmin, CurrentFieldMixin):
+class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
     list_display = (
         "inventory_number",
         "device",
@@ -31,19 +46,13 @@ class ItemAdmin(BaseAdmin, CurrentFieldMixin):
     )
     list_display_links = ("inventory_number", "device", "serial_number")
     list_filter = (
-        "device__category",
-        "device__type",
-        "device__manufacturer",
-        "device__model",
+        *DeviceFieldsMixin.device_list_filter,
         "updated_at",
         "created_at",
     )
     search_fields = (
         "inventory_number",
-        "device__category__name",
-        "device__type__name",
-        "device__manufacturer__name",
-        "device__model__name",
+        *DeviceFieldsMixin.device_search_fields,
         "serial_number",
         "notes",
     )
@@ -76,7 +85,7 @@ class ItemAdmin(BaseAdmin, CurrentFieldMixin):
 
 
 @admin.register(Operation)
-class OperationAdmin(BaseAdmin):
+class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
     list_display = (
         "item",
         "status",
@@ -88,10 +97,7 @@ class OperationAdmin(BaseAdmin):
     list_display_links = ("item", "status", "location", "responsible")
     search_fields = (
         "item__inventory_number",
-        "item__device__category__name",
-        "item__device__type__name",
-        "item__device__manufacturer__name",
-        "item__device__model__name",
+        *DeviceFieldsMixin.device_search_fields,
         "item__serial_number",
         "status__name",
         "responsible__last_name",
