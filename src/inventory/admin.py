@@ -37,14 +37,15 @@ class ItemAdmin(BaseAdmin):
         "device",
         "serial_number",
     )
-    fieldsets = (
-        (
-            None,
-            {
-                "fields": main_fields
-            },
-        ),
-        (
+
+    def get_fieldsets(self, request, obj=None):
+        fieldsets = super().get_fieldsets(request, obj)
+        fieldsets = list(fieldsets)
+        # Перемещаем секцию "Дополнительная информация" в начало
+        additional_info = fieldsets.pop(1)
+        fieldsets.insert(1, additional_info)
+        # Добавляем секцию "Эксплуатация" после
+        fieldsets.insert(2, (
             "Эксплуатация",
             {
                 "fields": (
@@ -53,8 +54,8 @@ class ItemAdmin(BaseAdmin):
                     "current_location",
                 )
             },
-        ),
-    )
+        ))
+        return fieldsets
 
     def _format_empty_value(self, value):
         return value or "-"
