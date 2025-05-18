@@ -28,14 +28,8 @@ jobs:
 
       - name: "Install uv"
         uses: astral-sh/setup-uv@v1
-
-      - name: "Cache uv dependencies"
-        uses: actions/cache@v4
         with:
-          path: /tmp/setup-uv-cache
-          key: ${{ runner.os }}-uv-${{ hashFiles('**/pyproject.toml', '**/uv.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-uv-
+          enable-cache: true
 
       - name: "Install tests dependencies"
         run: uv sync --extra test
@@ -47,5 +41,5 @@ jobs:
           DATABASE_PASSWORD: postgres
           DATABASE_HOST: localhost
           DATABASE_PORT: 5432
-          PATH: ${{ env.UV_PYTHON_PATH }}:${{ env.PATH }}
+          PATH: ${{ env.UV_PYTHON_PATH }}:$PATH
         run: uv run src/manage.py test 
