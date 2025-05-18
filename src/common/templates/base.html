@@ -5,96 +5,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% trans "Sloths Inventory" %}{% endblock %}</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .header {
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .header h1 {
-            margin: 0;
-        }
-        .user-menu {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .button {
-            padding: 8px 16px;
-            background-color: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            line-height: 1.5;
-            display: inline-block;
-            transition: background 0.2s;
-        }
-        .button:hover {
-            background-color: #0056b3;
-        }
-        .content {
-            min-height: 400px;
-        }
-        .form-container {
-            max-width: 400px;
-            margin: 0 auto;
-        }
-        .form-container p {
-            margin-bottom: 15px;
-        }
-        .form-container label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        .form-container input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        .form-container button[type="submit"] {
-            width: 100%;
-        }
-        .language-form {
-            display: inline-block;
-            margin: 0;
-        }
-        .language-form select {
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background-color: white;
-            cursor: pointer;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'admin/css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'admin/css/forms.css' %}">
+    <link rel="stylesheet" href="{% static 'admin/css/widgets.css' %}">
+    <link rel="stylesheet" href="{% static 'admin/css/responsive.css' %}">
+    <link rel="stylesheet" href="{% static 'admin/css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'admin/css/login.css' %}">
+    <link rel="stylesheet" href="{% static 'admin/css/rtl.css' %}">
+    <link rel="stylesheet" href="{% static 'admin/css/fonts.css' %}">
+    <link rel="stylesheet" href="{% static 'admin/css/vendor/select2/select2.min.css' %}">
+    <link rel="stylesheet" href="{% static 'admin/css/vendor/jquery-ui/jquery-ui.min.css' %}">
+    <link rel="stylesheet" href="{% static 'admin/css/vendor/select2/select2.min.css' %}">
+    <link rel="stylesheet" href="{% static 'admin/css/vendor/select2/select2-theme.css' %}">
     {% block extrahead %}{% endblock %}
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>{% block heading %}{% trans "Sloths Inventory" %}{% endblock %}</h1>
-            <div class="user-menu">
+<body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}" data-admin-utc-offset="{% now 'Z' %}">
+    <div id="container">
+        <div id="header">
+            <div id="branding">
+                <h1 id="site-name">{% block heading %}{% trans "Sloths Inventory" %}{% endblock %}</h1>
+            </div>
+            <div id="user-tools">
                 <form action="{% url 'common:set_language' %}" method="post" class="language-form">
                     {% csrf_token %}
                     <input name="next" type="hidden" value="{{ request.path }}">
@@ -120,10 +51,20 @@
                 {% endif %}
             </div>
         </div>
-        <div class="content">
+        <div id="content" class="{% block coltype %}colM{% endblock %}">
             {% block content %}{% endblock %}
         </div>
     </div>
     {% block extrabody %}{% endblock %}
+    <script src="{% static 'admin/js/vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'admin/js/vendor/jquery-ui/jquery-ui.min.js' %}"></script>
+    <script src="{% static 'admin/js/vendor/select2/select2.full.min.js' %}"></script>
+    <script src="{% static 'admin/js/core.js' %}"></script>
+    <script src="{% static 'admin/js/calendar.js' %}"></script>
+    <script src="{% static 'admin/js/admin/DateTimeShortcuts.js' %}"></script>
+    <script src="{% static 'admin/js/actions.js' %}"></script>
+    <script src="{% static 'admin/js/urlify.js' %}"></script>
+    <script src="{% static 'admin/js/prepopulate.js' %}"></script>
+    <script src="{% static 'admin/js/vendor/xregexp/xregexp.min.js' %}"></script>
 </body>
 </html> 
