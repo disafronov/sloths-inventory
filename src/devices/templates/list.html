@@ -2,27 +2,15 @@
 
 {% block title %}Устройства - {{ block.super }}{% endblock %}
 
-{% block bodyclass %}devices-list{% endblock %}
-
-{% block header %}
-<div id="user-tools">
-    {% if user.is_authenticated %}
-        <strong>{{ user.get_username }}</strong> /
-        <a href="{% url 'admin:logout' %}">Выйти</a>
-    {% endif %}
-</div>
-{% endblock %}
-
-{% block content %}
-<div class="module">
+{% block main_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
     <h2>Список устройств</h2>
-    
-    <div class="object-tools">
-        <a href="{% url 'devices:create' %}" class="addlink">Добавить устройство</a>
-    </div>
+    <a href="{% url 'devices:create' %}" class="btn btn-primary">Добавить устройство</a>
+</div>
 
-    {% if devices %}
-    <table>
+{% if devices %}
+<div class="table-responsive">
+    <table class="table table-striped">
         <thead>
             <tr>
                 <th>Категория</th>
@@ -34,20 +22,20 @@
         </thead>
         <tbody>
             {% for device in devices %}
-            <tr class="{% cycle 'row1' 'row2' %}">
+            <tr>
                 <td>{{ device.category }}</td>
                 <td>{{ device.type }}</td>
                 <td>{{ device.manufacturer }}</td>
                 <td>{{ device.model }}</td>
                 <td>
-                    <a href="{% url 'devices:update' device.id %}" class="changelink">Изменить</a>
+                    <a href="{% url 'devices:update' device.id %}" class="btn btn-sm btn-outline-primary">Изменить</a>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-    {% else %}
-    <p class="paginator">Нет доступных устройств</p>
-    {% endif %}
 </div>
+{% else %}
+<p class="text-muted">Нет доступных устройств</p>
+{% endif %}
 {% endblock %} 
