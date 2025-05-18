@@ -43,4 +43,4 @@ def readiness(request):
     return JsonResponse({
         'status': 'ok',
         'checks': {k: v[1] for k, v in checks.items()}
-    })
+    }) 

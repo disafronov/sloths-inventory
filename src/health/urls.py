@@ -3,11 +3,11 @@ from .health import liveness, readiness
 from django.http import HttpResponse
 from django.urls import reverse
 
-app_name = 'common'
+app_name = 'health'
 
 def health_index(request):
-    liveness_url = reverse('common:liveness')
-    readiness_url = reverse('common:readiness')
+    liveness_url = reverse('health:liveness')
+    readiness_url = reverse('health:readiness')
     return HttpResponse(f'<a href="{liveness_url}">liveness</a><br><a href="{readiness_url}">readiness</a>')
 
 urlpatterns = [
