@@ -1,10 +1,10 @@
 {% load i18n static %}
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Sloths Inventory{% endblock %}</title>
+    <title>{% block title %}{% trans "Sloths Inventory" %}{% endblock %}</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -76,23 +76,47 @@
         .form-container button[type="submit"] {
             width: 100%;
         }
+        .language-form {
+            display: inline-block;
+            margin: 0;
+        }
+        .language-form select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+            cursor: pointer;
+        }
     </style>
     {% block extrahead %}{% endblock %}
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>{% block heading %}Sloths Inventory{% endblock %}</h1>
+            <h1>{% block heading %}{% trans "Sloths Inventory" %}{% endblock %}</h1>
             <div class="user-menu">
+                <form action="{% url 'common:set_language' %}" method="post" class="language-form">
+                    {% csrf_token %}
+                    <input name="next" type="hidden" value="{{ request.path }}">
+                    <select name="language" onchange="this.form.submit()">
+                        {% get_current_language as CURRENT_LANGUAGE %}
+                        {% get_available_languages as LANGUAGES %}
+                        {% for lang_code, lang_name in LANGUAGES %}
+                            <option value="{{ lang_code }}" {% if lang_code == CURRENT_LANGUAGE %}selected{% endif %}>
+                                {{ lang_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </form>
                 {% if user.is_authenticated %}
                     <span>{{ user.username }}</span>
-                    <a href="{% url 'admin:index' %}" class="button">Админка</a>
+                    <a href="{% url 'admin:index' %}" class="button">{% trans "Admin" %}</a>
                     <form method="post" action="{% url 'common:logout' %}?next=/" style="margin: 0; display: inline;">
                         {% csrf_token %}
-                        <button type="submit" class="button">Выйти</button>
+                        <button type="submit" class="button">{% trans "Logout" %}</button>
                     </form>
                 {% elif request.resolver_match.url_name != 'login' %}
-                    <a href="{% url 'common:login' %}" class="button">Войти</a>
+                    <a href="{% url 'common:login' %}" class="button">{% trans "Login" %}</a>
                 {% endif %}
             </div>
         </div>
