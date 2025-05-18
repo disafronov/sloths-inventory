@@ -16,6 +16,10 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
 
+#: devices/apps.py:9
+msgid "Devices"
+msgstr "Устройства"
+
 #: devices/attributes.py:12 devices/models.py:9
 msgid "Category"
 msgstr "Категория"
@@ -51,7 +55,3 @@ msgstr "Типы"
 #: devices/models.py:18
 msgid "Device"
 msgstr "Устройство"
-
-#: devices/models.py:19
-msgid "Devices"
-msgstr "Устройства"

@@ -1,9 +1,10 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %}Главная - Sloths Inventory{% endblock %}
+{% block title %}{% trans "Home" %} - {% trans "Sloths Inventory" %}{% endblock %}
 
-{% block heading %}Добро пожаловать в Sloths Inventory{% endblock %}
+{% block heading %}{% trans "Welcome to Sloths Inventory" %}{% endblock %}
 
 {% block content %}
-<p>Система учета оборудования</p>
+<p>{% trans "Equipment inventory system" %}</p>
 {% endblock %}

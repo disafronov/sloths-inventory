@@ -1,13 +1,14 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %}Вход - Sloths Inventory{% endblock %}
+{% block title %}{% trans "Login" %} - {% trans "Sloths Inventory" %}{% endblock %}
 
-{% block heading %}Вход в систему{% endblock %}
+{% block heading %}{% trans "Login" %}{% endblock %}
 
 {% block content %}
 <form method="post" class="form-container">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit" class="button">Войти</button>
+    <button type="submit" class="button">{% trans "Login" %}</button>
 </form>
 {% endblock %} 

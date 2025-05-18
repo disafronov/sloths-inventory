@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-19 00:36+0400\n"
+"POT-Creation-Date: 2025-05-19 01:51+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -41,17 +41,31 @@ msgid "Name"
 msgstr "Название"
 
 #: common/templates/base.html:7 common/templates/base.html:96
+#: common/templates/home.html:4 common/templates/login.html:4
 msgid "Sloths Inventory"
-msgstr ""
+msgstr "Инвентаризация ленивцев"
 
 #: common/templates/base.html:113
 msgid "Admin"
-msgstr ""
+msgstr "Админка"
 
 #: common/templates/base.html:116
 msgid "Logout"
-msgstr ""
+msgstr "Выйти"
 
-#: common/templates/base.html:119
+#: common/templates/base.html:119 common/templates/login.html:4
+#: common/templates/login.html:6 common/templates/login.html:12
 msgid "Login"
-msgstr ""
+msgstr "Войти"
+
+#: common/templates/home.html:4
+msgid "Home"
+msgstr "Главная"
+
+#: common/templates/home.html:6
+msgid "Welcome to Sloths Inventory"
+msgstr "Добро пожаловать в Инвентаризацию ленивцев"
+
+#: common/templates/home.html:9
+msgid "Equipment inventory system"
+msgstr "Система учета оборудования"
