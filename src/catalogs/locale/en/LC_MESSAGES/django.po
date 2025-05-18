@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: catalogs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-19 00:28+0300\n"
+"POT-Creation-Date: 2025-05-19 00:36+0400\n"
 "PO-Revision-Date: 2024-03-19 00:28+0300\n"
 "Last-Translator: \n"
 "Language-Team: English\n"
@@ -15,46 +15,46 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: models.py:6
+#: catalogs/models.py:9
 msgid "Location"
 msgstr "Location"
 
-#: models.py:7
+#: catalogs/models.py:10
 msgid "Locations"
 msgstr "Locations"
 
-#: models.py:12
+#: catalogs/models.py:14
 msgid "Last name"
 msgstr "Last name"
 
-#: models.py:13
+#: catalogs/models.py:15
 msgid "First name"
 msgstr "First name"
 
-#: models.py:14
+#: catalogs/models.py:16
 msgid "Middle name"
 msgstr "Middle name"
 
-#: models.py:16
+#: catalogs/models.py:18
 msgid "Employee ID"
 msgstr "Employee ID"
 
-#: models.py:21
+#: catalogs/models.py:25
 msgid "User"
 msgstr "User"
 
-#: models.py:25
+#: catalogs/models.py:29
 msgid "Responsible"
 msgstr "Responsible"
 
-#: models.py:26
+#: catalogs/models.py:30
 msgid "Responsibles"
 msgstr "Responsibles"
 
-#: models.py:42
+#: catalogs/models.py:45
 msgid "Status"
 msgstr "Status"
 
-#: models.py:43
+#: catalogs/models.py:46
 msgid "Statuses"
-msgstr "Statuses" 
+msgstr "Statuses"
