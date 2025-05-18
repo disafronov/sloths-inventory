@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "common",
     "devices",
     "catalogs",
     "inventory",
@@ -136,3 +137,6 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Test runner
+TEST_RUNNER = 'sloths_inventory.tests.runner.PytestTestRunner'
