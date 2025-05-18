@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}Главная - Sloths Inventory{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 text-center">
+        <h1 class="display-4 mb-4">Добро пожаловать в Sloths Inventory</h1>
+        <p class="lead mb-4">Система учета оборудования и инвентаря</p>
+        <a href="{% url 'devices:list' %}" class="btn btn-primary btn-lg">Перейти к списку устройств</a>
+    </div>
+</div>
+{% endblock %} 
