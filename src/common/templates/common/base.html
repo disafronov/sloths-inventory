@@ -6,11 +6,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Sloths Inventory{% endblock %}</title>
     <link rel="stylesheet" type="text/css" href="{% static "admin/css/base.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "admin/css/dashboard.css" %}">
     <link rel="stylesheet" type="text/css" href="{% static "admin/css/changelists.css" %}">
     {% block extrastyle %}{% endblock %}
 </head>
-<body>
+<body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}" data-admin-utc-offset="0">
     <div id="container">
+        <div id="header">
+            <div id="branding">
+                <h1 id="site-name"><a href="/">Sloths Inventory</a></h1>
+            </div>
+            <div id="user-tools">
+                {% if user.is_authenticated %}
+                <strong>{% firstof user.get_short_name user.get_username %}</strong> /
+                <a href="{% url 'common:logout' %}">{% trans 'Log out' %}</a>
+                {% else %}
+                <a href="{% url 'common:login' %}">{% trans 'Log in' %}</a>
+                {% endif %}
+            </div>
+        </div>
         <div id="content">
             {% if messages %}
             <ul class="messagelist">
