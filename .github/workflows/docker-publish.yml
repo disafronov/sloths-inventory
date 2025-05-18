@@ -28,25 +28,10 @@ jobs:
       # This is used to complete the identity challenge
       # with sigstore/fulcio when running outside of PRs.
       id-token: write
-      actions: write
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Sideload tests
-        if: github.event_name == 'pull_request'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const { owner, repo } = context.repo;
-            const ref = context.payload.pull_request.head.ref;
-            await github.rest.actions.createWorkflowDispatch({
-              owner,
-              repo,
-              workflow_id: 'tests.yml',
-              ref: ref
-            });
 
       # Workaround: https://github.com/docker/build-push-action/issues/461
       - name: Setup Docker buildx
