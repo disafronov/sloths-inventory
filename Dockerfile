@@ -1,4 +1,4 @@
-FROM ubuntu:noble-20250619 AS base
+FROM ubuntu:noble-20250714 AS base
 
 # ENVs
 ENV PYTHONDONTWRITEBYTECODE=1 \
