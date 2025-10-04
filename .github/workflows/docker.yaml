@@ -1,16 +1,15 @@
+---
 name: "Docker"
 
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
-on:
-  workflow_call:
+"on":
+  pull_request:
+    branches:
+      # Publish PRs as unsigned images.
+      - main
   push:
-    # branches: [ "main" ]
-    # Publish semver tags as releases.
-    tags: [ 'v*.*.*' ]
+    tags:
+      # Publish semver tags as releases.
+      - 'v*.*.*'
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -25,8 +24,7 @@ jobs:
     permissions:
       contents: read
       packages: write
-      # This is used to complete the identity challenge
-      # with sigstore/fulcio when running outside of PRs.
+      # Required for cosign signing
       id-token: write
 
     steps:
@@ -98,7 +96,7 @@ jobs:
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
-      # * SIGNING ###############################################################################################
+      # * SIGNING ##############################################################
 
       # Install the cosign tool except on PR
       # https://github.com/sigstore/cosign-installer
@@ -109,14 +107,15 @@ jobs:
         #   cosign-release: 'v2.2.2'
 
       # Sign the resulting Docker image digest except on PRs.
-      # This will only write to the public Rekor transparency log when the Docker
-      # repository is public to avoid leaking data.  If you would like to publish
-      # transparency data even for private images, pass --force to cosign below.
+      # This will only write to the public Rekor transparency log when the
+      # Docker repository is public to avoid leaking data. If you would like
+      # to publish transparency data even for private images, pass --force to
+      # cosign below.
       # https://github.com/sigstore/cosign
       - name: Sign the published Docker image
         if: ${{ github.event_name != 'pull_request' }}
         env:
           COSIGN_EXPERIMENTAL: "true"
-        # This step uses the identity token to provision an ephemeral certificate
-        # against the sigstore community Fulcio instance.
+        # This step uses the identity token to provision an ephemeral
+        # certificate against the sigstore community Fulcio instance.
         run: echo "${{ steps.meta.outputs.tags }}" | grep -E '^(.+):(.+)-(.+)-(.+)$|^(.+):([0-9]+).([0-9]+).([0-9]+)(.+)$' | xargs -I {} cosign sign --yes {}@${{ steps.build-and-push.outputs.digest }}
