@@ -1,37 +1,33 @@
-name: "Release"
+---
+name: Release
 
 "on":
   push:
-    tags:
-      - v[0-9]+.[0-9]+.[0-9]+
+    branches:
+      - main
 
 jobs:
   release:
     name: "Release"
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    concurrency:
+      group: semantic-release
+      cancel-in-progress: false
     steps:
-
       - name: Checkout
         uses: actions/checkout@v5
         with:
-          token: ${{ secrets.PAT }}
           fetch-depth: 0
+          token: ${{ secrets.SEMANTIC_RELEASE_TOKEN || secrets.GITHUB_TOKEN }}
 
-      - name: Update release description .CHANGELOG.md
-        uses: orhun/git-cliff-action@v4
-        id: changelog-release
-        with:
-          config: .cliff.release.toml
-          args: --current --strip all
-        env:
-          OUTPUT: .CHANGELOG.md
-
-      - name: Create Release
-        uses: ncipollo/release-action@v1.20.0
-        with:
-          allowUpdates: true
-          draft: false
-          makeLatest: true
-          name: ${{ github.ref_name }}
-          body: ${{ steps.changelog-release.outputs.content }}
-          token: ${{ secrets.PAT }}
+      - name: Semantic release
+        run: |
+          docker run --rm \
+            --user 1001 \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace \
+            -e GITHUB_TOKEN=${{ secrets.SEMANTIC_RELEASE_TOKEN || secrets.GITHUB_TOKEN }} \
+            -e CI=true \
+            ghcr.io/disafronov/semantic-release:latest
