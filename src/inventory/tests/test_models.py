@@ -132,3 +132,11 @@ def test_operation_str_and_responsible_display() -> None:
 
     assert op.get_responsible_display() == "Ivanov Ivan"
     assert str(op) == f"{item} - {status} ({location})"
+
+
+def test_current_operation_value_descriptor_access_via_class_contract() -> None:
+    # Descriptor protocol contract: access via the class must return the descriptor
+    # itself (so admin/forms/introspection can read configuration without an instance).
+    descriptor = Item.current_status
+    assert isinstance(descriptor, Item.CurrentOperationValue)
+    assert descriptor.attr_name == "status"
