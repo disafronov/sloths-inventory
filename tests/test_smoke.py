@@ -5,4 +5,3 @@ def test_django_settings_import() -> None:
     from django.conf import settings
 
     assert settings is not None
-
