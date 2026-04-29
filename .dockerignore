@@ -3,3 +3,6 @@
 
 # SQLite
 /src/db.sqlite3
+
+# Django translations (compiled)
+**/*.mo
