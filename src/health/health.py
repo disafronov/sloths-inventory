@@ -1,7 +1,6 @@
 import logging
 
 from django.db import DatabaseError, connection
-from django.db.utils import OperationalError
 from django.http import HttpRequest, JsonResponse
 
 logger = logging.getLogger(__name__)
@@ -13,7 +12,7 @@ def check_database() -> tuple[bool, str]:
         with connection.cursor() as cursor:
             cursor.execute("SELECT 1")
         return True, "Database connection OK"
-    except (OperationalError, DatabaseError):
+    except DatabaseError:
         logger.exception("Database readiness check failed")
         return False, "Database connection failed"
 
