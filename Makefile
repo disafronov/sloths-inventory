@@ -5,7 +5,7 @@ COVERAGE_OPTS = --cov --cov-report=term-missing --cov-report=html
 
 DOCKER_IMAGE = sloths-inventory
 
-.PHONY: all clean dead-code docker docker-build docker-run format help install lint test test-coverage
+.PHONY: all clean dead-code docker docker-build docker-run format help install lint run test test-coverage
 
 help: ## Show this help message
 	@echo "Available commands:"
@@ -43,6 +43,10 @@ test-coverage: ## Run tests with HTML coverage report
 
 all: format lint test dead-code ## Run format, lint, test, and dead-code check
 	@echo "All checks completed successfully!"
+
+run: ## Run Django development server locally
+	@echo "Running Django development server locally..."
+	PYTHONPATH=$(PYTHONPATH) uv run python src/manage.py runserver 0.0.0.0:8000
 
 clean: ## Clean caches and coverage outputs
 	@echo "Cleaning cache and temporary files..."
