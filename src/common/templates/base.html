@@ -110,6 +110,8 @@
                 </form>
                 {% if user.is_authenticated %}
                     <span>{{ user.username }}</span>
+                    <a href="{% url 'inventory:my-items' %}" class="button">{% trans "My items" %}</a>
+                    <a href="{% url 'inventory:previous-items' %}" class="button">{% trans "Previously my items" %}</a>
                     <a href="{% url 'admin:index' %}" class="button">{% trans "Admin" %}</a>
                     <form method="post" action="{% url 'common:logout' %}?next=/" style="margin: 0; display: inline;">
                         {% csrf_token %}
