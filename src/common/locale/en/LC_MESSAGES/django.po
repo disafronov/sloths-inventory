@@ -49,7 +49,7 @@ msgstr "My items"
 
 #: src/common/templates/base.html:114
 msgid "Previously my items"
-msgstr "Previously my items"
+msgstr "Previously with me"
 
 #: src/common/templates/base.html:115
 msgid "Admin"
