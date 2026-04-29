@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.db.models import QuerySet
+from django.http import HttpRequest
 
 from common.admin import BaseAdmin, NamedModelAdmin
 
@@ -49,3 +51,11 @@ class DeviceAdmin(BaseAdmin):
     ]
     ordering = ["category", "type", "manufacturer", "model"]
     main_fields = ("category", "type", "manufacturer", "model")
+
+    def get_queryset(self, request: HttpRequest) -> QuerySet[Device]:
+        """
+        Avoid N+1 queries in admin list pages by preloading FK relations.
+        """
+
+        qs = super().get_queryset(request)
+        return qs.select_related("category", "type", "manufacturer", "model")
