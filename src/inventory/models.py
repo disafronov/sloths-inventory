@@ -62,9 +62,11 @@ class Item(BaseModel):
                 return None
 
             value = getattr(operation, self.attr_name, None)
-            if value and hasattr(value, "name"):
+            if value is not None and hasattr(value, "name"):
                 return value.name
-            return value
+            if value is None:
+                return None
+            return str(value)
 
     current_status = CurrentOperationValue("status")
     current_location = CurrentOperationValue("location")

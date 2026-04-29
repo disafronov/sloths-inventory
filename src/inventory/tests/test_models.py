@@ -102,8 +102,7 @@ def test_item_current_operation_and_current_fields() -> None:
     assert item.current_operation is not None
     assert item.current_status == "In stock"
     assert item.current_location == "Moscow"
-    assert item.current_responsible == responsible
-    assert str(item.current_responsible) == "Ivanov Ivan"
+    assert item.current_responsible == "Ivanov Ivan"
 
 
 @pytest.mark.django_db
@@ -232,3 +231,32 @@ def test_current_operation_value_is_introspectable_via_class_access() -> None:
     descriptor = Item.current_status
     assert isinstance(descriptor, Item.CurrentOperationValue)
     assert descriptor.attr_name == "status"
+
+
+@pytest.mark.django_db
+def test_current_operation_value_missing_attr_returns_none() -> None:
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+
+    status = Status.objects.create(name="In stock")
+    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    location = Location.objects.create(name="Moscow")
+
+    item = Item.objects.create(inventory_number="INV-404", device=device)
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=responsible,
+        location=location,
+    )
+
+    descriptor = Item.CurrentOperationValue("missing_field")
+    assert descriptor.__get__(item, Item) is None
