@@ -7,9 +7,9 @@ name = "sloths-inventory"
 version = "0.9.0rc1"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.14,<3.15"
+requires-python = ">=3.13,<3.14"
 dependencies = [
-  "django>=5.2",
+  "django>=5.2,<6.0",
   "django-environ>=0.12.0",
   "psycopg2-binary>=2.9.12"
 ]
@@ -24,9 +24,9 @@ dev = [
   "pytest-django>=4.8.0",
   "pytest-cov>=4.1.0",
   "factory-boy>=3.3.0",
-  "mypy>=1.20.2",
-  "django-stubs>=5.2,<6.0",
-  "django-stubs-ext>=5.2,<6.0",
+  "mypy>=1.19,<1.20",
+  "django-stubs>=5.2,<5.3",
+  "django-stubs-ext>=5.2,<5.3",
   "types-requests",
   "bandit>=1.7.5",
   "pre-commit>=4.6.0",
@@ -62,6 +62,7 @@ exclude = [ ".venv", "__pycache__", ".git", "htmlcov" ]
 [tool.mypy]
 exclude = "(^tests/|.*/tests/|.*/migrations/)"
 mypy_path = "stubs"
+plugins = ["mypy_django_plugin.main"]
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
@@ -79,17 +80,8 @@ strict_equality = true
 module = ["environ"]
 ignore_missing_imports = true # django-environ has no stubs/py.typed
 
-[[tool.mypy.overrides]]
-module = ["*.models"]
-# Django ORM fields/managers are hard to type-check correctly without the
-# mypy_django_plugin (which is currently incompatible with our mypy version).
-disable_error_code = ["var-annotated", "no-any-return", "attr-defined"]
-
-[[tool.mypy.overrides]]
-module = ["*.admin"]
-# Django admin typing is heavily dynamic; keep mypy useful by ignoring
-# purely-stub-related issues in admin modules.
-disable_error_code = ["assignment", "override", "return-value", "no-any-return"]
+[tool.django-stubs]
+django_settings_module = "sloths_inventory.settings"
 
 [tool.bandit]
 exclude_dirs = [ ".venv", "__pycache__", ".git", "htmlcov", "tests" ]
