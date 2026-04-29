@@ -32,7 +32,7 @@ class Item(BaseModel):
         return f"{self.inventory_number} - {self.device}"
 
     def clean(self) -> None:
-        """Валидация модели."""
+        """Validate the model."""
         if not self.inventory_number:
             raise ValidationError(
                 {"inventory_number": _("Inventory number cannot be empty")}
@@ -133,5 +133,5 @@ class Operation(BaseModel):
         return f"{self.item} - {self.status} ({self.location})"
 
     def get_responsible_display(self) -> str:
-        """Возвращает строковое представление ответственного."""
+        """Return a human-readable representation of the responsible person."""
         return str(self.responsible)
