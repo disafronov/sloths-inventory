@@ -47,10 +47,6 @@ msgstr "Sloths Inventory"
 msgid "Admin"
 msgstr "Admin"
 
-#: common/templates/base.html:114
-msgid "My items"
-msgstr "My items"
-
 #: common/templates/base.html:116
 msgid "Logout"
 msgstr "Logout"
