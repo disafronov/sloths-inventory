@@ -63,3 +63,7 @@ msgstr "Logout"
 #: src/common/templates/login.html:6 src/common/templates/login.html:12
 msgid "Login"
 msgstr "Login"
+
+#: src/common/templates/base.html:20
+msgid "Language"
+msgstr "Language"
