@@ -1,3 +1,5 @@
+from typing import Any
+
 from django.contrib import admin
 from django.db.models import Model
 from django.http import HttpRequest
@@ -45,40 +47,38 @@ class DeviceFieldsMixin:
 
 @admin.register(Item)
 class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
-    list_display = (
+    list_display = [
         "inventory_number",
         "device",
         "serial_number",
         "updated_at",
         "created_at",
-    )
-    list_display_links = ("inventory_number", "device", "serial_number")
-    list_filter = (
-        *DeviceFieldsMixin.device_list_filter,
+    ]
+    list_display_links = ["inventory_number", "device", "serial_number"]
+    list_filter = [
+        *list(DeviceFieldsMixin.device_list_filter),
         "updated_at",
         "created_at",
-    )
-    search_fields = (
+    ]
+    search_fields = [
         "inventory_number",
-        *DeviceFieldsMixin.device_search_fields,
+        *list(DeviceFieldsMixin.device_search_fields),
         "serial_number",
         "notes",
-    )
-    readonly_fields = tuple(BaseAdmin.readonly_fields) + (
+    ]
+    readonly_fields = list(BaseAdmin.readonly_fields) + [
         "current_status",
         "current_location",
         "current_responsible",
-    )
+    ]
     autocomplete_fields = ["device"]
-    main_fields = (
+    main_fields = [
         "inventory_number",
         "device",
         "serial_number",
-    )
+    ]
 
-    def get_fieldsets(
-        self, request: HttpRequest, obj: Model | None = None
-    ) -> list[tuple[str | None, dict[str, object]]]:
+    def get_fieldsets(self, request: HttpRequest, obj: Model | None = None) -> Any:
         fieldsets = super().get_fieldsets(request, obj)
         fieldsets = list(fieldsets)
         # Move "Additional Information" section to the beginning
@@ -103,18 +103,18 @@ class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
 
 @admin.register(Operation)
 class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
-    list_display = (
+    list_display = [
         "item",
         "status",
         "responsible",
         "location",
         "updated_at",
         "created_at",
-    )
-    list_display_links = ("item", "status", "location", "responsible")
-    search_fields = (
+    ]
+    list_display_links = ["item", "status", "location", "responsible"]
+    search_fields = [
         "item__inventory_number",
-        *DeviceFieldsMixin.device_search_fields,
+        *list(DeviceFieldsMixin.device_search_fields),
         "item__serial_number",
         "status__name",
         "responsible__last_name",
@@ -122,21 +122,21 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
         "responsible__middle_name",
         "location__name",
         "notes",
-    )
-    list_filter = (
+    ]
+    list_filter = [
         "status",
         "responsible",
         "location",
         "updated_at",
         "created_at",
-    )
+    ]
     autocomplete_fields = ["item", "status", "location", "responsible"]
-    main_fields = (
+    main_fields = [
         "item",
         "status",
         "responsible",
         "location",
-    )
+    ]
 
     @admin.display(description=_("Responsible Person"))
     def get_responsible_display(self, obj: Operation) -> str:
