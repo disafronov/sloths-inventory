@@ -50,12 +50,10 @@ class Item(BaseModel):
         @overload
         def __get__(
             self, instance: None, owner: type["Item"]
-        ) -> "Item.CurrentOperationValue": ...  # pragma: no cover
+        ) -> "Item.CurrentOperationValue": ...
 
         @overload
-        def __get__(
-            self, instance: "Item", owner: type["Item"]
-        ) -> Optional[str]: ...  # pragma: no cover
+        def __get__(self, instance: "Item", owner: type["Item"]) -> Optional[str]: ...
 
         def __get__(self, instance: Optional["Item"], owner: type["Item"]) -> Any:
             if instance is None:
