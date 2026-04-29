@@ -11,24 +11,24 @@ from .models import Item, Operation
 
 
 class _EmptyValueFormatter(Protocol):
-    def _format_empty_value(self, value: Any) -> str: ...
+    def _format_empty_value(self, value: Any) -> Any: ...
 
 
 class CurrentFieldMixin:
-    def get_current_field(self, obj: Item, field_name: str) -> str:
+    def get_current_field(self, obj: Item, field_name: str) -> Any:
         formatter = cast(_EmptyValueFormatter, self)
         return formatter._format_empty_value(getattr(obj, f"current_{field_name}"))
 
     @admin.display(description=_("Status"))
-    def current_status(self, obj: Item) -> str:
+    def current_status(self, obj: Item) -> Any:
         return self.get_current_field(obj, "status")
 
     @admin.display(description=_("Location"))
-    def current_location(self, obj: Item) -> str:
+    def current_location(self, obj: Item) -> Any:
         return self.get_current_field(obj, "location")
 
     @admin.display(description=_("Responsible Person"))
-    def current_responsible(self, obj: Item) -> str:
+    def current_responsible(self, obj: Item) -> Any:
         return self.get_current_field(obj, "responsible")
 
 
