@@ -47,6 +47,11 @@ Run using Docker Compose:
 docker compose up --build
 ```
 
+Note: `docker compose` runs `manage.py migrate` on startup (see `compose.yml`
+entrypoint config). The Docker image itself starts Django with `runserver` only
+(see `Dockerfile`), so if you run the image directly you must run migrations
+yourself.
+
 ## Localization
 
 Translations are stored in `src/*/locale/*/LC_MESSAGES/django.po` and are
