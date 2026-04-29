@@ -38,7 +38,7 @@ services:
       - ./src:/home/ubuntu/app/src
 
   postgres:
-    image: 'postgres:16'
+    image: 'postgres:17'
     ports:
       - 5432:5432
     environment:
@@ -55,7 +55,7 @@ services:
       start_period: 60s
 
   postgres-loader:
-    image: 'postgres:16'
+    image: 'postgres:17'
     depends_on:
       django:
         condition: service_healthy
