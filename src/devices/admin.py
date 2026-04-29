@@ -48,4 +48,4 @@ class DeviceAdmin(BaseAdmin):
         "updated_at",
     ]
     ordering = ["category", "type", "manufacturer", "model"]
-    main_fields = ["category", "type", "manufacturer", "model"]
+    main_fields = ("category", "type", "manufacturer", "model")

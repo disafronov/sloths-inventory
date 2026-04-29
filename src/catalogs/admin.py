@@ -38,13 +38,13 @@ class ResponsibleAdmin(BaseAdmin):
         "user__email",
     ]
     autocomplete_fields = ["user"]
-    main_fields = [
+    main_fields = (
         "last_name",
         "first_name",
         "middle_name",
         "employee_id",
         "user",
-    ]
+    )
 
 
 @admin.register(Status)

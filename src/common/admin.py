@@ -17,10 +17,10 @@ class BaseAdmin(admin.ModelAdmin):
             {"fields": ("notes", "updated_at", "created_at")},
         ),
     )
-    main_fields: list[str] = []  # Will be overridden in subclasses
+    main_fields: tuple[str, ...] = ()  # Will be overridden in subclasses
 
     def get_main_fields(self) -> tuple[str, ...]:
-        return tuple(self.main_fields)
+        return self.main_fields
 
     def get_fieldsets(self, request: HttpRequest, obj: Model | None = None) -> Any:
         fieldsets = list(super().get_fieldsets(request, obj))
@@ -39,4 +39,4 @@ class BaseAdmin(admin.ModelAdmin):
 class NamedModelAdmin(BaseAdmin):
     list_display = ["name", "updated_at", "created_at"]
     search_fields = ["name", "created_at", "updated_at", "notes"]
-    main_fields = ["name"]
+    main_fields = ("name",)

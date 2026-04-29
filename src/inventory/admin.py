@@ -74,11 +74,11 @@ class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
         "current_responsible",
     ]
     autocomplete_fields = ["device"]
-    main_fields = [
+    main_fields = (
         "inventory_number",
         "device",
         "serial_number",
-    ]
+    )
 
     def get_fieldsets(self, request: HttpRequest, obj: Model | None = None) -> Any:
         fieldsets = super().get_fieldsets(request, obj)
@@ -133,12 +133,12 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
         "created_at",
     ]
     autocomplete_fields = ["item", "status", "location", "responsible"]
-    main_fields = [
+    main_fields = (
         "item",
         "status",
         "responsible",
         "location",
-    ]
+    )
 
     def _is_latest_for_item(self, obj: Operation) -> bool:
         latest_id = (
