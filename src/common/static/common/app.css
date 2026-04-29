@@ -347,14 +347,6 @@ a.item-card:hover {
   margin-bottom: 8px;
 }
 
-.actions-footer {
-  margin-top: 20px;
-}
-
-.actions-footer .button {
-  width: 100%;
-}
-
 /* --- Wide screens: optional denser header -------------------------------- */
 
 @media (min-width: 768px) {
@@ -403,10 +395,6 @@ a.item-card:hover {
     width: auto;
     text-align: right;
     flex: 0 1 auto;
-  }
-
-  .actions-footer .button {
-    width: auto;
   }
 
   .user-menu .logout-form {
