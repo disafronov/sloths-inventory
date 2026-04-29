@@ -48,7 +48,7 @@ RUN --mount=from=uv,source=/uv,target=/bin/uv \
     uv sync --frozen --no-install-project --link-mode=copy --no-editable --no-group dev
 
 # Copy the project into the image
-COPY ./src/ /home/ubuntu/app/src/
+COPY --chown=ubuntu:ubuntu ./src/ /home/ubuntu/app/src/
 
 # Sync the project now that sources exist.
 RUN --mount=from=uv,source=/uv,target=/bin/uv \
