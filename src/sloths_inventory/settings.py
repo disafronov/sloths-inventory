@@ -150,7 +150,7 @@ LOCALE_PATHS = [
     BASE_DIR / "health" / "locale",
 ]
 
-# Настройки для определения языка
+# Language selection settings
 LANGUAGE_COOKIE_NAME = "django_language"
 LANGUAGE_COOKIE_AGE = None
 LANGUAGE_COOKIE_DOMAIN = None

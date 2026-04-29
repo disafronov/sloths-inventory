@@ -5,8 +5,9 @@ from common.models import NamedModel
 
 class Category(NamedModel):
     """
-    Модель категории устройства.
-    Используется для классификации устройств по их назначению или типу.
+    Device category model.
+
+    Used to classify devices by their purpose or type.
     """
 
     class Meta:
@@ -16,8 +17,9 @@ class Category(NamedModel):
 
 class Manufacturer(NamedModel):
     """
-    Модель производителя устройства.
-    Содержит информацию о компаниях-производителях оборудования.
+    Device manufacturer model.
+
+    Stores information about hardware manufacturers.
     """
 
     class Meta:
@@ -27,8 +29,9 @@ class Manufacturer(NamedModel):
 
 class Model(NamedModel):
     """
-    Модель устройства.
-    Представляет конкретную модель устройства от производителя.
+    Device model.
+
+    Represents a specific product model from a manufacturer.
     """
 
     class Meta:
@@ -38,8 +41,9 @@ class Model(NamedModel):
 
 class Type(NamedModel):
     """
-    Модель типа устройства.
-    Используется для дополнительной классификации устройств.
+    Device type model.
+
+    Used for additional device classification.
     """
 
     class Meta:
