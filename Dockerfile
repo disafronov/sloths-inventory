@@ -1,3 +1,5 @@
+FROM ghcr.io/astral-sh/uv:0.11.8 AS uv
+
 FROM ubuntu:noble-20260410 AS base
 
 # ENVs
@@ -13,29 +15,36 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Drop privileges
 USER ubuntu:ubuntu
-
-# Change the working directory to the `app` directory
 WORKDIR /home/ubuntu/app
+
+# Create venv (uses .python-version from the build context).
+RUN --mount=from=uv,source=/uv,target=/bin/uv \
+    --mount=type=cache,target=/home/ubuntu/.cache/uv,uid=1000,gid=1000 \
+    --mount=type=bind,source=.python-version,target=.python-version \
+    uv venv
+
+ENV PATH="/home/ubuntu/app/.venv/bin:$PATH"
 
 ##########################
 
 FROM base AS builder
 
-# Install dependencies
-RUN --mount=from=ghcr.io/astral-sh/uv,source=/uv,target=/bin/uv \
-    --mount=type=cache,target=/root/.cache/uv \
+# Install dependencies first (without installing the project itself).
+RUN --mount=from=uv,source=/uv,target=/bin/uv \
+    --mount=type=cache,target=/home/ubuntu/.cache/uv,uid=1000,gid=1000 \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
-    uv sync --frozen --no-install-project --link-mode=copy --no-editable --no-dev
+    --mount=type=bind,source=.python-version,target=.python-version \
+    uv sync --frozen --no-install-project --link-mode=copy --no-editable --no-group dev
 
 # Copy the project into the image
 COPY ./src/ /home/ubuntu/app/src/
 
-# Sync the project
-RUN --mount=from=ghcr.io/astral-sh/uv,source=/uv,target=/bin/uv \
-    --mount=type=cache,target=/root/.cache/uv \
+# Sync the project now that sources exist.
+RUN --mount=from=uv,source=/uv,target=/bin/uv \
+    --mount=type=cache,target=/home/ubuntu/.cache/uv,uid=1000,gid=1000 \
+    --mount=type=bind,source=README.md,target=README.md \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
     uv sync --frozen --link-mode=copy --no-editable --no-dev
@@ -44,15 +53,10 @@ RUN --mount=from=ghcr.io/astral-sh/uv,source=/uv,target=/bin/uv \
 
 FROM base AS runtime
 
-# Use python from UV
-COPY --from=builder /home/ubuntu/.local/share/uv/python/ /home/ubuntu/.local/share/uv/python/
+# Copy venv and app files from builder stage.
+COPY --from=builder /home/ubuntu/app/.venv/ /home/ubuntu/app/.venv/
+COPY ./ /home/ubuntu/app/
 
-# Copy app directory from builder
-COPY --from=builder --chown=app:app /home/ubuntu/app/ /home/ubuntu/app/
-
-ENV PATH="/home/ubuntu/app/.venv/bin:$PATH"
-
-# Change the working directory to the `django project` directory
 WORKDIR /home/ubuntu/app/src
 
 #! <MVP ONLY!
