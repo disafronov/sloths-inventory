@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Item history" %} - {% trans "Sloths Inventory" %}{% endblock %}
+
+{% block heading %}{% trans "Item history" %}{% endblock %}
+
+{% block content %}
+<p>
+    <strong>{% trans "Item" %}:</strong> {{ item.inventory_number }}<br>
+    <strong>{% trans "Device" %}:</strong> {{ item.device }}<br>
+    <strong>{% trans "Serial number" %}:</strong> {{ item.serial_number|default:"-" }}
+</p>
+
+{% if operations %}
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr>
+                <th style="text-align: left; border-bottom: 1px solid #eee; padding: 8px;">{% trans "Created at" %}</th>
+                <th style="text-align: left; border-bottom: 1px solid #eee; padding: 8px;">{% trans "Status" %}</th>
+                <th style="text-align: left; border-bottom: 1px solid #eee; padding: 8px;">{% trans "Responsible Person" %}</th>
+                <th style="text-align: left; border-bottom: 1px solid #eee; padding: 8px;">{% trans "Location" %}</th>
+                <th style="text-align: left; border-bottom: 1px solid #eee; padding: 8px;">{% trans "Notes" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for op in operations %}
+                <tr>
+                    <td style="border-bottom: 1px solid #f2f2f2; padding: 8px;">
+                        {{ op.created_at|date:"Y-m-d H:i:s" }}
+                    </td>
+                    <td style="border-bottom: 1px solid #f2f2f2; padding: 8px;">{{ op.status }}</td>
+                    <td style="border-bottom: 1px solid #f2f2f2; padding: 8px;">{{ op.responsible }}</td>
+                    <td style="border-bottom: 1px solid #f2f2f2; padding: 8px;">{{ op.location }}</td>
+                    <td style="border-bottom: 1px solid #f2f2f2; padding: 8px;">{{ op.notes|default:"-" }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>{% trans "No operations found." %}</p>
+{% endif %}
+
+<p style="margin-top: 20px;">
+    <a class="button" href="{% url 'inventory:my-items' %}">{% trans "Back to my items" %}</a>
+</p>
+{% endblock %}

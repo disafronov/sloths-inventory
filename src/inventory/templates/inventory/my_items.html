@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "My items" %} - {% trans "Sloths Inventory" %}{% endblock %}
+
+{% block heading %}{% trans "My items" %}{% endblock %}
+
+{% block content %}
+{% if responsible is None %}
+    <p>{% trans "Your account is not linked to a responsible person profile yet." %}</p>
+{% endif %}
+
+{% if items %}
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr>
+                <th style="text-align: left; border-bottom: 1px solid #eee; padding: 8px;">{% trans "Inventory number" %}</th>
+                <th style="text-align: left; border-bottom: 1px solid #eee; padding: 8px;">{% trans "Device" %}</th>
+                <th style="text-align: left; border-bottom: 1px solid #eee; padding: 8px;">{% trans "Serial number" %}</th>
+                <th style="text-align: left; border-bottom: 1px solid #eee; padding: 8px;">{% trans "Status" %}</th>
+                <th style="text-align: left; border-bottom: 1px solid #eee; padding: 8px;">{% trans "Location" %}</th>
+                <th style="text-align: left; border-bottom: 1px solid #eee; padding: 8px;">{% trans "History" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+                <tr>
+                    <td style="border-bottom: 1px solid #f2f2f2; padding: 8px;">{{ item.inventory_number }}</td>
+                    <td style="border-bottom: 1px solid #f2f2f2; padding: 8px;">{{ item.device }}</td>
+                    <td style="border-bottom: 1px solid #f2f2f2; padding: 8px;">{{ item.serial_number|default:"-" }}</td>
+                    <td style="border-bottom: 1px solid #f2f2f2; padding: 8px;">{{ item.current_status|default:"-" }}</td>
+                    <td style="border-bottom: 1px solid #f2f2f2; padding: 8px;">{{ item.current_location|default:"-" }}</td>
+                    <td style="border-bottom: 1px solid #f2f2f2; padding: 8px;">
+                        <a href="{% url 'inventory:item-history' item_id=item.id %}">{% trans "View" %}</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>{% trans "No items found." %}</p>
+{% endif %}
+{% endblock %}
