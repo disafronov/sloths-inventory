@@ -1,5 +1,10 @@
+import logging
+
 from django.db import connection
 from django.http import JsonResponse
+
+
+logger = logging.getLogger(__name__)
 
 
 def check_database():
@@ -8,8 +13,9 @@ def check_database():
         with connection.cursor() as cursor:
             cursor.execute("SELECT 1")
         return True, "Database connection OK"
-    except Exception as e:
-        return False, f"Database error: {str(e)}"
+    except Exception:
+        logger.exception("Database readiness check failed")
+        return False, "Database connection failed"
 
 
 def liveness(request):
