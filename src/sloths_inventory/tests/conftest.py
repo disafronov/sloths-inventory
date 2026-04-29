@@ -13,3 +13,12 @@ def pytest_configure() -> None:
     """
 
     settings.DEBUG = False
+
+    # Use a fast in-memory database for tests by default.
+    #
+    # The project settings are configured for Postgres, but local/CI test runs
+    # should not require an external database service.
+    settings.DATABASES["default"] = {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": ":memory:",
+    }
