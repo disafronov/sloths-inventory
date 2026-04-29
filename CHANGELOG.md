@@ -1,3 +1,13 @@
+## [0.9.0-rc.1](https://github.com/disafronov/sloths-inventory/compare/v0.8.3...v0.9.0-rc.1) (2026-04-29)
+
+### Features
+
+* introduce common utilities and test configuration for Django project ([3436fde](https://github.com/disafronov/sloths-inventory/commit/3436fdec50f446dd720153e11bfcf8d3a9af6023))
+
+### Bug Fixes
+
+* Potential fix for pull request finding 'CodeQL / Information exposure through an exception' ([85b977d](https://github.com/disafronov/sloths-inventory/commit/85b977d187cf9041917cd467d443d59a3a10220c))
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
