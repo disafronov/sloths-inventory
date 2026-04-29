@@ -69,9 +69,9 @@ class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
         "notes",
     ]
     readonly_fields = list(BaseAdmin.readonly_fields) + [
+        "current_responsible",
         "current_status",
         "current_location",
-        "current_responsible",
     ]
     autocomplete_fields = ["device"]
     main_fields = (
@@ -109,8 +109,8 @@ class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
                 _("Operation"),
                 {
                     "fields": (
-                        "current_status",
                         "current_responsible",
+                        "current_status",
                         "current_location",
                     )
                 },
@@ -123,36 +123,36 @@ class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
 class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
     list_display = [
         "item",
-        "status",
         "responsible",
+        "status",
         "location",
         "updated_at",
         "created_at",
     ]
-    list_display_links = ["item", "status", "location", "responsible"]
+    list_display_links = ["item", "responsible", "location", "status"]
     search_fields = [
         "item__inventory_number",
         *list(DeviceFieldsMixin.device_search_fields),
         "item__serial_number",
-        "status__name",
         "responsible__last_name",
         "responsible__first_name",
         "responsible__middle_name",
+        "status__name",
         "location__name",
         "notes",
     ]
     list_filter = [
-        "status",
         "responsible",
+        "status",
         "location",
         "updated_at",
         "created_at",
     ]
-    autocomplete_fields = ["item", "status", "location", "responsible"]
+    autocomplete_fields = ["item", "responsible", "status", "location"]
     main_fields = (
         "item",
-        "status",
         "responsible",
+        "status",
         "location",
     )
 

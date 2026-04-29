@@ -17,8 +17,8 @@
         <thead>
             <tr>
                 <th style="text-align: left; border-bottom: 1px solid #eee; padding: 8px;">{% trans "Created at" %}</th>
-                <th style="text-align: left; border-bottom: 1px solid #eee; padding: 8px;">{% trans "Status" %}</th>
                 <th style="text-align: left; border-bottom: 1px solid #eee; padding: 8px;">{% trans "Responsible Person" %}</th>
+                <th style="text-align: left; border-bottom: 1px solid #eee; padding: 8px;">{% trans "Status" %}</th>
                 <th style="text-align: left; border-bottom: 1px solid #eee; padding: 8px;">{% trans "Location" %}</th>
                 <th style="text-align: left; border-bottom: 1px solid #eee; padding: 8px;">{% trans "Notes" %}</th>
             </tr>
@@ -29,8 +29,8 @@
                     <td style="border-bottom: 1px solid #f2f2f2; padding: 8px;">
                         {{ op.created_at|date:"Y-m-d H:i:s" }}
                     </td>
-                    <td style="border-bottom: 1px solid #f2f2f2; padding: 8px;">{{ op.status }}</td>
                     <td style="border-bottom: 1px solid #f2f2f2; padding: 8px;">{{ op.responsible }}</td>
+                    <td style="border-bottom: 1px solid #f2f2f2; padding: 8px;">{{ op.status }}</td>
                     <td style="border-bottom: 1px solid #f2f2f2; padding: 8px;">{{ op.location }}</td>
                     <td style="border-bottom: 1px solid #f2f2f2; padding: 8px;">{{ op.notes|default:"-" }}</td>
                 </tr>
