@@ -40,7 +40,7 @@ class Item(BaseModel):
 
     @property
     def current_operation(self) -> Optional["Operation"]:
-        return self.operation_set.order_by("-created_at").first()
+        return self.operation_set.order_by("-created_at", "-id").first()
 
     class CurrentOperationValue:
         def __init__(self, attr_name: str) -> None:
