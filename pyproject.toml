@@ -1,34 +1,34 @@
 [build-system]
-requires = ["uv_build >= 0.9.11, <0.10.0"]
+requires = [ "uv_build >= 0.9.11, <0.10.0" ]
 build-backend = "uv_build"
 
 [project]
 name = "sloths-inventory"
-version = "0.1.0"
+version = "0.9.0rc1"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "django>=5.2",
-    "django-environ>=0.12.0",
-    "psycopg2-binary>=2.9.12",
+  "django>=5.2",
+  "django-environ>=0.12.0",
+  "psycopg2-binary>=2.9.12"
 ]
 
 [dependency-groups]
 dev = [
-    "black>=23.0.0",
-    "isort>=5.12.0",
-    "flake8>=6.0.0",
-    "flake8-pyproject>=1.2.3",
-    "pytest>=8.0.0",
-    "pytest-django>=4.8.0",
-    "pytest-cov>=4.1.0",
-    "factory-boy>=3.3.0",
-    "mypy>=1.20.2",
-    "types-requests",
-    "bandit>=1.7.5",
-    "pre-commit>=4.6.0",
-    "vulture>=2.16",
+  "black>=23.0.0",
+  "isort>=5.12.0",
+  "flake8>=6.0.0",
+  "flake8-pyproject>=1.2.3",
+  "pytest>=8.0.0",
+  "pytest-django>=4.8.0",
+  "pytest-cov>=4.1.0",
+  "factory-boy>=3.3.0",
+  "mypy>=1.20.2",
+  "types-requests",
+  "bandit>=1.7.5",
+  "pre-commit>=4.6.0",
+  "vulture>=2.16"
 ]
 
 [tool.black]
@@ -54,25 +54,20 @@ multi_line_output = 3
 
 [tool.flake8]
 max-line-length = 88
-extend-ignore = ["E203", "W503"]
-exclude = [".venv", "__pycache__", ".git", "htmlcov"]
+extend-ignore = [ "E203", "W503" ]
+exclude = [ ".venv", "__pycache__", ".git", "htmlcov" ]
 
 [tool.mypy]
 exclude = "(^tests/|.*/tests/)"
 mypy_path = "stubs"
-
-# This project is a legacy Django codebase. Aligning tooling first means mypy
-# should not block CI due to missing Django type information or widespread
-# missing annotations; those can be fixed incrementally later.
 ignore_missing_imports = true
 disable_error_code = [
   "import-untyped",
   "no-untyped-def",
   "attr-defined",
   "assignment",
-  "var-annotated",
+  "var-annotated"
 ]
-
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
@@ -124,10 +119,10 @@ python_classes = [ "Test*" ]
 python_functions = [ "test_*" ]
 addopts = "--strict-markers"
 markers = [
-    "django_db: mark test to use django database",
-    "slow: mark test as slow running",
-    "integration: mark test as integration test",
-    "unit: mark test as unit test",
+  "django_db: mark test to use django database",
+  "slow: mark test as slow running",
+  "integration: mark test as integration test",
+  "unit: mark test as unit test"
 ]
-testpaths = ["src"]
-filterwarnings = ["ignore::DeprecationWarning"]
+testpaths = [ "src" ]
+filterwarnings = [ "ignore::DeprecationWarning" ]
