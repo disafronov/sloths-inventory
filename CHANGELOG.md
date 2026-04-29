@@ -1,3 +1,9 @@
+## [0.10.0-rc.2](https://github.com/disafronov/sloths-inventory/compare/v0.10.0-rc.1...v0.10.0-rc.2) (2026-04-29)
+
+### Features
+
+* enhance home view and URL structure ([ddff8a9](https://github.com/disafronov/sloths-inventory/commit/ddff8a94be7bd431ce6cd8ea94d5c620bbd6570b))
+
 ## [0.10.0-rc.1](https://github.com/disafronov/sloths-inventory/compare/v0.9.0...v0.10.0-rc.1) (2026-04-29)
 
 ### Features
