@@ -1,7 +1,7 @@
 PYTHONPATH = src
 
 PYTEST_CMD = PYTHONPATH=$(PYTHONPATH) uv run python -m pytest -v
-COVERAGE_OPTS = --cov-report=html
+COVERAGE_OPTS = --cov --cov-report=term-missing --cov-report=html
 
 .PHONY: all clean help format lint test test-coverage dead-code install
 
