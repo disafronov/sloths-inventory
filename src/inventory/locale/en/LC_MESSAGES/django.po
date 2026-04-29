@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventory\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-29 21:43+0300\n"
+"POT-Creation-Date: 2026-04-29 21:54+0300\n"
 "PO-Revision-Date: 2024-03-19 00:40+0300\n"
 "Last-Translator: \n"
 "Language-Team: English\n"
@@ -17,13 +17,13 @@ msgstr ""
 
 #: src/inventory/admin.py:22 src/inventory/models.py:79
 #: src/inventory/templates/inventory/item_history.html:21
-#: src/inventory/templates/inventory/my_items.html:26
+#: src/inventory/templates/inventory/my_items.html:20
 msgid "Status"
 msgstr "Status"
 
 #: src/inventory/admin.py:26 src/inventory/models.py:85
 #: src/inventory/templates/inventory/item_history.html:22
-#: src/inventory/templates/inventory/my_items.html:27
+#: src/inventory/templates/inventory/my_items.html:21
 msgid "Location"
 msgstr "Location"
 
@@ -41,21 +41,21 @@ msgid "Inventory"
 msgstr "Inventory"
 
 #: src/inventory/models.py:14
-#: src/inventory/templates/inventory/my_items.html:23
+#: src/inventory/templates/inventory/my_items.html:17
 #: src/inventory/templates/inventory/previous_items.html:21
 msgid "Inventory number"
 msgstr "Inventory number"
 
 #: src/inventory/models.py:17
 #: src/inventory/templates/inventory/item_history.html:11
-#: src/inventory/templates/inventory/my_items.html:24
+#: src/inventory/templates/inventory/my_items.html:18
 #: src/inventory/templates/inventory/previous_items.html:22
 msgid "Device"
 msgstr "Device"
 
 #: src/inventory/models.py:20
 #: src/inventory/templates/inventory/item_history.html:12
-#: src/inventory/templates/inventory/my_items.html:25
+#: src/inventory/templates/inventory/my_items.html:19
 #: src/inventory/templates/inventory/previous_items.html:23
 msgid "Serial number"
 msgstr "Serial number"
@@ -129,16 +129,15 @@ msgstr "My items"
 msgid "Your account is not linked to a responsible person profile yet."
 msgstr "Your account is not linked to a responsible person profile yet."
 
-#: src/inventory/templates/inventory/my_items.html:15
+#: src/inventory/templates/inventory/my_items.html:58
+#: src/inventory/templates/inventory/previous_items.html:56
+msgid "No items found."
+msgstr "No items found."
+
 #: src/inventory/templates/inventory/previous_items.html:4
 #: src/inventory/templates/inventory/previous_items.html:6
 msgid "Previously my items"
 msgstr "Previously my items"
-
-#: src/inventory/templates/inventory/my_items.html:64
-#: src/inventory/templates/inventory/previous_items.html:56
-msgid "No items found."
-msgstr "No items found."
 
 #: src/inventory/templates/inventory/previous_items.html:24
 msgid "Last on you"
