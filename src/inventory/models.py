@@ -109,15 +109,17 @@ class Operation(BaseModel):
         if self.item_id != original.item_id:
             raise ValidationError({"item": _("Operation item cannot be changed")})
 
-        latest = (
+        latest_id = (
             Operation.objects.filter(item_id=self.item_id)
             .order_by("-created_at", "-id")
-            .only("id")
+            .values_list("id", flat=True)
             .first()
         )
-        if latest is None:
-            return
-        if latest.id != self.pk:
+        if latest_id is None:
+            raise AssertionError(
+                "Invariant violation: operation exists but no operations found for item"
+            )
+        if latest_id != self.pk:
             raise ValidationError(
                 _("Only the latest operation for this item can be edited")
             )
