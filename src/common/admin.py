@@ -30,7 +30,7 @@ class BaseAdmin(admin.ModelAdmin):
             fieldsets[0] = (None, {"fields": self.get_main_fields()})
         return fieldsets
 
-    def _format_empty_value(self, value: Any) -> str:
+    def _format_empty_value(self, value: Any) -> Any:
         return value or "-"
 
 
