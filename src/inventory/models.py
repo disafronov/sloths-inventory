@@ -89,6 +89,12 @@ class Operation(BaseModel):
         verbose_name = _("Operation")
         verbose_name_plural = _("Operations")
         ordering = ["-created_at", "-id"]
+        indexes = [
+            models.Index(
+                fields=["item", "-created_at", "-id"],
+                name="inventory_op_item_latest_idx",
+            ),
+        ]
 
     def clean(self) -> None:
         """
