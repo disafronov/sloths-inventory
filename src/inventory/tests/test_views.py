@@ -1,11 +1,12 @@
 import pytest
-from django.contrib.auth.models import User
-from django.test import Client
+from django.contrib.auth.models import AnonymousUser, User
+from django.test import Client, RequestFactory
 
 from catalogs.models import Location, Responsible, Status
 from devices.attributes import Category, Manufacturer, Model, Type
 from devices.models import Device
 from inventory.models import Item, Operation
+from inventory.views import _get_responsible_for_user
 
 
 @pytest.mark.django_db
@@ -14,6 +15,13 @@ def test_my_items_requires_login() -> None:
     response = client.get("/")
     assert response.status_code == 302
     assert "/login/" in response["Location"]
+
+
+def test_get_responsible_for_user_returns_none_for_anonymous() -> None:
+    rf = RequestFactory()
+    request = rf.get("/")
+    request.user = AnonymousUser()
+    assert _get_responsible_for_user(request) is None
 
 
 @pytest.mark.django_db
