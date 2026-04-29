@@ -83,11 +83,15 @@ msgstr "Operations"
 
 #: src/inventory/models.py:118
 msgid "Operation item cannot be changed"
-msgstr ""
+msgstr "Operation item cannot be changed"
 
 #: src/inventory/models.py:132
+msgid "This operation can no longer be edited (the correction window has expired)"
+msgstr "This operation can no longer be edited (the correction window has expired)"
+
+#: src/inventory/models.py:149
 msgid "Only the latest operation for this item can be edited"
-msgstr ""
+msgstr "Only the latest operation for this item can be edited"
 
 #: src/inventory/templates/inventory/item_history.html:4
 #: src/inventory/templates/inventory/item_history.html:6
