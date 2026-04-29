@@ -1,3 +1,9 @@
+## [0.9.0-rc.5](https://github.com/disafronov/sloths-inventory/compare/v0.9.0-rc.4...v0.9.0-rc.5) (2026-04-29)
+
+### Bug Fixes
+
+* update template directory path in settings ([54e8ce5](https://github.com/disafronov/sloths-inventory/commit/54e8ce5bd52073a662f43a191c3ac22936cf88e9))
+
 ## [0.9.0-rc.4](https://github.com/disafronov/sloths-inventory/compare/v0.9.0-rc.3...v0.9.0-rc.4) (2026-04-29)
 
 ### Features
