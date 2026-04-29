@@ -3,7 +3,7 @@
 <html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>{% block title %}{% trans "Sloths Inventory" %}{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'common/app.css' %}">
     {% block extrahead %}{% endblock %}
@@ -11,39 +11,64 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>{% block heading %}{% trans "Sloths Inventory" %}{% endblock %}</h1>
-            <div class="user-menu">
-                <form action="{% url 'common:set_language' %}" method="post" class="language-form">
-                    {% csrf_token %}
-                    <input name="next" type="hidden" value="{{ request.path }}">
-                    <select name="language" aria-label="{% trans 'Language' %}" onchange="this.form.submit()">
-                        {% get_current_language as CURRENT_LANGUAGE %}
-                        {% get_available_languages as LANGUAGES %}
-                        {% for lang_code, lang_name in LANGUAGES %}
-                            <option value="{{ lang_code }}" {% if lang_code == CURRENT_LANGUAGE %}selected{% endif %}>
-                                {{ lang_name }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </form>
-                {% if user.is_authenticated %}
-                    <span class="user-menu__user">{{ user.username }}</span>
-                    <a href="{% url 'inventory:my-items' %}" class="button">{% trans "My items" %}</a>
-                    <a href="{% url 'inventory:previous-items' %}" class="button">{% trans "Previously my items" %}</a>
-                    <a href="{% url 'admin:index' %}" class="button">{% trans "Admin" %}</a>
-                    <form method="post" action="{% url 'common:logout' %}?next=/" class="logout-form">
-                        {% csrf_token %}
-                        <button type="submit" class="button">{% trans "Logout" %}</button>
-                    </form>
-                {% elif request.resolver_match.url_name != 'login' %}
-                    <a href="{% url 'common:login' %}" class="button">{% trans "Login" %}</a>
-                {% endif %}
+            <div class="header__primary">
+                <h1 class="header__title">{% block heading %}{% trans "Sloths Inventory" %}{% endblock %}</h1>
+                <button
+                    type="button"
+                    class="nav-toggle"
+                    data-nav-toggle
+                    aria-expanded="false"
+                    aria-controls="site-nav-panel"
+                    aria-label="{% trans 'Menu' %}"
+                >
+                    <span class="nav-toggle__icon" aria-hidden="true">
+                        <span class="nav-toggle__bar nav-toggle__bar--top"></span>
+                        <span class="nav-toggle__bar nav-toggle__bar--mid"></span>
+                        <span class="nav-toggle__bar nav-toggle__bar--bot"></span>
+                    </span>
+                </button>
             </div>
+            <div class="nav-backdrop" data-nav-backdrop hidden aria-hidden="true"></div>
+            <nav
+                id="site-nav-panel"
+                class="site-nav"
+                data-site-nav
+                aria-label="{% trans 'Main navigation' %}"
+            >
+                <div class="user-menu">
+                    <form action="{% url 'common:set_language' %}" method="post" class="language-form">
+                        {% csrf_token %}
+                        <input name="next" type="hidden" value="{{ request.path }}">
+                        <select name="language" aria-label="{% trans 'Language' %}" onchange="this.form.submit()">
+                            {% get_current_language as CURRENT_LANGUAGE %}
+                            {% get_available_languages as LANGUAGES %}
+                            {% for lang_code, lang_name in LANGUAGES %}
+                                <option value="{{ lang_code }}" {% if lang_code == CURRENT_LANGUAGE %}selected{% endif %}>
+                                    {{ lang_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </form>
+                    {% if user.is_authenticated %}
+                        <span class="user-menu__user">{{ user.username }}</span>
+                        <a href="{% url 'inventory:my-items' %}" class="button">{% trans "My items" %}</a>
+                        <a href="{% url 'inventory:previous-items' %}" class="button">{% trans "Previously my items" %}</a>
+                        <a href="{% url 'admin:index' %}" class="button">{% trans "Admin" %}</a>
+                        <form method="post" action="{% url 'common:logout' %}?next=/" class="logout-form">
+                            {% csrf_token %}
+                            <button type="submit" class="button">{% trans "Logout" %}</button>
+                        </form>
+                    {% elif request.resolver_match.url_name != 'login' %}
+                        <a href="{% url 'common:login' %}" class="button">{% trans "Login" %}</a>
+                    {% endif %}
+                </div>
+            </nav>
         </div>
         <div class="content">
             {% block content %}{% endblock %}
         </div>
     </div>
+    <script src="{% static 'common/nav.js' %}" defer></script>
     {% block extrabody %}{% endblock %}
 </body>
 </html>
