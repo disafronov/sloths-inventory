@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
 from django.urls import path, reverse
 
 from .health import liveness, readiness
@@ -6,7 +6,7 @@ from .health import liveness, readiness
 app_name = "health"
 
 
-def health_index(request):
+def health_index(request: HttpRequest) -> HttpResponse:
     liveness_url = reverse("health:liveness")
     readiness_url = reverse("health:readiness")
     return HttpResponse(

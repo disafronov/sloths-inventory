@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.db.models import Model
+from django.http import HttpRequest
 from django.utils.translation import gettext as _
 
 from common.admin import BaseAdmin
@@ -7,23 +9,23 @@ from .models import Item, Operation
 
 
 class CurrentFieldMixin:
-    def get_current_field(self, obj, field_name):
+    def _format_empty_value(self, value: object) -> str:
+        raise NotImplementedError
+
+    def get_current_field(self, obj: Item, field_name: str) -> str:
         return self._format_empty_value(getattr(obj, f"current_{field_name}"))
 
-    def current_status(self, obj):
+    @admin.display(description=_("Status"))
+    def current_status(self, obj: Item) -> str:
         return self.get_current_field(obj, "status")
 
-    current_status.short_description = _("Status")
-
-    def current_location(self, obj):
+    @admin.display(description=_("Location"))
+    def current_location(self, obj: Item) -> str:
         return self.get_current_field(obj, "location")
 
-    current_location.short_description = _("Location")
-
-    def current_responsible(self, obj):
+    @admin.display(description=_("Responsible Person"))
+    def current_responsible(self, obj: Item) -> str:
         return self.get_current_field(obj, "responsible")
-
-    current_responsible.short_description = _("Responsible Person")
 
 
 class DeviceFieldsMixin:
@@ -62,11 +64,11 @@ class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
         "serial_number",
         "notes",
     )
-    readonly_fields = list(BaseAdmin.readonly_fields) + [
+    readonly_fields = tuple(BaseAdmin.readonly_fields) + (
         "current_status",
         "current_location",
         "current_responsible",
-    ]
+    )
     autocomplete_fields = ["device"]
     main_fields = (
         "inventory_number",
@@ -74,7 +76,9 @@ class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
         "serial_number",
     )
 
-    def get_fieldsets(self, request, obj=None):
+    def get_fieldsets(
+        self, request: HttpRequest, obj: Model | None = None
+    ) -> list[tuple[str | None, dict[str, object]]]:
         fieldsets = super().get_fieldsets(request, obj)
         fieldsets = list(fieldsets)
         # Move "Additional Information" section to the beginning
@@ -134,7 +138,6 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
         "location",
     )
 
-    def get_responsible_display(self, obj):
+    @admin.display(description=_("Responsible Person"))
+    def get_responsible_display(self, obj: Operation) -> str:
         return obj.responsible.get_full_name()
-
-    get_responsible_display.short_description = _("Responsible Person")

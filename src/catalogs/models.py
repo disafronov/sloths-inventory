@@ -33,13 +33,13 @@ class Responsible(BaseModel):
         verbose_name_plural = _("Responsibles")
         ordering = ["last_name", "first_name", "middle_name"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         parts = [self.last_name, self.first_name]
         if self.middle_name:
             parts.append(self.middle_name)
         return " ".join(parts)
 
-    def get_full_name(self):
+    def get_full_name(self) -> str:
         return str(self)
 
 

@@ -22,5 +22,5 @@ class Device(BaseModel):
         ordering = ["category", "type", "manufacturer", "model"]
         unique_together = ["category", "type", "manufacturer", "model"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.category} | {self.type} | {self.manufacturer} | {self.model}"
