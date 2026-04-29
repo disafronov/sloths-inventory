@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Protocol, cast
 
 from django.contrib import admin
 from django.db.models import Model
@@ -10,12 +10,14 @@ from common.admin import BaseAdmin
 from .models import Item, Operation
 
 
-class CurrentFieldMixin:
-    def _format_empty_value(self, value: object) -> str:
-        raise NotImplementedError
+class _EmptyValueFormatter(Protocol):
+    def _format_empty_value(self, value: Any) -> str: ...
 
+
+class CurrentFieldMixin:
     def get_current_field(self, obj: Item, field_name: str) -> str:
-        return self._format_empty_value(getattr(obj, f"current_{field_name}"))
+        formatter = cast(_EmptyValueFormatter, self)
+        return formatter._format_empty_value(getattr(obj, f"current_{field_name}"))
 
     @admin.display(description=_("Status"))
     def current_status(self, obj: Item) -> str:
