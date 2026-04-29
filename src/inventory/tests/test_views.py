@@ -42,6 +42,14 @@ def test_my_items_empty_when_user_has_no_responsible() -> None:
         or "не привязан к профилю ответственного".encode("utf-8") in response.content
     )
 
+    response_prev = client.get("/previous/")
+    assert response_prev.status_code == 200
+    assert (
+        b"not linked" in response_prev.content
+        or "не привязан к профилю ответственного".encode("utf-8")
+        in response_prev.content
+    )
+
 
 @pytest.mark.django_db
 def test_my_items_shows_only_items_where_latest_operation_has_my_responsible() -> None:

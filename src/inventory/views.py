@@ -151,11 +151,14 @@ def item_history(request: HttpRequest, *, item_id: int) -> HttpResponse:
             .order_by("created_at", "id")
             .first()
         )
+        if handoff is None:
+            raise AssertionError(
+                "Invariant violation: former-owner flow requires a handoff operation"
+            )
         ops_filter = Q(created_at__lt=last_mine.created_at) | Q(
             created_at=last_mine.created_at, id__lte=last_mine.id
         )
-        if handoff is not None:
-            ops_filter |= Q(pk=handoff.pk)
+        ops_filter |= Q(pk=handoff.pk)
 
         operations = (
             Operation.objects.filter(item=item)
