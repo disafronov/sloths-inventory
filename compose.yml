@@ -75,7 +75,7 @@ services:
 
   makemigrations:
     build: .
-    entrypoint: [ "python", "manage.py", "makemigrations" ]
+    entrypoint: [ "python3", "manage.py", "makemigrations" ]
     environment:
       DATABASE_HOST: postgres
       ALLOWED_HOSTS: "*"
@@ -96,7 +96,7 @@ configs:
       export DJANGO_SUPERUSER_EMAIL=admin@example.com
       export DJANGO_SUPERUSER_USERNAME=admin
       export DJANGO_SUPERUSER_PASSWORD=password
-      python3 manage.py createsuperuser --noinput
+      python3 manage.py createsuperuser --noinput || true
 
       python3 manage.py runserver 0.0.0.0:8000
 
