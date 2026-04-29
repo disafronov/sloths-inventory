@@ -1,12 +1,12 @@
 import logging
 
 from django.db import connection
-from django.http import JsonResponse
+from django.http import HttpRequest, JsonResponse
 
 logger = logging.getLogger(__name__)
 
 
-def check_database():
+def check_database() -> tuple[bool, str]:
     """Проверка базы данных"""
     try:
         with connection.cursor() as cursor:
@@ -17,14 +17,14 @@ def check_database():
         return False, "Database connection failed"
 
 
-def liveness(request):
+def liveness(request: HttpRequest) -> JsonResponse:
     """
     Liveness probe проверяет, что процесс приложения работает.
     """
     return JsonResponse({"status": "ok"})
 
 
-def readiness(request):
+def readiness(request: HttpRequest) -> JsonResponse:
     """
     Readiness probe проверяет, что приложение готово принимать трафик.
     Проверяет доступность критических компонентов.

@@ -1,3 +1,5 @@
+from typing import Any, Optional, overload
+
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -23,13 +25,13 @@ class Item(BaseModel):
         verbose_name_plural = _("Items")
         ordering = ["inventory_number"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.get_display_name()
 
-    def get_display_name(self):
+    def get_display_name(self) -> str:
         return f"{self.inventory_number} - {self.device}"
 
-    def clean(self):
+    def clean(self) -> None:
         """Валидация модели."""
         if not self.inventory_number:
             raise ValidationError(
@@ -37,15 +39,23 @@ class Item(BaseModel):
             )
 
     @property
-    def current_operation(self):
+    def current_operation(self) -> Optional["Operation"]:
         return self.operation_set.order_by("-created_at").first()
 
     class CurrentOperationValue:
-        def __init__(self, attr_name, display_attr=None):
+        def __init__(self, attr_name: str, display_attr: Optional[str] = None) -> None:
             self.attr_name = attr_name
             self.display_attr = display_attr or attr_name
 
-        def __get__(self, instance, owner):
+        @overload
+        def __get__(
+            self, instance: None, owner: type["Item"]
+        ) -> "Item.CurrentOperationValue": ...
+
+        @overload
+        def __get__(self, instance: "Item", owner: type["Item"]) -> Optional[str]: ...
+
+        def __get__(self, instance: Optional["Item"], owner: type["Item"]) -> Any:
             if instance is None:
                 return self
             operation = instance.current_operation
@@ -79,9 +89,9 @@ class Operation(BaseModel):
         verbose_name_plural = _("Operations")
         ordering = ["-updated_at"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.item} - {self.status} ({self.location})"
 
-    def get_responsible_display(self):
+    def get_responsible_display(self) -> str:
         """Возвращает строковое представление ответственного."""
         return str(self.responsible)
