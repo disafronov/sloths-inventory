@@ -1,6 +1,7 @@
 from datetime import timedelta
 from typing import Any, Optional, overload
 
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from django.utils import timezone
@@ -112,7 +113,10 @@ class Operation(BaseModel):
         if self._state.adding:
             return
 
-        edit_window = timedelta(minutes=30)
+        edit_window_minutes = getattr(
+            settings, "INVENTORY_OPERATION_EDIT_WINDOW_MINUTES", 10
+        )
+        edit_window = timedelta(minutes=edit_window_minutes)
 
         original = Operation.objects.only(
             "item_id",
