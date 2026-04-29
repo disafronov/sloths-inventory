@@ -1,7 +1,7 @@
 from typing import Any, Optional, overload
 
 from django.core.exceptions import ValidationError
-from django.db import models
+from django.db import models, transaction
 from django.utils.translation import gettext_lazy as _
 
 from catalogs.models import Location, Responsible, Status
@@ -127,9 +127,27 @@ class Operation(BaseModel):
             )
 
     def save(self, *args: Any, **kwargs: Any) -> None:
-        # Ensure `clean()` runs on updates as well (admin and any other code path).
-        self.full_clean()
-        return super().save(*args, **kwargs)
+        """
+        Save the operation with concurrency-safe append-only enforcement.
+
+        For updates (not inserts), we serialize modifications per item by taking a
+        row-level lock on the related Item inside a transaction. This makes the
+        "only the latest operation may be edited" rule deterministic even under
+        concurrent edits.
+        """
+
+        # Inserts don't need locking: append-only constraints are about updates.
+        if self._state.adding:
+            self.full_clean()
+            return super().save(*args, **kwargs)
+
+        with transaction.atomic():
+            # Lock the item row to serialize concurrent updates for the same item.
+            Item.objects.select_for_update().only("id").get(pk=self.item_id)
+
+            # Ensure `clean()` runs on updates as well (admin and any other code path).
+            self.full_clean()
+            return super().save(*args, **kwargs)
 
     def __str__(self) -> str:
         return f"{self.item} - {self.status} ({self.location})"
