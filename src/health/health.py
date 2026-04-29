@@ -3,7 +3,6 @@ import logging
 from django.db import connection
 from django.http import JsonResponse
 
-
 logger = logging.getLogger(__name__)
 
 
