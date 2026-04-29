@@ -12,15 +12,15 @@ def test_home_and_health_routes_are_wired(monkeypatch) -> None:
 
     client = Client()
 
-    # Anonymous user sees the home page.
-    assert client.get("/").status_code == 200
+    # Anonymous user is redirected to login (root is "My items").
+    response = client.get("/")
+    assert response.status_code == 302
+    assert "/login/" in response["Location"]
 
     # Authenticated user is redirected to "My items".
     user = User.objects.create_user(username="smoke", password="pw")
     client.force_login(user)
-    response = client.get("/")
-    assert response.status_code == 302
-    assert response["Location"] == "/my/"
+    assert client.get("/").status_code == 200
 
     health_index = client.get("/health/")
     assert health_index.status_code == 200

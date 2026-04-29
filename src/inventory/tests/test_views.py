@@ -11,7 +11,7 @@ from inventory.models import Item, Operation
 @pytest.mark.django_db
 def test_my_items_requires_login() -> None:
     client = Client()
-    response = client.get("/my/")
+    response = client.get("/")
     assert response.status_code == 302
     assert "/login/" in response["Location"]
 
@@ -23,7 +23,7 @@ def test_my_items_empty_when_user_has_no_responsible() -> None:
     client = Client()
     client.force_login(user)
 
-    response = client.get("/my/")
+    response = client.get("/")
     assert response.status_code == 200
     assert (
         b"not linked" in response.content
@@ -78,7 +78,7 @@ def test_my_items_shows_only_items_where_latest_operation_has_my_responsible() -
     client = Client()
     client.force_login(user1)
 
-    response = client.get("/my/")
+    response = client.get("/")
     assert response.status_code == 200
 
     assert b"INV-MINE" in response.content
@@ -127,9 +127,9 @@ def test_item_history_only_for_my_item() -> None:
     client = Client()
     client.force_login(user1)
 
-    ok = client.get(f"/my/items/{item_mine.pk}/")
+    ok = client.get(f"/items/{item_mine.pk}/")
     assert ok.status_code == 200
     assert b"INV-MINE" in ok.content
 
-    forbidden = client.get(f"/my/items/{item_other.pk}/")
+    forbidden = client.get(f"/items/{item_other.pk}/")
     assert forbidden.status_code == 404
