@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ngettext
 
 from catalogs.models import Location, Responsible, Status
 from common.models import BaseModel
@@ -131,11 +132,15 @@ class Operation(BaseModel):
             raise ValidationError({"item": _("Operation item cannot be changed")})
 
         if timezone.now() - original.created_at > edit_window:
+            message = ngettext(
+                "This operation can no longer be edited "
+                "(the %(minutes)d minute correction window has expired)",
+                "This operation can no longer be edited "
+                "(the %(minutes)d minutes correction window has expired)",
+                edit_window_minutes,
+            ) % {"minutes": edit_window_minutes}
             raise ValidationError(
-                _(
-                    "This operation can no longer be edited "
-                    "(the correction window has expired)"
-                ),
+                message,
                 code="correction_window_expired",
             )
 
