@@ -18,6 +18,19 @@ history.
 - **Admin UI**: `GET /admin/`
 - **Health**: `GET /health/liveness/`, `GET /health/readiness/`
 
+### Account linking
+
+The user-facing inventory pages (`/`, `/previous/`, `/items/<id>/`) are scoped by
+the `Responsible` profile linked to the authenticated `User`
+(`catalogs.Responsible.user`).
+
+`Responsible` is a domain entity and can exist without any Django `User`. Linking
+to a `User` is optional and is only required for the user-facing pages. If the
+current `User` is not linked, the UI will show a message and no items.
+
+To link an account, open the Django admin, edit the desired `Responsible` record
+and set its `user` field to the corresponding Django `User`.
+
 ## Requirements
 
 - `uv` package manager
