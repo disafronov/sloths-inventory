@@ -1,3 +1,10 @@
+## [0.10.0-rc.4](https://github.com/disafronov/sloths-inventory/compare/v0.10.0-rc.3...v0.10.0-rc.4) (2026-04-29)
+
+### Bug Fixes
+
+* update English translation for "Previously my items" ([21feacc](https://github.com/disafronov/sloths-inventory/commit/21feacceac507e62ebf27b532bb1cae584078a65))
+* update Russian translation for "Previously my items" ([efdb7bc](https://github.com/disafronov/sloths-inventory/commit/efdb7bc53f08898d4ee07682de1e838e348291e7))
+
 ## [0.10.0-rc.3](https://github.com/disafronov/sloths-inventory/compare/v0.10.0-rc.2...v0.10.0-rc.3) (2026-04-29)
 
 ### Features
