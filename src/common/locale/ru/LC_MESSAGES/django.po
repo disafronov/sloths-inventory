@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-29 21:43+0300\n"
+"POT-Creation-Date: 2026-04-29 21:51+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -46,14 +46,22 @@ msgid "Sloths Inventory"
 msgstr "Инвентаризация ленивцев"
 
 #: src/common/templates/base.html:113
+msgid "My items"
+msgstr "Мои вещи"
+
+#: src/common/templates/base.html:114
+msgid "Previously my items"
+msgstr "Ранее закреплённые за мной"
+
+#: src/common/templates/base.html:115
 msgid "Admin"
 msgstr "Админка"
 
-#: src/common/templates/base.html:116
+#: src/common/templates/base.html:118
 msgid "Logout"
 msgstr "Выйти"
 
-#: src/common/templates/base.html:119 src/common/templates/login.html:4
+#: src/common/templates/base.html:121 src/common/templates/login.html:4
 #: src/common/templates/login.html:6 src/common/templates/login.html:12
 msgid "Login"
 msgstr "Войти"
