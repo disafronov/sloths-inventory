@@ -1,5 +1,6 @@
 import pytest
 from django.contrib.admin.sites import AdminSite
+from django.contrib.auth import get_user_model
 from django.test import RequestFactory
 
 from catalogs.models import Location, Responsible, Status
@@ -84,3 +85,98 @@ def test_operation_admin_responsible_display() -> None:
     admin_obj = OperationAdmin(Operation, site)
 
     assert admin_obj.get_responsible_display(op) == responsible.get_full_name()
+
+
+@pytest.mark.django_db
+def test_operation_admin_allows_edit_only_for_latest_operation() -> None:
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+
+    status = Status.objects.create(name="In stock")
+    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    location = Location.objects.create(name="Moscow")
+
+    item = Item.objects.create(inventory_number="INV-012", device=device)
+    op1 = Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=responsible,
+        location=location,
+    )
+    op2 = Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=responsible,
+        location=location,
+    )
+
+    site = AdminSite()
+    admin_obj = OperationAdmin(Operation, site)
+    rf = RequestFactory()
+    request = rf.get("/")
+    user = get_user_model().objects.create_superuser(
+        username="admin", email="admin@example.com", password="password"
+    )
+    request.user = user
+
+    assert admin_obj.has_change_permission(request, obj=op1) is False
+    assert admin_obj.has_delete_permission(request, obj=op1) is False
+
+    assert admin_obj.has_change_permission(request, obj=op2) is True
+    assert admin_obj.has_delete_permission(request, obj=op2) is True
+
+
+@pytest.mark.django_db
+def test_operation_admin_permission_short_circuits() -> None:
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+
+    status = Status.objects.create(name="In stock")
+    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    location = Location.objects.create(name="Moscow")
+
+    item = Item.objects.create(inventory_number="INV-013", device=device)
+    op = Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=responsible,
+        location=location,
+    )
+
+    site = AdminSite()
+    admin_obj = OperationAdmin(Operation, site)
+    rf = RequestFactory()
+
+    # If obj is None, we should fall back to the base permission check.
+    request_any = rf.get("/")
+    superuser = get_user_model().objects.create_superuser(
+        username="admin2", email="admin2@example.com", password="password"
+    )
+    request_any.user = superuser
+    assert admin_obj.has_change_permission(request_any, obj=None) is True
+    assert admin_obj.has_delete_permission(request_any, obj=None) is True
+
+    # If base permission check fails, we should short-circuit to False.
+    request_denied = rf.get("/")
+    normal_user = get_user_model().objects.create_user(
+        username="user", email="user@example.com", password="password"
+    )
+    request_denied.user = normal_user
+    assert admin_obj.has_change_permission(request_denied, obj=op) is False
+    assert admin_obj.has_delete_permission(request_denied, obj=op) is False

@@ -138,6 +138,31 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
         "location",
     ]
 
+    def _is_latest_for_item(self, obj: Operation) -> bool:
+        latest_id = (
+            Operation.objects.filter(item_id=obj.item_id)
+            .order_by("-created_at", "-id")
+            .values_list("id", flat=True)
+            .first()
+        )
+        return latest_id == obj.pk
+
+    def has_change_permission(
+        self, request: HttpRequest, obj: Operation | None = None
+    ) -> bool:
+        allowed = super().has_change_permission(request, obj)
+        if not allowed or obj is None:
+            return allowed
+        return self._is_latest_for_item(obj)
+
+    def has_delete_permission(
+        self, request: HttpRequest, obj: Operation | None = None
+    ) -> bool:
+        allowed = super().has_delete_permission(request, obj)
+        if not allowed or obj is None:
+            return allowed
+        return self._is_latest_for_item(obj)
+
     @admin.display(description=_("Responsible Person"))
     def get_responsible_display(self, obj: Operation) -> str:
         return obj.responsible.get_full_name()
