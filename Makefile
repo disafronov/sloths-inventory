@@ -3,7 +3,9 @@ PYTHONPATH = src
 PYTEST_CMD = PYTHONPATH=$(PYTHONPATH) uv run python -m pytest -v
 COVERAGE_OPTS = --cov --cov-report=term-missing --cov-report=html
 
-.PHONY: all clean dead-code format help install lint test test-coverage
+DOCKER_IMAGE = sloths-inventory
+
+.PHONY: all clean dead-code docker docker-build docker-run format help install lint test test-coverage
 
 help: ## Show this help message
 	@echo "Available commands:"
@@ -47,4 +49,20 @@ clean: ## Clean caches and coverage outputs
 	rm -rf .mypy_cache/ .pytest_cache/ .venv/ build/ dist/ htmlcov/ .coverage
 	find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
 	find . -type f -name "*.pyc" -delete 2>/dev/null || true
+
+docker-build: ## Build Docker image
+	@echo "Building Docker image..."
+	docker build -t $(DOCKER_IMAGE) .
+
+docker-run: ## Run Docker container
+	@echo "Running Docker container..."
+	docker run --rm \
+		-p 8000:8000 \
+		$(if $(wildcard env.example),--env-file env.example,) \
+		$(if $(wildcard env.docker),--env-file env.docker,) \
+		$(if $(wildcard .env),--env-file .env,) \
+		$(DOCKER_IMAGE)
+
+docker: docker-build docker-run ## Build and run Docker container
+	@echo "Docker container built and running!"
 
