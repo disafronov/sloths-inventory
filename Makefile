@@ -3,9 +3,10 @@ PYTHONPATH = src
 PYTEST_CMD = PYTHONPATH=$(PYTHONPATH) uv run python -m pytest -v
 COVERAGE_OPTS = --cov --cov-report=term-missing --cov-report=html
 
-.PHONY: all clean help format lint test test-coverage dead-code install
+.PHONY: all clean dead-code format help install lint test test-coverage
 
 help: ## Show this help message
+	@echo "Available commands:"
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  %-15s %s\n", $$1, $$2}' $(MAKEFILE_LIST) | sort
 
 install: ## Install dependencies
@@ -28,7 +29,7 @@ lint: ## Run linting tools
 
 dead-code: ## Check for dead code using vulture
 	@echo "Checking for dead code..."
-	PYTHONPATH=$(PYTHONPATH) uv run vulture .
+	uv run vulture
 
 test: ## Run tests
 	@echo "Running tests..."
@@ -43,5 +44,7 @@ all: format lint test dead-code ## Run format, lint, test, and dead-code check
 
 clean: ## Clean caches and coverage outputs
 	@echo "Cleaning cache and temporary files..."
-	rm -rf .mypy_cache/ .pytest_cache/ .venv/ build/ dist/ htmlcov/ .coverage coverage.xml .coverage.*
+	rm -rf .mypy_cache/ .pytest_cache/ .venv/ build/ dist/ htmlcov/ .coverage
+	find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+	find . -type f -name "*.pyc" -delete 2>/dev/null || true
 
