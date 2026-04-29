@@ -100,7 +100,7 @@ WSGI_APPLICATION = "sloths_inventory.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "ENGINE": "django.db.backends.postgresql",
         "NAME": env("DATABASE_NAME", default="database"),
         "USER": env("DATABASE_USER", default="user"),
         "PASSWORD": env("DATABASE_PASSWORD", default="password"),
