@@ -6,38 +6,38 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('inventory', '0001_initial'),
+        ("inventory", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='item',
-            name='created_at',
-            field=models.DateTimeField(auto_now_add=True, verbose_name='Created at'),
+            model_name="item",
+            name="created_at",
+            field=models.DateTimeField(auto_now_add=True, verbose_name="Created at"),
         ),
         migrations.AlterField(
-            model_name='item',
-            name='notes',
-            field=models.TextField(blank=True, verbose_name='Notes'),
+            model_name="item",
+            name="notes",
+            field=models.TextField(blank=True, verbose_name="Notes"),
         ),
         migrations.AlterField(
-            model_name='item',
-            name='updated_at',
-            field=models.DateTimeField(auto_now=True, verbose_name='Updated at'),
+            model_name="item",
+            name="updated_at",
+            field=models.DateTimeField(auto_now=True, verbose_name="Updated at"),
         ),
         migrations.AlterField(
-            model_name='operation',
-            name='created_at',
-            field=models.DateTimeField(auto_now_add=True, verbose_name='Created at'),
+            model_name="operation",
+            name="created_at",
+            field=models.DateTimeField(auto_now_add=True, verbose_name="Created at"),
         ),
         migrations.AlterField(
-            model_name='operation',
-            name='notes',
-            field=models.TextField(blank=True, verbose_name='Notes'),
+            model_name="operation",
+            name="notes",
+            field=models.TextField(blank=True, verbose_name="Notes"),
         ),
         migrations.AlterField(
-            model_name='operation',
-            name='updated_at',
-            field=models.DateTimeField(auto_now=True, verbose_name='Updated at'),
+            model_name="operation",
+            name="updated_at",
+            field=models.DateTimeField(auto_now=True, verbose_name="Updated at"),
         ),
     ]

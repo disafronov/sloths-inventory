@@ -8,46 +8,60 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('catalogs', '0002_alter_location_created_at_alter_location_name_and_more'),
+        ("catalogs", "0002_alter_location_created_at_alter_location_name_and_more"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='location',
-            options={'verbose_name': 'Location', 'verbose_name_plural': 'Locations'},
+            name="location",
+            options={"verbose_name": "Location", "verbose_name_plural": "Locations"},
         ),
         migrations.AlterModelOptions(
-            name='responsible',
-            options={'ordering': ['last_name', 'first_name', 'middle_name'], 'verbose_name': 'Responsible', 'verbose_name_plural': 'Responsibles'},
+            name="responsible",
+            options={
+                "ordering": ["last_name", "first_name", "middle_name"],
+                "verbose_name": "Responsible",
+                "verbose_name_plural": "Responsibles",
+            },
         ),
         migrations.AlterModelOptions(
-            name='status',
-            options={'verbose_name': 'Status', 'verbose_name_plural': 'Statuses'},
+            name="status",
+            options={"verbose_name": "Status", "verbose_name_plural": "Statuses"},
         ),
         migrations.AlterField(
-            model_name='responsible',
-            name='employee_id',
-            field=models.CharField(blank=True, max_length=50, verbose_name='Employee ID'),
+            model_name="responsible",
+            name="employee_id",
+            field=models.CharField(
+                blank=True, max_length=50, verbose_name="Employee ID"
+            ),
         ),
         migrations.AlterField(
-            model_name='responsible',
-            name='first_name',
-            field=models.CharField(max_length=150, verbose_name='First name'),
+            model_name="responsible",
+            name="first_name",
+            field=models.CharField(max_length=150, verbose_name="First name"),
         ),
         migrations.AlterField(
-            model_name='responsible',
-            name='last_name',
-            field=models.CharField(max_length=150, verbose_name='Last name'),
+            model_name="responsible",
+            name="last_name",
+            field=models.CharField(max_length=150, verbose_name="Last name"),
         ),
         migrations.AlterField(
-            model_name='responsible',
-            name='middle_name',
-            field=models.CharField(blank=True, max_length=150, null=True, verbose_name='Middle name'),
+            model_name="responsible",
+            name="middle_name",
+            field=models.CharField(
+                blank=True, max_length=150, null=True, verbose_name="Middle name"
+            ),
         ),
         migrations.AlterField(
-            model_name='responsible',
-            name='user',
-            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL, verbose_name='User'),
+            model_name="responsible",
+            name="user",
+            field=models.OneToOneField(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="User",
+            ),
         ),
     ]

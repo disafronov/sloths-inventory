@@ -9,44 +9,121 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('catalogs', '0001_initial'),
-        ('devices', '0001_initial'),
+        ("catalogs", "0001_initial"),
+        ("devices", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Item',
+            name="Item",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Дата обновления')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')),
-                ('notes', models.TextField(blank=True, verbose_name='Примечания')),
-                ('inventory_number', models.CharField(max_length=50, unique=True, verbose_name='Инвентарный номер')),
-                ('serial_number', models.CharField(blank=True, max_length=50, verbose_name='Серийный номер')),
-                ('device', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='devices.device', verbose_name='Устройство')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Дата обновления"),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Дата создания"
+                    ),
+                ),
+                ("notes", models.TextField(blank=True, verbose_name="Примечания")),
+                (
+                    "inventory_number",
+                    models.CharField(
+                        max_length=50, unique=True, verbose_name="Инвентарный номер"
+                    ),
+                ),
+                (
+                    "serial_number",
+                    models.CharField(
+                        blank=True, max_length=50, verbose_name="Серийный номер"
+                    ),
+                ),
+                (
+                    "device",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="devices.device",
+                        verbose_name="Устройство",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Экземпляр',
-                'verbose_name_plural': 'Экземпляры',
-                'ordering': ['inventory_number'],
+                "verbose_name": "Экземпляр",
+                "verbose_name_plural": "Экземпляры",
+                "ordering": ["inventory_number"],
             },
         ),
         migrations.CreateModel(
-            name='Operation',
+            name="Operation",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Дата обновления')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')),
-                ('notes', models.TextField(blank=True, verbose_name='Примечания')),
-                ('item', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='inventory.item', verbose_name='Экземпляр')),
-                ('location', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='catalogs.location', verbose_name='Расположение')),
-                ('responsible', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='catalogs.responsible', verbose_name='Ответственный')),
-                ('status', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='catalogs.status', verbose_name='Статус')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Дата обновления"),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Дата создания"
+                    ),
+                ),
+                ("notes", models.TextField(blank=True, verbose_name="Примечания")),
+                (
+                    "item",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="inventory.item",
+                        verbose_name="Экземпляр",
+                    ),
+                ),
+                (
+                    "location",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="catalogs.location",
+                        verbose_name="Расположение",
+                    ),
+                ),
+                (
+                    "responsible",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="catalogs.responsible",
+                        verbose_name="Ответственный",
+                    ),
+                ),
+                (
+                    "status",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="catalogs.status",
+                        verbose_name="Статус",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Эксплуатация',
-                'verbose_name_plural': 'Эксплуатация',
-                'ordering': ['-updated_at'],
+                "verbose_name": "Эксплуатация",
+                "verbose_name_plural": "Эксплуатация",
+                "ordering": ["-updated_at"],
             },
         ),
     ]
