@@ -1,3 +1,9 @@
+## [0.9.0-rc.4](https://github.com/disafronov/sloths-inventory/compare/v0.9.0-rc.3...v0.9.0-rc.4) (2026-04-29)
+
+### Features
+
+* add logging configuration to settings ([d4915bf](https://github.com/disafronov/sloths-inventory/commit/d4915bf6d2469bc536165e3c01d09e8235488b7b))
+
 ## [0.9.0-rc.3](https://github.com/disafronov/sloths-inventory/compare/v0.9.0-rc.2...v0.9.0-rc.3) (2026-04-29)
 
 ### Features
