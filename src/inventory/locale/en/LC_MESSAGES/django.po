@@ -128,11 +128,6 @@ msgstr "Notes"
 msgid "No operations found."
 msgstr "No operations found."
 
-#: src/inventory/templates/inventory/item_history.html:45
-#: src/inventory/templates/inventory/previous_items.html:14
-msgid "Back to my items"
-msgstr "Back to my items"
-
 #: src/inventory/templates/inventory/my_items.html:4
 #: src/inventory/templates/inventory/my_items.html:6
 msgid "My items"
