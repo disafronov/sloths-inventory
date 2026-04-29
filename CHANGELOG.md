@@ -1,3 +1,25 @@
+## [0.10.0](https://github.com/disafronov/sloths-inventory/compare/v0.9.0...v0.10.0) (2026-04-29)
+
+### Features
+
+* add "Previously my items" feature ([3dfa5ef](https://github.com/disafronov/sloths-inventory/commit/3dfa5ef9dd181404683c0cde63945bf8cf2d1258))
+* add new links for "My items" and "Previously my items" in the base template ([0492bcc](https://github.com/disafronov/sloths-inventory/commit/0492bccc4e71fd9ce87d5c5171b24310ac68c608))
+* enhance error messaging for operation edit restrictions ([1759af9](https://github.com/disafronov/sloths-inventory/commit/1759af989dec117bb649db20c8cdcdd8fa148970))
+* enhance home view and URL structure ([e55c769](https://github.com/disafronov/sloths-inventory/commit/e55c7697736eea520983dd18de8dbde78ddbba69))
+* implement edit time restriction for operations ([c1ab095](https://github.com/disafronov/sloths-inventory/commit/c1ab0955121ad6613ba01c3d131aca5d6c373fde))
+* implement inventory management features ([1a23f19](https://github.com/disafronov/sloths-inventory/commit/1a23f19a13cf343b08fbc97abee6d462b5463f0a))
+* make operation edit window configurable ([1d4b9f8](https://github.com/disafronov/sloths-inventory/commit/1d4b9f88c21ebddaa891b96a0375676456ce6744))
+
+### Bug Fixes
+
+* add error code for editing restriction in operations ([8887048](https://github.com/disafronov/sloths-inventory/commit/88870483047e913bb24dc5b0f2d625ad43d104b4))
+* enforce handoff operation requirement in item history view ([6da7ede](https://github.com/disafronov/sloths-inventory/commit/6da7ede7d2c371d84500040a7f4318286e3fd827))
+* update English translation for "Previously my items" ([abbabf3](https://github.com/disafronov/sloths-inventory/commit/abbabf366dcc677d61ab93cb9beddb82ad169988))
+* update localization files and adjust message references ([10edb13](https://github.com/disafronov/sloths-inventory/commit/10edb13121950ae716f905b378b33fae6bc08452))
+* update localization files and remove unused links in "My items" template ([aba9a09](https://github.com/disafronov/sloths-inventory/commit/aba9a093b3cebba3b4d888413c141512dff64661))
+* update Russian localization for account linking message ([6fde91a](https://github.com/disafronov/sloths-inventory/commit/6fde91ad84c5e4795db247b8387a508262bd7702))
+* update Russian translation for "Previously my items" ([0513707](https://github.com/disafronov/sloths-inventory/commit/05137071dcff80b16e45452c6ad1a0bfeffea9c2))
+
 ## [0.10.0-rc.5](https://github.com/disafronov/sloths-inventory/compare/v0.10.0-rc.4...v0.10.0-rc.5) (2026-04-29)
 
 ### Features
