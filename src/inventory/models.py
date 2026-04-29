@@ -131,7 +131,8 @@ class Operation(BaseModel):
                 _(
                     "This operation can no longer be edited "
                     "(the correction window has expired)"
-                )
+                ),
+                code="correction_window_expired",
             )
 
         latest_id = (
