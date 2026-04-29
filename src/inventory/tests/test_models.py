@@ -134,9 +134,15 @@ def test_operation_str_and_responsible_display() -> None:
     assert str(op) == f"{item} - {status} ({location})"
 
 
-def test_current_operation_value_descriptor_access_via_class_contract() -> None:
-    # Descriptor protocol contract: access via the class must return the descriptor
-    # itself (so admin/forms/introspection can read configuration without an instance).
+def test_current_operation_value_is_introspectable_via_class_access() -> None:
+    """
+    Descriptor contract: accessing the attribute via the class returns the descriptor.
+
+    This matters for Django/admin introspection and for safe refactoring: if the
+    descriptor stops being accessible at class level, it's easy to accidentally
+    break dynamic attribute usage patterns.
+    """
+
     descriptor = Item.current_status
     assert isinstance(descriptor, Item.CurrentOperationValue)
     assert descriptor.attr_name == "status"
