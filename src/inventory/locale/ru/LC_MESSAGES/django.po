@@ -86,9 +86,22 @@ msgstr "Эксплуатации"
 msgid "Operation item cannot be changed"
 msgstr "Нельзя изменить предмет у операции"
 
-#: src/inventory/models.py:132
-msgid "This operation can no longer be edited (the correction window has expired)"
-msgstr "Эту операцию больше нельзя редактировать (окно исправления истекло)"
+#: src/inventory/models.py:133
+msgid ""
+"This operation can no longer be edited (the %(minutes)d minute correction "
+"window has expired)"
+msgid_plural ""
+"This operation can no longer be edited (the %(minutes)d minutes correction "
+"window has expired)"
+msgstr[0] ""
+"Эту операцию больше нельзя редактировать (окно исправления в %(minutes)d "
+"минуту истекло)"
+msgstr[1] ""
+"Эту операцию больше нельзя редактировать (окно исправления в %(minutes)d "
+"минуты истекло)"
+msgstr[2] ""
+"Эту операцию больше нельзя редактировать (окно исправления в %(minutes)d "
+"минут истекло)"
 
 #: src/inventory/models.py:149
 msgid "Only the latest operation for this item can be edited"
