@@ -56,7 +56,7 @@ RUN --mount=from=uv,source=/uv,target=/bin/uv \
     --mount=type=bind,source=README.md,target=README.md \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
-    uv sync --frozen --link-mode=copy --no-editable --no-dev
+    uv sync --frozen --link-mode=copy --no-editable --no-group dev
 
 # Compile translations inside the build image.
 WORKDIR /home/ubuntu/app/src
