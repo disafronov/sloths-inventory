@@ -88,13 +88,13 @@ WSGI_APPLICATION = "sloths_inventory.wsgi.application"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME':     env("DATABASE_NAME",        default="database"),
-        'USER':     env("DATABASE_USER",        default="user"),
-        'PASSWORD': env("DATABASE_PASSWORD",    default="password"),
-        'HOST':     env("DATABASE_HOST",        default="127.0.0.1"),
-        'PORT':     env("DATABASE_PORT",        default="5432"),
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": env("DATABASE_NAME", default="database"),
+        "USER": env("DATABASE_USER", default="user"),
+        "PASSWORD": env("DATABASE_PASSWORD", default="password"),
+        "HOST": env("DATABASE_HOST", default="127.0.0.1"),
+        "PORT": env("DATABASE_PORT", default="5432"),
     }
 }
 
@@ -104,7 +104,10 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "NAME": (
+            "django.contrib.auth.password_validation."
+            "UserAttributeSimilarityValidator"
+        ),
     },
     {
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
@@ -130,23 +133,23 @@ USE_L10N = True
 USE_TZ = True
 
 LANGUAGES = [
-    ('ru', 'Русский'),
-    ('en', 'English'),
+    ("ru", "Русский"),
+    ("en", "English"),
 ]
 
 LOCALE_PATHS = [
-    BASE_DIR / 'common' / 'locale',
-    BASE_DIR / 'devices' / 'locale',
-    BASE_DIR / 'catalogs' / 'locale',
-    BASE_DIR / 'inventory' / 'locale',
-    BASE_DIR / 'health' / 'locale',
+    BASE_DIR / "common" / "locale",
+    BASE_DIR / "devices" / "locale",
+    BASE_DIR / "catalogs" / "locale",
+    BASE_DIR / "inventory" / "locale",
+    BASE_DIR / "health" / "locale",
 ]
 
 # Настройки для определения языка
-LANGUAGE_COOKIE_NAME = 'django_language'
+LANGUAGE_COOKIE_NAME = "django_language"
 LANGUAGE_COOKIE_AGE = None
 LANGUAGE_COOKIE_DOMAIN = None
-LANGUAGE_COOKIE_PATH = '/'
+LANGUAGE_COOKIE_PATH = "/"
 
 
 # Static files (CSS, JavaScript, Images)
@@ -160,8 +163,8 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Test runner
-TEST_RUNNER = 'sloths_inventory.tests.runner.PytestTestRunner'
+TEST_RUNNER = "sloths_inventory.tests.runner.PytestTestRunner"
 
-LOGIN_URL = 'common:login'
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
+LOGIN_URL = "common:login"
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"

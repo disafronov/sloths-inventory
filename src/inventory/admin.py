@@ -1,23 +1,28 @@
 from django.contrib import admin
 from django.utils.translation import gettext as _
+
 from common.admin import BaseAdmin
+
 from .models import Item, Operation
 
 
 class CurrentFieldMixin:
     def get_current_field(self, obj, field_name):
-        return self._format_empty_value(getattr(obj, f'current_{field_name}'))
+        return self._format_empty_value(getattr(obj, f"current_{field_name}"))
 
     def current_status(self, obj):
-        return self.get_current_field(obj, 'status')
+        return self.get_current_field(obj, "status")
+
     current_status.short_description = _("Status")
 
     def current_location(self, obj):
-        return self.get_current_field(obj, 'location')
+        return self.get_current_field(obj, "location")
+
     current_location.short_description = _("Location")
 
     def current_responsible(self, obj):
-        return self.get_current_field(obj, 'responsible')
+        return self.get_current_field(obj, "responsible")
+
     current_responsible.short_description = _("Responsible Person")
 
 
@@ -57,7 +62,11 @@ class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
         "serial_number",
         "notes",
     )
-    readonly_fields = list(BaseAdmin.readonly_fields) + ["current_status", "current_location", "current_responsible"]
+    readonly_fields = list(BaseAdmin.readonly_fields) + [
+        "current_status",
+        "current_location",
+        "current_responsible",
+    ]
     autocomplete_fields = ["device"]
     main_fields = (
         "inventory_number",
@@ -72,16 +81,19 @@ class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
         additional_info = fieldsets.pop(1)
         fieldsets.insert(1, additional_info)
         # Add "Operation" section after
-        fieldsets.insert(2, (
-            _("Operation"),
-            {
-                "fields": (
-                    "current_status",
-                    "current_responsible",
-                    "current_location",
-                )
-            },
-        ))
+        fieldsets.insert(
+            2,
+            (
+                _("Operation"),
+                {
+                    "fields": (
+                        "current_status",
+                        "current_responsible",
+                        "current_location",
+                    )
+                },
+            ),
+        )
         return fieldsets
 
 
@@ -124,4 +136,5 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
 
     def get_responsible_display(self, obj):
         return obj.responsible.get_full_name()
+
     get_responsible_display.short_description = _("Responsible Person")

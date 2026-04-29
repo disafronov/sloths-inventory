@@ -6,63 +6,63 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('catalogs', '0001_initial'),
+        ("catalogs", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='location',
-            name='created_at',
-            field=models.DateTimeField(auto_now_add=True, verbose_name='Created at'),
+            model_name="location",
+            name="created_at",
+            field=models.DateTimeField(auto_now_add=True, verbose_name="Created at"),
         ),
         migrations.AlterField(
-            model_name='location',
-            name='name',
-            field=models.CharField(max_length=255, unique=True, verbose_name='Name'),
+            model_name="location",
+            name="name",
+            field=models.CharField(max_length=255, unique=True, verbose_name="Name"),
         ),
         migrations.AlterField(
-            model_name='location',
-            name='notes',
-            field=models.TextField(blank=True, verbose_name='Notes'),
+            model_name="location",
+            name="notes",
+            field=models.TextField(blank=True, verbose_name="Notes"),
         ),
         migrations.AlterField(
-            model_name='location',
-            name='updated_at',
-            field=models.DateTimeField(auto_now=True, verbose_name='Updated at'),
+            model_name="location",
+            name="updated_at",
+            field=models.DateTimeField(auto_now=True, verbose_name="Updated at"),
         ),
         migrations.AlterField(
-            model_name='responsible',
-            name='created_at',
-            field=models.DateTimeField(auto_now_add=True, verbose_name='Created at'),
+            model_name="responsible",
+            name="created_at",
+            field=models.DateTimeField(auto_now_add=True, verbose_name="Created at"),
         ),
         migrations.AlterField(
-            model_name='responsible',
-            name='notes',
-            field=models.TextField(blank=True, verbose_name='Notes'),
+            model_name="responsible",
+            name="notes",
+            field=models.TextField(blank=True, verbose_name="Notes"),
         ),
         migrations.AlterField(
-            model_name='responsible',
-            name='updated_at',
-            field=models.DateTimeField(auto_now=True, verbose_name='Updated at'),
+            model_name="responsible",
+            name="updated_at",
+            field=models.DateTimeField(auto_now=True, verbose_name="Updated at"),
         ),
         migrations.AlterField(
-            model_name='status',
-            name='created_at',
-            field=models.DateTimeField(auto_now_add=True, verbose_name='Created at'),
+            model_name="status",
+            name="created_at",
+            field=models.DateTimeField(auto_now_add=True, verbose_name="Created at"),
         ),
         migrations.AlterField(
-            model_name='status',
-            name='name',
-            field=models.CharField(max_length=255, unique=True, verbose_name='Name'),
+            model_name="status",
+            name="name",
+            field=models.CharField(max_length=255, unique=True, verbose_name="Name"),
         ),
         migrations.AlterField(
-            model_name='status',
-            name='notes',
-            field=models.TextField(blank=True, verbose_name='Notes'),
+            model_name="status",
+            name="notes",
+            field=models.TextField(blank=True, verbose_name="Notes"),
         ),
         migrations.AlterField(
-            model_name='status',
-            name='updated_at',
-            field=models.DateTimeField(auto_now=True, verbose_name='Updated at'),
+            model_name="status",
+            name="updated_at",
+            field=models.DateTimeField(auto_now=True, verbose_name="Updated at"),
         ),
     ]

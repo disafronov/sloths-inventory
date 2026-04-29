@@ -7,12 +7,11 @@ class BaseAdmin(admin.ModelAdmin):
     list_display = ["updated_at", "created_at"]
     search_fields = ["created_at", "updated_at", "notes"]
     fieldsets = (
-        (None, {
-            "fields": ()  # Будет переопределено в дочерних классах
-        }),
-        (_("Additional information"), {
-            "fields": ("notes", "updated_at", "created_at")
-        }),
+        (None, {"fields": ()}),  # Будет переопределено в дочерних классах
+        (
+            _("Additional information"),
+            {"fields": ("notes", "updated_at", "created_at")},
+        ),
     )
     main_fields = ()  # Будет переопределено в дочерних классах
 
