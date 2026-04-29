@@ -220,8 +220,9 @@ def test_operation_latest_edit_is_blocked_after_correction_window() -> None:
     op.refresh_from_db()
 
     op.status = status2
-    with pytest.raises(ValidationError, match="correction window"):
+    with pytest.raises(ValidationError) as exc_info:
         op.save()
+    assert exc_info.value.error_dict["__all__"][0].code == "correction_window_expired"
 
 
 @pytest.mark.django_db
