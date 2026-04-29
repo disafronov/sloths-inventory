@@ -39,7 +39,7 @@ msgid "Name"
 msgstr "Name"
 
 #: common/templates/base.html:7 common/templates/base.html:96
-#: common/templates/home.html:4 common/templates/login.html:4
+#: common/templates/login.html:4
 msgid "Sloths Inventory"
 msgstr "Sloths Inventory"
 
@@ -59,15 +59,3 @@ msgstr "Logout"
 #: common/templates/login.html:6 common/templates/login.html:12
 msgid "Login"
 msgstr "Login"
-
-#: common/templates/home.html:4
-msgid "Home"
-msgstr "Home"
-
-#: common/templates/home.html:6
-msgid "Welcome to Sloths Inventory"
-msgstr "Welcome to Sloths Inventory"
-
-#: common/templates/home.html:9
-msgid "Equipment inventory system"
-msgstr "Equipment inventory system"
