@@ -134,6 +134,56 @@ def test_operation_str_and_responsible_display() -> None:
     assert str(op) == f"{item} - {status} ({location})"
 
 
+@pytest.mark.django_db
+def test_operation_only_latest_can_be_edited_and_item_cannot_change() -> None:
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+
+    status1 = Status.objects.create(name="S1")
+    status2 = Status.objects.create(name="S2")
+    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    location = Location.objects.create(name="Moscow")
+
+    item1 = Item.objects.create(inventory_number="INV-100", device=device)
+    item2 = Item.objects.create(inventory_number="INV-101", device=device)
+
+    op1 = Operation.objects.create(
+        item=item1,
+        status=status1,
+        responsible=responsible,
+        location=location,
+    )
+    op2 = Operation.objects.create(
+        item=item1,
+        status=status1,
+        responsible=responsible,
+        location=location,
+    )
+
+    # Old operations are append-only: cannot edit.
+    op1.status = status2
+    with pytest.raises(ValidationError):
+        op1.save()
+
+    # The latest operation may be corrected.
+    op2.status = status2
+    op2.notes = "typo fix"
+    op2.save()
+
+    # Changing item is forbidden even for the latest operation.
+    op2.item = item2
+    with pytest.raises(ValidationError):
+        op2.save()
+
+
 def test_current_operation_value_is_introspectable_via_class_access() -> None:
     """
     Descriptor contract: accessing the attribute via the class returns the descriptor.
