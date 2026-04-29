@@ -62,6 +62,9 @@ yourself.
 - **Correction window**: editing the latest operation is only allowed within a
   limited time window after it was created. The window is configurable via
   `INVENTORY_OPERATION_EDIT_WINDOW_MINUTES` (default: 10 minutes).
+- **Item history visibility**: item history is only accessible to the current
+  owner and former owners. Former owners can only see the history up to the last
+  time the item was assigned to them, plus one subsequent handoff operation.
 
 ## Configuration
 
