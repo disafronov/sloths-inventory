@@ -41,7 +41,7 @@ msgid "Name"
 msgstr "Название"
 
 #: common/templates/base.html:7 common/templates/base.html:96
-#: common/templates/home.html:4 common/templates/login.html:4
+#: common/templates/login.html:4
 msgid "Sloths Inventory"
 msgstr "Инвентаризация ленивцев"
 
@@ -61,15 +61,3 @@ msgstr "Выйти"
 #: common/templates/login.html:6 common/templates/login.html:12
 msgid "Login"
 msgstr "Войти"
-
-#: common/templates/home.html:4
-msgid "Home"
-msgstr "Главная"
-
-#: common/templates/home.html:6
-msgid "Welcome to Sloths Inventory"
-msgstr "Добро пожаловать в Инвентаризацию ленивцев"
-
-#: common/templates/home.html:9
-msgid "Equipment inventory system"
-msgstr "Система учета оборудования"
