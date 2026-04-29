@@ -86,7 +86,46 @@ class Operation(BaseModel):
     class Meta:
         verbose_name = _("Operation")
         verbose_name_plural = _("Operations")
-        ordering = ["-updated_at"]
+        ordering = ["-created_at", "-id"]
+
+    def clean(self) -> None:
+        """
+        Enforce append-only semantics for operations.
+
+        Only the latest operation for a given item may be edited, and only to
+        correct its state fields. This keeps the history stable while allowing
+        a human error to be fixed without rewriting older events.
+        """
+
+        super().clean()
+
+        if self._state.adding:
+            return
+
+        original = Operation.objects.only(
+            "item_id", "status_id", "responsible_id", "location_id", "notes"
+        ).get(pk=self.pk)
+
+        if self.item_id != original.item_id:
+            raise ValidationError({"item": _("Operation item cannot be changed")})
+
+        latest = (
+            Operation.objects.filter(item_id=self.item_id)
+            .order_by("-created_at", "-id")
+            .only("id")
+            .first()
+        )
+        if latest is None:
+            return
+        if latest.id != self.pk:
+            raise ValidationError(
+                _("Only the latest operation for this item can be edited")
+            )
+
+    def save(self, *args: Any, **kwargs: Any) -> None:
+        # Ensure `clean()` runs on updates as well (admin and any other code path).
+        self.full_clean()
+        return super().save(*args, **kwargs)
 
     def __str__(self) -> str:
         return f"{self.item} - {self.status} ({self.location})"
