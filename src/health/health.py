@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 
 def check_database() -> tuple[bool, str]:
-    """Проверка базы данных"""
+    """Check database connectivity."""
     try:
         with connection.cursor() as cursor:
             cursor.execute("SELECT 1")
@@ -19,15 +19,16 @@ def check_database() -> tuple[bool, str]:
 
 def liveness(request: HttpRequest) -> JsonResponse:
     """
-    Liveness probe проверяет, что процесс приложения работает.
+    Liveness probe checks that the application process is running.
     """
     return JsonResponse({"status": "ok"})
 
 
 def readiness(request: HttpRequest) -> JsonResponse:
     """
-    Readiness probe проверяет, что приложение готово принимать трафик.
-    Проверяет доступность критических компонентов.
+    Readiness probe checks that the application is ready to accept traffic.
+
+    It verifies availability of critical dependencies.
     """
     checks = {"database": check_database()}
 
