@@ -47,6 +47,12 @@ ALLOWED_HOSTS = _split_env_list(env("ALLOWED_HOSTS", default=""))
 
 CSRF_TRUSTED_ORIGINS = _split_env_list(env("CSRF_TRUSTED_ORIGINS", default=""))
 
+# Inventory domain settings
+INVENTORY_OPERATION_EDIT_WINDOW_MINUTES = env.int(
+    "INVENTORY_OPERATION_EDIT_WINDOW_MINUTES",
+    default=10,
+)
+
 
 # Application definition
 
