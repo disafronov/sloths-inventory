@@ -8,83 +8,210 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Category',
+            name="Category",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Дата обновления')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')),
-                ('notes', models.TextField(blank=True, verbose_name='Примечания')),
-                ('name', models.CharField(max_length=255, unique=True, verbose_name='Название')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Дата обновления"),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Дата создания"
+                    ),
+                ),
+                ("notes", models.TextField(blank=True, verbose_name="Примечания")),
+                (
+                    "name",
+                    models.CharField(
+                        max_length=255, unique=True, verbose_name="Название"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Категория',
-                'verbose_name_plural': 'Категории',
+                "verbose_name": "Категория",
+                "verbose_name_plural": "Категории",
             },
         ),
         migrations.CreateModel(
-            name='Manufacturer',
+            name="Manufacturer",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Дата обновления')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')),
-                ('notes', models.TextField(blank=True, verbose_name='Примечания')),
-                ('name', models.CharField(max_length=255, unique=True, verbose_name='Название')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Дата обновления"),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Дата создания"
+                    ),
+                ),
+                ("notes", models.TextField(blank=True, verbose_name="Примечания")),
+                (
+                    "name",
+                    models.CharField(
+                        max_length=255, unique=True, verbose_name="Название"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Производитель',
-                'verbose_name_plural': 'Производители',
+                "verbose_name": "Производитель",
+                "verbose_name_plural": "Производители",
             },
         ),
         migrations.CreateModel(
-            name='Model',
+            name="Model",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Дата обновления')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')),
-                ('notes', models.TextField(blank=True, verbose_name='Примечания')),
-                ('name', models.CharField(max_length=255, unique=True, verbose_name='Название')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Дата обновления"),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Дата создания"
+                    ),
+                ),
+                ("notes", models.TextField(blank=True, verbose_name="Примечания")),
+                (
+                    "name",
+                    models.CharField(
+                        max_length=255, unique=True, verbose_name="Название"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Модель',
-                'verbose_name_plural': 'Модели',
+                "verbose_name": "Модель",
+                "verbose_name_plural": "Модели",
             },
         ),
         migrations.CreateModel(
-            name='Type',
+            name="Type",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Дата обновления')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')),
-                ('notes', models.TextField(blank=True, verbose_name='Примечания')),
-                ('name', models.CharField(max_length=255, unique=True, verbose_name='Название')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Дата обновления"),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Дата создания"
+                    ),
+                ),
+                ("notes", models.TextField(blank=True, verbose_name="Примечания")),
+                (
+                    "name",
+                    models.CharField(
+                        max_length=255, unique=True, verbose_name="Название"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Тип',
-                'verbose_name_plural': 'Типы',
+                "verbose_name": "Тип",
+                "verbose_name_plural": "Типы",
             },
         ),
         migrations.CreateModel(
-            name='Device',
+            name="Device",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Дата обновления')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')),
-                ('notes', models.TextField(blank=True, verbose_name='Примечания')),
-                ('category', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='devices.category', verbose_name='Категория')),
-                ('manufacturer', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='devices.manufacturer', verbose_name='Производитель')),
-                ('model', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='devices.model', verbose_name='Модель')),
-                ('type', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='devices.type', verbose_name='Тип')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Дата обновления"),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Дата создания"
+                    ),
+                ),
+                ("notes", models.TextField(blank=True, verbose_name="Примечания")),
+                (
+                    "category",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="devices.category",
+                        verbose_name="Категория",
+                    ),
+                ),
+                (
+                    "manufacturer",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="devices.manufacturer",
+                        verbose_name="Производитель",
+                    ),
+                ),
+                (
+                    "model",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="devices.model",
+                        verbose_name="Модель",
+                    ),
+                ),
+                (
+                    "type",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="devices.type",
+                        verbose_name="Тип",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Устройство',
-                'verbose_name_plural': 'Устройства',
-                'ordering': ['category', 'type', 'manufacturer', 'model'],
-                'unique_together': {('category', 'type', 'manufacturer', 'model')},
+                "verbose_name": "Устройство",
+                "verbose_name_plural": "Устройства",
+                "ordering": ["category", "type", "manufacturer", "model"],
+                "unique_together": {("category", "type", "manufacturer", "model")},
             },
         ),
     ]

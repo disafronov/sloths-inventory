@@ -1,6 +1,7 @@
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
 from django.utils.translation import gettext_lazy as _
+
 from common.models import BaseModel, NamedModel
 
 
@@ -13,7 +14,9 @@ class Location(NamedModel):
 class Responsible(BaseModel):
     last_name = models.CharField(max_length=150, verbose_name=_("Last name"))
     first_name = models.CharField(max_length=150, verbose_name=_("First name"))
-    middle_name = models.CharField(max_length=150, null=True, blank=True, verbose_name=_("Middle name"))
+    middle_name = models.CharField(
+        max_length=150, null=True, blank=True, verbose_name=_("Middle name")
+    )
     employee_id = models.CharField(
         max_length=50, blank=True, verbose_name=_("Employee ID")
     )
