@@ -1,3 +1,9 @@
+## [0.9.0-rc.2](https://github.com/disafronov/sloths-inventory/compare/v0.9.0-rc.1...v0.9.0-rc.2) (2026-04-29)
+
+### Bug Fixes
+
+* update entrypoint commands in Docker Compose configuration ([c2849e1](https://github.com/disafronov/sloths-inventory/commit/c2849e11b17679081f0ce517f087a96dd8dbc8bb))
+
 ## [0.9.0-rc.1](https://github.com/disafronov/sloths-inventory/compare/v0.8.3...v0.9.0-rc.1) (2026-04-29)
 
 ### Features
