@@ -50,6 +50,23 @@ def test_item_clean_requires_inventory_number() -> None:
 
 
 @pytest.mark.django_db
+def test_item_clean_valid_inventory_number() -> None:
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+
+    item = Item(inventory_number="INV-VALID", device=device)
+    item.clean()
+
+
+@pytest.mark.django_db
 def test_item_current_operation_and_current_fields() -> None:
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
