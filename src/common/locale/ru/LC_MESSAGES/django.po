@@ -49,10 +49,6 @@ msgstr "Инвентаризация ленивцев"
 msgid "Admin"
 msgstr "Админка"
 
-#: common/templates/base.html:114
-msgid "My items"
-msgstr "Мои вещи"
-
 #: common/templates/base.html:116
 msgid "Logout"
 msgstr "Выйти"
