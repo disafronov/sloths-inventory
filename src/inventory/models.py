@@ -130,16 +130,11 @@ class Operation(BaseModel):
         """
         Save the operation with concurrency-safe append-only enforcement.
 
-        For updates (not inserts), we serialize modifications per item by taking a
-        row-level lock on the related Item inside a transaction. This makes the
-        "only the latest operation may be edited" rule deterministic even under
-        concurrent edits.
+        We serialize all operation writes per item by taking a row-level lock on
+        the related Item inside a transaction. This makes the "only the latest
+        operation may be edited" rule deterministic even under concurrent inserts
+        and edits.
         """
-
-        # Inserts don't need locking: append-only constraints are about updates.
-        if self._state.adding:
-            self.full_clean()
-            return super().save(*args, **kwargs)
 
         with transaction.atomic():
             # Lock the item row to serialize concurrent updates for the same item.
