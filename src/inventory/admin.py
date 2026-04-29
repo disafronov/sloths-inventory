@@ -174,13 +174,37 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
             "location",
         )
 
-    def _is_latest_for_item(self, obj: Operation) -> bool:
-        latest_id = (
-            Operation.objects.filter(item_id=obj.item_id)
+    def _get_latest_operation_id_for_item(
+        self, request: HttpRequest, *, item_id: int
+    ) -> int | None:
+        """
+        Return the latest operation id for the given item, cached per request.
+
+        Admin permission checks may call this multiple times while rendering a
+        changelist. Caching keeps the behavior correct while avoiding repetitive
+        queries.
+        """
+
+        cache_attr = "_inventory_latest_operation_id_by_item"
+        cache = cast(dict[int, int | None] | None, getattr(request, cache_attr, None))
+        if cache is None:
+            cache = {}
+            setattr(request, cache_attr, cache)
+
+        if item_id in cache:
+            return cache[item_id]
+
+        latest_id: int | None = (
+            Operation.objects.filter(item_id=item_id)
             .order_by("-created_at", "-id")
             .values_list("id", flat=True)
             .first()
         )
+        cache[item_id] = latest_id
+        return latest_id
+
+    def _is_latest_for_item(self, request: HttpRequest, obj: Operation) -> bool:
+        latest_id = self._get_latest_operation_id_for_item(request, item_id=obj.item_id)
         return latest_id == obj.pk
 
     def has_change_permission(
@@ -189,7 +213,7 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
         allowed = super().has_change_permission(request, obj)
         if not allowed or obj is None:
             return allowed
-        return self._is_latest_for_item(obj)
+        return self._is_latest_for_item(request, obj)
 
     def has_delete_permission(
         self, request: HttpRequest, obj: Operation | None = None
@@ -197,7 +221,7 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
         allowed = super().has_delete_permission(request, obj)
         if not allowed or obj is None:
             return allowed
-        return self._is_latest_for_item(obj)
+        return self._is_latest_for_item(request, obj)
 
     @admin.display(description=_("Responsible Person"))
     def get_responsible_display(self, obj: Operation) -> str:

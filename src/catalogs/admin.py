@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.db.models import QuerySet
+from django.http import HttpRequest
 
 from common.admin import BaseAdmin, NamedModelAdmin
 
@@ -45,6 +47,14 @@ class ResponsibleAdmin(BaseAdmin):
         "employee_id",
         "user",
     )
+
+    def get_queryset(self, request: HttpRequest) -> QuerySet[Responsible]:
+        """
+        Avoid N+1 queries in admin list pages by preloading the related user.
+        """
+
+        qs = super().get_queryset(request)
+        return qs.select_related("user")
 
 
 @admin.register(Status)
