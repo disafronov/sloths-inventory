@@ -1,7 +1,9 @@
+from datetime import timedelta
 from typing import Any, Optional, overload
 
 from django.core.exceptions import ValidationError
 from django.db import models, transaction
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from catalogs.models import Location, Responsible, Status
@@ -110,12 +112,27 @@ class Operation(BaseModel):
         if self._state.adding:
             return
 
+        edit_window = timedelta(minutes=30)
+
         original = Operation.objects.only(
-            "item_id", "status_id", "responsible_id", "location_id", "notes"
+            "item_id",
+            "status_id",
+            "responsible_id",
+            "location_id",
+            "notes",
+            "created_at",
         ).get(pk=self.pk)
 
         if self.item_id != original.item_id:
             raise ValidationError({"item": _("Operation item cannot be changed")})
+
+        if timezone.now() - original.created_at > edit_window:
+            raise ValidationError(
+                _(
+                    "This operation can no longer be edited "
+                    "(the correction window has expired)"
+                )
+            )
 
         latest_id = (
             Operation.objects.filter(item_id=self.item_id)
