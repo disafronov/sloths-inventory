@@ -114,6 +114,10 @@ class Operation(BaseModel):
         if self._state.adding:
             return
 
+        # Editing operations is a "correction" path only. The goal is to prevent
+        # silent history rewrites while still allowing quick fixes for recent typos.
+        # The actual limit is configurable because different teams have different
+        # operational workflows.
         edit_window_minutes = getattr(
             settings, "INVENTORY_OPERATION_EDIT_WINDOW_MINUTES", 10
         )
@@ -141,6 +145,7 @@ class Operation(BaseModel):
             ) % {"minutes": edit_window_minutes}
             raise ValidationError(
                 message,
+                # Keep a stable error code for tests and possible UI handling.
                 code="correction_window_expired",
             )
 
