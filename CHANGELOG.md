@@ -1,3 +1,15 @@
+## [0.10.0-rc.5](https://github.com/disafronov/sloths-inventory/compare/v0.10.0-rc.4...v0.10.0-rc.5) (2026-04-29)
+
+### Features
+
+* enhance error messaging for operation edit restrictions ([22a280d](https://github.com/disafronov/sloths-inventory/commit/22a280d041641bc4e14e7383fabdf0ec7f122c66))
+* implement edit time restriction for operations ([7ecc89f](https://github.com/disafronov/sloths-inventory/commit/7ecc89f3c1c07e4d86db9e79b7bb44aab72c642a))
+* make operation edit window configurable ([6c73d20](https://github.com/disafronov/sloths-inventory/commit/6c73d20e1873ad7d9a36d87788ab983a786e5e94))
+
+### Bug Fixes
+
+* add error code for editing restriction in operations ([aa4b77a](https://github.com/disafronov/sloths-inventory/commit/aa4b77ab28d576f8738e80ad49c75a3deb1d0870))
+
 ## [0.10.0-rc.4](https://github.com/disafronov/sloths-inventory/compare/v0.10.0-rc.3...v0.10.0-rc.4) (2026-04-29)
 
 ### Bug Fixes
