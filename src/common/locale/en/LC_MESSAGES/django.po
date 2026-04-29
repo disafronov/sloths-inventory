@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-19 01:52+0400\n"
+"POT-Creation-Date: 2026-04-29 21:43+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,40 +18,40 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: common/admin.py:13
+#: src/common/admin.py:16
 msgid "Additional information"
 msgstr "Additional information"
 
-#: common/models.py:10
+#: src/common/models.py:12
 msgid "Updated at"
 msgstr "Updated at"
 
-#: common/models.py:11
+#: src/common/models.py:13
 msgid "Created at"
 msgstr "Created at"
 
-#: common/models.py:12
+#: src/common/models.py:14
 msgid "Notes"
 msgstr "Notes"
 
-#: common/models.py:23
+#: src/common/models.py:27
 msgid "Name"
 msgstr "Name"
 
-#: common/templates/base.html:7 common/templates/base.html:96
-#: common/templates/login.html:4
+#: src/common/templates/base.html:7 src/common/templates/base.html:96
+#: src/common/templates/login.html:4
 msgid "Sloths Inventory"
 msgstr "Sloths Inventory"
 
-#: common/templates/base.html:113
+#: src/common/templates/base.html:113
 msgid "Admin"
 msgstr "Admin"
 
-#: common/templates/base.html:116
+#: src/common/templates/base.html:116
 msgid "Logout"
 msgstr "Logout"
 
-#: common/templates/base.html:119 common/templates/login.html:4
-#: common/templates/login.html:6 common/templates/login.html:12
+#: src/common/templates/base.html:119 src/common/templates/login.html:4
+#: src/common/templates/login.html:6 src/common/templates/login.html:12
 msgid "Login"
 msgstr "Login"
