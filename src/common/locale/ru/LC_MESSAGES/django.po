@@ -51,7 +51,7 @@ msgstr "Мои вещи"
 
 #: src/common/templates/base.html:114
 msgid "Previously my items"
-msgstr "Ранее закреплённые за мной"
+msgstr "Были у меня"
 
 #: src/common/templates/base.html:115
 msgid "Admin"
