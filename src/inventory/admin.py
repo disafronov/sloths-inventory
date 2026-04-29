@@ -3,7 +3,7 @@ from typing import Any, Protocol, cast
 from django.contrib import admin
 from django.db.models import Model
 from django.http import HttpRequest
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 from common.admin import BaseAdmin
 
