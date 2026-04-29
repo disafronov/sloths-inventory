@@ -207,3 +207,53 @@ def test_operation_admin_queryset_is_select_related() -> None:
     assert "status" in qs.query.select_related
     assert "responsible" in qs.query.select_related
     assert "location" in qs.query.select_related
+
+
+@pytest.mark.django_db
+def test_operation_admin_latest_operation_id_is_cached_per_request(
+    django_assert_num_queries,
+) -> None:
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+
+    status = Status.objects.create(name="In stock")
+    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    location = Location.objects.create(name="Moscow")
+
+    item = Item.objects.create(inventory_number="INV-CACHE-001", device=device)
+    op1 = Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=responsible,
+        location=location,
+    )
+    op2 = Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=responsible,
+        location=location,
+    )
+
+    site = AdminSite()
+    admin_obj = OperationAdmin(Operation, site)
+    rf = RequestFactory()
+    request = rf.get("/")
+    request.user = get_user_model().objects.create_superuser(
+        username="admin-cache", email="admin-cache@example.com", password="password"
+    )
+
+    # First lookup: 1 query for latest_id. (Permission base checks are in-memory.)
+    with django_assert_num_queries(1):
+        assert admin_obj.has_change_permission(request, obj=op1) is False
+
+    # Second lookup for the same item within the same request should hit cache.
+    with django_assert_num_queries(0):
+        assert admin_obj.has_change_permission(request, obj=op2) is True
