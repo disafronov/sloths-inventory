@@ -11,49 +11,30 @@
 {% endif %}
 
 {% if items %}
-    <table style="width: 100%; border-collapse: collapse;">
-        <thead>
-            <tr>
-                <th style="text-align: left; border-bottom: 1px solid #eee; padding: 8px;">{% trans "Inventory number" %}</th>
-                <th style="text-align: left; border-bottom: 1px solid #eee; padding: 8px;">{% trans "Device" %}</th>
-                <th style="text-align: left; border-bottom: 1px solid #eee; padding: 8px;">{% trans "Serial number" %}</th>
-                <th style="text-align: left; border-bottom: 1px solid #eee; padding: 8px;">{% trans "Status" %}</th>
-                <th style="text-align: left; border-bottom: 1px solid #eee; padding: 8px;">{% trans "Location" %}</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in items %}
-                {% url 'inventory:item-history' item_id=item.id as history_url %}
-                <tr>
-                    <td style="border-bottom: 1px solid #f2f2f2; padding: 8px;">
-                        <a href="{{ history_url }}" style="display: block; color: inherit; text-decoration: none;">
-                            {{ item.inventory_number }}
-                        </a>
-                    </td>
-                    <td style="border-bottom: 1px solid #f2f2f2; padding: 8px;">
-                        <a href="{{ history_url }}" style="display: block; color: inherit; text-decoration: none;">
-                            {{ item.device }}
-                        </a>
-                    </td>
-                    <td style="border-bottom: 1px solid #f2f2f2; padding: 8px;">
-                        <a href="{{ history_url }}" style="display: block; color: inherit; text-decoration: none;">
-                            {{ item.serial_number|default:"-" }}
-                        </a>
-                    </td>
-                    <td style="border-bottom: 1px solid #f2f2f2; padding: 8px;">
-                        <a href="{{ history_url }}" style="display: block; color: inherit; text-decoration: none;">
-                            {{ item.current_status|default:"-" }}
-                        </a>
-                    </td>
-                    <td style="border-bottom: 1px solid #f2f2f2; padding: 8px;">
-                        <a href="{{ history_url }}" style="display: block; color: inherit; text-decoration: none;">
-                            {{ item.current_location|default:"-" }}
-                        </a>
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="item-card-list">
+        {% for item in items %}
+            {% url 'inventory:item-history' item_id=item.id as history_url %}
+            <a class="item-card" href="{{ history_url }}">
+                <div class="item-card__title">{{ item.inventory_number }}</div>
+                <div class="item-card__row">
+                    <span class="item-card__label">{% trans "Device" %}:</span>
+                    <span class="item-card__value">{{ item.device }}</span>
+                </div>
+                <div class="item-card__row">
+                    <span class="item-card__label">{% trans "Serial number" %}:</span>
+                    <span class="item-card__value">{{ item.serial_number|default:"-" }}</span>
+                </div>
+                <div class="item-card__row">
+                    <span class="item-card__label">{% trans "Status" %}:</span>
+                    <span class="item-card__value">{{ item.current_status|default:"-" }}</span>
+                </div>
+                <div class="item-card__row">
+                    <span class="item-card__label">{% trans "Location" %}:</span>
+                    <span class="item-card__value">{{ item.current_location|default:"-" }}</span>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
 {% else %}
     <p>{% trans "No items found." %}</p>
 {% endif %}

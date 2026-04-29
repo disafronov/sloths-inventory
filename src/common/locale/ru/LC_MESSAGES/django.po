@@ -65,3 +65,7 @@ msgstr "Выйти"
 #: src/common/templates/login.html:6 src/common/templates/login.html:12
 msgid "Login"
 msgstr "Войти"
+
+#: src/common/templates/base.html:20
+msgid "Language"
+msgstr "Язык"
