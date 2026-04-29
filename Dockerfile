@@ -30,6 +30,15 @@ ENV PATH="/home/ubuntu/app/.venv/bin:$PATH"
 
 FROM base AS builder
 
+# Install build-only dependencies for i18n compilation.
+USER root
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        gettext && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+USER ubuntu:ubuntu
+
 # Install dependencies first (without installing the project itself).
 RUN --mount=from=uv,source=/uv,target=/bin/uv \
     --mount=type=cache,target=/home/ubuntu/.cache/uv,uid=1000,gid=1000 \
@@ -49,13 +58,17 @@ RUN --mount=from=uv,source=/uv,target=/bin/uv \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
     uv sync --frozen --link-mode=copy --no-editable --no-dev
 
+# Compile translations inside the build image.
+WORKDIR /home/ubuntu/app/src
+RUN python3 manage.py compilemessages
+
 ##########################
 
 FROM base AS runtime
 
 # Copy venv and app files from builder stage.
 COPY --from=builder /home/ubuntu/app/.venv/ /home/ubuntu/app/.venv/
-COPY ./ /home/ubuntu/app/
+COPY --from=builder /home/ubuntu/app/src/ /home/ubuntu/app/src/
 
 WORKDIR /home/ubuntu/app/src
 
