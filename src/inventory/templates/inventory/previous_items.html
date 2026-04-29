@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "My items" %} - {% trans "Sloths Inventory" %}{% endblock %}
+{% block title %}{% trans "Previously my items" %} - {% trans "Sloths Inventory" %}{% endblock %}
 
-{% block heading %}{% trans "My items" %}{% endblock %}
+{% block heading %}{% trans "Previously my items" %}{% endblock %}
 
 {% block content %}
 {% if responsible is None %}
@@ -11,9 +11,7 @@
 {% endif %}
 
 <p>
-    <a class="button" href="{% url 'inventory:previous-items' %}">
-        {% trans "Previously my items" %}
-    </a>
+    <a class="button" href="{% url 'inventory:my-items' %}">{% trans "Back to my items" %}</a>
 </p>
 
 {% if items %}
@@ -23,8 +21,7 @@
                 <th style="text-align: left; border-bottom: 1px solid #eee; padding: 8px;">{% trans "Inventory number" %}</th>
                 <th style="text-align: left; border-bottom: 1px solid #eee; padding: 8px;">{% trans "Device" %}</th>
                 <th style="text-align: left; border-bottom: 1px solid #eee; padding: 8px;">{% trans "Serial number" %}</th>
-                <th style="text-align: left; border-bottom: 1px solid #eee; padding: 8px;">{% trans "Status" %}</th>
-                <th style="text-align: left; border-bottom: 1px solid #eee; padding: 8px;">{% trans "Location" %}</th>
+                <th style="text-align: left; border-bottom: 1px solid #eee; padding: 8px;">{% trans "Last on you" %}</th>
             </tr>
         </thead>
         <tbody>
@@ -48,12 +45,7 @@
                     </td>
                     <td style="border-bottom: 1px solid #f2f2f2; padding: 8px;">
                         <a href="{{ history_url }}" style="display: block; color: inherit; text-decoration: none;">
-                            {{ item.current_status|default:"-" }}
-                        </a>
-                    </td>
-                    <td style="border-bottom: 1px solid #f2f2f2; padding: 8px;">
-                        <a href="{{ history_url }}" style="display: block; color: inherit; text-decoration: none;">
-                            {{ item.current_location|default:"-" }}
+                            {{ item.last_on_me_created_at|date:"Y-m-d H:i:s"|default:"-" }}
                         </a>
                     </td>
                 </tr>
@@ -64,3 +56,4 @@
     <p>{% trans "No items found." %}</p>
 {% endif %}
 {% endblock %}
+

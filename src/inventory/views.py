@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from django.contrib.auth.decorators import login_required
 from django.db.models import OuterRef, QuerySet, Subquery
+from django.db.models.query_utils import Q
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, render
 
@@ -24,6 +25,23 @@ def _get_responsible_for_user(request: HttpRequest) -> Responsible | None:
     return Responsible.objects.filter(user=request.user).first()
 
 
+def _items_with_device_relations() -> QuerySet[Item]:
+    """
+    Shared base queryset for item list/detail views.
+
+    Keeping this centralized avoids subtle N+1 regressions when templates render
+    `item.device` (which touches multiple FK relations).
+    """
+
+    return Item.objects.select_related(
+        "device",
+        "device__category",
+        "device__type",
+        "device__manufacturer",
+        "device__model",
+    )
+
+
 def _items_owned_by(responsible: Responsible) -> QuerySet[Item]:
     latest_responsible_id = (
         Operation.objects.filter(item_id=OuterRef("pk"))
@@ -32,15 +50,9 @@ def _items_owned_by(responsible: Responsible) -> QuerySet[Item]:
     )
 
     return (
-        Item.objects.annotate(_latest_responsible_id=Subquery(latest_responsible_id))
+        _items_with_device_relations()
+        .annotate(_latest_responsible_id=Subquery(latest_responsible_id))
         .filter(_latest_responsible_id=responsible.pk)
-        .select_related(
-            "device",
-            "device__category",
-            "device__type",
-            "device__manufacturer",
-            "device__model",
-        )
     )
 
 
@@ -69,19 +81,95 @@ def my_items(request: HttpRequest) -> HttpResponse:
 
 
 @login_required
+def previous_items(request: HttpRequest) -> HttpResponse:
+    responsible = _get_responsible_for_user(request)
+    if responsible is None:
+        return render(
+            request,
+            "inventory/previous_items.html",
+            {
+                "responsible": None,
+                "items": [],
+            },
+        )
+
+    last_on_me_created_at = (
+        Operation.objects.filter(item_id=OuterRef("pk"), responsible=responsible)
+        .order_by("-created_at", "-id")
+        .values("created_at")[:1]
+    )
+
+    current_items = _items_owned_by(responsible).values("pk")
+    items = (
+        _items_with_device_relations()
+        .filter(operation__responsible=responsible)
+        .exclude(pk__in=current_items)
+        .distinct()
+        .annotate(last_on_me_created_at=Subquery(last_on_me_created_at))
+        .order_by("-last_on_me_created_at", "inventory_number")
+    )
+
+    return render(
+        request,
+        "inventory/previous_items.html",
+        {
+            "responsible": responsible,
+            "items": items,
+        },
+    )
+
+
+@login_required
 def item_history(request: HttpRequest, *, item_id: int) -> HttpResponse:
     responsible = _get_responsible_for_user(request)
     if responsible is None:
         # Hide existence details for users without a linked Responsible profile.
         raise Http404  # pragma: no cover
 
-    item = get_object_or_404(_items_owned_by(responsible), pk=item_id)
+    # Current owner sees the entire history.
+    item_qs = _items_owned_by(responsible)
+    item = item_qs.filter(pk=item_id).first()
+    if item is None:
+        # Former owners may only see the history up to their last responsibility,
+        # plus one "handoff" operation after they transferred the item away.
+        last_mine = (
+            Operation.objects.filter(item_id=item_id, responsible=responsible)
+            .order_by("-created_at", "-id")
+            .first()
+        )
+        if last_mine is None:
+            raise Http404
 
-    operations = (
-        Operation.objects.filter(item=item)
-        .select_related("status", "responsible", "location")
-        .order_by("-created_at", "-id")
-    )
+        item = get_object_or_404(_items_with_device_relations(), pk=item_id)
+
+        handoff = (
+            Operation.objects.filter(item_id=item_id)
+            .filter(
+                Q(created_at__gt=last_mine.created_at)
+                | Q(created_at=last_mine.created_at, id__gt=last_mine.id)
+            )
+            .order_by("created_at", "id")
+            .first()
+        )
+        ops_filter = Q(created_at__lt=last_mine.created_at) | Q(
+            created_at=last_mine.created_at, id__lte=last_mine.id
+        )
+        if handoff is not None:
+            ops_filter |= Q(pk=handoff.pk)
+
+        operations = (
+            Operation.objects.filter(item=item)
+            .filter(ops_filter)
+            .select_related("status", "responsible", "location")
+            .order_by("-created_at", "-id")
+        )
+    else:
+        operations = (
+            Operation.objects.filter(item=item)
+            .select_related("status", "responsible", "location")
+            .order_by("-created_at", "-id")
+        )
+
     return render(
         request,
         "inventory/item_history.html",
