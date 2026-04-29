@@ -24,7 +24,10 @@ class BaseAdmin(admin.ModelAdmin):
 
     def get_fieldsets(self, request: HttpRequest, obj: Model | None = None) -> Any:
         fieldsets = list(super().get_fieldsets(request, obj))
-        fieldsets[0] = (None, {"fields": self.get_main_fields()})
+        if not fieldsets:
+            fieldsets = [(None, {"fields": self.get_main_fields()})]
+        else:
+            fieldsets[0] = (None, {"fields": self.get_main_fields()})
         return fieldsets
 
     def _format_empty_value(self, value: Any) -> str:
