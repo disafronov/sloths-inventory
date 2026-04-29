@@ -1,3 +1,17 @@
+## [0.10.0-rc.3](https://github.com/disafronov/sloths-inventory/compare/v0.10.0-rc.2...v0.10.0-rc.3) (2026-04-29)
+
+### Features
+
+* add "Previously my items" feature ([8c86610](https://github.com/disafronov/sloths-inventory/commit/8c866109af281f533ca980ec9cbebf5d15a7605e))
+* add new links for "My items" and "Previously my items" in the base template ([881d0c9](https://github.com/disafronov/sloths-inventory/commit/881d0c9c0630a08d8b717c546675953603ad01fd))
+
+### Bug Fixes
+
+* enforce handoff operation requirement in item history view ([76c3df1](https://github.com/disafronov/sloths-inventory/commit/76c3df1173184e9d431c4a56aa0a6565c2f95ce7))
+* update localization files and adjust message references ([254cce4](https://github.com/disafronov/sloths-inventory/commit/254cce454968b28708f703fc4d9ed84230d8e2c3))
+* update localization files and remove unused links in "My items" template ([2d6aa85](https://github.com/disafronov/sloths-inventory/commit/2d6aa85762ee976e97ed5ff604f9cac72cc05358))
+* update Russian localization for account linking message ([46112c1](https://github.com/disafronov/sloths-inventory/commit/46112c12575f1aad3749337096772ba383702ca7))
+
 ## [0.10.0-rc.2](https://github.com/disafronov/sloths-inventory/compare/v0.10.0-rc.1...v0.10.0-rc.2) (2026-04-29)
 
 ### Features
