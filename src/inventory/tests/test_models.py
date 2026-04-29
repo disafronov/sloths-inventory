@@ -1,5 +1,6 @@
 import pytest
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 from catalogs.models import Location, Responsible, Status
 from devices.attributes import Category, Manufacturer, Model, Type
@@ -182,6 +183,41 @@ def test_operation_only_latest_can_be_edited_and_item_cannot_change() -> None:
     op2.item = item2
     with pytest.raises(ValidationError):
         op2.save()
+
+
+@pytest.mark.django_db
+def test_operation_default_ordering_and_current_operation_tiebreaker() -> None:
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+
+    status = Status.objects.create(name="S1")
+    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    location = Location.objects.create(name="Moscow")
+
+    item = Item.objects.create(inventory_number="INV-200", device=device)
+    op1 = Operation.objects.create(
+        item=item, status=status, responsible=responsible, location=location
+    )
+    op2 = Operation.objects.create(
+        item=item, status=status, responsible=responsible, location=location
+    )
+
+    # Simulate identical created_at to validate deterministic tiebreaker by id.
+    created_at = timezone.now()
+    Operation.objects.filter(pk__in=[op1.pk, op2.pk]).update(created_at=created_at)
+    op1.refresh_from_db()
+    op2.refresh_from_db()
+
+    assert Operation.objects.filter(item=item).first() == op2
+    assert item.current_operation == op2
 
 
 def test_current_operation_value_is_introspectable_via_class_access() -> None:
