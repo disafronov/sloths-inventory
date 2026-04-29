@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 import pytest
 from django.core.exceptions import ValidationError
 from django.utils import timezone
@@ -182,6 +184,44 @@ def test_operation_only_latest_can_be_edited_and_item_cannot_change() -> None:
     op2.item = item2
     with pytest.raises(ValidationError):
         op2.save()
+
+
+@pytest.mark.django_db
+def test_operation_latest_edit_is_blocked_after_correction_window() -> None:
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+
+    status1 = Status.objects.create(name="S1")
+    status2 = Status.objects.create(name="S2")
+    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    location = Location.objects.create(name="Moscow")
+
+    item = Item.objects.create(inventory_number="INV-WINDOW-001", device=device)
+    op = Operation.objects.create(
+        item=item,
+        status=status1,
+        responsible=responsible,
+        location=location,
+        notes="init",
+    )
+
+    # Simulate an old operation by moving created_at to the past.
+    Operation.objects.filter(pk=op.pk).update(
+        created_at=timezone.now() - timedelta(days=1)
+    )
+    op.refresh_from_db()
+
+    op.status = status2
+    with pytest.raises(ValidationError, match="correction window"):
+        op.save()
 
 
 @pytest.mark.django_db
