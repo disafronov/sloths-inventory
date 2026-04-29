@@ -128,7 +128,7 @@ msgstr "Мои вещи"
 #: src/inventory/templates/inventory/my_items.html:10
 #: src/inventory/templates/inventory/previous_items.html:10
 msgid "Your account is not linked to a responsible person profile yet."
-msgstr "Ваш аккаунт пока не привязан к профилю ответственного."
+msgstr "Этот аккаунт пока не привязан к профилю ответственного."
 
 #: src/inventory/templates/inventory/my_items.html:15
 #: src/inventory/templates/inventory/previous_items.html:4
