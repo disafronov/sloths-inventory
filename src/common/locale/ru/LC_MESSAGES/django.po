@@ -69,3 +69,11 @@ msgstr "Войти"
 #: src/common/templates/base.html:20
 msgid "Language"
 msgstr "Язык"
+
+#: src/common/templates/base.html:21
+msgid "Menu"
+msgstr "Меню"
+
+#: src/common/templates/base.html:35
+msgid "Main navigation"
+msgstr "Главная навигация"

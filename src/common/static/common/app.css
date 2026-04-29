@@ -14,7 +14,10 @@
 body {
   font-family: Arial, Helvetica, sans-serif;
   margin: 0;
-  padding: 16px;
+  /* Respect display cutouts and the home indicator (iOS); 0px fallback for older engines. */
+  padding: max(16px, env(safe-area-inset-top, 0px))
+    max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px))
+    max(16px, env(safe-area-inset-left, 0px));
   background-color: #f5f5f5;
   color: #222;
   line-height: 1.45;
@@ -30,20 +33,133 @@ body {
 }
 
 .header {
+  position: relative;
   margin-bottom: 16px;
   padding-bottom: 12px;
   border-bottom: 1px solid #eee;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
   align-items: flex-start;
   gap: 12px;
 }
 
-.header h1 {
+/**
+ * Title row: on mobile the hamburger sits on the right; on desktop the toggle is hidden.
+ */
+.header__primary {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+}
+
+.header__title {
   margin: 0;
   font-size: 1.35rem;
-  flex: 1 1 100%;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/**
+ * Hamburger control (visible only under 768px via media query below).
+ */
+.nav-toggle {
+  display: none;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #fafafa;
+  cursor: pointer;
+  color: #222;
+}
+
+.nav-toggle:hover {
+  background: #f0f0f0;
+}
+
+.nav-toggle:focus-visible {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+/**
+ * Hamburger icon: three bars morph into a close (X) when .nav-toggle.is-open.
+ */
+.nav-toggle__icon {
+  position: relative;
+  display: block;
+  width: 22px;
+  height: 16px;
+}
+
+.nav-toggle__bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: currentColor;
+  border-radius: 1px;
+  transition: transform 0.22s ease, opacity 0.18s ease;
+}
+
+.nav-toggle__bar--top {
+  top: 0;
+}
+
+.nav-toggle__bar--mid {
+  top: 7px;
+}
+
+.nav-toggle__bar--bot {
+  top: 14px;
+}
+
+.nav-toggle.is-open .nav-toggle__bar--top {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.nav-toggle.is-open .nav-toggle__bar--mid {
+  opacity: 0;
+}
+
+.nav-toggle.is-open .nav-toggle__bar--bot {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-toggle__bar {
+    transition: none;
+  }
+}
+
+/** Dim page behind the open mobile drawer */
+.nav-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: rgba(0, 0, 0, 0.35);
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.nav-backdrop:not([hidden]) {
+  display: block;
+}
+
+/** Panel wrapping language + auth links (full horizontal bar on desktop). */
+.site-nav {
+  width: 100%;
 }
 
 .user-menu {
@@ -53,6 +169,10 @@ body {
   gap: 8px;
   width: 100%;
   justify-content: flex-end;
+}
+
+body.nav-open {
+  overflow: hidden;
 }
 
 .user-menu__user {
@@ -239,21 +359,43 @@ a.item-card:hover {
 
 @media (min-width: 768px) {
   body {
-    padding: 20px;
+    padding: max(20px, env(safe-area-inset-top, 0px))
+      max(20px, env(safe-area-inset-right, 0px)) max(20px, env(safe-area-inset-bottom, 0px))
+      max(20px, env(safe-area-inset-left, 0px));
   }
 
   .container {
     padding: 20px;
   }
 
-  .header h1 {
+  .header {
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .header__primary {
     flex: 0 1 auto;
+    width: auto;
+  }
+
+  .header__title {
     font-size: 1.5rem;
+  }
+
+  .nav-toggle {
+    display: none !important;
+  }
+
+  .site-nav {
+    display: block !important;
+    width: auto;
+    flex: 1 1 auto;
+    min-width: 0;
   }
 
   .user-menu {
     width: auto;
-    flex: 1 1 auto;
     justify-content: flex-end;
   }
 
@@ -270,6 +412,10 @@ a.item-card:hover {
   .user-menu .logout-form {
     width: auto;
   }
+
+  .nav-backdrop {
+    display: none !important;
+  }
 }
 
 /* --- Narrow screens: stack header controls ------------------------------- */
@@ -278,6 +424,29 @@ a.item-card:hover {
   .header {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .nav-toggle {
+    display: inline-flex;
+  }
+
+  /** Closed by default; opened via .is-open from nav.js */
+  .site-nav:not(.is-open) {
+    display: none;
+  }
+
+  .site-nav.is-open {
+    display: block;
+    position: relative;
+    z-index: 100;
+    max-height: min(70vh, 28rem);
+    overflow-y: auto;
+    margin-top: 4px;
+    padding: 12px;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
   }
 
   .user-menu {
