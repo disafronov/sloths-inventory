@@ -43,9 +43,8 @@ class Item(BaseModel):
         return self.operation_set.order_by("-created_at").first()
 
     class CurrentOperationValue:
-        def __init__(self, attr_name: str, display_attr: Optional[str] = None) -> None:
+        def __init__(self, attr_name: str) -> None:
             self.attr_name = attr_name
-            self.display_attr = display_attr or attr_name
 
         @overload
         def __get__(
