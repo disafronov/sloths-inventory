@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: devices\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-19 00:36+0400\n"
+"POT-Creation-Date: 2026-04-29 21:43+0300\n"
 "PO-Revision-Date: 2024-03-19 00:23+0300\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
@@ -16,42 +16,42 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
 
-#: devices/apps.py:9
+#: src/devices/apps.py:8 src/devices/models.py:21
 msgid "Devices"
 msgstr "Устройства"
 
-#: devices/attributes.py:12 devices/models.py:9
+#: src/devices/attributes.py:14 src/devices/models.py:11
 msgid "Category"
 msgstr "Категория"
 
-#: devices/attributes.py:13
+#: src/devices/attributes.py:15
 msgid "Categories"
 msgstr "Категории"
 
-#: devices/attributes.py:22 devices/models.py:13
+#: src/devices/attributes.py:26 src/devices/models.py:15
 msgid "Manufacturer"
 msgstr "Производитель"
 
-#: devices/attributes.py:23
+#: src/devices/attributes.py:27
 msgid "Manufacturers"
 msgstr "Производители"
 
-#: devices/attributes.py:32 devices/models.py:15
+#: src/devices/attributes.py:38 src/devices/models.py:17
 msgid "Model"
 msgstr "Модель"
 
-#: devices/attributes.py:33
+#: src/devices/attributes.py:39
 msgid "Models"
 msgstr "Модели"
 
-#: devices/attributes.py:42 devices/models.py:11
+#: src/devices/attributes.py:50 src/devices/models.py:13
 msgid "Type"
 msgstr "Тип"
 
-#: devices/attributes.py:43
+#: src/devices/attributes.py:51
 msgid "Types"
 msgstr "Типы"
 
-#: devices/models.py:18
+#: src/devices/models.py:20
 msgid "Device"
 msgstr "Устройство"

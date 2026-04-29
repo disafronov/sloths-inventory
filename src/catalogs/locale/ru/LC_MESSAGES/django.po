@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: catalogs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-19 00:36+0400\n"
+"POT-Creation-Date: 2026-04-29 21:43+0300\n"
 "PO-Revision-Date: 2024-03-19 00:28+0300\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
@@ -16,50 +16,50 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
 
-#: catalogs/apps.py:9
+#: src/catalogs/apps.py:8
 msgid "Catalogs"
 msgstr "Каталоги"
 
-#: catalogs/models.py:9
+#: src/catalogs/models.py:10
 msgid "Location"
 msgstr "Расположение"
 
-#: catalogs/models.py:10
+#: src/catalogs/models.py:11
 msgid "Locations"
 msgstr "Расположения"
 
-#: catalogs/models.py:14
+#: src/catalogs/models.py:15
 msgid "Last name"
 msgstr "Фамилия"
 
-#: catalogs/models.py:15
+#: src/catalogs/models.py:16
 msgid "First name"
 msgstr "Имя"
 
-#: catalogs/models.py:16
+#: src/catalogs/models.py:18
 msgid "Middle name"
 msgstr "Отчество"
 
-#: catalogs/models.py:18
+#: src/catalogs/models.py:21
 msgid "Employee ID"
 msgstr "Табельный номер"
 
-#: catalogs/models.py:25
+#: src/catalogs/models.py:28
 msgid "User"
 msgstr "Пользователь"
 
-#: catalogs/models.py:29
+#: src/catalogs/models.py:32
 msgid "Responsible"
 msgstr "Ответственный"
 
-#: catalogs/models.py:30
+#: src/catalogs/models.py:33
 msgid "Responsibles"
 msgstr "Ответственные"
 
-#: catalogs/models.py:45
+#: src/catalogs/models.py:48
 msgid "Status"
 msgstr "Статус"
 
-#: catalogs/models.py:46
+#: src/catalogs/models.py:49
 msgid "Statuses"
 msgstr "Статусы"

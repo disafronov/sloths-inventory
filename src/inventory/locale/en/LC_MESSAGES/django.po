@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventory\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-19 01:52+0400\n"
+"POT-Creation-Date: 2026-04-29 21:43+0300\n"
 "PO-Revision-Date: 2024-03-19 00:40+0300\n"
 "Last-Translator: \n"
 "Language-Team: English\n"
@@ -15,96 +15,137 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: inventory/admin.py:13 inventory/models.py:68
+#: src/inventory/admin.py:22 src/inventory/models.py:79
+#: src/inventory/templates/inventory/item_history.html:21
+#: src/inventory/templates/inventory/my_items.html:26
 msgid "Status"
 msgstr "Status"
 
-#: inventory/admin.py:17 inventory/models.py:73
+#: src/inventory/admin.py:26 src/inventory/models.py:85
+#: src/inventory/templates/inventory/item_history.html:22
+#: src/inventory/templates/inventory/my_items.html:27
 msgid "Location"
 msgstr "Location"
 
-#: inventory/admin.py:21 inventory/admin.py:127
+#: src/inventory/admin.py:30 src/inventory/admin.py:226
+#: src/inventory/templates/inventory/item_history.html:20
 msgid "Responsible Person"
 msgstr "Responsible Person"
 
-#: inventory/admin.py:76 inventory/models.py:77
+#: src/inventory/admin.py:109 src/inventory/models.py:89
 msgid "Operation"
 msgstr "Operation"
 
-#: inventory/apps.py:9
+#: src/inventory/apps.py:8
 msgid "Inventory"
 msgstr "Inventory"
 
-#: inventory/models.py:13
+#: src/inventory/models.py:14
+#: src/inventory/templates/inventory/my_items.html:23
+#: src/inventory/templates/inventory/previous_items.html:21
 msgid "Inventory number"
 msgstr "Inventory number"
 
-#: inventory/models.py:16
+#: src/inventory/models.py:17
+#: src/inventory/templates/inventory/item_history.html:11
+#: src/inventory/templates/inventory/my_items.html:24
+#: src/inventory/templates/inventory/previous_items.html:22
 msgid "Device"
 msgstr "Device"
 
-#: inventory/models.py:21
+#: src/inventory/models.py:20
+#: src/inventory/templates/inventory/item_history.html:12
+#: src/inventory/templates/inventory/my_items.html:25
+#: src/inventory/templates/inventory/previous_items.html:23
 msgid "Serial number"
 msgstr "Serial number"
 
-#: inventory/models.py:25 inventory/models.py:67
+#: src/inventory/models.py:24 src/inventory/models.py:77
+#: src/inventory/templates/inventory/item_history.html:10
 msgid "Item"
 msgstr "Item"
 
-#: inventory/models.py:26
+#: src/inventory/models.py:25
 msgid "Items"
 msgstr "Items"
 
-#: inventory/models.py:38
+#: src/inventory/models.py:38
 msgid "Inventory number cannot be empty"
 msgstr "Inventory number cannot be empty"
 
-#: inventory/models.py:70
+#: src/inventory/models.py:82
 msgid "Responsible"
 msgstr "Responsible"
 
-#: inventory/models.py:78
+#: src/inventory/models.py:90
 msgid "Operations"
 msgstr "Operations"
 
-#: inventory/templates/inventory/my_items.html:4
-#: inventory/templates/inventory/my_items.html:6
-msgid "My items"
-msgstr "My items"
+#: src/inventory/models.py:118
+msgid "Operation item cannot be changed"
+msgstr ""
 
-#: inventory/templates/inventory/my_items.html:11
-msgid "Your account is not linked to a responsible person profile yet."
-msgstr "Your account is not linked to a responsible person profile yet."
+#: src/inventory/models.py:132
+msgid "Only the latest operation for this item can be edited"
+msgstr ""
 
-#: inventory/templates/inventory/my_items.html:20
-msgid "History"
-msgstr "History"
-
-#: inventory/templates/inventory/my_items.html:37
-msgid "View"
-msgstr "View"
-
-#: inventory/templates/inventory/my_items.html:46
-msgid "No items found."
-msgstr "No items found."
-
-#: inventory/templates/inventory/item_history.html:4
-#: inventory/templates/inventory/item_history.html:6
+#: src/inventory/templates/inventory/item_history.html:4
+#: src/inventory/templates/inventory/item_history.html:6
 msgid "Item history"
 msgstr "Item history"
 
-#: inventory/templates/inventory/item_history.html:15
+#: src/inventory/templates/inventory/item_history.html:4
+#: src/inventory/templates/inventory/my_items.html:4
+#: src/inventory/templates/inventory/previous_items.html:4
+#, fuzzy
+#| msgid "Inventory"
+msgid "Sloths Inventory"
+msgstr "Inventory"
+
+#: src/inventory/templates/inventory/item_history.html:19
 msgid "Created at"
 msgstr "Created at"
 
-#: inventory/templates/inventory/item_history.html:19
+#: src/inventory/templates/inventory/item_history.html:23
 msgid "Notes"
 msgstr "Notes"
 
-#: inventory/templates/inventory/item_history.html:37
+#: src/inventory/templates/inventory/item_history.html:41
 msgid "No operations found."
 msgstr "No operations found."
 
-#: inventory/templates/inventory/item_history.html:41
+#: src/inventory/templates/inventory/item_history.html:45
+#: src/inventory/templates/inventory/previous_items.html:14
 msgid "Back to my items"
 msgstr "Back to my items"
+
+#: src/inventory/templates/inventory/my_items.html:4
+#: src/inventory/templates/inventory/my_items.html:6
+msgid "My items"
+msgstr "My items"
+
+#: src/inventory/templates/inventory/my_items.html:10
+#: src/inventory/templates/inventory/previous_items.html:10
+msgid "Your account is not linked to a responsible person profile yet."
+msgstr "Your account is not linked to a responsible person profile yet."
+
+#: src/inventory/templates/inventory/my_items.html:15
+#: src/inventory/templates/inventory/previous_items.html:4
+#: src/inventory/templates/inventory/previous_items.html:6
+msgid "Previously my items"
+msgstr "Previously my items"
+
+#: src/inventory/templates/inventory/my_items.html:64
+#: src/inventory/templates/inventory/previous_items.html:56
+msgid "No items found."
+msgstr "No items found."
+
+#: src/inventory/templates/inventory/previous_items.html:24
+msgid "Last on you"
+msgstr "Last on you"
+
+#~ msgid "History"
+#~ msgstr "History"
+
+#~ msgid "View"
+#~ msgstr "View"
