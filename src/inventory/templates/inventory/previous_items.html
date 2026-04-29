@@ -10,10 +10,6 @@
     <p>{% trans "Your account is not linked to a responsible person profile yet." %}</p>
 {% endif %}
 
-<p>
-    <a class="button" href="{% url 'inventory:my-items' %}">{% trans "Back to my items" %}</a>
-</p>
-
 {% if items %}
     <table style="width: 100%; border-collapse: collapse;">
         <thead>
@@ -56,4 +52,3 @@
     <p>{% trans "No items found." %}</p>
 {% endif %}
 {% endblock %}
-
