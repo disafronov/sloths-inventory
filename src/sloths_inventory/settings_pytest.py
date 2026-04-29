@@ -7,6 +7,9 @@ Postgres instance in CI.
 
 from .settings import *  # noqa: F401,F403
 
+# Keep test output deterministic and quiet.
+DEBUG = False  # noqa: F405
+
 # Force in-memory SQLite for pytest runs.
 DATABASES = {  # noqa: F405
     "default": {
