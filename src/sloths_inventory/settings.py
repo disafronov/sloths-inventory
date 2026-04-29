@@ -32,9 +32,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [env("ALLOWED_HOSTS", default="")]
 
-CSRF_TRUSTED_ORIGINS = [env("CSRF_TRUSTED_ORIGINS", default="")]
+def _split_env_list(raw: str) -> list[str]:
+    return [part.strip() for part in raw.split(",") if part.strip()]
+
+
+ALLOWED_HOSTS = _split_env_list(env("ALLOWED_HOSTS", default=""))
+
+CSRF_TRUSTED_ORIGINS = _split_env_list(env("CSRF_TRUSTED_ORIGINS", default=""))
 
 
 # Application definition
