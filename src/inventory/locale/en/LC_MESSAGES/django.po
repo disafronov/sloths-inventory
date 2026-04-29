@@ -60,11 +60,51 @@ msgid "Inventory number cannot be empty"
 msgstr "Inventory number cannot be empty"
 
 #: inventory/models.py:70
-#, fuzzy
-#| msgid "Responsible Person"
 msgid "Responsible"
-msgstr "Responsible Person"
+msgstr "Responsible"
 
 #: inventory/models.py:78
 msgid "Operations"
 msgstr "Operations"
+
+#: inventory/templates/inventory/my_items.html:4
+#: inventory/templates/inventory/my_items.html:6
+msgid "My items"
+msgstr "My items"
+
+#: inventory/templates/inventory/my_items.html:11
+msgid "Your account is not linked to a responsible person profile yet."
+msgstr "Your account is not linked to a responsible person profile yet."
+
+#: inventory/templates/inventory/my_items.html:20
+msgid "History"
+msgstr "History"
+
+#: inventory/templates/inventory/my_items.html:37
+msgid "View"
+msgstr "View"
+
+#: inventory/templates/inventory/my_items.html:46
+msgid "No items found."
+msgstr "No items found."
+
+#: inventory/templates/inventory/item_history.html:4
+#: inventory/templates/inventory/item_history.html:6
+msgid "Item history"
+msgstr "Item history"
+
+#: inventory/templates/inventory/item_history.html:15
+msgid "Created at"
+msgstr "Created at"
+
+#: inventory/templates/inventory/item_history.html:19
+msgid "Notes"
+msgstr "Notes"
+
+#: inventory/templates/inventory/item_history.html:37
+msgid "No operations found."
+msgstr "No operations found."
+
+#: inventory/templates/inventory/item_history.html:41
+msgid "Back to my items"
+msgstr "Back to my items"
