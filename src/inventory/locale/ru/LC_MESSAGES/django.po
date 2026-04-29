@@ -138,7 +138,7 @@ msgstr "Вещи не найдены."
 #: src/inventory/templates/inventory/previous_items.html:4
 #: src/inventory/templates/inventory/previous_items.html:6
 msgid "Previously my items"
-msgstr "Ранее закреплённые за мной"
+msgstr "Были у меня"
 
 #: src/inventory/templates/inventory/previous_items.html:24
 msgid "Last on you"
