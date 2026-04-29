@@ -1,3 +1,9 @@
+## [0.10.0-rc.1](https://github.com/disafronov/sloths-inventory/compare/v0.9.0...v0.10.0-rc.1) (2026-04-29)
+
+### Features
+
+* implement inventory management features ([9b2ae60](https://github.com/disafronov/sloths-inventory/commit/9b2ae60baad23b14b440de8ffe53e7713ee45fbb))
+
 ## [0.9.0](https://github.com/disafronov/sloths-inventory/compare/v0.8.3...v0.9.0) (2026-04-29)
 
 ### Features
