@@ -67,3 +67,11 @@ msgstr "Login"
 #: src/common/templates/base.html:20
 msgid "Language"
 msgstr "Language"
+
+#: src/common/templates/base.html:21
+msgid "Menu"
+msgstr "Menu"
+
+#: src/common/templates/base.html:35
+msgid "Main navigation"
+msgstr "Main navigation"
