@@ -2,12 +2,9 @@ from django.contrib.auth import views as auth_views
 from django.urls import path
 from django.views.i18n import set_language
 
-from . import views
-
 app_name = "common"
 
 urlpatterns = [
-    path("", views.HomeView.as_view(), name="home"),
     path(
         "login/",
         auth_views.LoginView.as_view(
