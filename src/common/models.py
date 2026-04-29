@@ -4,8 +4,9 @@ from django.utils.translation import gettext_lazy as _
 
 class BaseModel(models.Model):
     """
-    Базовый класс для всех моделей с общими полями.
-    Предоставляет поля для отслеживания времени создания/обновления и заметок.
+    Base class for all models with common fields.
+
+    Provides timestamps for creation/update and a free-form notes field.
     """
 
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
@@ -18,8 +19,9 @@ class BaseModel(models.Model):
 
 class NamedModel(BaseModel):
     """
-    Базовый класс для моделей с полем name.
-    Предоставляет общие поля и поведение для именованных моделей.
+    Base class for models that have a `name` field.
+
+    Extends `BaseModel` with a unique `name` and default ordering by name.
     """
 
     name = models.CharField(max_length=255, unique=True, verbose_name=_("Name"))

@@ -11,7 +11,7 @@ class BaseAdmin(admin.ModelAdmin):
     list_display = ["updated_at", "created_at"]
     search_fields = ["created_at", "updated_at", "notes"]
     fieldsets = (
-        (None, {"fields": ()}),  # Будет переопределено в дочерних классах
+        (None, {"fields": ()}),  # Will be overridden in subclasses
         (
             _("Additional information"),
             {"fields": ("notes", "updated_at", "created_at")},
