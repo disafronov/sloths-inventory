@@ -13,24 +13,30 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 
 import environ
+from django.core.exceptions import ImproperlyConfigured
 
 env = environ.Env()
 # reading .env file
 environ.Env.read_env()
-
-# Raises django's ImproperlyConfigured exception if SECRET_KEY not in os.environ
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env("SECRET_KEY", default="unsafe-secret-key")
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG", default=True)
+
+# SECURITY WARNING: keep the secret key used in production secret!
+#
+# In non-debug environments the key must be explicitly provided via env vars.
+if DEBUG:
+    SECRET_KEY = env("SECRET_KEY", default="unsafe-secret-key")
+else:
+    SECRET_KEY = env("SECRET_KEY", default=None)
+    if not SECRET_KEY:
+        raise ImproperlyConfigured("SECRET_KEY must be set when DEBUG is False")
+
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 def _split_env_list(raw: str) -> list[str]:
