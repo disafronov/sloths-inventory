@@ -13,4 +13,3 @@ def pytest_configure() -> None:
     """
 
     settings.DEBUG = False
-
