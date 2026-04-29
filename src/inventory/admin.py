@@ -1,7 +1,7 @@
 from typing import Any, Protocol, cast
 
 from django.contrib import admin
-from django.db.models import Model
+from django.db.models import Model, QuerySet
 from django.http import HttpRequest
 from django.utils.translation import gettext_lazy as _
 
@@ -80,6 +80,22 @@ class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
         "serial_number",
     )
 
+    def get_queryset(self, request: HttpRequest) -> QuerySet[Item]:
+        """
+        Avoid N+1 queries in admin list pages by preloading device relations.
+
+        `Item.__str__` renders `Device`, which touches multiple FK relations.
+        """
+
+        qs = super().get_queryset(request)
+        return qs.select_related(
+            "device",
+            "device__category",
+            "device__type",
+            "device__manufacturer",
+            "device__model",
+        )
+
     def get_fieldsets(self, request: HttpRequest, obj: Model | None = None) -> Any:
         fieldsets = super().get_fieldsets(request, obj)
         fieldsets = list(fieldsets)
@@ -139,6 +155,24 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
         "responsible",
         "location",
     )
+
+    def get_queryset(self, request: HttpRequest) -> QuerySet[Operation]:
+        """
+        Avoid N+1 queries in admin list pages by preloading common relations.
+        """
+
+        qs = super().get_queryset(request)
+        return qs.select_related(
+            "item",
+            "item__device",
+            "item__device__category",
+            "item__device__type",
+            "item__device__manufacturer",
+            "item__device__model",
+            "status",
+            "responsible",
+            "location",
+        )
 
     def _is_latest_for_item(self, obj: Operation) -> bool:
         latest_id = (

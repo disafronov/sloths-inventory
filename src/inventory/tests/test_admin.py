@@ -1,6 +1,7 @@
 import pytest
 from django.contrib.admin.sites import AdminSite
 from django.contrib.auth import get_user_model
+from django.db.models import QuerySet
 from django.test import RequestFactory
 
 from catalogs.models import Location, Responsible, Status
@@ -179,3 +180,30 @@ def test_operation_admin_permission_short_circuits() -> None:
     request_denied.user = normal_user
     assert admin_obj.has_change_permission(request_denied, obj=op) is False
     assert admin_obj.has_delete_permission(request_denied, obj=op) is False
+
+
+@pytest.mark.django_db
+def test_item_admin_queryset_is_select_related() -> None:
+    site = AdminSite()
+    admin_obj = ItemAdmin(Item, site)
+    rf = RequestFactory()
+    request = rf.get("/")
+
+    qs = admin_obj.get_queryset(request)
+    assert isinstance(qs, QuerySet)
+    assert "device" in qs.query.select_related
+
+
+@pytest.mark.django_db
+def test_operation_admin_queryset_is_select_related() -> None:
+    site = AdminSite()
+    admin_obj = OperationAdmin(Operation, site)
+    rf = RequestFactory()
+    request = rf.get("/")
+
+    qs = admin_obj.get_queryset(request)
+    assert isinstance(qs, QuerySet)
+    assert "item" in qs.query.select_related
+    assert "status" in qs.query.select_related
+    assert "responsible" in qs.query.select_related
+    assert "location" in qs.query.select_related
