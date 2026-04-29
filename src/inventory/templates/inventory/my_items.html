@@ -10,12 +10,6 @@
     <p>{% trans "Your account is not linked to a responsible person profile yet." %}</p>
 {% endif %}
 
-<p>
-    <a class="button" href="{% url 'inventory:previous-items' %}">
-        {% trans "Previously my items" %}
-    </a>
-</p>
-
 {% if items %}
     <table style="width: 100%; border-collapse: collapse;">
         <thead>
