@@ -1,5 +1,4 @@
 import threading
-import time
 
 import pytest
 from django.core.exceptions import ValidationError
@@ -105,6 +104,9 @@ def test_operation_insert_waits_for_item_lock_under_concurrency() -> None:
     We hold a row-level lock on Item in one transaction and ensure that a
     concurrent Operation.create() for the same item blocks until the lock is
     released.
+
+    Blocking is asserted by ``insert_finished`` staying unset until the main
+    thread calls ``allow_release`` (wall-clock duration is unreliable on fast CI).
     """
 
     if connections["default"].vendor != "postgresql":
@@ -132,8 +134,6 @@ def test_operation_insert_waits_for_item_lock_under_concurrency() -> None:
     insert_started = threading.Event()
     insert_finished = threading.Event()
 
-    elapsed: dict[str, float] = {}
-
     def _thread_1_lock_holder() -> None:
         close_old_connections()
         with transaction.atomic():
@@ -146,7 +146,6 @@ def test_operation_insert_waits_for_item_lock_under_concurrency() -> None:
         assert lock_acquired.wait(timeout=5), "Item lock was not acquired in time"
 
         insert_started.set()
-        start = time.monotonic()
         Operation.objects.create(
             item=item,
             status=status,
@@ -154,7 +153,6 @@ def test_operation_insert_waits_for_item_lock_under_concurrency() -> None:
             location=location,
             notes="insert",
         )
-        elapsed["seconds"] = time.monotonic() - start
         insert_finished.set()
 
     t1 = threading.Thread(target=_thread_1_lock_holder)
@@ -174,6 +172,4 @@ def test_operation_insert_waits_for_item_lock_under_concurrency() -> None:
     assert not t1.is_alive(), "Thread 1 did not finish (possible deadlock)"
     assert not t2.is_alive(), "Thread 2 did not finish (possible deadlock)"
 
-    # If the insert did not block, elapsed would be near-zero; we expect it to
-    # have waited for the lock to be released.
-    assert elapsed["seconds"] >= 0.01
+    assert Operation.objects.filter(item=item, notes="insert").exists()
