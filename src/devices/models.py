@@ -20,7 +20,12 @@ class Device(BaseModel):
         verbose_name = _("Device")
         verbose_name_plural = _("Devices")
         ordering = ["category", "type", "manufacturer", "model"]
-        unique_together = ["category", "type", "manufacturer", "model"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["category", "type", "manufacturer", "model"],
+                name="devices_device_cat_type_mfr_model_uniq",
+            )
+        ]
 
     def __str__(self) -> str:
         return f"{self.category} | {self.type} | {self.manufacturer} | {self.model}"
