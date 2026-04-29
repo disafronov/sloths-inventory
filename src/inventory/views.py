@@ -132,6 +132,10 @@ def item_history(request: HttpRequest, *, item_id: int) -> HttpResponse:
     if item is None:
         # Former owners may only see the history up to their last responsibility,
         # plus one "handoff" operation after they transferred the item away.
+        #
+        # Rationale: this gives the former owner enough context to understand when
+        # and to whom the item was handed off, while limiting how much of the
+        # subsequent history is exposed.
         last_mine = (
             Operation.objects.filter(item_id=item_id, responsible=responsible)
             .order_by("-created_at", "-id")
