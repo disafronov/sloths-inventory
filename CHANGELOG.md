@@ -1,3 +1,37 @@
+## [0.9.0](https://github.com/disafronov/sloths-inventory/compare/v0.8.3...v0.9.0) (2026-04-29)
+
+### Features
+
+* add index to Operation model for improved query performance ([0b9d55d](https://github.com/disafronov/sloths-inventory/commit/0b9d55dca8ca3ce7c4ce3f5b5677b348fb39a0e0))
+* add logging configuration to settings ([4e3b5d7](https://github.com/disafronov/sloths-inventory/commit/4e3b5d768713d3dbaee3038331e53aa3ea78bf8b))
+* enforce append-only semantics for Operation model ([52d04cf](https://github.com/disafronov/sloths-inventory/commit/52d04cf2efb6b61ff85d32549a99ee9f5a5ddab9))
+* implement permission checks for latest Operation in admin ([f0c8152](https://github.com/disafronov/sloths-inventory/commit/f0c8152b13d034e16d2d8ce7a4e950762c43e386))
+* introduce common utilities and test configuration for Django project ([ce39309](https://github.com/disafronov/sloths-inventory/commit/ce39309c05769d5d27127f1715c43788f0e78d85))
+
+### Bug Fixes
+
+* enhance Dockerfile for internationalization support ([c302e80](https://github.com/disafronov/sloths-inventory/commit/c302e80863da045439c907793a6bab107b6f698c))
+* enhance fieldset handling in BaseAdmin class ([673c454](https://github.com/disafronov/sloths-inventory/commit/673c454a881cd0fcfdfb44024e4a5e22a8b60ba3))
+* enhance SECRET_KEY handling in settings ([73b774d](https://github.com/disafronov/sloths-inventory/commit/73b774d2507697b19e2f18b585e15c30412fe129))
+* implement concurrency-safe updates in Operation model ([c1d04ff](https://github.com/disafronov/sloths-inventory/commit/c1d04fff3e99c51bbe2b08fb2381ceeff453b486))
+* improve concurrency handling in Operation model ([dbbee3b](https://github.com/disafronov/sloths-inventory/commit/dbbee3bac0e675137a92ddb0a7967517cf63e9d1))
+* improve database connection error handling in health check ([d3f5b6b](https://github.com/disafronov/sloths-inventory/commit/d3f5b6baf80cd81c172c2bfea5e8205708e477f7))
+* improve handling of None values in CurrentOperationValue ([d2dd253](https://github.com/disafronov/sloths-inventory/commit/d2dd25379188e619d6e8c2d4909ca633d97396ce))
+* improve validation logic in Operation model ([ec1d7f9](https://github.com/disafronov/sloths-inventory/commit/ec1d7f9791d30754933d43b913a05aa888d46b99))
+* optimize queryset and caching in admin views ([8b9e372](https://github.com/disafronov/sloths-inventory/commit/8b9e372ecd0da61f43ea8433abadc5a5444306f0))
+* optimize queryset retrieval in admin views ([8162a85](https://github.com/disafronov/sloths-inventory/commit/8162a85c1fd0d8d0d2c972085c689c54f024bebb))
+* Potential fix for pull request finding 'CodeQL / Information exposure through an exception' ([e9f6297](https://github.com/disafronov/sloths-inventory/commit/e9f62975a4829601ca22528b8ff594661a953332))
+* refine current operation retrieval in Item model ([048c761](https://github.com/disafronov/sloths-inventory/commit/048c761373fc47c51094f90557d81195a91c6257))
+* refine database error handling in health check ([b070033](https://github.com/disafronov/sloths-inventory/commit/b0700332b3aeca91642d046103ba09b9e8331397))
+* remove USE_L10N setting from settings.py ([d782693](https://github.com/disafronov/sloths-inventory/commit/d782693da51c692ecfe1aa793f2fbcfbfdb4bcdf))
+* update database engine in settings.py ([16cc366](https://github.com/disafronov/sloths-inventory/commit/16cc366369aae5a35820fa85a50a4432a18d1a3f))
+* update DEBUG setting to use environment variable ([c799f39](https://github.com/disafronov/sloths-inventory/commit/c799f390cfbc3c362f14fec168055af1e02fc171))
+* update Dockerfile for development environment configuration ([366551e](https://github.com/disafronov/sloths-inventory/commit/366551efd9421cec802320c1f4607899aca5ded7))
+* update Dockerfile to set ownership for source files ([bdbe43d](https://github.com/disafronov/sloths-inventory/commit/bdbe43d343dcc30fb8f3bcbc9c304eb9eb758071))
+* update entrypoint commands in Docker Compose configuration ([bcea8d2](https://github.com/disafronov/sloths-inventory/commit/bcea8d26d634d3600369371028b4febe551a6e41))
+* update template directory path in settings ([8de0952](https://github.com/disafronov/sloths-inventory/commit/8de0952813bbec7334fbb3113eedc61163b22aa4))
+* update translation function in admin.py ([ebbac5f](https://github.com/disafronov/sloths-inventory/commit/ebbac5f4a6cf8857567fceaa51ecdd12f7c22bd6))
+
 ## [0.9.0-rc.5](https://github.com/disafronov/sloths-inventory/compare/v0.9.0-rc.4...v0.9.0-rc.5) (2026-04-29)
 
 ### Bug Fixes
