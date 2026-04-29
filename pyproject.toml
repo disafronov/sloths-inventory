@@ -58,7 +58,7 @@ extend-ignore = ["E203", "W503"]
 exclude = [".venv", "__pycache__", ".git", "htmlcov"]
 
 [tool.mypy]
-exclude = "tests/"
+exclude = "(^tests/|.*/tests/)"
 mypy_path = "stubs"
 
 # This project is a legacy Django codebase. Aligning tooling first means mypy
@@ -91,7 +91,7 @@ exclude_dirs = [ ".venv", "__pycache__", ".git", "htmlcov", "tests" ]
 
 [tool.coverage.run]
 source = [ "." ]
-omit = [ "tests/*" ]
+omit = [ "tests/*", "src/*/tests/*" ]
 branch = true
 
 [tool.coverage.report]
@@ -129,5 +129,5 @@ markers = [
     "integration: mark test as integration test",
     "unit: mark test as unit test",
 ]
-testpaths = ["tests"]
+testpaths = ["src"]
 filterwarnings = ["ignore::DeprecationWarning"]
