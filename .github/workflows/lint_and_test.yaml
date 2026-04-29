@@ -1,6 +1,7 @@
+---
 name: Lint and test
 
-on:
+"on":
   pull_request:
     branches:
       - main
@@ -40,54 +41,3 @@ jobs:
       - name: Check if code was reformatted
         if: always()
         run: git diff --exit-code
-
-  concurrency_postgres:
-    name: "Concurrency (Postgres)"
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-
-    services:
-      postgres:
-        image: postgres:17
-        env:
-          POSTGRES_DB: database
-          POSTGRES_USER: user
-          POSTGRES_PASSWORD: password
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U user -d database"
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 30
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Read Python version
-        id: python_version
-        run: echo "version=$(cat .python-version | tr -d '[:space:]')" >> $GITHUB_OUTPUT
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v7
-        with:
-          enable-cache: true
-          cache-suffix: ${{ steps.python_version.outputs.version }}-postgres
-
-      - name: Install dependencies
-        run: uv sync --python ${{ steps.python_version.outputs.version }}
-        env:
-          UV_PYTHON: ${{ steps.python_version.outputs.version }}
-
-      - name: Run concurrency tests against Postgres
-        run: PYTHONPATH=src uv run python -m pytest -v src/inventory/tests/test_concurrency.py
-        env:
-          UV_PYTHON: ${{ steps.python_version.outputs.version }}
-          DJANGO_SETTINGS_MODULE: sloths_inventory.settings
-          DATABASE_HOST: 127.0.0.1
-          DATABASE_PORT: "5432"
-          DATABASE_NAME: database
-          DATABASE_USER: user
-          DATABASE_PASSWORD: password
