@@ -1,3 +1,14 @@
+## [1.1.0-rc.3](https://github.com/disafronov/sloths-inventory/compare/v1.1.0-rc.2...v1.1.0-rc.3) (2026-04-30)
+
+### Features
+
+* add user identity display in user menu ([72756f0](https://github.com/disafronov/sloths-inventory/commit/72756f0d3f9ddeb2b3219306e423493f039598d0))
+* update user menu with SVG icon and CSS enhancements ([4f0eb66](https://github.com/disafronov/sloths-inventory/commit/4f0eb667360ae421cc897e5676bab8ed50f0c452))
+
+### Bug Fixes
+
+* update item history template for clarity ([5b80501](https://github.com/disafronov/sloths-inventory/commit/5b80501481b9b1404868262d8203368861e84222))
+
 ## [1.1.0-rc.2](https://github.com/disafronov/sloths-inventory/compare/v1.1.0-rc.1...v1.1.0-rc.2) (2026-04-30)
 
 ### Features
