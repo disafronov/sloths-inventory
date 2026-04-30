@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import TypeVar
+
 from django.contrib.auth.decorators import login_required
 from django.db.models import OuterRef, QuerySet, Subquery
 from django.db.models.query_utils import Q
@@ -9,6 +11,29 @@ from django.shortcuts import get_object_or_404, redirect, render
 from catalogs.models import Location, Responsible
 
 from .models import Item, Operation
+
+TItem = TypeVar("TItem", bound=Item)
+
+
+def _apply_item_search(qs: QuerySet[TItem], *, query: str) -> QuerySet[TItem]:
+    """
+    Apply a user-facing search query to an item queryset.
+
+    The UI needs a lightweight search that works without introducing additional
+    entities (e.g. dedicated search indexes). We scope it to the most useful
+    identifying fields.
+    """
+
+    query = query.strip()
+    if not query:
+        return qs
+
+    return qs.filter(
+        Q(inventory_number__icontains=query)
+        | Q(serial_number__icontains=query)
+        | Q(device__manufacturer__name__icontains=query)
+        | Q(device__model__name__icontains=query)
+    )
 
 
 def _get_responsible_for_user(request: HttpRequest) -> Responsible | None:
@@ -69,13 +94,15 @@ def my_items(request: HttpRequest) -> HttpResponse:
             },
         )
 
-    items = _items_owned_by(responsible)
+    query = request.GET.get("q", "")
+    items = _apply_item_search(_items_owned_by(responsible), query=query)
     return render(
         request,
         "inventory/my_items.html",
         {
             "responsible": responsible,
             "items": items,
+            "query": query,
         },
     )
 
@@ -100,6 +127,7 @@ def previous_items(request: HttpRequest) -> HttpResponse:
     )
 
     current_items = _items_owned_by(responsible).values("pk")
+    query = request.GET.get("q", "")
     items = (
         _items_with_device_relations()
         .filter(operation__responsible=responsible)
@@ -108,6 +136,7 @@ def previous_items(request: HttpRequest) -> HttpResponse:
         .annotate(last_on_me_created_at=Subquery(last_on_me_created_at))
         .order_by("-last_on_me_created_at", "inventory_number")
     )
+    items = _apply_item_search(items, query=query)
 
     return render(
         request,
@@ -115,6 +144,7 @@ def previous_items(request: HttpRequest) -> HttpResponse:
         {
             "responsible": responsible,
             "items": items,
+            "query": query,
         },
     )
 

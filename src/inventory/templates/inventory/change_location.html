@@ -22,9 +22,9 @@
             {% endfor %}
         </select>
     </p>
-    <p>
+    <div class="form-actions">
         <button type="submit" class="button">{% trans "Save" %}</button>
         <a href="{% url 'inventory:my-items' %}" class="button button--secondary">{% trans "Cancel" %}</a>
-    </p>
+    </div>
 </form>
 {% endblock %}

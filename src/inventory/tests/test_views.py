@@ -108,6 +108,51 @@ def test_my_items_shows_only_items_where_latest_operation_has_my_responsible() -
 
 
 @pytest.mark.django_db
+def test_my_items_search_filters_by_inventory_number_and_serial() -> None:
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    status = Status.objects.create(name="In stock")
+    location = Location.objects.create(name="Moscow")
+
+    user = User.objects.create_user(username="u1", password="pw")
+    resp = Responsible.objects.create(last_name="Ivanov", first_name="Ivan", user=user)
+
+    item1 = Item.objects.create(
+        inventory_number="INV-ABC-1", device=device, serial_number="SN-123"
+    )
+    item2 = Item.objects.create(
+        inventory_number="INV-XYZ-2", device=device, serial_number="SN-999"
+    )
+    Operation.objects.create(
+        item=item1, status=status, responsible=resp, location=location
+    )
+    Operation.objects.create(
+        item=item2, status=status, responsible=resp, location=location
+    )
+
+    client = Client()
+    client.force_login(user)
+
+    by_inv = client.get("/", {"q": "ABC"})
+    assert by_inv.status_code == 200
+    assert b"INV-ABC-1" in by_inv.content
+    assert b"INV-XYZ-2" not in by_inv.content
+
+    by_serial = client.get("/", {"q": "SN-999"})
+    assert by_serial.status_code == 200
+    assert b"INV-ABC-1" not in by_serial.content
+    assert b"INV-XYZ-2" in by_serial.content
+
+
+@pytest.mark.django_db
 def test_item_history_only_for_my_or_previously_my_item() -> None:
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
@@ -226,6 +271,58 @@ def test_previous_items_shows_only_items_where_user_was_responsible_in_the_past(
     assert b"INV-PREV" in response.content
     assert b"INV-CUR" not in response.content
     assert item_never.inventory_number.encode("utf-8") not in response.content
+
+
+@pytest.mark.django_db
+def test_previous_items_search_filters_results() -> None:
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    status = Status.objects.create(name="In stock")
+    location = Location.objects.create(name="Moscow")
+
+    user1 = User.objects.create_user(username="u1", password="pw")
+    user2 = User.objects.create_user(username="u2", password="pw")
+    resp1 = Responsible.objects.create(
+        last_name="Ivanov", first_name="Ivan", user=user1
+    )
+    resp2 = Responsible.objects.create(
+        last_name="Petrov", first_name="Petr", user=user2
+    )
+
+    item_a = Item.objects.create(
+        inventory_number="INV-SEARCH-A", device=device, serial_number="S-A"
+    )
+    item_b = Item.objects.create(
+        inventory_number="INV-SEARCH-B", device=device, serial_number="S-B"
+    )
+    Operation.objects.create(
+        item=item_a, status=status, responsible=resp1, location=location
+    )
+    Operation.objects.create(
+        item=item_a, status=status, responsible=resp2, location=location
+    )
+    Operation.objects.create(
+        item=item_b, status=status, responsible=resp1, location=location
+    )
+    Operation.objects.create(
+        item=item_b, status=status, responsible=resp2, location=location
+    )
+
+    client = Client()
+    client.force_login(user1)
+
+    response = client.get("/previous/", {"q": "SEARCH-A"})
+    assert response.status_code == 200
+    assert b"INV-SEARCH-A" in response.content
+    assert b"INV-SEARCH-B" not in response.content
 
 
 @pytest.mark.django_db

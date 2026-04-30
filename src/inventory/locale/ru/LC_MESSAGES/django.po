@@ -171,6 +171,28 @@ msgstr "Сохранить"
 msgid "Cancel"
 msgstr "Отмена"
 
+#: src/inventory/templates/inventory/my_items.html:15
+#: src/inventory/templates/inventory/previous_items.html:15
+msgid "Search items"
+msgstr "Поиск по вещам"
+
+#: src/inventory/templates/inventory/my_items.html:16
+#: src/inventory/templates/inventory/my_items.html:26
+#: src/inventory/templates/inventory/previous_items.html:16
+#: src/inventory/templates/inventory/previous_items.html:26
+msgid "Search"
+msgstr "Найти"
+
+#: src/inventory/templates/inventory/my_items.html:23
+#: src/inventory/templates/inventory/previous_items.html:23
+msgid "Search by inventory number, serial, model…"
+msgstr "Поиск по инвентарному номеру, серийному, модели…"
+
+#: src/inventory/templates/inventory/my_items.html:28
+#: src/inventory/templates/inventory/previous_items.html:28
+msgid "Clear"
+msgstr "Сбросить"
+
 #~ msgid "History"
 #~ msgstr "История"
 
