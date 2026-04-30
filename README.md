@@ -84,6 +84,9 @@ Notes:
 - **Item history visibility**: item history is only accessible to the current
   owner and former owners. Former owners can only see the history up to the last
   time the item was assigned to them, plus one subsequent handoff operation.
+  This is a privacy/security invariant: it provides enough context for a handoff
+  dispute ("when and to whom it was transferred") without exposing the item's
+  subsequent history to former owners.
 
 ## Configuration
 
