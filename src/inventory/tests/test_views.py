@@ -880,6 +880,37 @@ def test_outgoing_transfers_lists_offers_for_sender() -> None:
 
 
 @pytest.mark.django_db
+def test_my_items_does_not_duplicate_item_between_owned_and_outgoing_transfer() -> None:
+    user_sender = User.objects.create_user(username="sender", password="pw")
+    user_receiver = User.objects.create_user(username="receiver", password="pw")
+    resp_sender = Responsible.objects.create(
+        last_name="Sender", first_name="User", user=user_sender
+    )
+    resp_receiver = Responsible.objects.create(
+        last_name="Receiver", first_name="User", user=user_receiver
+    )
+    status = Status.objects.create(name="In use")
+    location = Location.objects.create(name="Home")
+    item = _make_item_with_operation(status, location, resp_sender, "INV-XFER-NODUPE")
+    PendingTransfer.objects.create(
+        item=item,
+        from_responsible=resp_sender,
+        to_responsible=resp_receiver,
+    )
+
+    client = Client()
+    client.force_login(user_sender)
+    response = client.get("/")
+    assert response.status_code == 200
+    # The transfer card is rendered as an item-card with a modifier class.
+    # The same item must not be rendered again as a plain owned item-card.
+    assert (
+        response.content.count(b'class="item-card item-card--outgoing-transfer"') == 1
+    )
+    assert response.content.count(b'class="item-card"') == 0
+
+
+@pytest.mark.django_db
 def test_transfers_page_is_removed() -> None:
     user = User.objects.create_user(username="u1", password="pw")
     client = Client()
