@@ -137,6 +137,13 @@ Some tests validate PostgreSQL-specific behavior (e.g. row-level locking). Such
 tests are marked with `@pytest.mark.postgres` and are automatically skipped
 unless the active database backend is PostgreSQL.
 
+Rule of thumb: add `@pytest.mark.postgres` when a test relies on PostgreSQL
+semantics or query planning, for example:
+
+- row-level locks / blocking behavior (`select_for_update()`)
+- transaction isolation / concurrency edge cases
+- PostgreSQL-specific SQL or index/ordering behavior
+
 To run the PostgreSQL-only test suite locally:
 
 ```bash
