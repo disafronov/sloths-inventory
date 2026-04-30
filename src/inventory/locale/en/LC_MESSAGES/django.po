@@ -189,6 +189,12 @@ msgstr "Search by inventory number, serial, model…"
 msgid "Clear"
 msgstr "Clear"
 
+msgid "Search location"
+msgstr "Search location"
+
+msgid "Type to filter locations…"
+msgstr "Type to filter locations…"
+
 #~ msgid "History"
 #~ msgstr "History"
 

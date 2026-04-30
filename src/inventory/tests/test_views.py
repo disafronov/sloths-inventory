@@ -381,7 +381,9 @@ def test_item_history_for_former_owner_includes_only_one_handoff_after_last_mine
     assert b"a" in response.content
     assert last_mine.notes.encode("utf-8") in response.content
     assert handoff.notes.encode("utf-8") in response.content
-    assert b"c2" not in response.content
+    # Avoid false positives: "c2" may occur in CSRF tokens. We assert the note value
+    # isn't rendered as a standalone text node.
+    assert b">c2<" not in response.content
 
 
 def _make_item_with_operation(
