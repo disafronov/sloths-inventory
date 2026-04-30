@@ -1,3 +1,10 @@
+## [1.1.0-rc.6](https://github.com/disafronov/sloths-inventory/compare/v1.1.0-rc.5...v1.1.0-rc.6) (2026-04-30)
+
+### Features
+
+* enhance item transfer functionality and coverage ([8e2f223](https://github.com/disafronov/sloths-inventory/commit/8e2f223cfcc6e3086faf5ee2ab54ab56d8abafdf))
+* implement pending item transfer functionality ([fcf5d50](https://github.com/disafronov/sloths-inventory/commit/fcf5d50775d664a156014df2a4e558600182109b))
+
 ## [1.1.0-rc.5](https://github.com/disafronov/sloths-inventory/compare/v1.1.0-rc.4...v1.1.0-rc.5) (2026-04-30)
 
 ### Bug Fixes
