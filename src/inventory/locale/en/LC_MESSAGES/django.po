@@ -229,6 +229,11 @@ msgstr "Type to filter people…"
 msgid "View item"
 msgstr "View item"
 
+msgid "From"
+msgstr "From"
+
+msgid "To"
+msgstr "To"
 #~ msgid "History"
 #~ msgstr "History"
 

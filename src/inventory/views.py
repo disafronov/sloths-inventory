@@ -110,11 +110,49 @@ def my_items(request: HttpRequest) -> HttpResponse:
             {
                 "responsible": None,
                 "items": [],
+                "incoming_transfers": [],
+                "outgoing_transfers": [],
             },
         )
 
     query = request.GET.get("q", "")
     items = _apply_item_search(_items_owned_by(responsible), query=query)
+
+    latest_location_name = (
+        Operation.objects.filter(item_id=OuterRef("item_id"))
+        .order_by("-created_at", "-id")
+        .values("location__name")[:1]
+    )
+    latest_status_name = (
+        Operation.objects.filter(item_id=OuterRef("item_id"))
+        .order_by("-created_at", "-id")
+        .values("status__name")[:1]
+    )
+
+    base_transfers_qs = PendingTransfer.objects.filter(
+        accepted_at__isnull=True,
+        cancelled_at__isnull=True,
+    ).select_related(
+        "item",
+        "item__device",
+        "item__device__category",
+        "item__device__type",
+        "item__device__manufacturer",
+        "item__device__model",
+        "from_responsible",
+        "to_responsible",
+    )
+    base_transfers_qs = base_transfers_qs.annotate(
+        current_location=Subquery(latest_location_name),
+        current_status=Subquery(latest_status_name),
+    )
+    incoming_transfers = base_transfers_qs.filter(to_responsible=responsible).order_by(
+        "-created_at", "-id"
+    )
+    outgoing_transfers = base_transfers_qs.filter(
+        from_responsible=responsible
+    ).order_by("-created_at", "-id")
+
     return render(
         request,
         "inventory/my_items.html",
@@ -122,6 +160,8 @@ def my_items(request: HttpRequest) -> HttpResponse:
             "responsible": responsible,
             "items": items,
             "query": query,
+            "incoming_transfers": incoming_transfers,
+            "outgoing_transfers": outgoing_transfers,
         },
     )
 
@@ -470,69 +510,3 @@ def cancel_transfer(request: HttpRequest, *, transfer_id: int) -> HttpResponse:
     transfer.cancelled_at = timezone.now()
     transfer.save()
     return redirect("inventory:item-history", item_id=transfer.item_id)
-
-
-@login_required
-def incoming_transfers(request: HttpRequest) -> HttpResponse:
-    """
-    List active transfers addressed to the current user.
-
-    This is a lightweight inbox that makes pending handoff offers discoverable
-    without having to know the item id in advance.
-    """
-
-    return redirect("inventory:transfers")
-
-
-@login_required
-def outgoing_transfers(request: HttpRequest) -> HttpResponse:
-    """
-    List active transfers initiated by the current user.
-
-    This provides visibility into pending offers and allows the sender to cancel
-    them without searching for the item page.
-    """
-
-    return redirect("inventory:transfers")
-
-
-@login_required
-def transfers(request: HttpRequest) -> HttpResponse:
-    """
-    Show incoming and outgoing pending transfers on a single page.
-
-    This keeps the UI simple for end users while preserving separate URLs
-    (incoming/outgoing) for backwards compatibility via redirects.
-    """
-
-    responsible = _get_responsible_for_user(request)
-    if responsible is None:
-        return render(
-            request,
-            "inventory/transfers.html",
-            {
-                "responsible": None,
-                "incoming": [],
-                "outgoing": [],
-            },
-        )
-
-    base_qs = PendingTransfer.objects.filter(
-        accepted_at__isnull=True,
-        cancelled_at__isnull=True,
-    ).select_related("item", "from_responsible", "to_responsible")
-
-    incoming = base_qs.filter(to_responsible=responsible).order_by("-created_at", "-id")
-    outgoing = base_qs.filter(from_responsible=responsible).order_by(
-        "-created_at", "-id"
-    )
-
-    return render(
-        request,
-        "inventory/transfers.html",
-        {
-            "responsible": responsible,
-            "incoming": incoming,
-            "outgoing": outgoing,
-        },
-    )

@@ -76,11 +76,6 @@
                             {% if request.resolver_match.url_name == 'previous-items' %}aria-current="page"{% endif %}
                         >{% trans "Previously my items" %}</a>
                         <a
-                            href="{% url 'inventory:transfers' %}"
-                            class="button{% if request.resolver_match.url_name == 'transfers' %} button--active{% endif %}"
-                            {% if request.resolver_match.url_name == 'transfers' %}aria-current="page"{% endif %}
-                        >{% trans "Transfers" %}</a>
-                        <a
                             href="{% url 'admin:index' %}"
                             class="button{% if request.path|slice:':7' == '/admin/' %} button--active{% endif %}"
                             {% if request.path|slice:':7' == '/admin/' %}aria-current="page"{% endif %}

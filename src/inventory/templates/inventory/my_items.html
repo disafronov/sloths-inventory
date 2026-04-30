@@ -25,6 +25,14 @@
     {% endif %}
 </form>
 
+{% if incoming_transfers %}
+    <div class="item-card-list" aria-label="{% trans 'Incoming transfers' %}">
+        {% for t in incoming_transfers %}
+            {% include "inventory/_transfer_card.html" with transfer=t direction="incoming" %}
+        {% endfor %}
+    </div>
+{% endif %}
+
 {% if items %}
     <div class="item-card-list">
         {% for item in items %}
@@ -52,5 +60,13 @@
     </div>
 {% else %}
     <p>{% trans "No items found." %}</p>
+{% endif %}
+
+{% if outgoing_transfers %}
+    <div class="item-card-list" aria-label="{% trans 'Outgoing transfers' %}">
+        {% for t in outgoing_transfers %}
+            {% include "inventory/_transfer_card.html" with transfer=t direction="outgoing" %}
+        {% endfor %}
+    </div>
 {% endif %}
 {% endblock %}

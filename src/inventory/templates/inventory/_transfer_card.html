@@ -1,0 +1,36 @@
+{% load i18n %}
+<a
+    class="item-card{% if direction == 'incoming' %} item-card--incoming-transfer{% else %} item-card--outgoing-transfer{% endif %}"
+    href="{% url 'inventory:item-history' item_id=transfer.item.id %}"
+>
+    <div class="transfer-card__layout">
+        <div class="transfer-card__main">
+    {% include "inventory/_item_card_title_inventory_number.html" with inventory_number=transfer.item.inventory_number %}
+    <div class="item-card__row">
+        <span class="item-card__label">{% trans "Device" %}:</span>
+        <span class="item-card__value">{{ transfer.item.device }}</span>
+    </div>
+    <div class="item-card__row">
+        <span class="item-card__label">{% trans "Serial number" %}:</span>
+        <span class="item-card__value">{{ transfer.item.serial_number|default:"-" }}</span>
+    </div>
+    <div class="item-card__row">
+        <span class="item-card__label">{% trans "Location" %}:</span>
+        <span class="item-card__value">{{ transfer.current_location|default:"-" }}</span>
+    </div>
+    <div class="item-card__row">
+        <span class="item-card__label">{% trans "Status" %}:</span>
+        <span class="item-card__value">{{ transfer.current_status|default:"-" }}</span>
+    </div>
+        </div>
+        <aside class="transfer-card__party" aria-label="{% trans 'Transfer party' %}">
+            {% if direction == "incoming" %}
+                <div class="transfer-card__party-label">{% trans "From" %}</div>
+                <div class="transfer-card__party-value">{{ transfer.from_responsible }}</div>
+            {% else %}
+                <div class="transfer-card__party-label">{% trans "To" %}</div>
+                <div class="transfer-card__party-value">{{ transfer.to_responsible }}</div>
+            {% endif %}
+        </aside>
+    </div>
+</a>
