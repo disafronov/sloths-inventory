@@ -24,7 +24,7 @@
                         <span class="item-card__label">{% trans "From" %}:</span>
                         <span class="item-card__value">{{ t.from_responsible }}</span>
                     </div>
-                    <div class="form-actions">
+                    <div class="form-actions form-actions--inline">
                         <a href="{% url 'inventory:item-history' item_id=t.item.id %}" class="button button--secondary button--sm">
                             {% trans "View item" %}
                         </a>
@@ -55,7 +55,7 @@
                         <span class="item-card__label">{% trans "To" %}:</span>
                         <span class="item-card__value">{{ t.to_responsible }}</span>
                     </div>
-                    <div class="form-actions">
+                    <div class="form-actions form-actions--inline">
                         <a href="{% url 'inventory:item-history' item_id=t.item.id %}" class="button button--secondary button--sm">
                             {% trans "View item" %}
                         </a>
