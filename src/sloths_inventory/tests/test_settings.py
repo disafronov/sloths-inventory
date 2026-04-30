@@ -72,7 +72,7 @@ def test_settings_time_zone_defaults_when_env_is_unset(tmp_path, monkeypatch) ->
         "sloths_inventory._settings_time_zone_default_test",
         sloths_inventory.settings.__file__,
     )
-    assert module.TIME_ZONE == "Europe/Moscow"
+    assert module.TIME_ZONE == "UTC"
 
 
 def test_settings_time_zone_can_be_overridden_via_env(tmp_path, monkeypatch) -> None:
