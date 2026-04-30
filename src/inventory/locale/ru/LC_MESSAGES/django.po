@@ -238,6 +238,12 @@ msgstr "От кого"
 
 msgid "To"
 msgstr "Кому"
+
+msgid "Incoming transfer from"
+msgstr "Входящая передача от"
+
+msgid "Outgoing transfer for"
+msgstr "Исходящая передача для"
 #~ msgid "History"
 #~ msgstr "История"
 

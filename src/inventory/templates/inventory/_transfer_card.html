@@ -25,10 +25,10 @@
         </div>
         <aside class="transfer-card__party" aria-label="{% trans 'Transfer party' %}">
             {% if direction == "incoming" %}
-                <div class="transfer-card__party-label">{% trans "From" %}</div>
+                <div class="transfer-card__party-label">{% trans "Incoming transfer from" %}</div>
                 <div class="transfer-card__party-value">{{ transfer.from_responsible }}</div>
             {% else %}
-                <div class="transfer-card__party-label">{% trans "To" %}</div>
+                <div class="transfer-card__party-label">{% trans "Outgoing transfer for" %}</div>
                 <div class="transfer-card__party-value">{{ transfer.to_responsible }}</div>
             {% endif %}
         </aside>
