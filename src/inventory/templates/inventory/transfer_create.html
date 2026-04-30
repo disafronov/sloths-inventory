@@ -23,7 +23,13 @@
         {% csrf_token %}
         <p>
             <label for="to_responsible_id">{% trans "Transfer to" %}:</label>
-            <select name="to_responsible_id" id="to_responsible_id" required>
+            <select
+                name="to_responsible_id"
+                id="to_responsible_id"
+                required
+                data-searchable-select
+                data-search-placeholder="{% trans 'Type to filter people…' %}"
+            >
                 {% for r in responsibles %}
                     <option value="{{ r.pk }}">{{ r }}</option>
                 {% endfor %}
@@ -35,4 +41,9 @@
         </div>
     </form>
 {% endif %}
+{% endblock %}
+
+{% block extrabody %}
+{% load static %}
+<script src="{% static 'common/searchable_select.js' %}" defer></script>
 {% endblock %}
