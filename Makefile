@@ -3,6 +3,22 @@ PYTHONPATH = src
 # Python version is pinned via `.python-version` (used by uv and CI).
 PYTHON_VERSION := $(shell tr -d '[:space:]' < .python-version)
 
+# Include environment files (same pattern as other repos).
+#
+# - `env.example` provides defaults and documents available settings.
+# - `.env` (if present) overrides `env.example` for local development.
+ifneq (,$(wildcard .env))
+    ifneq (,$(wildcard env.example))
+        include env.example
+    endif
+    include .env
+else
+    ifneq (,$(wildcard env.example))
+        include env.example
+    endif
+endif
+export
+
 # Tooling-only SECRET_KEY used for local checks.
 #
 # Django settings require SECRET_KEY when DEBUG is disabled. Both pytest-django and
@@ -73,6 +89,7 @@ docker-run: ## Run Docker container
 	@echo "Running Docker container..."
 	docker run --rm \
 		-p 8000:8000 \
+		--add-host=host.docker.internal:host-gateway \
 		$(if $(wildcard env.example),--env-file env.example,) \
 		$(if $(wildcard env.docker),--env-file env.docker,) \
 		$(if $(wildcard .env),--env-file .env,) \

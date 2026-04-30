@@ -59,19 +59,23 @@ Then open:
 Run using Docker Compose:
 
 ```bash
-docker compose up --build
+docker compose up -d
 ```
 
 Notes:
 
-- `docker compose` runs `manage.py migrate` on startup (see the `compose.yml`
-  `entrypoint` config).
-- `docker compose` is intended for local development. It overrides the image
-  entrypoint and starts Django with `runserver`.
+- `docker compose` in this repository is intended to run **PostgreSQL only** for
+  local development.
+- Run Django locally with `make run` and point it to the Postgres instance via
+  env vars (see `env.example`).
 - The Docker image itself starts the application with **Gunicorn** (see
   `Dockerfile`) and serves static files via **WhiteNoise**.
 - If you run the image directly (without Docker Compose), you must run migrations
   yourself.
+- If you want to run the Docker image against the local Postgres started via
+  `docker compose up -d postgres`, use `env.docker` (it points `DATABASE_HOST` to
+  `host.docker.internal`). On Linux, `make docker-run` includes the required host
+  mapping (`--add-host=host.docker.internal:host-gateway`).
 
 ## Domain rules
 
@@ -92,6 +96,8 @@ Notes:
 
 The application is configured via environment variables (loaded using
 `django-environ`).
+
+See `env.example` for a complete list of supported variables.
 
 - **Django**
   - `DEBUG`: enable debug mode (default: `0`)
@@ -150,24 +156,14 @@ semantics or query planning, for example:
 - transaction isolation / concurrency edge cases
 - PostgreSQL-specific SQL or index/ordering behavior
 
-To run only the PostgreSQL-marked subset locally, enable PostgreSQL for pytest
-and request the postgres-only selection via env vars:
-
-```bash
-PYTEST_POSTGRES_USE=1 PYTEST_POSTGRES_ONLY=1 \
-DATABASE_HOST=127.0.0.1 DATABASE_PORT=5432 \
-DATABASE_NAME=database DATABASE_USER=user DATABASE_PASSWORD=password \
-make test
-```
-
-To run the full test suite on PostgreSQL (not just the marked subset), omit
-`PYTEST_POSTGRES_ONLY=1`:
+To run tests on PostgreSQL locally, enable PostgreSQL for pytest:
 
 ```bash
 PYTEST_POSTGRES_USE=1 \
 DATABASE_HOST=127.0.0.1 DATABASE_PORT=5432 \
 DATABASE_NAME=database DATABASE_USER=user DATABASE_PASSWORD=password \
-make test
+PYTHONPATH=src SECRET_KEY=unsafe-secret-key-for-tooling \
+uv run python -m pytest -v
 ```
 
 Formatting is intentionally not part of `make all` (so checks do not mutate the
