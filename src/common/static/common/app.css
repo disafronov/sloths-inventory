@@ -312,6 +312,29 @@ body.nav-open {
 }
 
 /**
+ * Inline actions for card-like UIs (e.g. transfers): keep buttons on one row when possible,
+ * but allow wrapping on narrow screens.
+ */
+.form-actions--inline {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.form-actions--inline > * {
+  flex: 0 0 auto;
+}
+
+.form-actions--inline .button {
+  width: auto;
+}
+
+.form-actions--inline form {
+  margin: 0;
+  display: inline-flex;
+}
+
+/**
  * Logout uses a form so CSRF POST works; stretch like other nav buttons on phones.
  */
 .logout-form {

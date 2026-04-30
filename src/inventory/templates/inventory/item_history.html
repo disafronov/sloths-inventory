@@ -8,10 +8,6 @@
 {% block content %}
 <p class="sr-only">{% trans "Item history" %}</p>
 <div class="item-card" aria-label="{% trans 'Item details' %}">
-    <div class="item-card__title">
-        <span class="item-card__label">{% trans "Inventory number" %}:</span>
-        <span class="item-card__value">{{ item.inventory_number }}</span>
-    </div>
     <div class="item-card__row">
         <span class="item-card__label">{% trans "Device" %}:</span>
         <span class="item-card__value">{{ item.device }}</span>
@@ -23,7 +19,18 @@
 </div>
 
 {% if is_owner %}
-    <p><a href="{% url 'inventory:change-location' item_id=item.id %}" class="button button--secondary button--sm">{% trans "Change location" %}</a></p>
+    <div class="form-actions form-actions--inline" aria-label="{% trans 'Item actions' %}">
+        <a
+            href="{% url 'inventory:change-location' item_id=item.id %}"
+            class="button button--secondary button--sm"
+        >{% trans "Change location" %}</a>
+        {% if not pending_transfer %}
+            <a
+                href="{% url 'inventory:create-transfer' item_id=item.id %}"
+                class="button button--secondary button--sm"
+            >{% trans "Transfer item" %}</a>
+        {% endif %}
+    </div>
 {% endif %}
 
 {% if pending_transfer %}
@@ -32,7 +39,7 @@
             <span class="item-card__label">{% trans "Pending transfer" %}:</span>
             <span class="item-card__value">{{ pending_transfer.from_responsible }} → {{ pending_transfer.to_responsible }}</span>
         </div>
-        <div class="form-actions">
+        <div class="form-actions form-actions--inline">
             {% if pending_transfer.to_responsible.user_id == user.id %}
                 <form method="post" action="{% url 'inventory:accept-transfer' transfer_id=pending_transfer.id %}">
                     {% csrf_token %}
@@ -47,12 +54,6 @@
             {% endif %}
         </div>
     </div>
-{% elif is_owner %}
-    <p>
-        <a href="{% url 'inventory:create-transfer' item_id=item.id %}" class="button button--secondary button--sm">
-            {% trans "Transfer item" %}
-        </a>
-    </p>
 {% endif %}
 
 {% if operations %}
