@@ -161,6 +161,9 @@ msgstr "Current location"
 msgid "New location"
 msgstr "New location"
 
+msgid "New location must be different from current location."
+msgstr "New location must be different from current location."
+
 msgid "Save"
 msgstr "Save"
 

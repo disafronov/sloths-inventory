@@ -9,6 +9,7 @@ from django.db.models.query_utils import Q
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.utils.translation import gettext as _
 
 from catalogs.models import Location, Responsible
 
@@ -357,6 +358,20 @@ def change_location(request: HttpRequest, *, item_id: int) -> HttpResponse:
             location = Location.objects.get(pk=location_id)
         except Location.DoesNotExist:
             raise Http404
+
+        if location.pk == current_op.location_id:
+            locations = Location.objects.order_by("name")
+            return render(
+                request,
+                "inventory/change_location.html",
+                {
+                    "item": item,
+                    "locations": locations,
+                    "current_location": current_op.location,
+                    "error": _("New location must be different from current location."),
+                },
+                status=400,
+            )
 
         Operation.objects.create(
             item=item,
