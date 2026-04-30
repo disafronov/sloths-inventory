@@ -1,5 +1,8 @@
 PYTHONPATH = src
 
+# Python version is pinned via `.python-version` (used by uv and CI).
+PYTHON_VERSION := $(shell tr -d '[:space:]' < .python-version)
+
 # Tooling-only SECRET_KEY used for local checks.
 #
 # Django settings require SECRET_KEY when DEBUG is disabled. Both pytest-django and
@@ -20,7 +23,8 @@ help: ## Show this help message
 
 install: ## Install dependencies
 	@echo "Installing dependencies..."
-	uv sync
+	uv python install $(PYTHON_VERSION)
+	uv sync --python $(PYTHON_VERSION)
 	@echo "Installing pre-commit hooks..."
 	uv run pre-commit install
 
