@@ -1,3 +1,13 @@
+## [1.0.0-rc.1](https://github.com/disafronov/sloths-inventory/compare/v0.12.0-rc.1...v1.0.0-rc.1) (2026-04-30)
+
+### ⚠ BREAKING CHANGES
+
+* major release
+
+### Features
+
+* major release ([7b6d5f0](https://github.com/disafronov/sloths-inventory/commit/7b6d5f0df1800d0d8991af9a7a74377c553e6b65))
+
 ## [0.12.0-rc.1](https://github.com/disafronov/sloths-inventory/compare/v0.11.0...v0.12.0-rc.1) (2026-04-30)
 
 ### ⚠ BREAKING CHANGES
