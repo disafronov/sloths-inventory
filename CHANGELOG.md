@@ -1,3 +1,22 @@
+## [0.12.0-rc.1](https://github.com/disafronov/sloths-inventory/compare/v0.11.0...v0.12.0-rc.1) (2026-04-30)
+
+### ⚠ BREAKING CHANGES
+
+* ready for major release
+
+### Features
+
+* **docker:** update Dockerfile for static file handling and server configuration ([0f27b04](https://github.com/disafronov/sloths-inventory/commit/0f27b041e953e0d07df62edb446e080e74798965))
+* ready for major release ([22ad2ac](https://github.com/disafronov/sloths-inventory/commit/22ad2ac5d839103e6a1f26ced43d8c851e604052))
+* **tests:** configure static file storage for pytest runs ([d761b76](https://github.com/disafronov/sloths-inventory/commit/d761b768d85e1c7c311fe7cce6c2a9cdfc467a4f))
+* **tests:** enhance pytest configuration with tooling secret key ([b3f8315](https://github.com/disafronov/sloths-inventory/commit/b3f83156e1cf0d5bb340255d64800d61001bf318))
+
+### Bug Fixes
+
+* **docker:** set SECRET_KEY for static file collection in Dockerfile ([19ae587](https://github.com/disafronov/sloths-inventory/commit/19ae587454d3647d643936b110ceda9aa89ab0df))
+* **settings:** disable debug mode for production ([47fc36a](https://github.com/disafronov/sloths-inventory/commit/47fc36ac4f2ff725cffa640448bdfe8fbd9728b8))
+* **settings:** make TIME_ZONE configurable via environment variable ([282c4b5](https://github.com/disafronov/sloths-inventory/commit/282c4b5d27df2b8c8ea053a55eeb9783e505be35))
+
 ## [0.11.0](https://github.com/disafronov/sloths-inventory/compare/v0.10.0...v0.11.0) (2026-04-30)
 
 ### Features
