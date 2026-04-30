@@ -5,13 +5,7 @@ Pytest (via pytest-django) should be self-contained and must not require a runni
 Postgres instance in CI.
 """
 
-import secrets
-
 from .settings import *  # noqa: F401,F403
-
-# Keep test output deterministic and quiet.
-DEBUG = False  # noqa: F405
-SECRET_KEY = secrets.token_urlsafe(32)  # noqa: F405
 
 # Static files in tests should not depend on `collectstatic`.
 #
