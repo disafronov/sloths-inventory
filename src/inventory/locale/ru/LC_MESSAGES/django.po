@@ -208,9 +208,6 @@ msgstr "Входящие передачи"
 msgid "Outgoing transfers"
 msgstr "Исходящие передачи"
 
-msgid "Transfer item"
-msgstr "Передать вещь"
-
 msgid "Pending transfer"
 msgstr "Ожидающая передача"
 
