@@ -54,7 +54,7 @@ jobs:
         env:
           UV_PYTHON: ${{ steps.python_version.outputs.version }}
 
-      - name: Run Postgres-only contract tests
+      - name: Run Postgres-only tests
         run: make test
         env:
           UV_PYTHON: ${{ steps.python_version.outputs.version }}
