@@ -37,7 +37,7 @@ msgstr "Ответственный"
 
 #: src/inventory/admin.py:109 src/inventory/models.py:93
 msgid "Operation"
-msgstr "Эксплуатация"
+msgstr "Назначение"
 
 #: src/inventory/apps.py:8
 msgid "Inventory"
@@ -76,11 +76,11 @@ msgstr "Серийный номер"
 #: src/inventory/models.py:28 src/inventory/models.py:81
 #: src/inventory/models.py:203
 msgid "Item"
-msgstr "Экземпляр"
+msgstr "Вещь"
 
 #: src/inventory/models.py:29
 msgid "Items"
-msgstr "Экземпляры"
+msgstr "Вещи"
 
 #: src/inventory/models.py:42
 msgid "Inventory number cannot be empty"
@@ -92,11 +92,11 @@ msgstr "Ответственный"
 
 #: src/inventory/models.py:94
 msgid "Operations"
-msgstr "Эксплуатации"
+msgstr "Назначения"
 
 #: src/inventory/models.py:136
 msgid "Operation item cannot be changed"
-msgstr "Нельзя изменить предмет у операции"
+msgstr "Нельзя изменить вещь в назначении"
 
 #: src/inventory/models.py:140
 #, python-format
@@ -107,18 +107,18 @@ msgid_plural ""
 "This operation can no longer be edited (the %(minutes)d minutes correction "
 "window has expired)"
 msgstr[0] ""
-"Эту операцию больше нельзя редактировать (окно исправления в %(minutes)d "
+"Это назначение больше нельзя редактировать (окно исправления в %(minutes)d "
 "минуту истекло)"
 msgstr[1] ""
-"Эту операцию больше нельзя редактировать (окно исправления в %(minutes)d "
+"Это назначение больше нельзя редактировать (окно исправления в %(minutes)d "
 "минуты истекло)"
 msgstr[2] ""
-"Эту операцию больше нельзя редактировать (окно исправления в %(minutes)d "
+"Это назначение больше нельзя редактировать (окно исправления в %(minutes)d "
 "минут истекло)"
 
 #: src/inventory/models.py:164
 msgid "Only the latest operation for this item can be edited"
-msgstr "Можно редактировать только последнюю операцию для этого предмета"
+msgstr "Можно редактировать только последнее назначение для этой вещи"
 
 #: src/inventory/models.py:208
 msgid "From"
@@ -255,7 +255,7 @@ msgstr "Заметки"
 
 #: src/inventory/templates/inventory/item_history.html:100
 msgid "No operations found."
-msgstr "Операции не найдены."
+msgstr "Назначений пока нет."
 
 #: src/inventory/templates/inventory/my_items.html:4
 #: src/inventory/templates/inventory/my_items.html:6
