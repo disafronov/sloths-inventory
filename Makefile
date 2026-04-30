@@ -5,19 +5,26 @@ PYTHON_VERSION := $(shell tr -d '[:space:]' < .python-version)
 
 # Include environment files (same pattern as other repos).
 #
+# Important: in CI, environment variables passed by the runner must win over
+# defaults from `env.example`, but GNU make gives Makefile assignments higher
+# priority than the environment. Therefore we only auto-include env files for
+# local development (when `CI` is not set).
+#
 # - `env.example` provides defaults and documents available settings.
 # - `.env` (if present) overrides `env.example` for local development.
-ifneq (,$(wildcard .env))
-    ifneq (,$(wildcard env.example))
-        include env.example
+ifeq ($(strip $(CI)),)
+    ifneq (,$(wildcard .env))
+        ifneq (,$(wildcard env.example))
+            include env.example
+        endif
+        include .env
+    else
+        ifneq (,$(wildcard env.example))
+            include env.example
+        endif
     endif
-    include .env
-else
-    ifneq (,$(wildcard env.example))
-        include env.example
-    endif
+    export
 endif
-export
 
 # Tooling-only SECRET_KEY used for local checks.
 #
