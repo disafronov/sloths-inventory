@@ -333,6 +333,8 @@ def create_transfer(request: HttpRequest, *, item_id: int) -> HttpResponse:
             to_responsible = Responsible.objects.get(pk=int(to_id))
         except (Responsible.DoesNotExist, ValueError):
             raise Http404
+        if to_responsible.pk == responsible.pk:
+            raise Http404
 
         PendingTransfer.objects.create(
             item=item,
