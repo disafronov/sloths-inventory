@@ -687,7 +687,7 @@ def test_accept_transfer_returns_404_if_user_has_no_responsible() -> None:
 
 
 @pytest.mark.django_db
-def test_cancel_transfer_is_allowed_only_for_sender() -> None:
+def test_cancel_transfer_is_allowed_for_sender_and_receiver() -> None:
     user_sender = User.objects.create_user(username="sender", password="pw")
     user_receiver = User.objects.create_user(username="receiver", password="pw")
     resp_sender = Responsible.objects.create(
@@ -708,17 +708,28 @@ def test_cancel_transfer_is_allowed_only_for_sender() -> None:
 
     client_receiver = Client()
     client_receiver.force_login(user_receiver)
-    forbidden = client_receiver.post(f"/transfers/{transfer.pk}/cancel/")
-    assert forbidden.status_code == 404
-
-    client_sender = Client()
-    client_sender.force_login(user_sender)
-    ok = client_sender.post(f"/transfers/{transfer.pk}/cancel/")
-    assert ok.status_code == 302
+    ok_receiver = client_receiver.post(f"/transfers/{transfer.pk}/cancel/")
+    assert ok_receiver.status_code == 302
 
     transfer.refresh_from_db()
     assert transfer.cancelled_at is not None
     assert transfer.accepted_at is None
+
+    # Reset state: create another transfer for sender cancellation path.
+    transfer2 = PendingTransfer.objects.create(
+        item=item,
+        from_responsible=resp_sender,
+        to_responsible=resp_receiver,
+    )
+
+    client_sender = Client()
+    client_sender.force_login(user_sender)
+    ok_sender = client_sender.post(f"/transfers/{transfer2.pk}/cancel/")
+    assert ok_sender.status_code == 302
+
+    transfer2.refresh_from_db()
+    assert transfer2.cancelled_at is not None
+    assert transfer2.accepted_at is None
 
 
 @pytest.mark.django_db

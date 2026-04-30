@@ -32,6 +32,12 @@
                             {% csrf_token %}
                             <button type="submit" class="button button--sm">{% trans "Accept" %}</button>
                         </form>
+                        <form method="post" action="{% url 'inventory:cancel-transfer' transfer_id=t.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="button button--secondary button--sm">
+                                {% trans "Decline transfer" %}
+                            </button>
+                        </form>
                     </div>
                 </div>
             {% endfor %}
