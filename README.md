@@ -137,6 +137,9 @@ Some tests validate PostgreSQL-specific behavior (e.g. row-level locking). Such
 tests are marked with `@pytest.mark.postgres` and are automatically skipped
 unless the active database backend is PostgreSQL.
 
+Note: `src/conftest.py` is test infrastructure (not application code) and is
+excluded from coverage.
+
 Rule of thumb: add `@pytest.mark.postgres` when a test relies on PostgreSQL
 semantics or query planning, for example:
 

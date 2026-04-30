@@ -84,7 +84,7 @@ exclude_dirs = [ ".venv", "__pycache__", ".git", "htmlcov", "tests" ]
 
 [tool.coverage.run]
 source = [ "." ]
-omit = [ "tests/*", "src/*/tests/*" ]
+omit = [ "tests/*", "src/*/tests/*", "src/conftest.py" ]
 branch = true
 
 [tool.coverage.report]

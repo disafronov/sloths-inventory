@@ -496,6 +496,20 @@ def test_change_location_post_creates_new_operation_and_redirects() -> None:
 
 
 @pytest.mark.django_db
+def test_change_location_post_returns_404_when_location_id_is_missing() -> None:
+    user = User.objects.create_user(username="u1", password="pw")
+    resp = Responsible.objects.create(last_name="One", first_name="User", user=user)
+    status = Status.objects.create(name="In use")
+    location = Location.objects.create(name="Home")
+    item = _make_item_with_operation(status, location, resp, "INV-NOLOCID")
+
+    client = Client()
+    client.force_login(user)
+    response = client.post(f"/items/{item.pk}/change-location/", {})
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
 def test_change_location_post_returns_404_for_invalid_location() -> None:
     user = User.objects.create_user(username="u1", password="pw")
     resp = Responsible.objects.create(last_name="One", first_name="User", user=user)
