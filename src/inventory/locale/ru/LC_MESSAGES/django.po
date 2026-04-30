@@ -197,7 +197,13 @@ msgid "Search location"
 msgstr "Поиск местоположения"
 
 msgid "Type to filter locations…"
-msgstr "Начните вводить, чтобы отфильтровать…"
+msgstr "Начните вводить, чтобы отфильтровать местоположения…"
+
+msgid "Decline transfer"
+msgstr "Отклонить передачу"
+
+msgid "Type to filter people…"
+msgstr "Начните вводить, чтобы отфильтровать людей…"
 
 #~ msgid "History"
 #~ msgstr "История"
