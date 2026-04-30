@@ -1,5 +1,5 @@
 ---
-name: Concurrency (Postgres)
+name: Tests Postgres
 
 "on":
   pull_request:
@@ -14,8 +14,8 @@ name: Concurrency (Postgres)
       - "src/inventory/**"
 
 jobs:
-  concurrency_postgres:
-    name: "Concurrency (Postgres)"
+  tests_postgres:
+    name: "Tests Postgres"
     runs-on: ubuntu-latest
     permissions:
       contents: read
