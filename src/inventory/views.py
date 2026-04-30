@@ -3,14 +3,16 @@ from __future__ import annotations
 from typing import TypeVar
 
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
 from django.db.models import OuterRef, QuerySet, Subquery
 from django.db.models.query_utils import Q
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 
 from catalogs.models import Location, Responsible
 
-from .models import Item, Operation
+from .models import Item, Operation, PendingTransfer
 
 TItem = TypeVar("TItem", bound=Item)
 
@@ -78,6 +80,23 @@ def _items_owned_by(responsible: Responsible) -> QuerySet[Item]:
         _items_with_device_relations()
         .annotate(_latest_responsible_id=Subquery(latest_responsible_id))
         .filter(_latest_responsible_id=responsible.pk)
+    )
+
+
+def _get_active_transfer_for_item(item: Item) -> PendingTransfer | None:
+    """
+    Return the active pending transfer for an item, if any.
+
+    Transfers are separate from `Operation` history and only become part of the
+    inventory state when accepted (at which point a new `Operation` is created).
+    """
+
+    return (
+        PendingTransfer.objects.filter(item=item)
+        .filter(accepted_at__isnull=True, cancelled_at__isnull=True)
+        .select_related("from_responsible", "to_responsible")
+        .order_by("-created_at", "-id")
+        .first()
     )
 
 
@@ -208,6 +227,15 @@ def item_history(request: HttpRequest, *, item_id: int) -> HttpResponse:
             .order_by("-created_at", "-id")
         )
 
+    pending_transfer = _get_active_transfer_for_item(item)
+    can_see_transfer = False
+    if pending_transfer is not None:
+        can_see_transfer = (
+            is_owner or pending_transfer.to_responsible_id == responsible.pk
+        )
+        if not can_see_transfer:
+            pending_transfer = None
+
     return render(
         request,
         "inventory/item_history.html",
@@ -215,6 +243,7 @@ def item_history(request: HttpRequest, *, item_id: int) -> HttpResponse:
             "item": item,
             "operations": operations,
             "is_owner": is_owner,
+            "pending_transfer": pending_transfer,
         },
     )
 
@@ -258,5 +287,220 @@ def change_location(request: HttpRequest, *, item_id: int) -> HttpResponse:
             "item": item,
             "locations": locations,
             "current_location": current_op.location,
+        },
+    )
+
+
+@login_required
+def create_transfer(request: HttpRequest, *, item_id: int) -> HttpResponse:
+    """
+    Create a pending transfer offer for an item.
+
+    Only the current owner may initiate a transfer. Ownership is changed only
+    when the receiver confirms the handoff (see `accept_transfer`).
+    """
+
+    responsible = _get_responsible_for_user(request)
+    if responsible is None:
+        raise Http404
+
+    item = _items_owned_by(responsible).filter(pk=item_id).first()
+    if item is None:
+        raise Http404
+
+    current_op = item.current_operation
+    if current_op is None:
+        raise Http404  # pragma: no cover
+
+    pending_transfer = _get_active_transfer_for_item(item)
+    if pending_transfer is not None:
+        return render(
+            request,
+            "inventory/transfer_create.html",
+            {
+                "item": item,
+                "responsible": responsible,
+                "responsibles": [],
+                "pending_transfer": pending_transfer,
+            },
+        )
+
+    if request.method == "POST":
+        to_id = request.POST.get("to_responsible_id")
+        if not to_id:
+            raise Http404
+        try:
+            to_responsible = Responsible.objects.get(pk=int(to_id))
+        except (Responsible.DoesNotExist, ValueError):
+            raise Http404
+
+        PendingTransfer.objects.create(
+            item=item,
+            from_responsible=responsible,
+            to_responsible=to_responsible,
+        )
+        return redirect("inventory:item-history", item_id=item.pk)
+
+    responsibles = (
+        Responsible.objects.exclude(pk=responsible.pk)
+        .order_by("last_name", "first_name", "middle_name")
+        .all()
+    )
+    return render(
+        request,
+        "inventory/transfer_create.html",
+        {
+            "item": item,
+            "responsible": responsible,
+            "responsibles": responsibles,
+            "pending_transfer": None,
+        },
+    )
+
+
+@login_required
+def accept_transfer(request: HttpRequest, *, transfer_id: int) -> HttpResponse:
+    """
+    Accept a pending transfer and append an ownership-changing operation.
+
+    Only the transfer receiver may accept. This is the authoritative confirmation
+    path that changes the current owner (via a new `Operation`).
+    """
+
+    if request.method != "POST":
+        raise Http404
+
+    responsible = _get_responsible_for_user(request)
+    if responsible is None:
+        raise Http404
+
+    transfer = get_object_or_404(
+        PendingTransfer.objects.select_related(
+            "item", "to_responsible", "from_responsible"
+        ),
+        pk=transfer_id,
+    )
+    if not transfer.is_active:
+        raise Http404
+    if transfer.to_responsible_id != responsible.pk:
+        raise Http404
+
+    with transaction.atomic():
+        Item.objects.select_for_update().only("id").get(pk=transfer.item_id)
+        transfer = PendingTransfer.objects.select_for_update().get(pk=transfer.pk)
+        if not transfer.is_active:
+            raise Http404
+
+        item = Item.objects.get(pk=transfer.item_id)
+        current_op = item.current_operation
+        if current_op is None:
+            raise Http404  # pragma: no cover
+
+        Operation.objects.create(
+            item=item,
+            status=current_op.status,
+            responsible=transfer.to_responsible,
+            location=current_op.location,
+            notes=f"Accepted transfer from {transfer.from_responsible}",
+        )
+        transfer.accepted_at = timezone.now()
+        transfer.save()
+
+    return redirect("inventory:item-history", item_id=transfer.item_id)
+
+
+@login_required
+def cancel_transfer(request: HttpRequest, *, transfer_id: int) -> HttpResponse:
+    """
+    Cancel a pending transfer.
+
+    Only the sender may cancel while the transfer is active.
+    """
+
+    if request.method != "POST":
+        raise Http404
+
+    responsible = _get_responsible_for_user(request)
+    if responsible is None:
+        raise Http404
+
+    transfer = get_object_or_404(
+        PendingTransfer.objects.select_related(
+            "item", "from_responsible", "to_responsible"
+        ),
+        pk=transfer_id,
+    )
+    if not transfer.is_active:
+        raise Http404
+    if transfer.from_responsible_id != responsible.pk:
+        raise Http404
+
+    transfer.cancelled_at = timezone.now()
+    transfer.save()
+    return redirect("inventory:item-history", item_id=transfer.item_id)
+
+
+@login_required
+def incoming_transfers(request: HttpRequest) -> HttpResponse:
+    """
+    List active transfers addressed to the current user.
+
+    This is a lightweight inbox that makes pending handoff offers discoverable
+    without having to know the item id in advance.
+    """
+
+    return redirect("inventory:transfers")
+
+
+@login_required
+def outgoing_transfers(request: HttpRequest) -> HttpResponse:
+    """
+    List active transfers initiated by the current user.
+
+    This provides visibility into pending offers and allows the sender to cancel
+    them without searching for the item page.
+    """
+
+    return redirect("inventory:transfers")
+
+
+@login_required
+def transfers(request: HttpRequest) -> HttpResponse:
+    """
+    Show incoming and outgoing pending transfers on a single page.
+
+    This keeps the UI simple for end users while preserving separate URLs
+    (incoming/outgoing) for backwards compatibility via redirects.
+    """
+
+    responsible = _get_responsible_for_user(request)
+    if responsible is None:
+        return render(
+            request,
+            "inventory/transfers.html",
+            {
+                "responsible": None,
+                "incoming": [],
+                "outgoing": [],
+            },
+        )
+
+    base_qs = PendingTransfer.objects.filter(
+        accepted_at__isnull=True,
+        cancelled_at__isnull=True,
+    ).select_related("item", "from_responsible", "to_responsible")
+
+    incoming = base_qs.filter(to_responsible=responsible).order_by("-created_at", "-id")
+    outgoing = base_qs.filter(from_responsible=responsible).order_by(
+        "-created_at", "-id"
+    )
+
+    return render(
+        request,
+        "inventory/transfers.html",
+        {
+            "responsible": responsible,
+            "incoming": incoming,
+            "outgoing": outgoing,
         },
     )

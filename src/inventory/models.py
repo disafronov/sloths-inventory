@@ -188,3 +188,113 @@ class Operation(BaseModel):
     def get_responsible_display(self) -> str:
         """Return a human-readable representation of the responsible person."""
         return str(self.responsible)
+
+
+class PendingTransfer(BaseModel):
+    """
+    Pending item transfer that requires receiver confirmation.
+
+    The inventory uses an append-only stream of `Operation` records to derive the
+    current owner. A transfer must not be a unilateral state change, so we store
+    a separate pending entity and only create a new `Operation` when the
+    receiver confirms the handoff.
+    """
+
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, verbose_name=_("Item"))
+    from_responsible = models.ForeignKey(
+        Responsible,
+        on_delete=models.PROTECT,
+        related_name="outgoing_transfers",
+        verbose_name=_("From"),
+    )
+    to_responsible = models.ForeignKey(
+        Responsible,
+        on_delete=models.PROTECT,
+        related_name="incoming_transfers",
+        verbose_name=_("To"),
+    )
+    expires_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name=_("Expires at"),
+        help_text=_("Optional. Transfers are ignored after expiration."),
+    )
+    accepted_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name=_("Accepted at"),
+    )
+    cancelled_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name=_("Cancelled at"),
+    )
+
+    class Meta:
+        verbose_name = _("Pending transfer")
+        verbose_name_plural = _("Pending transfers")
+        ordering = ["-created_at", "-id"]
+        indexes = [
+            models.Index(
+                fields=["item", "accepted_at", "cancelled_at", "-created_at", "-id"],
+                name="inv_pend_xfer_item_idx",
+            ),
+        ]
+
+    def __str__(self) -> str:
+        return f"{self.item} -> {self.to_responsible}"
+
+    def clean(self) -> None:
+        """
+        Validate pending transfer invariants.
+
+        - Only one active transfer may exist per item.
+        - Transfers cannot be accepted and cancelled at the same time.
+        """
+
+        super().clean()
+
+        if self.from_responsible_id == self.to_responsible_id:
+            raise ValidationError(
+                {"to_responsible": _("Transfer receiver must be different")}
+            )
+
+        if self.accepted_at and self.cancelled_at:
+            raise ValidationError(_("Transfer cannot be accepted and cancelled"))
+
+        if self.expires_at and self.expires_at <= timezone.now():
+            raise ValidationError({"expires_at": _("Expiration must be in the future")})
+
+        if self._state.adding and self.item_id:
+            active_exists = (
+                PendingTransfer.objects.filter(item_id=self.item_id)
+                .filter(accepted_at__isnull=True, cancelled_at__isnull=True)
+                .exists()
+            )
+            if active_exists:
+                raise ValidationError(
+                    _("An active transfer already exists for this item")
+                )
+
+    def save(self, *args: Any, **kwargs: Any) -> None:
+        """
+        Save the transfer with per-item serialization.
+
+        We lock the related Item row to avoid creating multiple concurrent
+        pending transfers for the same item under race conditions.
+        """
+
+        with transaction.atomic():
+            Item.objects.select_for_update().only("id").get(pk=self.item_id)
+            self.full_clean()
+            return super().save(*args, **kwargs)
+
+    @property
+    def is_active(self) -> bool:
+        """Return True when the transfer is pending and not expired."""
+
+        if self.accepted_at or self.cancelled_at:
+            return False
+        if self.expires_at is not None and timezone.now() >= self.expires_at:
+            return False
+        return True

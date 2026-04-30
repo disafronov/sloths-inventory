@@ -7,7 +7,7 @@ from django.utils.translation import gettext_lazy as _
 
 from common.admin import BaseAdmin
 
-from .models import Item, Operation
+from .models import Item, Operation, PendingTransfer
 
 
 class _EmptyValueFormatter(Protocol):
@@ -226,3 +226,45 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
     @admin.display(description=_("Responsible Person"))
     def get_responsible_display(self, obj: Operation) -> str:
         return obj.responsible.get_full_name()
+
+
+@admin.register(PendingTransfer)
+class PendingTransferAdmin(BaseAdmin):
+    list_display = [
+        "item",
+        "from_responsible",
+        "to_responsible",
+        "expires_at",
+        "accepted_at",
+        "cancelled_at",
+        "updated_at",
+        "created_at",
+    ]
+    list_display_links = ["item", "from_responsible", "to_responsible"]
+    search_fields = [
+        "item__inventory_number",
+        "from_responsible__last_name",
+        "from_responsible__first_name",
+        "from_responsible__middle_name",
+        "to_responsible__last_name",
+        "to_responsible__first_name",
+        "to_responsible__middle_name",
+        "notes",
+    ]
+    list_filter = [
+        "from_responsible",
+        "to_responsible",
+        "accepted_at",
+        "cancelled_at",
+        "updated_at",
+        "created_at",
+    ]
+    autocomplete_fields = ["item", "from_responsible", "to_responsible"]
+    main_fields = (
+        "item",
+        "from_responsible",
+        "to_responsible",
+        "expires_at",
+        "accepted_at",
+        "cancelled_at",
+    )
