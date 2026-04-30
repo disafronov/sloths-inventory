@@ -59,16 +59,16 @@
 
     {% if is_owner %}
         <div class="form-actions form-actions--inline" aria-label="{% trans 'Item actions' %}">
+            <a
+                href="{% url 'inventory:change-location' item_id=item.id %}"
+                class="button button--secondary button--sm"
+            >{% trans "Change location" %}</a>
             {% if not pending_transfer %}
                 <a
                     href="{% url 'inventory:create-transfer' item_id=item.id %}"
                     class="button button--secondary button--sm"
                 >{% trans "Transfer" %}</a>
             {% endif %}
-            <a
-                href="{% url 'inventory:change-location' item_id=item.id %}"
-                class="button button--secondary button--sm"
-            >{% trans "Change location" %}</a>
         </div>
     {% endif %}
 
