@@ -234,6 +234,12 @@ msgstr "From"
 
 msgid "To"
 msgstr "To"
+
+msgid "Incoming transfer from"
+msgstr "Incoming transfer from"
+
+msgid "Outgoing transfer for"
+msgstr "Outgoing transfer for"
 #~ msgid "History"
 #~ msgstr "History"
 

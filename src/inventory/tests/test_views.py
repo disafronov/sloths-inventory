@@ -1101,8 +1101,8 @@ def test_item_history_shows_pending_transfer_to_owner() -> None:
     response = client.get(f"/items/{item.pk}/")
     assert response.status_code == 200
     assert (
-        b"Pending transfer" in response.content
-        or "передач".encode("utf-8") in response.content
+        b"Outgoing transfer for" in response.content
+        or "Исходящая передача".encode("utf-8") in response.content
     )
 
 
@@ -1156,8 +1156,8 @@ def test_item_history_allows_receiver_to_view_item_with_pending_transfer() -> No
     response = client.get(f"/items/{item.pk}/")
     assert response.status_code == 200
     assert (
-        b"Pending transfer" in response.content
-        or "передач".encode("utf-8") in response.content
+        b"Incoming transfer from" in response.content
+        or "Входящая передача".encode("utf-8") in response.content
     )
     assert b"newest" in response.content
     assert b"owner" not in response.content

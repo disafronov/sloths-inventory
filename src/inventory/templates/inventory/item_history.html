@@ -37,8 +37,16 @@
     {% if pending_transfer %}
         <div class="item-card">
             <div class="item-card__row">
-                <span class="item-card__label">{% trans "Pending transfer" %}:</span>
-                <span class="item-card__value">{{ pending_transfer.from_responsible }} → {{ pending_transfer.to_responsible }}</span>
+                {% if pending_transfer.to_responsible.user_id == user.id %}
+                    <span class="item-card__label">{% trans "Incoming transfer from" %}:</span>
+                {% else %}
+                    <span class="item-card__label">{% trans "Outgoing transfer for" %}:</span>
+                {% endif %}
+                {% if pending_transfer.to_responsible.user_id == user.id %}
+                    <span class="item-card__value">{{ pending_transfer.from_responsible }}</span>
+                {% else %}
+                    <span class="item-card__value">{{ pending_transfer.to_responsible }}</span>
+                {% endif %}
             </div>
             <div class="form-actions form-actions--inline">
                 {% if pending_transfer.to_responsible.user_id == user.id %}
