@@ -1,6 +1,8 @@
 PYTHONPATH = src
 
-PYTEST_CMD = PYTHONPATH=$(PYTHONPATH) uv run python -m pytest -v
+TOOLING_SECRET_KEY = unsafe-secret-key-for-tooling
+
+PYTEST_CMD = PYTHONPATH=$(PYTHONPATH) SECRET_KEY=$(TOOLING_SECRET_KEY) uv run python -m pytest -v
 COVERAGE_OPTS = --cov --cov-report=term-missing --cov-report=html
 
 DOCKER_IMAGE = sloths-inventory
@@ -26,7 +28,7 @@ lint: ## Run linting tools
 	PYTHONPATH=$(PYTHONPATH) uv run black --check . && \
 	PYTHONPATH=$(PYTHONPATH) uv run isort --check-only . && \
 		PYTHONPATH=$(PYTHONPATH) uv run flake8 . && \
-		PYTHONPATH=$(PYTHONPATH) uv run mypy . && \
+		PYTHONPATH=$(PYTHONPATH) SECRET_KEY=$(TOOLING_SECRET_KEY) uv run mypy . && \
 		PYTHONPATH=$(PYTHONPATH) uv run bandit -r -c pyproject.toml .
 
 dead-code: ## Check for dead code using vulture
@@ -69,4 +71,3 @@ docker-run: ## Run Docker container
 
 docker: docker-build docker-run ## Build and run Docker container
 	@echo "Docker container built and running!"
-
