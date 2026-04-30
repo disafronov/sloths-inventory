@@ -195,15 +195,6 @@ msgstr "Search location"
 msgid "Type to filter locations…"
 msgstr "Type to filter locations…"
 
-msgid "Transfers"
-msgstr "Transfers"
-
-msgid "Incoming transfers"
-msgstr "Incoming transfers"
-
-msgid "Outgoing transfers"
-msgstr "Outgoing transfers"
-
 msgid "Pending transfer"
 msgstr "Pending transfer"
 
@@ -225,9 +216,6 @@ msgstr "Create offer"
 
 msgid "Type to filter people…"
 msgstr "Type to filter people…"
-
-msgid "View item"
-msgstr "View item"
 
 msgid "From"
 msgstr "From"
