@@ -131,23 +131,20 @@ msgstr "Кому"
 
 #: src/inventory/models.py:219
 msgid "Expires at"
-msgstr ""
+msgstr "Действительно до"
 
 #: src/inventory/models.py:220
 msgid "Optional. Transfers are ignored after expiration."
 msgstr ""
+"Необязательно. После указанного момента передача считается недействительной."
 
 #: src/inventory/models.py:225
-#, fuzzy
-#| msgid "Accept"
 msgid "Accepted at"
-msgstr "Принять"
+msgstr "Время принятия"
 
 #: src/inventory/models.py:230
-#, fuzzy
-#| msgid "Cancel"
 msgid "Cancelled at"
-msgstr "Отмена"
+msgstr "Время отмены"
 
 #: src/inventory/models.py:234
 msgid "Pending transfer"
@@ -159,19 +156,19 @@ msgstr "Передачи в ожидании"
 
 #: src/inventory/models.py:259
 msgid "Transfer receiver must be different"
-msgstr ""
+msgstr "Получатель передачи должен отличаться от отправителя"
 
 #: src/inventory/models.py:263
 msgid "Transfer cannot be accepted and cancelled"
-msgstr ""
+msgstr "Передача не может одновременно быть принятой и отменённой"
 
 #: src/inventory/models.py:266
 msgid "Expiration must be in the future"
-msgstr ""
+msgstr "Срок действия должен быть в будущем"
 
 #: src/inventory/models.py:276
 msgid "An active transfer already exists for this item"
-msgstr ""
+msgstr "Для этой вещи уже есть активная передача"
 
 #: src/inventory/templates/inventory/_transfer_card.html:26
 msgid "Transfer party"
