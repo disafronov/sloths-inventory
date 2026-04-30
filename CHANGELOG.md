@@ -1,3 +1,9 @@
+## [1.1.0-rc.4](https://github.com/disafronov/sloths-inventory/compare/v1.1.0-rc.3...v1.1.0-rc.4) (2026-04-30)
+
+### Bug Fixes
+
+* update navigation button styles and enhance active state indication ([be6c1fe](https://github.com/disafronov/sloths-inventory/commit/be6c1fe4150a416355a031f968337049bb2133ff))
+
 ## [1.1.0-rc.3](https://github.com/disafronov/sloths-inventory/compare/v1.1.0-rc.2...v1.1.0-rc.3) (2026-04-30)
 
 ### Features
