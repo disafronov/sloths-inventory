@@ -60,8 +60,9 @@ RUN --mount=from=uv,source=/uv,target=/bin/uv \
 
 # Compile translations and collect static files inside the build image.
 WORKDIR /home/ubuntu/app/src
-RUN python3 manage.py compilemessages
-RUN python3 manage.py collectstatic --noinput
+RUN export SECRET_KEY=unsafe-secret-key-for-tooling && \
+    python3 manage.py compilemessages && \
+    python3 manage.py collectstatic --noinput
 
 ##########################
 
