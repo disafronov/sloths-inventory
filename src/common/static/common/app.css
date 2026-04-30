@@ -495,15 +495,18 @@ body.nav-open {
 /**
  * Full-row tap target: entire card links to item history on list pages.
  */
-a.item-card {
+.item-card {
   display: block;
   padding: 12px 14px;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+a.item-card {
   text-decoration: none;
   color: inherit;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 a.item-card:hover {

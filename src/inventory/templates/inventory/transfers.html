@@ -16,7 +16,10 @@
         <div class="item-card-list">
             {% for t in incoming %}
                 <div class="item-card">
-                    <div class="item-card__title">{{ t.item.inventory_number }}</div>
+                    <div class="item-card__title">
+                        <span class="item-card__label">{% trans "Inventory number" %}:</span>
+                        <span class="item-card__value">{{ t.item.inventory_number }}</span>
+                    </div>
                     <div class="item-card__row">
                         <span class="item-card__label">{% trans "From" %}:</span>
                         <span class="item-card__value">{{ t.from_responsible }}</span>
@@ -44,7 +47,10 @@
         <div class="item-card-list">
             {% for t in outgoing %}
                 <div class="item-card">
-                    <div class="item-card__title">{{ t.item.inventory_number }}</div>
+                    <div class="item-card__title">
+                        <span class="item-card__label">{% trans "Inventory number" %}:</span>
+                        <span class="item-card__value">{{ t.item.inventory_number }}</span>
+                    </div>
                     <div class="item-card__row">
                         <span class="item-card__label">{% trans "To" %}:</span>
                         <span class="item-card__value">{{ t.to_responsible }}</span>
