@@ -157,7 +157,7 @@ msgid "Last on you"
 msgstr "Дата последнего закрепления"
 
 msgid "Change location"
-msgstr "Изменить местоположение"
+msgstr "Переместить"
 
 msgid "Current location"
 msgstr "Текущее местоположение"
@@ -199,8 +199,33 @@ msgstr "Поиск местоположения"
 msgid "Type to filter locations…"
 msgstr "Начните вводить, чтобы отфильтровать местоположения…"
 
-msgid "Decline transfer"
-msgstr "Отклонить передачу"
+msgid "Transfers"
+msgstr "Передачи"
+
+msgid "Incoming transfers"
+msgstr "Входящие передачи"
+
+msgid "Outgoing transfers"
+msgstr "Исходящие передачи"
+
+msgid "Transfer item"
+msgstr "Передать вещь"
+
+msgid "Pending transfer"
+msgstr "Ожидающая передача"
+
+msgid "Accept"
+msgstr "Принять"
+
+
+msgid "Decline"
+msgstr "Отклонить"
+
+msgid "Transfer to"
+msgstr "Передать кому"
+
+msgid "Create offer"
+msgstr "Создать предложение"
 
 msgid "Type to filter people…"
 msgstr "Начните вводить, чтобы отфильтровать людей…"

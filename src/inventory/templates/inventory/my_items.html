@@ -30,10 +30,7 @@
         {% for item in items %}
             {% url 'inventory:item-history' item_id=item.id as history_url %}
             <a class="item-card" href="{{ history_url }}">
-                <div class="item-card__title">
-                    <span class="item-card__label">{% trans "Inventory number" %}:</span>
-                    <span class="item-card__value">{{ item.inventory_number }}</span>
-                </div>
+                {% include "inventory/_item_card_title_inventory_number.html" with inventory_number=item.inventory_number %}
                 <div class="item-card__row">
                     <span class="item-card__label">{% trans "Device" %}:</span>
                     <span class="item-card__value">{{ item.device }}</span>

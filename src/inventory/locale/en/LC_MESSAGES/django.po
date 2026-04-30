@@ -195,8 +195,33 @@ msgstr "Search location"
 msgid "Type to filter locations…"
 msgstr "Type to filter locations…"
 
-msgid "Decline transfer"
-msgstr "Decline transfer"
+msgid "Transfers"
+msgstr "Transfers"
+
+msgid "Incoming transfers"
+msgstr "Incoming transfers"
+
+msgid "Outgoing transfers"
+msgstr "Outgoing transfers"
+
+msgid "Transfer item"
+msgstr "Transfer item"
+
+msgid "Pending transfer"
+msgstr "Pending transfer"
+
+msgid "Accept"
+msgstr "Accept"
+
+
+msgid "Decline"
+msgstr "Decline"
+
+msgid "Transfer to"
+msgstr "Transfer to"
+
+msgid "Create offer"
+msgstr "Create offer"
 
 msgid "Type to filter people…"
 msgstr "Type to filter people…"
