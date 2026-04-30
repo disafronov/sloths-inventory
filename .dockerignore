@@ -1,6 +1,32 @@
 /.git/
 /.venv/
 
+# OS / editor junk
+.DS_Store
+**/.DS_Store
+._*
+*.swp
+*~
+.idea/
+.vscode/
+
+# Python caches
+__pycache__/
+*.pyc
+*.pyo
+
+# Tool caches / artifacts
+.mypy_cache/
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Packaging artifacts
+build/
+dist/
+*.egg-info/
+
 # SQLite
 /src/db.sqlite3
 
