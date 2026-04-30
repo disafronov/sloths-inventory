@@ -9,6 +9,7 @@ class Location(NamedModel):
     class Meta:
         verbose_name = _("Location")
         verbose_name_plural = _("Locations")
+        ordering = ["name"]
 
 
 class Responsible(BaseModel):
@@ -47,3 +48,4 @@ class Status(NamedModel):
     class Meta:
         verbose_name = _("Status")
         verbose_name_plural = _("Statuses")
+        ordering = ["name"]
