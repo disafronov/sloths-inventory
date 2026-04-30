@@ -364,7 +364,7 @@ def change_location(request: HttpRequest, *, item_id: int) -> HttpResponse:
             responsible=responsible,
             location=location,
         )
-        return redirect("inventory:my-items")
+        return redirect("inventory:item-history", item_id=item.pk)
 
     locations = Location.objects.order_by("name")
     return render(

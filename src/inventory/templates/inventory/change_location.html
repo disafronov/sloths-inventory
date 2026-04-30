@@ -29,7 +29,10 @@
     </p>
     <div class="form-actions">
         <button type="submit" class="button">{% trans "Save" %}</button>
-        <a href="{% url 'inventory:my-items' %}" class="button button--secondary">{% trans "Cancel" %}</a>
+        <a
+            href="{% url 'inventory:item-history' item_id=item.id %}"
+            class="button button--secondary"
+        >{% trans "Cancel" %}</a>
     </div>
 </form>
 {% endblock %}
