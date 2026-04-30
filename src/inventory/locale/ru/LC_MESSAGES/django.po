@@ -221,6 +221,9 @@ msgstr "Принять"
 msgid "Decline"
 msgstr "Отклонить"
 
+msgid "Transfer"
+msgstr "Передать"
+
 msgid "Transfer to"
 msgstr "Передать кому"
 

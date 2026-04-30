@@ -217,6 +217,9 @@ msgstr "Accept"
 msgid "Decline"
 msgstr "Decline"
 
+msgid "Transfer"
+msgstr "Transfer"
+
 msgid "Transfer to"
 msgstr "Transfer to"
 
