@@ -148,7 +148,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "ru"
 
-TIME_ZONE = "Europe/Moscow"
+TIME_ZONE = env.str("TIME_ZONE", default="Europe/Moscow")
 
 USE_I18N = True
 USE_TZ = True
