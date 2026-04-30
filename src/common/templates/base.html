@@ -39,12 +39,14 @@
                     {% if user.is_authenticated %}
                         <span class="user-menu__user user-menu__user--identity">
                             <span class="user-menu__user-icon" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" width="18" height="18" focusable="false" aria-hidden="true">
-                                    <path
-                                        fill="currentColor"
-                                        d="M12 12a4 4 0 1 0-4-4a4 4 0 0 0 4 4m0 2c-4.42 0-8 2-8 4.5V21h16v-2.5C20 16 16.42 14 12 14"
-                                    />
-                                </svg>
+                                <img
+                                    src="{% static 'common/icons/user.svg' %}"
+                                    alt=""
+                                    width="18"
+                                    height="18"
+                                    loading="lazy"
+                                    decoding="async"
+                                >
                             </span>
                             <span class="user-menu__user-name">{{ user.username }}</span>
                         </span>
