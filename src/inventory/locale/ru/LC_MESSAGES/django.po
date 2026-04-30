@@ -156,6 +156,21 @@ msgstr "Были у меня"
 msgid "Last on you"
 msgstr "Дата последнего закрепления"
 
+msgid "Change location"
+msgstr "Изменить местоположение"
+
+msgid "Current location"
+msgstr "Текущее местоположение"
+
+msgid "New location"
+msgstr "Новое местоположение"
+
+msgid "Save"
+msgstr "Сохранить"
+
+msgid "Cancel"
+msgstr "Отмена"
+
 #~ msgid "History"
 #~ msgstr "История"
 

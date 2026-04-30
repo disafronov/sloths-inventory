@@ -12,6 +12,10 @@
     <strong>{% trans "Serial number" %}:</strong> {{ item.serial_number|default:"-" }}
 </div>
 
+{% if is_owner %}
+    <p><a href="{% url 'inventory:change-location' item_id=item.id %}" class="button button--secondary button--sm">{% trans "Change location" %}</a></p>
+{% endif %}
+
 {% if operations %}
     <div class="operation-list">
         {% for op in operations %}

@@ -285,3 +285,129 @@ def test_item_history_for_former_owner_includes_only_one_handoff_after_last_mine
     assert last_mine.notes.encode("utf-8") in response.content
     assert handoff.notes.encode("utf-8") in response.content
     assert b"c2" not in response.content
+
+
+def _make_item_with_operation(
+    status: "Status",
+    location: "Location",
+    responsible: "Responsible",
+    inventory_number: str = "INV-TEST",
+) -> "Item":
+    category = Category.objects.create(name=f"Cat-{inventory_number}")
+    device_type = Type.objects.create(name=f"Type-{inventory_number}")
+    manufacturer = Manufacturer.objects.create(name=f"Mfr-{inventory_number}")
+    device_model = Model.objects.create(name=f"Model-{inventory_number}")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    item = Item.objects.create(inventory_number=inventory_number, device=device)
+    Operation.objects.create(
+        item=item, status=status, responsible=responsible, location=location
+    )
+    return item
+
+
+@pytest.mark.django_db
+def test_change_location_requires_login() -> None:
+    client = Client()
+    response = client.get("/items/1/change-location/")
+    assert response.status_code == 302
+    assert "/login/" in response["Location"]
+
+
+@pytest.mark.django_db
+def test_change_location_returns_404_if_no_responsible() -> None:
+    user = User.objects.create_user(username="alice", password="pw")
+    status = Status.objects.create(name="In use")
+    location = Location.objects.create(name="Home")
+    resp = Responsible.objects.create(last_name="Other", first_name="User")
+    item = _make_item_with_operation(status, location, resp, "INV-404")
+
+    client = Client()
+    client.force_login(user)
+    response = client.get(f"/items/{item.pk}/change-location/")
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_change_location_returns_404_if_not_current_owner() -> None:
+    user1 = User.objects.create_user(username="u1", password="pw")
+    user2 = User.objects.create_user(username="u2", password="pw")
+    resp1 = Responsible.objects.create(last_name="One", first_name="User", user=user1)
+    resp2 = Responsible.objects.create(last_name="Two", first_name="User", user=user2)
+    status = Status.objects.create(name="In use")
+    location = Location.objects.create(name="Home")
+    item = _make_item_with_operation(status, location, resp2, "INV-NOTMINE")
+
+    client = Client()
+    client.force_login(user1)
+    response = client.get(f"/items/{item.pk}/change-location/")
+    assert response.status_code == 404
+
+    # resp1 is unused but defined — suppress linter
+    _ = resp1
+
+
+@pytest.mark.django_db
+def test_change_location_get_shows_form_with_locations() -> None:
+    user = User.objects.create_user(username="u1", password="pw")
+    resp = Responsible.objects.create(last_name="One", first_name="User", user=user)
+    status = Status.objects.create(name="In use")
+    location = Location.objects.create(name="Home")
+    Location.objects.create(name="Dacha")
+    item = _make_item_with_operation(status, location, resp, "INV-FORM")
+
+    client = Client()
+    client.force_login(user)
+    response = client.get(f"/items/{item.pk}/change-location/")
+    assert response.status_code == 200
+    assert b"Home" in response.content
+    assert b"Dacha" in response.content
+
+
+@pytest.mark.django_db
+def test_change_location_post_creates_new_operation_and_redirects() -> None:
+    user = User.objects.create_user(username="u1", password="pw")
+    resp = Responsible.objects.create(last_name="One", first_name="User", user=user)
+    status = Status.objects.create(name="In use")
+    location_old = Location.objects.create(name="Home")
+    location_new = Location.objects.create(name="Dacha")
+    item = _make_item_with_operation(status, location_old, resp, "INV-POST")
+
+    assert item.operation_set.count() == 1
+
+    client = Client()
+    client.force_login(user)
+    response = client.post(
+        f"/items/{item.pk}/change-location/",
+        {"location_id": location_new.pk},
+    )
+    assert response.status_code == 302
+    assert response["Location"] == "/"
+
+    assert item.operation_set.count() == 2
+    latest = item.operation_set.order_by("-created_at", "-id").first()
+    assert latest is not None
+    assert latest.location == location_new
+    assert latest.status == status
+    assert latest.responsible == resp
+
+
+@pytest.mark.django_db
+def test_change_location_post_returns_404_for_invalid_location() -> None:
+    user = User.objects.create_user(username="u1", password="pw")
+    resp = Responsible.objects.create(last_name="One", first_name="User", user=user)
+    status = Status.objects.create(name="In use")
+    location = Location.objects.create(name="Home")
+    item = _make_item_with_operation(status, location, resp, "INV-BADLOC")
+
+    client = Client()
+    client.force_login(user)
+    response = client.post(
+        f"/items/{item.pk}/change-location/",
+        {"location_id": 99999},
+    )
+    assert response.status_code == 404
