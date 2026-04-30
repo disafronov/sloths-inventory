@@ -25,6 +25,9 @@
   --space-row: var(--space-4);
   /* Tighter step for rows inside a card. */
   --space-row-inner: var(--space-2);
+  /* Card interior padding (tighter than legacy 12px/14px). */
+  --card-padding-y: var(--space-3);
+  --card-padding-x: 0.875rem;
 }
 
 body {
@@ -562,7 +565,7 @@ body.nav-open {
  */
 .item-card {
   display: block;
-  padding: 12px 14px;
+  padding: var(--card-padding-y) var(--card-padding-x);
   border: 1px solid #bdbdbd;
   border-radius: 8px;
   background: #fff;
@@ -595,8 +598,12 @@ a.item-card:hover {
   display: flex;
   flex-wrap: wrap;
   gap: 6px 10px;
-  margin-top: var(--space-row-inner);
+  margin-top: 0;
   font-size: 0.95rem;
+}
+
+.item-card__row + .item-card__row {
+  margin-top: var(--space-row-inner);
 }
 
 .item-card__label {
@@ -627,7 +634,7 @@ a.item-card:hover {
   flex: 0 0 auto;
   min-width: 180px;
   max-width: 40%;
-  padding: 10px 10px;
+  padding: var(--space-2-5) var(--space-3);
   border-radius: 8px;
   border: 1px solid #bdbdbd;
   background: #f8f9fa;
@@ -672,7 +679,7 @@ a.item-card:hover {
 }
 
 .operation-card {
-  padding: 12px 14px;
+  padding: var(--card-padding-y) var(--card-padding-x);
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   background: #fff;
