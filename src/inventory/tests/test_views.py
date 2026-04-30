@@ -488,7 +488,7 @@ def test_change_location_post_creates_new_operation_and_redirects() -> None:
         {"location_id": location_new.pk},
     )
     assert response.status_code == 302
-    assert response["Location"] == "/"
+    assert response["Location"] == f"/items/{item.pk}/"
 
     assert item.operation_set.count() == 2
     latest = item.operation_set.order_by("-created_at", "-id").first()
