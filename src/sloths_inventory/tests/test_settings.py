@@ -36,3 +36,32 @@ def test_settings_accepts_secret_key_when_debug_false(monkeypatch) -> None:
         sloths_inventory.settings.__file__,
     )
     assert module.SECRET_KEY == "not-a-secret-value"
+
+
+def test_settings_time_zone_defaults_when_env_is_unset(tmp_path, monkeypatch) -> None:
+    """
+    Ensure TIME_ZONE is configurable and has a deterministic default.
+
+    `settings.py` reads `.env` at import time; we change CWD to a temporary empty
+    directory to avoid picking up any repository-local `.env` during tests.
+    """
+
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.delenv("TIME_ZONE", raising=False)
+
+    module = _load_module_from_path(
+        "sloths_inventory._settings_time_zone_default_test",
+        sloths_inventory.settings.__file__,
+    )
+    assert module.TIME_ZONE == "Europe/Moscow"
+
+
+def test_settings_time_zone_can_be_overridden_via_env(tmp_path, monkeypatch) -> None:
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("TIME_ZONE", "UTC")
+
+    module = _load_module_from_path(
+        "sloths_inventory._settings_time_zone_env_override_test",
+        sloths_inventory.settings.__file__,
+    )
+    assert module.TIME_ZONE == "UTC"
