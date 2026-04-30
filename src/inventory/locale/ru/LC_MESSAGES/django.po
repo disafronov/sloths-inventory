@@ -151,13 +151,11 @@ msgstr "Отмена"
 
 #: src/inventory/models.py:234
 msgid "Pending transfer"
-msgstr "Ожидающая передача"
+msgstr "Передача в ожидании"
 
 #: src/inventory/models.py:235
-#, fuzzy
-#| msgid "Pending transfer"
 msgid "Pending transfers"
-msgstr "Ожидающая передача"
+msgstr "Передачи в ожидании"
 
 #: src/inventory/models.py:259
 msgid "Transfer receiver must be different"
