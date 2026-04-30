@@ -10,6 +10,21 @@
     <p>{% trans "Your account is not linked to a responsible person profile yet." %}</p>
 {% endif %}
 
+<form method="get" class="search-form" role="search" aria-label="{% trans 'Search items' %}">
+    <label class="sr-only" for="q">{% trans "Search" %}</label>
+    <input
+        type="search"
+        id="q"
+        name="q"
+        value="{{ query|default:'' }}"
+        placeholder="{% trans 'Search by inventory number, serial, model…' %}"
+    >
+    <button type="submit" class="button button--sm">{% trans "Search" %}</button>
+    {% if query %}
+        <a class="button button--secondary button--sm" href="{% url 'inventory:my-items' %}">{% trans "Clear" %}</a>
+    {% endif %}
+</form>
+
 {% if items %}
     <div class="item-card-list">
         {% for item in items %}
