@@ -189,12 +189,12 @@ body.nav-open {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 8px 10px;
-  border: 1px solid #d7e7ff;
-  border-radius: 999px;
-  background: #f6f9ff;
-  color: #0d47a1;
-  font-weight: 600;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: #222;
+  font-weight: 700;
 }
 
 .user-menu__user-icon {
@@ -238,6 +238,10 @@ body.nav-open {
 
 .button:hover {
   background-color: #0056b3;
+}
+
+.button--active {
+  font-weight: 700;
 }
 
 .button--secondary {
