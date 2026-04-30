@@ -372,12 +372,12 @@ body.nav-open {
 }
 
 .transfer-section--incoming {
-  background: #fff2f2;
+  background: linear-gradient(90deg, #ffe1e1 0%, rgba(255, 225, 225, 0) 100%);
   border-color: #f6caca;
 }
 
 .transfer-section--outgoing {
-  background: #f2fff5;
+  background: linear-gradient(90deg, rgba(242, 255, 245, 0) 0%, #e7ffed 100%);
   border-color: #c8f0d2;
 }
 
@@ -521,7 +521,7 @@ body.nav-open {
 .item-card {
   display: block;
   padding: 12px 14px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid #bdbdbd;
   border-radius: 8px;
   background: #fff;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
@@ -544,6 +544,10 @@ a.item-card:hover {
   color: #0d47a1;
 }
 
+.item-card__title .item-card__value {
+  font-weight: 800;
+}
+
 .item-card__row {
   display: flex;
   flex-wrap: wrap;
@@ -561,6 +565,66 @@ a.item-card:hover {
   flex: 1 1 auto;
   min-width: 0;
   word-break: break-word;
+}
+
+/* Transfer cards: show From/To as a side badge. */
+.transfer-card__layout {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.transfer-card__main {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.transfer-card__party {
+  flex: 0 0 auto;
+  min-width: 180px;
+  max-width: 40%;
+  padding: 10px 10px;
+  border-radius: 8px;
+  border: 1px solid #bdbdbd;
+  background: #f8f9fa;
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.18),
+    0 8px 20px rgba(0, 0, 0, 0.10);
+}
+
+.transfer-card__party-label {
+  font-size: 0.85rem;
+  color: #666;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.transfer-card__party-value {
+  font-size: 0.95rem;
+  color: #222;
+  word-break: break-word;
+}
+
+@media (max-width: 520px) {
+  .transfer-card__layout {
+    flex-direction: column;
+  }
+
+  .transfer-card__party {
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
+.item-card--incoming-transfer {
+  background: linear-gradient(90deg, #ffe1e1 0%, rgba(255, 225, 225, 0) 100%);
+  border-color: #f6caca;
+}
+
+.item-card--outgoing-transfer {
+  background: linear-gradient(90deg, rgba(242, 255, 245, 0) 0%, #e7ffed 100%);
+  border-color: #c8f0d2;
 }
 
 .operation-card {

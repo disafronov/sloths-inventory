@@ -848,7 +848,7 @@ def test_incoming_transfers_lists_offers_for_receiver() -> None:
 
     client = Client()
     client.force_login(user_receiver)
-    response = client.get("/transfers/")
+    response = client.get("/")
     assert response.status_code == 200
     assert item.inventory_number.encode("utf-8") in response.content
 
@@ -874,36 +874,27 @@ def test_outgoing_transfers_lists_offers_for_sender() -> None:
 
     client = Client()
     client.force_login(user_sender)
-    response = client.get("/transfers/")
+    response = client.get("/")
     assert response.status_code == 200
     assert item.inventory_number.encode("utf-8") in response.content
 
 
 @pytest.mark.django_db
-def test_transfers_page_works_for_user_without_responsible() -> None:
+def test_transfers_page_is_removed() -> None:
     user = User.objects.create_user(username="u1", password="pw")
     client = Client()
     client.force_login(user)
-    response = client.get("/transfers/")
-    assert response.status_code == 200
-    assert (
-        b"not linked" in response.content
-        or "не привязан".encode("utf-8") in response.content
-    )
+    assert client.get("/transfers/").status_code == 404
 
 
 @pytest.mark.django_db
-def test_transfers_incoming_and_outgoing_urls_redirect_to_transfers() -> None:
+def test_transfers_incoming_and_outgoing_urls_are_removed() -> None:
     user = User.objects.create_user(username="u1", password="pw")
     Responsible.objects.create(last_name="Ivanov", first_name="Ivan", user=user)
     client = Client()
     client.force_login(user)
-    r1 = client.get("/transfers/incoming/")
-    assert r1.status_code == 302
-    assert r1["Location"].endswith("/transfers/")
-    r2 = client.get("/transfers/outgoing/")
-    assert r2.status_code == 302
-    assert r2["Location"].endswith("/transfers/")
+    assert client.get("/transfers/incoming/").status_code == 404
+    assert client.get("/transfers/outgoing/").status_code == 404
 
 
 @pytest.mark.django_db
