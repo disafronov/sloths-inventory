@@ -226,6 +226,9 @@ msgstr "Create offer"
 msgid "Type to filter people…"
 msgstr "Type to filter people…"
 
+msgid "View item"
+msgstr "View item"
+
 #~ msgid "History"
 #~ msgstr "History"
 

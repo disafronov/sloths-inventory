@@ -230,6 +230,9 @@ msgstr "Создать предложение"
 msgid "Type to filter people…"
 msgstr "Начните вводить, чтобы отфильтровать людей…"
 
+msgid "View item"
+msgstr "Открыть вещь"
+
 #~ msgid "History"
 #~ msgstr "История"
 
