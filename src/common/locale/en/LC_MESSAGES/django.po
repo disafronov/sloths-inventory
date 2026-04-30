@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-29 21:51+0300\n"
+"POT-Creation-Date: 2026-04-30 23:19+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -38,40 +38,40 @@ msgstr "Notes"
 msgid "Name"
 msgstr "Name"
 
-#: src/common/templates/base.html:7 src/common/templates/base.html:96
+#: src/common/templates/base.html:7 src/common/templates/base.html:15
 #: src/common/templates/login.html:4
 msgid "Sloths Inventory"
 msgstr "Sloths Inventory"
 
-#: src/common/templates/base.html:113
-msgid "My items"
-msgstr "My items"
-
-#: src/common/templates/base.html:114
-msgid "Previously my items"
-msgstr "Previously with me"
-
-#: src/common/templates/base.html:115
-msgid "Admin"
-msgstr "Admin"
-
-#: src/common/templates/base.html:118
-msgid "Logout"
-msgstr "Logout"
-
-#: src/common/templates/base.html:121 src/common/templates/login.html:4
-#: src/common/templates/login.html:6 src/common/templates/login.html:12
-msgid "Login"
-msgstr "Login"
-
-#: src/common/templates/base.html:20
-msgid "Language"
-msgstr "Language"
-
-#: src/common/templates/base.html:21
+#: src/common/templates/base.html:22
 msgid "Menu"
 msgstr "Menu"
 
-#: src/common/templates/base.html:35
+#: src/common/templates/base.html:36
 msgid "Main navigation"
 msgstr "Main navigation"
+
+#: src/common/templates/base.html:57
+msgid "Language"
+msgstr "Language"
+
+#: src/common/templates/base.html:72
+msgid "My items"
+msgstr "My items"
+
+#: src/common/templates/base.html:77
+msgid "Previously my items"
+msgstr "Previously with me"
+
+#: src/common/templates/base.html:82
+msgid "Admin"
+msgstr "Admin"
+
+#: src/common/templates/base.html:85
+msgid "Logout"
+msgstr "Logout"
+
+#: src/common/templates/base.html:88 src/common/templates/login.html:4
+#: src/common/templates/login.html:6 src/common/templates/login.html:12
+msgid "Login"
+msgstr "Login"

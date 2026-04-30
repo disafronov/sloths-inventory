@@ -444,6 +444,13 @@ body.nav-open {
   gap: var(--space-row);
 }
 
+/* Current context above a labeled field (e.g. location before "New location"). */
+.form-container .form-readout {
+  margin: 0 0 var(--space-2);
+  font-size: 0.95rem;
+  color: #222;
+}
+
 .change-location-form select {
   width: 100%;
   padding: 12px 10px;
