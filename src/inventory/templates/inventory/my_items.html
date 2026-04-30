@@ -40,12 +40,12 @@
                     <span class="item-card__value">{{ item.serial_number|default:"-" }}</span>
                 </div>
                 <div class="item-card__row">
-                    <span class="item-card__label">{% trans "Status" %}:</span>
-                    <span class="item-card__value">{{ item.current_status|default:"-" }}</span>
-                </div>
-                <div class="item-card__row">
                     <span class="item-card__label">{% trans "Location" %}:</span>
                     <span class="item-card__value">{{ item.current_location|default:"-" }}</span>
+                </div>
+                <div class="item-card__row">
+                    <span class="item-card__label">{% trans "Status" %}:</span>
+                    <span class="item-card__value">{{ item.current_status|default:"-" }}</span>
                 </div>
             </a>
         {% endfor %}
