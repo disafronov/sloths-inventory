@@ -73,7 +73,7 @@ Notes:
 - If you run the image directly (without Docker Compose), you must run migrations
   yourself.
 - If you want to run the Docker image against the local Postgres started via
-  `docker compose up -d postgres`, use `env.docker` (it points `DATABASE_HOST` to
+  `docker compose up -d`, use `env.docker` (it points `DATABASE_HOST` to
   `host.docker.internal`). On Linux, `make docker-run` includes the required host
   mapping (`--add-host=host.docker.internal:host-gateway`).
 
