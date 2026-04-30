@@ -19,21 +19,7 @@
         </div>
     </div>
 
-    {% if is_owner %}
-        <div class="form-actions form-actions--inline" aria-label="{% trans 'Item actions' %}">
-            <a
-                href="{% url 'inventory:change-location' item_id=item.id %}"
-                class="button button--secondary button--sm"
-            >{% trans "Change location" %}</a>
-            {% if not pending_transfer %}
-                <a
-                    href="{% url 'inventory:create-transfer' item_id=item.id %}"
-                    class="button button--secondary button--sm"
-            >{% trans "Transfer" %}</a>
-            {% endif %}
-        </div>
-    {% endif %}
-
+    {# Transfer state before move actions so "transfer" stays above "change location" when the offer link is hidden. #}
     {% if pending_transfer %}
         <div class="item-card">
             <div class="item-card__row">
@@ -68,6 +54,21 @@
                     </form>
                 {% endif %}
             </div>
+        </div>
+    {% endif %}
+
+    {% if is_owner %}
+        <div class="form-actions form-actions--inline" aria-label="{% trans 'Item actions' %}">
+            {% if not pending_transfer %}
+                <a
+                    href="{% url 'inventory:create-transfer' item_id=item.id %}"
+                    class="button button--secondary button--sm"
+                >{% trans "Transfer" %}</a>
+            {% endif %}
+            <a
+                href="{% url 'inventory:change-location' item_id=item.id %}"
+                class="button button--secondary button--sm"
+            >{% trans "Change location" %}</a>
         </div>
     {% endif %}
 
