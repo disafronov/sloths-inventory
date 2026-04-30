@@ -13,6 +13,16 @@ from .settings import *  # noqa: F401,F403
 DEBUG = False  # noqa: F405
 SECRET_KEY = secrets.token_urlsafe(32)  # noqa: F405
 
+# Static files in tests should not depend on `collectstatic`.
+#
+# The production settings use WhiteNoise's manifest-based storage, which requires a
+# generated manifest. In pytest runs we render templates that include `{% static %}`
+# and we want those tests to be hermetic, so we switch to the non-manifest storage.
+STORAGES = dict(STORAGES)  # noqa: F405
+STORAGES["staticfiles"] = {  # noqa: F405
+    "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+}
+
 # Force in-memory SQLite for pytest runs.
 DATABASES = {  # noqa: F405
     "default": {
