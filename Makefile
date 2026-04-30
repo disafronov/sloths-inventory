@@ -1,5 +1,10 @@
 PYTHONPATH = src
 
+# Tooling-only SECRET_KEY used for local checks.
+#
+# Django settings require SECRET_KEY when DEBUG is disabled. Both pytest-django and
+# django-stubs (mypy) import Django settings during initialization, so we provide a
+# deterministic fake key for local tooling via Makefile targets.
 TOOLING_SECRET_KEY = unsafe-secret-key-for-tooling
 
 PYTEST_CMD = PYTHONPATH=$(PYTHONPATH) SECRET_KEY=$(TOOLING_SECRET_KEY) uv run python -m pytest -v

@@ -91,7 +91,7 @@ The application is configured via environment variables (loaded using
 `django-environ`).
 
 - **Django**
-  - `DEBUG`: enable debug mode (default: `1`)
+  - `DEBUG`: enable debug mode (default: `0`)
   - `SECRET_KEY`: required when `DEBUG=0`
   - `ALLOWED_HOSTS`: comma-separated list
   - `CSRF_TRUSTED_ORIGINS`: comma-separated list
@@ -122,6 +122,10 @@ PYTHONPATH=src uv run python src/manage.py compilemessages
 ```bash
 make all
 ```
+
+Note: use `make` targets for checks (`make all`, `make test`, `make lint`). They
+set a tooling-only `SECRET_KEY` for `pytest` and `mypy` so local runs do not
+depend on developer environment variables.
 
 Run tests:
 
