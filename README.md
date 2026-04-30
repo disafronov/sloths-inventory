@@ -127,6 +127,13 @@ Note: use `make` targets for checks (`make all`, `make test`, `make lint`). They
 set a tooling-only `SECRET_KEY` for `pytest` and `mypy` so local runs do not
 depend on developer environment variables.
 
+Formatting is intentionally not part of `make all` (so checks do not mutate the
+working tree). To auto-format code, use:
+
+```bash
+make format
+```
+
 Run tests:
 
 ```bash

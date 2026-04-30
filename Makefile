@@ -48,7 +48,7 @@ test-coverage: ## Run tests with HTML coverage report
 	@echo "Running tests with coverage..."
 	$(PYTEST_CMD) $(COVERAGE_OPTS)
 
-all: format lint test dead-code ## Run format, lint, test, and dead-code check
+all: lint test dead-code ## Run all checks (no mutations)
 	@echo "All checks completed successfully!"
 
 run: ## Run Django development server locally
