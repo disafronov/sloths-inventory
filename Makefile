@@ -107,7 +107,16 @@ docker-run: ## Run Docker container
 		$(if $(wildcard env.example),--env-file env.example,) \
 		$(if $(wildcard env.docker),--env-file env.docker,) \
 		$(if $(wildcard .env),--env-file .env,) \
-		$(DOCKER_IMAGE)
+		--entrypoint sh \
+		$(DOCKER_IMAGE) -c '\
+			python3 manage.py migrate && \
+			if [ -n "$$DJANGO_SUPERUSER_USERNAME" ] && [ -n "$$DJANGO_SUPERUSER_PASSWORD" ] && [ -n "$$DJANGO_SUPERUSER_EMAIL" ]; then \
+				echo "Ensuring Django superuser exists..."; \
+				python3 manage.py createsuperuser --noinput || true; \
+			else \
+				echo "Skipping createsuperuser (set DJANGO_SUPERUSER_USERNAME/PASSWORD/EMAIL to enable)."; \
+			fi && \
+			exec gunicorn sloths_inventory.wsgi --bind 0.0.0.0:8000 --access-logfile - --error-logfile -'
 
 docker: docker-build docker-run ## Build and run Docker container
 	@echo "Docker container built and running!"
