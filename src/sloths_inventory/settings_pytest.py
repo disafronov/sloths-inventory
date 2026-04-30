@@ -3,6 +3,9 @@ Pytest settings module.
 
 Pytest (via pytest-django) should be self-contained and must not require a running
 Postgres instance in CI.
+
+Note: run tests via `make test` / `make all` so the tooling-only `SECRET_KEY` is
+provided via environment variables.
 """
 
 from .settings import *  # noqa: F401,F403
