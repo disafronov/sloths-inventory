@@ -58,9 +58,10 @@ RUN --mount=from=uv,source=/uv,target=/bin/uv \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
     uv sync --frozen --link-mode=copy --no-editable --no-group dev
 
-# Compile translations inside the build image.
+# Compile translations and collect static files inside the build image.
 WORKDIR /home/ubuntu/app/src
 RUN python3 manage.py compilemessages
+RUN python3 manage.py collectstatic --noinput
 
 ##########################
 
@@ -72,8 +73,6 @@ COPY --from=builder /home/ubuntu/app/src/ /home/ubuntu/app/src/
 
 WORKDIR /home/ubuntu/app/src
 
-#! <MVP ONLY!
-ENTRYPOINT [ "python3", "manage.py", "runserver", "0.0.0.0:8000", "--noreload" ]
-#! MVP ONLY!>
+ENTRYPOINT [ "gunicorn", "sloths_inventory.wsgi", "--bind", "0.0.0.0:8000" ]
 
 EXPOSE 8000
