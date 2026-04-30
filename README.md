@@ -127,6 +127,27 @@ Note: use `make` targets for checks (`make all`, `make test`, `make lint`). They
 set a tooling-only `SECRET_KEY` for `pytest` and `mypy` so local runs do not
 depend on developer environment variables.
 
+### PostgreSQL-only tests
+
+The default test configuration runs Django with in-memory SQLite
+(`sloths_inventory.settings_pytest`) for speed and to avoid requiring a running
+Postgres instance.
+
+Some tests validate PostgreSQL-specific behavior (e.g. row-level locking). Such
+tests are marked with `@pytest.mark.postgres` and are automatically skipped
+unless the active database backend is PostgreSQL.
+
+To run the PostgreSQL-only test suite locally:
+
+```bash
+PYTHONPATH=src \
+DJANGO_SETTINGS_MODULE=sloths_inventory.settings \
+SECRET_KEY=unsafe-secret-key-for-tooling \
+DATABASE_HOST=127.0.0.1 DATABASE_PORT=5432 \
+DATABASE_NAME=database DATABASE_USER=user DATABASE_PASSWORD=password \
+uv run python -m pytest -v -m postgres
+```
+
 Formatting is intentionally not part of `make all` (so checks do not mutate the
 working tree). To auto-format code, use:
 
@@ -151,6 +172,7 @@ make test-coverage
 - **Coverage 100%**: we exclude **typing-only** lines (e.g. `@overload`, `if TYPE_CHECKING:`, `...`) via coverage config in `pyproject.toml`.
 - **Concurrency tests**: `inventory/tests/test_concurrency.py` validates
   row-level locking semantics and is intended to run on PostgreSQL (it is
-  skipped on SQLite). CI runs these tests against Postgres in a dedicated job.
+  skipped on SQLite). CI runs PostgreSQL-only tests in a dedicated workflow
+  (**Tests Postgres**).
 - **Testing entrypoint**: `manage.py test` is intentionally disabled; use `make test`
   or `make all` instead.
