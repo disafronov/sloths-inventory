@@ -51,6 +51,7 @@ class DeviceAdmin(BaseAdmin):
     ]
     ordering = ["category", "type", "manufacturer", "model"]
     main_fields = ("category", "type", "manufacturer", "model")
+    autocomplete_fields = ["category", "type", "manufacturer", "model"]
 
     def get_queryset(self, request: HttpRequest) -> QuerySet[Device]:
         """
