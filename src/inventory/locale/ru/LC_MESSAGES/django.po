@@ -199,15 +199,6 @@ msgstr "Поиск местоположения"
 msgid "Type to filter locations…"
 msgstr "Начните вводить, чтобы отфильтровать местоположения…"
 
-msgid "Transfers"
-msgstr "Передачи"
-
-msgid "Incoming transfers"
-msgstr "Входящие передачи"
-
-msgid "Outgoing transfers"
-msgstr "Исходящие передачи"
-
 msgid "Pending transfer"
 msgstr "Ожидающая передача"
 
@@ -229,9 +220,6 @@ msgstr "Создать предложение"
 
 msgid "Type to filter people…"
 msgstr "Начните вводить, чтобы отфильтровать людей…"
-
-msgid "View item"
-msgstr "Открыть вещь"
 
 msgid "From"
 msgstr "От кого"
