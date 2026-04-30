@@ -55,11 +55,11 @@ jobs:
           UV_PYTHON: ${{ steps.python_version.outputs.version }}
 
       - name: Run Postgres-only contract tests
-        run: PYTHONPATH=src uv run python -m pytest -v -m postgres
+        run: make test
         env:
           UV_PYTHON: ${{ steps.python_version.outputs.version }}
-          DJANGO_SETTINGS_MODULE: sloths_inventory.settings
-          SECRET_KEY: unsafe-secret-key-for-tooling
+          PYTEST_POSTGRES_USE: "1"
+          PYTEST_POSTGRES_ONLY: "1"
           DATABASE_HOST: 127.0.0.1
           DATABASE_PORT: "5432"
           DATABASE_NAME: database

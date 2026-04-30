@@ -150,15 +150,24 @@ semantics or query planning, for example:
 - transaction isolation / concurrency edge cases
 - PostgreSQL-specific SQL or index/ordering behavior
 
-To run the PostgreSQL-only test suite locally:
+To run only the PostgreSQL-marked subset locally, enable PostgreSQL for pytest
+and request the postgres-only selection via env vars:
 
 ```bash
-PYTHONPATH=src \
-DJANGO_SETTINGS_MODULE=sloths_inventory.settings \
-SECRET_KEY=unsafe-secret-key-for-tooling \
+PYTEST_POSTGRES_USE=1 PYTEST_POSTGRES_ONLY=1 \
 DATABASE_HOST=127.0.0.1 DATABASE_PORT=5432 \
 DATABASE_NAME=database DATABASE_USER=user DATABASE_PASSWORD=password \
-uv run python -m pytest -v -m postgres
+make test
+```
+
+To run the full test suite on PostgreSQL (not just the marked subset), omit
+`PYTEST_POSTGRES_ONLY=1`:
+
+```bash
+PYTEST_POSTGRES_USE=1 \
+DATABASE_HOST=127.0.0.1 DATABASE_PORT=5432 \
+DATABASE_NAME=database DATABASE_USER=user DATABASE_PASSWORD=password \
+make test
 ```
 
 Formatting is intentionally not part of `make all` (so checks do not mutate the
