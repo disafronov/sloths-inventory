@@ -16,6 +16,35 @@
     <p><a href="{% url 'inventory:change-location' item_id=item.id %}" class="button button--secondary button--sm">{% trans "Change location" %}</a></p>
 {% endif %}
 
+{% if pending_transfer %}
+    <div class="item-card">
+        <div class="item-card__row">
+            <span class="item-card__label">{% trans "Pending transfer" %}:</span>
+            <span class="item-card__value">{{ pending_transfer.from_responsible }} → {{ pending_transfer.to_responsible }}</span>
+        </div>
+        <div class="form-actions">
+            {% if pending_transfer.to_responsible.user_id == user.id %}
+                <form method="post" action="{% url 'inventory:accept-transfer' transfer_id=pending_transfer.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="button button--sm">{% trans "Accept" %}</button>
+                </form>
+            {% endif %}
+            {% if pending_transfer.from_responsible.user_id == user.id %}
+                <form method="post" action="{% url 'inventory:cancel-transfer' transfer_id=pending_transfer.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="button button--secondary button--sm">{% trans "Cancel transfer" %}</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+{% elif is_owner %}
+    <p>
+        <a href="{% url 'inventory:create-transfer' item_id=item.id %}" class="button button--secondary button--sm">
+            {% trans "Transfer item" %}
+        </a>
+    </p>
+{% endif %}
+
 {% if operations %}
     <div class="operation-list">
         {% for op in operations %}

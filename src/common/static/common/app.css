@@ -337,6 +337,27 @@ body.nav-open {
 
 /* --- Item / operation cards ---------------------------------------------- */
 
+.transfer-section {
+  margin: 16px 0;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.transfer-section h2 {
+  margin-top: 0;
+}
+
+.transfer-section--incoming {
+  background: #fff2f2;
+  border-color: #f6caca;
+}
+
+.transfer-section--outgoing {
+  background: #f2fff5;
+  border-color: #c8f0d2;
+}
+
 .item-meta {
   margin: 0 0 16px;
   padding: 12px;

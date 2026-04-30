@@ -5,7 +5,7 @@ from django.test import Client, RequestFactory
 from catalogs.models import Location, Responsible, Status
 from devices.attributes import Category, Manufacturer, Model, Type
 from devices.models import Device
-from inventory.models import Item, Operation
+from inventory.models import Item, Operation, PendingTransfer
 from inventory.views import _get_responsible_for_user
 
 
@@ -524,3 +524,189 @@ def test_change_location_post_returns_404_for_invalid_location() -> None:
         {"location_id": 99999},
     )
     assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_create_transfer_requires_login() -> None:
+    client = Client()
+    response = client.get("/items/1/transfer/")
+    assert response.status_code == 302
+    assert "/login/" in response["Location"]
+
+
+@pytest.mark.django_db
+def test_create_transfer_returns_404_if_not_current_owner() -> None:
+    user1 = User.objects.create_user(username="u1", password="pw")
+    user2 = User.objects.create_user(username="u2", password="pw")
+    resp1 = Responsible.objects.create(last_name="One", first_name="User", user=user1)
+    resp2 = Responsible.objects.create(last_name="Two", first_name="User", user=user2)
+    status = Status.objects.create(name="In use")
+    location = Location.objects.create(name="Home")
+    item = _make_item_with_operation(status, location, resp2, "INV-XFER-404")
+
+    client = Client()
+    client.force_login(user1)
+    response = client.get(f"/items/{item.pk}/transfer/")
+    assert response.status_code == 404
+
+    _ = resp1
+
+
+@pytest.mark.django_db
+def test_create_transfer_post_creates_pending_transfer() -> None:
+    user1 = User.objects.create_user(username="u1", password="pw")
+    user2 = User.objects.create_user(username="u2", password="pw")
+    resp1 = Responsible.objects.create(last_name="One", first_name="User", user=user1)
+    resp2 = Responsible.objects.create(last_name="Two", first_name="User", user=user2)
+    status = Status.objects.create(name="In use")
+    location = Location.objects.create(name="Home")
+    item = _make_item_with_operation(status, location, resp1, "INV-XFER-CREATE")
+
+    client = Client()
+    client.force_login(user1)
+    response = client.post(
+        f"/items/{item.pk}/transfer/",
+        {"to_responsible_id": resp2.pk},
+    )
+    assert response.status_code == 302
+
+    transfer = PendingTransfer.objects.get(item=item)
+    assert transfer.from_responsible == resp1
+    assert transfer.to_responsible == resp2
+    assert transfer.accepted_at is None
+    assert transfer.cancelled_at is None
+
+
+@pytest.mark.django_db
+def test_accept_transfer_requires_receiver_confirmation_and_changes_owner() -> None:
+    user_sender = User.objects.create_user(username="sender", password="pw")
+    user_receiver = User.objects.create_user(username="receiver", password="pw")
+    resp_sender = Responsible.objects.create(
+        last_name="Sender", first_name="User", user=user_sender
+    )
+    resp_receiver = Responsible.objects.create(
+        last_name="Receiver", first_name="User", user=user_receiver
+    )
+    status = Status.objects.create(name="In use")
+    location = Location.objects.create(name="Home")
+    item = _make_item_with_operation(status, location, resp_sender, "INV-XFER-ACCEPT")
+
+    transfer = PendingTransfer.objects.create(
+        item=item,
+        from_responsible=resp_sender,
+        to_responsible=resp_receiver,
+    )
+
+    # Sender cannot accept.
+    client_sender = Client()
+    client_sender.force_login(user_sender)
+    forbidden = client_sender.post(f"/transfers/{transfer.pk}/accept/")
+    assert forbidden.status_code == 404
+
+    # Receiver accepts: ownership changes via a new Operation.
+    client_receiver = Client()
+    client_receiver.force_login(user_receiver)
+    ok = client_receiver.post(f"/transfers/{transfer.pk}/accept/")
+    assert ok.status_code == 302
+
+    transfer.refresh_from_db()
+    assert transfer.accepted_at is not None
+    assert transfer.cancelled_at is None
+
+    latest = item.operation_set.order_by("-created_at", "-id").first()
+    assert latest is not None
+    assert latest.responsible == resp_receiver
+    assert latest.status == status
+    assert latest.location == location
+
+    # Receiver should now see the item on "My items".
+    response = client_receiver.get("/")
+    assert response.status_code == 200
+    assert item.inventory_number.encode("utf-8") in response.content
+
+
+@pytest.mark.django_db
+def test_cancel_transfer_is_allowed_only_for_sender() -> None:
+    user_sender = User.objects.create_user(username="sender", password="pw")
+    user_receiver = User.objects.create_user(username="receiver", password="pw")
+    resp_sender = Responsible.objects.create(
+        last_name="Sender", first_name="User", user=user_sender
+    )
+    resp_receiver = Responsible.objects.create(
+        last_name="Receiver", first_name="User", user=user_receiver
+    )
+    status = Status.objects.create(name="In use")
+    location = Location.objects.create(name="Home")
+    item = _make_item_with_operation(status, location, resp_sender, "INV-XFER-CANCEL")
+
+    transfer = PendingTransfer.objects.create(
+        item=item,
+        from_responsible=resp_sender,
+        to_responsible=resp_receiver,
+    )
+
+    client_receiver = Client()
+    client_receiver.force_login(user_receiver)
+    forbidden = client_receiver.post(f"/transfers/{transfer.pk}/cancel/")
+    assert forbidden.status_code == 404
+
+    client_sender = Client()
+    client_sender.force_login(user_sender)
+    ok = client_sender.post(f"/transfers/{transfer.pk}/cancel/")
+    assert ok.status_code == 302
+
+    transfer.refresh_from_db()
+    assert transfer.cancelled_at is not None
+    assert transfer.accepted_at is None
+
+
+@pytest.mark.django_db
+def test_incoming_transfers_lists_offers_for_receiver() -> None:
+    user_sender = User.objects.create_user(username="sender", password="pw")
+    user_receiver = User.objects.create_user(username="receiver", password="pw")
+    resp_sender = Responsible.objects.create(
+        last_name="Sender", first_name="User", user=user_sender
+    )
+    resp_receiver = Responsible.objects.create(
+        last_name="Receiver", first_name="User", user=user_receiver
+    )
+    status = Status.objects.create(name="In use")
+    location = Location.objects.create(name="Home")
+    item = _make_item_with_operation(status, location, resp_sender, "INV-XFER-INBOX")
+    PendingTransfer.objects.create(
+        item=item,
+        from_responsible=resp_sender,
+        to_responsible=resp_receiver,
+    )
+
+    client = Client()
+    client.force_login(user_receiver)
+    response = client.get("/transfers/")
+    assert response.status_code == 200
+    assert item.inventory_number.encode("utf-8") in response.content
+
+
+@pytest.mark.django_db
+def test_outgoing_transfers_lists_offers_for_sender() -> None:
+    user_sender = User.objects.create_user(username="sender", password="pw")
+    user_receiver = User.objects.create_user(username="receiver", password="pw")
+    resp_sender = Responsible.objects.create(
+        last_name="Sender", first_name="User", user=user_sender
+    )
+    resp_receiver = Responsible.objects.create(
+        last_name="Receiver", first_name="User", user=user_receiver
+    )
+    status = Status.objects.create(name="In use")
+    location = Location.objects.create(name="Home")
+    item = _make_item_with_operation(status, location, resp_sender, "INV-XFER-OUTBOX")
+    PendingTransfer.objects.create(
+        item=item,
+        from_responsible=resp_sender,
+        to_responsible=resp_receiver,
+    )
+
+    client = Client()
+    client.force_login(user_sender)
+    response = client.get("/transfers/")
+    assert response.status_code == 200
+    assert item.inventory_number.encode("utf-8") in response.content
