@@ -48,14 +48,14 @@
                 <form method="post" action="{% url 'inventory:cancel-transfer' transfer_id=pending_transfer.id %}">
                     {% csrf_token %}
                     <button type="submit" class="button button--secondary button--sm">
-                        {% trans "Decline transfer" %}
+                        {% trans "Decline" %}
                     </button>
                 </form>
             {% endif %}
             {% if pending_transfer.from_responsible.user_id == user.id %}
                 <form method="post" action="{% url 'inventory:cancel-transfer' transfer_id=pending_transfer.id %}">
                     {% csrf_token %}
-                    <button type="submit" class="button button--secondary button--sm">{% trans "Cancel transfer" %}</button>
+                    <button type="submit" class="button button--secondary button--sm">{% trans "Cancel" %}</button>
                 </form>
             {% endif %}
         </div>

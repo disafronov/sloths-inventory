@@ -16,10 +16,7 @@
         <div class="item-card-list">
             {% for t in incoming %}
                 <div class="item-card">
-                    <div class="item-card__title">
-                        <span class="item-card__label">{% trans "Inventory number" %}:</span>
-                        <span class="item-card__value">{{ t.item.inventory_number }}</span>
-                    </div>
+                    {% include "inventory/_item_card_title_inventory_number.html" with inventory_number=t.item.inventory_number %}
                     <div class="item-card__row">
                         <span class="item-card__label">{% trans "From" %}:</span>
                         <span class="item-card__value">{{ t.from_responsible }}</span>
@@ -35,7 +32,7 @@
                         <form method="post" action="{% url 'inventory:cancel-transfer' transfer_id=t.id %}">
                             {% csrf_token %}
                             <button type="submit" class="button button--secondary button--sm">
-                                {% trans "Decline transfer" %}
+                                {% trans "Decline" %}
                             </button>
                         </form>
                     </div>
@@ -53,10 +50,7 @@
         <div class="item-card-list">
             {% for t in outgoing %}
                 <div class="item-card">
-                    <div class="item-card__title">
-                        <span class="item-card__label">{% trans "Inventory number" %}:</span>
-                        <span class="item-card__value">{{ t.item.inventory_number }}</span>
-                    </div>
+                    {% include "inventory/_item_card_title_inventory_number.html" with inventory_number=t.item.inventory_number %}
                     <div class="item-card__row">
                         <span class="item-card__label">{% trans "To" %}:</span>
                         <span class="item-card__value">{{ t.to_responsible }}</span>
@@ -67,7 +61,7 @@
                         </a>
                         <form method="post" action="{% url 'inventory:cancel-transfer' transfer_id=t.id %}">
                             {% csrf_token %}
-                            <button type="submit" class="button button--secondary button--sm">{% trans "Cancel transfer" %}</button>
+                            <button type="submit" class="button button--secondary button--sm">{% trans "Cancel" %}</button>
                         </form>
                     </div>
                 </div>
