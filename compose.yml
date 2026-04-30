@@ -24,6 +24,7 @@ services:
         target: /home/ubuntu/entrypoint
         mode: 644
     environment:
+      DEBUG: "1"
       DATABASE_HOST: postgres
       ALLOWED_HOSTS: "*"
       CSRF_TRUSTED_ORIGINS: "http://*"
@@ -79,6 +80,7 @@ services:
     build: .
     entrypoint: [ "python3", "manage.py", "makemigrations" ]
     environment:
+      DEBUG: "1"
       DATABASE_HOST: postgres
       ALLOWED_HOSTS: "*"
       CSRF_TRUSTED_ORIGINS: "http://*"
