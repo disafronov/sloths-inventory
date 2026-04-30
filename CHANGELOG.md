@@ -1,3 +1,9 @@
+## [1.1.0-rc.5](https://github.com/disafronov/sloths-inventory/compare/v1.1.0-rc.4...v1.1.0-rc.5) (2026-04-30)
+
+### Bug Fixes
+
+* sort languages with English first ([5e1d255](https://github.com/disafronov/sloths-inventory/commit/5e1d255da658f25c6bd469fda24b32150ed7de37))
+
 ## [1.1.0-rc.4](https://github.com/disafronov/sloths-inventory/compare/v1.1.0-rc.3...v1.1.0-rc.4) (2026-04-30)
 
 ### Bug Fixes
