@@ -7,7 +7,7 @@ from django.utils import timezone
 from catalogs.models import Location, Responsible, Status
 from devices.attributes import Category, Manufacturer, Model, Type
 from devices.models import Device
-from inventory.models import Item, Operation
+from inventory.models import Item, Operation, PendingTransfer
 
 
 @pytest.mark.django_db
@@ -301,3 +301,165 @@ def test_current_operation_value_missing_attr_returns_none() -> None:
 
     descriptor = Item.CurrentOperationValue("missing_field")
     assert descriptor.__get__(item, Item) is None
+
+
+@pytest.mark.django_db
+def test_pending_transfer_str_and_is_active() -> None:
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    status = Status.objects.create(name="S1")
+    location = Location.objects.create(name="Moscow")
+
+    sender = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    receiver = Responsible.objects.create(last_name="Petrov", first_name="Petr")
+
+    item = Item.objects.create(inventory_number="INV-XFER-ACTIVE", device=device)
+    Operation.objects.create(
+        item=item, status=status, responsible=sender, location=location, notes="init"
+    )
+
+    transfer = PendingTransfer.objects.create(
+        item=item,
+        from_responsible=sender,
+        to_responsible=receiver,
+    )
+    assert str(item.inventory_number) in str(transfer)
+    assert transfer.is_active is True
+
+    transfer.accepted_at = timezone.now()
+    transfer.save()
+    assert transfer.is_active is False
+
+
+@pytest.mark.django_db
+def test_pending_transfer_clean_rejects_self_transfer() -> None:
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    status = Status.objects.create(name="S1")
+    location = Location.objects.create(name="Moscow")
+    person = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+
+    item = Item.objects.create(inventory_number="INV-XFER-SELF", device=device)
+    Operation.objects.create(
+        item=item, status=status, responsible=person, location=location
+    )
+
+    transfer = PendingTransfer(
+        item=item, from_responsible=person, to_responsible=person
+    )
+    with pytest.raises(ValidationError):
+        transfer.full_clean()
+
+
+@pytest.mark.django_db
+def test_pending_transfer_clean_rejects_accepted_and_cancelled() -> None:
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    status = Status.objects.create(name="S1")
+    location = Location.objects.create(name="Moscow")
+    sender = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    receiver = Responsible.objects.create(last_name="Petrov", first_name="Petr")
+
+    item = Item.objects.create(inventory_number="INV-XFER-BADSTATE", device=device)
+    Operation.objects.create(
+        item=item, status=status, responsible=sender, location=location
+    )
+
+    transfer = PendingTransfer(
+        item=item,
+        from_responsible=sender,
+        to_responsible=receiver,
+        accepted_at=timezone.now(),
+        cancelled_at=timezone.now(),
+    )
+    with pytest.raises(ValidationError):
+        transfer.full_clean()
+
+
+@pytest.mark.django_db
+def test_pending_transfer_clean_rejects_expired_expires_at() -> None:
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    status = Status.objects.create(name="S1")
+    location = Location.objects.create(name="Moscow")
+    sender = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    receiver = Responsible.objects.create(last_name="Petrov", first_name="Petr")
+
+    item = Item.objects.create(inventory_number="INV-XFER-EXPIRED", device=device)
+    Operation.objects.create(
+        item=item, status=status, responsible=sender, location=location
+    )
+
+    transfer = PendingTransfer(
+        item=item,
+        from_responsible=sender,
+        to_responsible=receiver,
+        expires_at=timezone.now() - timedelta(seconds=1),
+    )
+    with pytest.raises(ValidationError):
+        transfer.full_clean()
+
+
+@pytest.mark.django_db
+def test_pending_transfer_clean_rejects_second_active_transfer_for_item() -> None:
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    status = Status.objects.create(name="S1")
+    location = Location.objects.create(name="Moscow")
+    sender = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    receiver1 = Responsible.objects.create(last_name="Petrov", first_name="Petr")
+    receiver2 = Responsible.objects.create(last_name="Sidorov", first_name="Sid")
+
+    item = Item.objects.create(inventory_number="INV-XFER-UNIQ", device=device)
+    Operation.objects.create(
+        item=item, status=status, responsible=sender, location=location
+    )
+
+    PendingTransfer.objects.create(
+        item=item, from_responsible=sender, to_responsible=receiver1
+    )
+    another = PendingTransfer(
+        item=item, from_responsible=sender, to_responsible=receiver2
+    )
+    with pytest.raises(ValidationError):
+        another.full_clean()
