@@ -70,8 +70,8 @@ class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
     ]
     readonly_fields = list(BaseAdmin.readonly_fields) + [
         "current_responsible",
-        "current_status",
         "current_location",
+        "current_status",
     ]
     autocomplete_fields = ["device"]
     main_fields = (
@@ -110,8 +110,8 @@ class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
                 {
                     "fields": (
                         "current_responsible",
-                        "current_status",
                         "current_location",
+                        "current_status",
                     )
                 },
             ),
@@ -124,8 +124,8 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
     list_display = [
         "item",
         "responsible",
-        "status",
         "location",
+        "status",
         "updated_at",
         "created_at",
     ]
@@ -143,8 +143,8 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
     ]
     list_filter = [
         "responsible",
-        "status",
         "location",
+        "status",
         "updated_at",
         "created_at",
     ]
@@ -152,8 +152,8 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
     main_fields = (
         "item",
         "responsible",
-        "status",
         "location",
+        "status",
     )
 
     def get_queryset(self, request: HttpRequest) -> QuerySet[Operation]:
