@@ -19,11 +19,39 @@
         value="{{ query|default:'' }}"
         placeholder="{% trans 'Search by inventory number, serial, model…' %}"
     >
+    {% if list_kind != 'all' %}
+        <input type="hidden" name="kind" value="{{ list_kind }}">
+    {% endif %}
     <button type="submit" class="button">{% trans "Search" %}</button>
     {% if query %}
         <a class="button button--secondary" href="{% url 'inventory:my-items' %}">{% trans "Clear" %}</a>
     {% endif %}
 </form>
+
+{% if responsible %}
+    <nav class="my-items-kind-tabs" aria-label="{% trans 'My items list kind' %}">
+        <a
+            href="{% url 'inventory:my-items' %}{% if query %}?q={{ query|urlencode }}{% endif %}"
+            class="button button--secondary button--sm{% if list_kind == 'all' %} button--active{% endif %}"
+            {% if list_kind == 'all' %}aria-current="page"{% endif %}
+        >{% trans "All" %}</a>
+        <a
+            href="{% url 'inventory:my-items' %}?kind=incoming{% if query %}&q={{ query|urlencode }}{% endif %}"
+            class="button button--secondary button--sm{% if list_kind == 'incoming' %} button--active{% endif %}"
+            {% if list_kind == 'incoming' %}aria-current="page"{% endif %}
+        >{% trans "Incoming" %}</a>
+        <a
+            href="{% url 'inventory:my-items' %}?kind=owned{% if query %}&q={{ query|urlencode }}{% endif %}"
+            class="button button--secondary button--sm{% if list_kind == 'owned' %} button--active{% endif %}"
+            {% if list_kind == 'owned' %}aria-current="page"{% endif %}
+        >{% trans "Owned" %}</a>
+        <a
+            href="{% url 'inventory:my-items' %}?kind=outgoing{% if query %}&q={{ query|urlencode }}{% endif %}"
+            class="button button--secondary button--sm{% if list_kind == 'outgoing' %} button--active{% endif %}"
+            {% if list_kind == 'outgoing' %}aria-current="page"{% endif %}
+        >{% trans "Outgoing" %}</a>
+    </nav>
+{% endif %}
 
 {% if incoming_transfers or items or outgoing_transfers %}
     <div class="item-card-list" aria-label="{% trans 'My items list' %}">
@@ -60,7 +88,9 @@
     </div>
 {% endif %}
 
-{% if not items %}
-    <p>{% trans "No items found." %}</p>
+{% if responsible is not None %}
+    {% if not incoming_transfers and not items and not outgoing_transfers %}
+        <p>{% trans "No items found." %}</p>
+    {% endif %}
 {% endif %}
 {% endblock %}

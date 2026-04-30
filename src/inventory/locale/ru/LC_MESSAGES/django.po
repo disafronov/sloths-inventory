@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventory\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-30 23:21+0000\n"
+"POT-Creation-Date: 2026-04-30 23:38+0000\n"
 "PO-Revision-Date: 2024-03-19 00:40+0300\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
@@ -18,20 +18,20 @@ msgstr ""
 
 #: src/inventory/admin.py:22 src/inventory/models.py:83
 #: src/inventory/templates/inventory/_transfer_card.html:22
-#: src/inventory/templates/inventory/item_history.html:88
-#: src/inventory/templates/inventory/my_items.html:51
+#: src/inventory/templates/inventory/item_history.html:89
+#: src/inventory/templates/inventory/my_items.html:79
 msgid "Status"
 msgstr "Статус"
 
 #: src/inventory/admin.py:26 src/inventory/models.py:89
 #: src/inventory/templates/inventory/_transfer_card.html:18
-#: src/inventory/templates/inventory/item_history.html:84
-#: src/inventory/templates/inventory/my_items.html:47
+#: src/inventory/templates/inventory/item_history.html:85
+#: src/inventory/templates/inventory/my_items.html:75
 msgid "Location"
 msgstr "Местоположение"
 
 #: src/inventory/admin.py:30 src/inventory/admin.py:226
-#: src/inventory/templates/inventory/item_history.html:80
+#: src/inventory/templates/inventory/item_history.html:81
 msgid "Responsible Person"
 msgstr "Ответственный"
 
@@ -57,7 +57,7 @@ msgstr "Инвентарный номер"
 #: src/inventory/templates/inventory/_transfer_card.html:10
 #: src/inventory/templates/inventory/change_location.html:15
 #: src/inventory/templates/inventory/item_history.html:13
-#: src/inventory/templates/inventory/my_items.html:39
+#: src/inventory/templates/inventory/my_items.html:67
 #: src/inventory/templates/inventory/previous_items.html:35
 #: src/inventory/templates/inventory/transfer_create.html:15
 msgid "Device"
@@ -67,7 +67,7 @@ msgstr "Устройство"
 #: src/inventory/templates/inventory/_transfer_card.html:14
 #: src/inventory/templates/inventory/change_location.html:19
 #: src/inventory/templates/inventory/item_history.html:17
-#: src/inventory/templates/inventory/my_items.html:43
+#: src/inventory/templates/inventory/my_items.html:71
 #: src/inventory/templates/inventory/previous_items.html:39
 #: src/inventory/templates/inventory/transfer_create.html:19
 msgid "Serial number"
@@ -180,18 +180,18 @@ msgid "Transfer party"
 msgstr "Сторона передачи"
 
 #: src/inventory/templates/inventory/_transfer_card.html:28
-#: src/inventory/templates/inventory/item_history.html:41
+#: src/inventory/templates/inventory/item_history.html:27
 msgid "Incoming transfer from"
 msgstr "Входящая передача от"
 
 #: src/inventory/templates/inventory/_transfer_card.html:31
-#: src/inventory/templates/inventory/item_history.html:43
+#: src/inventory/templates/inventory/item_history.html:29
 msgid "Outgoing transfer for"
 msgstr "Исходящая передача для"
 
 #: src/inventory/templates/inventory/change_location.html:5
 #: src/inventory/templates/inventory/change_location.html:12
-#: src/inventory/templates/inventory/item_history.html:27
+#: src/inventory/templates/inventory/item_history.html:65
 msgid "Change location"
 msgstr "Переместить"
 
@@ -226,7 +226,7 @@ msgid "Save"
 msgstr "Сохранить"
 
 #: src/inventory/templates/inventory/change_location.html:51
-#: src/inventory/templates/inventory/item_history.html:67
+#: src/inventory/templates/inventory/item_history.html:53
 #: src/inventory/templates/inventory/transfer_create.html:50
 msgid "Cancel"
 msgstr "Отмена"
@@ -236,29 +236,29 @@ msgstr "Отмена"
 msgid "Item history"
 msgstr "История вещи"
 
-#: src/inventory/templates/inventory/item_history.html:23
+#: src/inventory/templates/inventory/item_history.html:41
+msgid "Accept"
+msgstr "Принять"
+
+#: src/inventory/templates/inventory/item_history.html:46
+msgid "Decline"
+msgstr "Отклонить"
+
+#: src/inventory/templates/inventory/item_history.html:61
 msgid "Item actions"
 msgstr "Действия с вещью"
 
-#: src/inventory/templates/inventory/item_history.html:32
+#: src/inventory/templates/inventory/item_history.html:70
 #: src/inventory/templates/inventory/transfer_create.html:5
 #: src/inventory/templates/inventory/transfer_create.html:12
 msgid "Transfer"
 msgstr "Передать"
 
-#: src/inventory/templates/inventory/item_history.html:55
-msgid "Accept"
-msgstr "Принять"
-
-#: src/inventory/templates/inventory/item_history.html:60
-msgid "Decline"
-msgstr "Отклонить"
-
-#: src/inventory/templates/inventory/item_history.html:92
+#: src/inventory/templates/inventory/item_history.html:93
 msgid "Notes"
 msgstr "Заметки"
 
-#: src/inventory/templates/inventory/item_history.html:99
+#: src/inventory/templates/inventory/item_history.html:100
 msgid "No operations found."
 msgstr "Операции не найдены."
 
@@ -278,7 +278,7 @@ msgid "Search items"
 msgstr "Поиск по вещам"
 
 #: src/inventory/templates/inventory/my_items.html:14
-#: src/inventory/templates/inventory/my_items.html:22
+#: src/inventory/templates/inventory/my_items.html:25
 #: src/inventory/templates/inventory/previous_items.html:14
 #: src/inventory/templates/inventory/previous_items.html:22
 msgid "Search"
@@ -289,16 +289,36 @@ msgstr "Найти"
 msgid "Search by inventory number, serial, model…"
 msgstr "Поиск по инвентарному номеру, серийному, модели…"
 
-#: src/inventory/templates/inventory/my_items.html:24
+#: src/inventory/templates/inventory/my_items.html:27
 #: src/inventory/templates/inventory/previous_items.html:24
 msgid "Clear"
 msgstr "Сбросить"
 
-#: src/inventory/templates/inventory/my_items.html:29
+#: src/inventory/templates/inventory/my_items.html:32
+msgid "My items list kind"
+msgstr "Разделы списка «Мои вещи»"
+
+#: src/inventory/templates/inventory/my_items.html:37
+msgid "All"
+msgstr "Все"
+
+#: src/inventory/templates/inventory/my_items.html:42
+msgid "Incoming"
+msgstr "Входящие"
+
+#: src/inventory/templates/inventory/my_items.html:47
+msgid "Owned"
+msgstr "Мои"
+
+#: src/inventory/templates/inventory/my_items.html:52
+msgid "Outgoing"
+msgstr "Исходящие"
+
+#: src/inventory/templates/inventory/my_items.html:57
 msgid "My items list"
 msgstr "Список моих вещей"
 
-#: src/inventory/templates/inventory/my_items.html:64
+#: src/inventory/templates/inventory/my_items.html:93
 #: src/inventory/templates/inventory/previous_items.html:50
 msgid "No items found."
 msgstr "Вещи не найдены."
@@ -332,6 +352,6 @@ msgstr "Начните вводить, чтобы отфильтровать л�
 msgid "Create offer"
 msgstr "Создать предложение"
 
-#: src/inventory/views.py:371
+#: src/inventory/views.py:402
 msgid "New location must be different from current location."
 msgstr "Новое местоположение должно отличаться от текущего."

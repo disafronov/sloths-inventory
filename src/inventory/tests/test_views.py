@@ -156,6 +156,157 @@ def test_my_items_search_filters_by_inventory_number_and_serial() -> None:
 
 
 @pytest.mark.django_db
+def test_my_items_list_kind_outgoing_shows_only_outgoing_card() -> None:
+    """`kind=outgoing` must list only outgoing transfer cards, not owned rows."""
+
+    user_sender = User.objects.create_user(username="sender", password="pw")
+    user_receiver = User.objects.create_user(username="receiver", password="pw")
+    resp_sender = Responsible.objects.create(
+        last_name="Sender", first_name="User", user=user_sender
+    )
+    resp_receiver = Responsible.objects.create(
+        last_name="Receiver", first_name="User", user=user_receiver
+    )
+    status = Status.objects.create(name="In use")
+    location = Location.objects.create(name="Home")
+    item_xfer = _make_item_with_operation(
+        status, location, resp_sender, "INV-KIND-OUT-ONLY"
+    )
+    PendingTransfer.objects.create(
+        item=item_xfer,
+        from_responsible=resp_sender,
+        to_responsible=resp_receiver,
+    )
+
+    client = Client()
+    client.force_login(user_sender)
+
+    owned_resp = client.get("/", {"kind": "owned"})
+    assert owned_resp.status_code == 200
+    assert b"INV-KIND-OUT-ONLY" not in owned_resp.content
+
+    outgoing_resp = client.get("/", {"kind": "outgoing"})
+    assert outgoing_resp.status_code == 200
+    assert b"INV-KIND-OUT-ONLY" in outgoing_resp.content
+    assert (
+        outgoing_resp.content.count(b'class="item-card item-card--outgoing-transfer"')
+        == 1
+    )
+
+    all_resp = client.get("/")
+    assert all_resp.status_code == 200
+    assert b"INV-KIND-OUT-ONLY" in all_resp.content
+
+
+@pytest.mark.django_db
+def test_my_items_list_kind_owned_hides_transfer_offers() -> None:
+    """
+    `kind=owned` must not show inventory numbers that appear only on transfer cards.
+    """
+
+    user_sender = User.objects.create_user(username="sender", password="pw")
+    user_receiver = User.objects.create_user(username="receiver", password="pw")
+    resp_sender = Responsible.objects.create(
+        last_name="Sender", first_name="User", user=user_sender
+    )
+    resp_receiver = Responsible.objects.create(
+        last_name="Receiver", first_name="User", user=user_receiver
+    )
+    status = Status.objects.create(name="In use")
+    location = Location.objects.create(name="Home")
+    _make_item_with_operation(status, location, resp_sender, "INV-KIND-OWN-PLAIN")
+    item_out = _make_item_with_operation(
+        status, location, resp_sender, "INV-KIND-OWN-XFER"
+    )
+    PendingTransfer.objects.create(
+        item=item_out,
+        from_responsible=resp_sender,
+        to_responsible=resp_receiver,
+    )
+
+    client = Client()
+    client.force_login(user_sender)
+
+    owned_resp = client.get("/", {"kind": "owned"})
+    assert owned_resp.status_code == 200
+    assert b"INV-KIND-OWN-PLAIN" in owned_resp.content
+    assert b"INV-KIND-OWN-XFER" not in owned_resp.content
+
+    all_resp = client.get("/")
+    assert all_resp.status_code == 200
+    assert b"INV-KIND-OWN-PLAIN" in all_resp.content
+    assert b"INV-KIND-OWN-XFER" in all_resp.content
+
+
+@pytest.mark.django_db
+def test_my_items_list_kind_incoming_for_receiver() -> None:
+    """Receiver: `kind=incoming` shows the offer; `kind=outgoing` is empty."""
+
+    user_sender = User.objects.create_user(username="sender", password="pw")
+    user_receiver = User.objects.create_user(username="receiver", password="pw")
+    resp_sender = Responsible.objects.create(
+        last_name="Sender", first_name="User", user=user_sender
+    )
+    resp_receiver = Responsible.objects.create(
+        last_name="Receiver", first_name="User", user=user_receiver
+    )
+    status = Status.objects.create(name="In use")
+    location = Location.objects.create(name="Home")
+    item = _make_item_with_operation(status, location, resp_sender, "INV-KIND-INCOMING")
+    PendingTransfer.objects.create(
+        item=item,
+        from_responsible=resp_sender,
+        to_responsible=resp_receiver,
+    )
+
+    client = Client()
+    client.force_login(user_receiver)
+
+    incoming_resp = client.get("/", {"kind": "incoming"})
+    assert incoming_resp.status_code == 200
+    assert b"INV-KIND-INCOMING" in incoming_resp.content
+
+    outgoing_resp = client.get("/", {"kind": "outgoing"})
+    assert outgoing_resp.status_code == 200
+    assert b"INV-KIND-INCOMING" not in outgoing_resp.content
+
+
+@pytest.mark.django_db
+def test_my_items_list_kind_invalid_falls_back_to_all() -> None:
+    """Unknown `kind` values are ignored (treated as all)."""
+
+    user_sender = User.objects.create_user(username="sender", password="pw")
+    user_receiver = User.objects.create_user(username="receiver", password="pw")
+    resp_sender = Responsible.objects.create(
+        last_name="Sender", first_name="User", user=user_sender
+    )
+    resp_receiver = Responsible.objects.create(
+        last_name="Receiver", first_name="User", user=user_receiver
+    )
+    status = Status.objects.create(name="In use")
+    location = Location.objects.create(name="Home")
+    item = _make_item_with_operation(status, location, resp_sender, "INV-KIND-INVALID")
+    PendingTransfer.objects.create(
+        item=item,
+        from_responsible=resp_sender,
+        to_responsible=resp_receiver,
+    )
+
+    client = Client()
+    client.force_login(user_sender)
+
+    baseline = client.get("/")
+    weird = client.get("/", {"kind": "not-a-real-kind"})
+    assert baseline.status_code == 200
+    assert weird.status_code == 200
+    assert b"INV-KIND-INVALID" in baseline.content
+    assert b"INV-KIND-INVALID" in weird.content
+    assert baseline.content.count(
+        b'class="item-card item-card--outgoing-transfer"'
+    ) == weird.content.count(b'class="item-card item-card--outgoing-transfer"')
+
+
+@pytest.mark.django_db
 def test_item_history_only_for_my_or_previously_my_item() -> None:
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")

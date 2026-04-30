@@ -84,6 +84,23 @@ def _items_owned_by(responsible: Responsible) -> QuerySet[Item]:
     )
 
 
+_MY_ITEMS_LIST_KINDS = frozenset({"all", "incoming", "owned", "outgoing"})
+
+
+def _parse_my_items_list_kind(request: HttpRequest) -> str:
+    """
+    Parse the optional `kind` query parameter for the "My items" list.
+
+    Values: ``all`` (default), ``incoming``, ``owned``, ``outgoing``.
+    Unknown values fall back to ``all`` so bookmarked URLs stay safe.
+    """
+
+    raw = (request.GET.get("kind") or "").strip().lower()
+    if raw in _MY_ITEMS_LIST_KINDS:
+        return raw
+    return "all"
+
+
 def _get_active_transfer_for_item(item: Item) -> PendingTransfer | None:
     """
     Return the active pending transfer for an item, if any.
@@ -113,10 +130,13 @@ def my_items(request: HttpRequest) -> HttpResponse:
                 "items": [],
                 "incoming_transfers": [],
                 "outgoing_transfers": [],
+                "query": "",
+                "list_kind": "all",
             },
         )
 
     query = request.GET.get("q", "")
+    list_kind = _parse_my_items_list_kind(request)
     items = _apply_item_search(_items_owned_by(responsible), query=query)
 
     latest_location_name = (
@@ -171,6 +191,16 @@ def my_items(request: HttpRequest) -> HttpResponse:
     )
     items = items.exclude(id__in=transfer_item_ids)
 
+    if list_kind == "incoming":
+        items = items.none()
+        outgoing_transfers = outgoing_transfers.none()
+    elif list_kind == "owned":
+        incoming_transfers = incoming_transfers.none()
+        outgoing_transfers = outgoing_transfers.none()
+    elif list_kind == "outgoing":
+        items = items.none()
+        incoming_transfers = incoming_transfers.none()
+
     return render(
         request,
         "inventory/my_items.html",
@@ -178,6 +208,7 @@ def my_items(request: HttpRequest) -> HttpResponse:
             "responsible": responsible,
             "items": items,
             "query": query,
+            "list_kind": list_kind,
             "incoming_transfers": incoming_transfers,
             "outgoing_transfers": outgoing_transfers,
         },
