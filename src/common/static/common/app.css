@@ -282,6 +282,12 @@ body.nav-open {
   margin-bottom: 15px;
 }
 
+.form-error {
+  color: #b00020;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
 .form-container label {
   display: block;
   margin-bottom: 5px;

@@ -165,6 +165,9 @@ msgstr "Текущее местоположение"
 msgid "New location"
 msgstr "Новое местоположение"
 
+msgid "New location must be different from current location."
+msgstr "Новое местоположение должно отличаться от текущего."
+
 msgid "Save"
 msgstr "Сохранить"
 

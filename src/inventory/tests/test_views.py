@@ -530,6 +530,24 @@ def test_change_location_post_returns_404_for_invalid_location() -> None:
 
 
 @pytest.mark.django_db
+def test_change_location_post_returns_400_when_location_is_unchanged() -> None:
+    user = User.objects.create_user(username="u1", password="pw")
+    resp = Responsible.objects.create(last_name="One", first_name="User", user=user)
+    status = Status.objects.create(name="In use")
+    location = Location.objects.create(name="Home")
+    item = _make_item_with_operation(status, location, resp, "INV-SAMELOC")
+
+    client = Client()
+    client.force_login(user)
+    response = client.post(
+        f"/items/{item.pk}/change-location/",
+        {"location_id": location.pk},
+    )
+    assert response.status_code == 400
+    assert item.operation_set.count() == 1
+
+
+@pytest.mark.django_db
 def test_create_transfer_requires_login() -> None:
     client = Client()
     response = client.get("/items/1/transfer/")
