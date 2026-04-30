@@ -46,18 +46,11 @@ repos:
 
   - repo: local
     hooks:
-      - id: make-format
-        name: make format (pre-commit)
+      - id: make-all
+        name: make all (pre-commit)
         stages: [pre-commit]
         language: system
-        entry: make format
-        pass_filenames: false
-
-      - id: make-lint
-        name: make lint (pre-commit)
-        stages: [pre-commit]
-        language: system
-        entry: make lint
+        entry: make all
         pass_filenames: false
 
       - id: uv-lock
@@ -79,4 +72,11 @@ repos:
         stages: [pre-push]
         language: system
         entry: make dead-code
+        pass_filenames: false
+
+      - id: make-format
+        name: make format (pre-push)
+        stages: [pre-push]
+        language: system
+        entry: make format
         pass_filenames: false

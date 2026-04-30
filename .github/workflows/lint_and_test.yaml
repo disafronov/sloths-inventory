@@ -38,6 +38,11 @@ jobs:
         env:
           UV_PYTHON: ${{ steps.python_version.outputs.version }}
 
+      - name: Run formatter
+        run: make format
+        env:
+          UV_PYTHON: ${{ steps.python_version.outputs.version }}
+
       - name: Check if code was reformatted
         if: always()
         run: git diff --exit-code
