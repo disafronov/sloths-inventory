@@ -7,86 +7,88 @@
 
 {% block content %}
 <p class="sr-only">{% trans "Item history" %}</p>
-<div class="item-card" aria-label="{% trans 'Item details' %}">
-    <div class="item-card__row">
-        <span class="item-card__label">{% trans "Device" %}:</span>
-        <span class="item-card__value">{{ item.device }}</span>
-    </div>
-    <div class="item-card__row">
-        <span class="item-card__label">{% trans "Serial number" %}:</span>
-        <span class="item-card__value">{{ item.serial_number|default:"-" }}</span>
-    </div>
-</div>
-
-{% if is_owner %}
-    <div class="form-actions form-actions--inline" aria-label="{% trans 'Item actions' %}">
-        <a
-            href="{% url 'inventory:change-location' item_id=item.id %}"
-            class="button button--secondary button--sm"
-        >{% trans "Change location" %}</a>
-        {% if not pending_transfer %}
-            <a
-                href="{% url 'inventory:create-transfer' item_id=item.id %}"
-                class="button button--secondary button--sm"
-            >{% trans "Transfer item" %}</a>
-        {% endif %}
-    </div>
-{% endif %}
-
-{% if pending_transfer %}
-    <div class="item-card">
+<div class="page-stack">
+    <div class="item-card" aria-label="{% trans 'Item details' %}">
         <div class="item-card__row">
-            <span class="item-card__label">{% trans "Pending transfer" %}:</span>
-            <span class="item-card__value">{{ pending_transfer.from_responsible }} → {{ pending_transfer.to_responsible }}</span>
+            <span class="item-card__label">{% trans "Device" %}:</span>
+            <span class="item-card__value">{{ item.device }}</span>
         </div>
-        <div class="form-actions form-actions--inline">
-            {% if pending_transfer.to_responsible.user_id == user.id %}
-                <form method="post" action="{% url 'inventory:accept-transfer' transfer_id=pending_transfer.id %}">
-                    {% csrf_token %}
-                    <button type="submit" class="button button--sm">{% trans "Accept" %}</button>
-                </form>
-                <form method="post" action="{% url 'inventory:cancel-transfer' transfer_id=pending_transfer.id %}">
-                    {% csrf_token %}
-                    <button type="submit" class="button button--secondary button--sm">
-                        {% trans "Decline" %}
-                    </button>
-                </form>
-            {% endif %}
-            {% if pending_transfer.from_responsible.user_id == user.id %}
-                <form method="post" action="{% url 'inventory:cancel-transfer' transfer_id=pending_transfer.id %}">
-                    {% csrf_token %}
-                    <button type="submit" class="button button--secondary button--sm">{% trans "Cancel" %}</button>
-                </form>
-            {% endif %}
+        <div class="item-card__row">
+            <span class="item-card__label">{% trans "Serial number" %}:</span>
+            <span class="item-card__value">{{ item.serial_number|default:"-" }}</span>
         </div>
     </div>
-{% endif %}
 
-{% if operations %}
-    <div class="operation-list">
-        {% for op in operations %}
-            <article class="operation-card">
-                <div class="operation-card__time">{{ op.created_at|date:"Y-m-d H:i:s" }}</div>
-                <div class="item-card__row">
-                    <span class="item-card__label">{% trans "Responsible Person" %}:</span>
-                    <span class="item-card__value">{{ op.responsible }}</span>
-                </div>
-                <div class="item-card__row">
-                    <span class="item-card__label">{% trans "Location" %}:</span>
-                    <span class="item-card__value">{{ op.location }}</span>
-                </div>
-                <div class="item-card__row">
-                    <span class="item-card__label">{% trans "Status" %}:</span>
-                    <span class="item-card__value">{{ op.status }}</span>
-                </div>
-                <div class="item-card__row">
-                    <span class="item-card__label">{% trans "Notes" %}:</span>
-                    <span class="item-card__value">{{ op.notes|default:"-" }}</span>
-                </div>
-            </article>
-        {% endfor %}
-    </div>
-{% else %}
-    <p>{% trans "No operations found." %}</p>
-{% endif %}
+    {% if is_owner %}
+        <div class="form-actions form-actions--inline" aria-label="{% trans 'Item actions' %}">
+            <a
+                href="{% url 'inventory:change-location' item_id=item.id %}"
+                class="button button--secondary button--sm"
+            >{% trans "Change location" %}</a>
+            {% if not pending_transfer %}
+                <a
+                    href="{% url 'inventory:create-transfer' item_id=item.id %}"
+                    class="button button--secondary button--sm"
+                >{% trans "Transfer item" %}</a>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    {% if pending_transfer %}
+        <div class="item-card">
+            <div class="item-card__row">
+                <span class="item-card__label">{% trans "Pending transfer" %}:</span>
+                <span class="item-card__value">{{ pending_transfer.from_responsible }} → {{ pending_transfer.to_responsible }}</span>
+            </div>
+            <div class="form-actions form-actions--inline">
+                {% if pending_transfer.to_responsible.user_id == user.id %}
+                    <form method="post" action="{% url 'inventory:accept-transfer' transfer_id=pending_transfer.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="button button--sm">{% trans "Accept" %}</button>
+                    </form>
+                    <form method="post" action="{% url 'inventory:cancel-transfer' transfer_id=pending_transfer.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="button button--secondary button--sm">
+                            {% trans "Decline" %}
+                        </button>
+                    </form>
+                {% endif %}
+                {% if pending_transfer.from_responsible.user_id == user.id %}
+                    <form method="post" action="{% url 'inventory:cancel-transfer' transfer_id=pending_transfer.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="button button--secondary button--sm">{% trans "Cancel" %}</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+
+    {% if operations %}
+        <div class="operation-list">
+            {% for op in operations %}
+                <article class="operation-card">
+                    <div class="operation-card__time">{{ op.created_at|date:"Y-m-d H:i:s" }}</div>
+                    <div class="item-card__row">
+                        <span class="item-card__label">{% trans "Responsible Person" %}:</span>
+                        <span class="item-card__value">{{ op.responsible }}</span>
+                    </div>
+                    <div class="item-card__row">
+                        <span class="item-card__label">{% trans "Location" %}:</span>
+                        <span class="item-card__value">{{ op.location }}</span>
+                    </div>
+                    <div class="item-card__row">
+                        <span class="item-card__label">{% trans "Status" %}:</span>
+                        <span class="item-card__value">{{ op.status }}</span>
+                    </div>
+                    <div class="item-card__row">
+                        <span class="item-card__label">{% trans "Notes" %}:</span>
+                        <span class="item-card__value">{{ op.notes|default:"-" }}</span>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>{% trans "No operations found." %}</p>
+    {% endif %}
+</div>
 {% endblock %}
