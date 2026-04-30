@@ -9,6 +9,8 @@ from devices.attributes import Category, Manufacturer, Model, Type
 from devices.models import Device
 from inventory.models import Item, Operation
 
+pytestmark = [pytest.mark.postgres]
+
 
 @pytest.mark.django_db(transaction=True)
 def test_operation_update_is_serialized_per_item_under_concurrency() -> None:
