@@ -446,7 +446,7 @@ def cancel_transfer(request: HttpRequest, *, transfer_id: int) -> HttpResponse:
     """
     Cancel a pending transfer.
 
-    Only the sender may cancel while the transfer is active.
+    The sender may cancel their offer; the receiver may decline it.
     """
 
     if request.method != "POST":
@@ -464,7 +464,7 @@ def cancel_transfer(request: HttpRequest, *, transfer_id: int) -> HttpResponse:
     )
     if not transfer.is_active:
         raise Http404
-    if transfer.from_responsible_id != responsible.pk:
+    if responsible.pk not in {transfer.from_responsible_id, transfer.to_responsible_id}:
         raise Http404
 
     transfer.cancelled_at = timezone.now()
