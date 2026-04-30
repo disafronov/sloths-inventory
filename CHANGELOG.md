@@ -1,3 +1,9 @@
+## [1.1.0-rc.7](https://github.com/disafronov/sloths-inventory/compare/v1.1.0-rc.6...v1.1.0-rc.7) (2026-04-30)
+
+### Features
+
+* enhance item history view to support pending transfers ([fdcda84](https://github.com/disafronov/sloths-inventory/commit/fdcda8436444888cb079e1fd61f320577ea0171a))
+
 ## [1.1.0-rc.6](https://github.com/disafronov/sloths-inventory/compare/v1.1.0-rc.5...v1.1.0-rc.6) (2026-04-30)
 
 ### Features
