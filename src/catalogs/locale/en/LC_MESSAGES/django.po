@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: catalogs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-29 21:43+0300\n"
+"POT-Creation-Date: 2026-04-30 23:19+0000\n"
 "PO-Revision-Date: 2024-03-19 00:28+0300\n"
 "Last-Translator: \n"
 "Language-Team: English\n"
@@ -27,38 +27,38 @@ msgstr "Location"
 msgid "Locations"
 msgstr "Locations"
 
-#: src/catalogs/models.py:15
+#: src/catalogs/models.py:16
 msgid "Last name"
 msgstr "Last name"
 
-#: src/catalogs/models.py:16
+#: src/catalogs/models.py:17
 msgid "First name"
 msgstr "First name"
 
-#: src/catalogs/models.py:18
+#: src/catalogs/models.py:19
 msgid "Middle name"
 msgstr "Middle name"
 
-#: src/catalogs/models.py:21
+#: src/catalogs/models.py:22
 msgid "Employee ID"
 msgstr "Employee ID"
 
-#: src/catalogs/models.py:28
+#: src/catalogs/models.py:29
 msgid "User"
 msgstr "User"
 
-#: src/catalogs/models.py:32
+#: src/catalogs/models.py:33
 msgid "Responsible"
 msgstr "Responsible"
 
-#: src/catalogs/models.py:33
+#: src/catalogs/models.py:34
 msgid "Responsibles"
 msgstr "Responsibles"
 
-#: src/catalogs/models.py:48
+#: src/catalogs/models.py:49
 msgid "Status"
 msgstr "Status"
 
-#: src/catalogs/models.py:49
+#: src/catalogs/models.py:50
 msgid "Statuses"
 msgstr "Statuses"

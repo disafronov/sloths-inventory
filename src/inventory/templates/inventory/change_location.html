@@ -1,43 +1,57 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "Change location" %} - {% trans "Sloths Inventory" %}{% endblock %}
+{% block title %}
+    {% trans "Change location" %} - {% trans "Inventory number" %} {{ item.inventory_number }} - {% trans "Sloths Inventory" %}
+{% endblock %}
 
-{% block heading %}{% trans "Change location" %}{% endblock %}
+{% block heading %}{% trans "Inventory number" %}: {{ item.inventory_number }}{% endblock %}
 
 {% block content %}
-<div class="item-meta">
-    <strong>{% trans "Item" %}:</strong> {{ item.inventory_number }}<br>
-    <strong>{% trans "Device" %}:</strong> {{ item.device }}<br>
-    <strong>{% trans "Current location" %}:</strong> {{ current_location }}
-</div>
-
-<form method="post" class="form-container change-location-form">
-    {% csrf_token %}
-    {% if error %}
-        <p class="form-error" role="alert">{{ error }}</p>
-    {% endif %}
-    <p>
-        <label for="location_id">{% trans "New location" %}:</label>
-        <select
-            name="location_id"
-            id="location_id"
-            data-searchable-select
-            data-search-placeholder="{% trans 'Type to filter locations…' %}"
-        >
-            {% for loc in locations %}
-                <option value="{{ loc.pk }}"{% if loc.pk == current_location.pk %} selected{% endif %}>{{ loc.name }}</option>
-            {% endfor %}
-        </select>
-    </p>
-    <div class="form-actions">
-        <button type="submit" class="button">{% trans "Save" %}</button>
-        <a
-            href="{% url 'inventory:item-history' item_id=item.id %}"
-            class="button button--secondary"
-        >{% trans "Cancel" %}</a>
+<div class="page-stack">
+    <p class="sr-only">{% trans "Change location" %}</p>
+    <div class="item-card" aria-label="{% trans 'Item details' %}">
+        <div class="item-card__row">
+            <span class="item-card__label">{% trans "Device" %}:</span>
+            <span class="item-card__value">{{ item.device }}</span>
+        </div>
+        <div class="item-card__row">
+            <span class="item-card__label">{% trans "Serial number" %}:</span>
+            <span class="item-card__value">{{ item.serial_number|default:"-" }}</span>
+        </div>
     </div>
-</form>
+
+    <form method="post" class="form-container change-location-form">
+        {% csrf_token %}
+        {% if error %}
+            <p class="form-error" role="alert">{{ error }}</p>
+        {% endif %}
+        <p class="form-readout">
+            <strong>{% trans "Current location" %}:</strong>
+            {{ current_location }}
+        </p>
+        <p>
+            <label for="location_id">{% trans "New location" %}:</label>
+            <select
+                name="location_id"
+                id="location_id"
+                data-searchable-select
+                data-search-placeholder="{% trans 'Type to filter locations…' %}"
+            >
+                {% for loc in locations %}
+                    <option value="{{ loc.pk }}"{% if loc.pk == current_location.pk %} selected{% endif %}>{{ loc.name }}</option>
+                {% endfor %}
+            </select>
+        </p>
+        <div class="form-actions">
+            <button type="submit" class="button">{% trans "Save" %}</button>
+            <a
+                href="{% url 'inventory:item-history' item_id=item.id %}"
+                class="button button--secondary"
+            >{% trans "Cancel" %}</a>
+        </div>
+    </form>
+</div>
 {% endblock %}
 
 {% block extrabody %}
