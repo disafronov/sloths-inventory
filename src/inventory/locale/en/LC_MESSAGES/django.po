@@ -204,9 +204,6 @@ msgstr "Incoming transfers"
 msgid "Outgoing transfers"
 msgstr "Outgoing transfers"
 
-msgid "Transfer item"
-msgstr "Transfer item"
-
 msgid "Pending transfer"
 msgstr "Pending transfer"
 
