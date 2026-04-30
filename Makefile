@@ -80,6 +80,13 @@ all: lint test dead-code ## Run all checks (no mutations)
 
 run: ## Run Django development server locally
 	@echo "Running Django development server locally..."
+	PYTHONPATH=$(PYTHONPATH) uv run python src/manage.py migrate
+	@if [ -n "$$DJANGO_SUPERUSER_USERNAME" ] && [ -n "$$DJANGO_SUPERUSER_PASSWORD" ] && [ -n "$$DJANGO_SUPERUSER_EMAIL" ]; then \
+		echo "Ensuring Django superuser exists..."; \
+		PYTHONPATH=$(PYTHONPATH) uv run python src/manage.py createsuperuser --noinput || true; \
+	else \
+		echo "Skipping createsuperuser (set DJANGO_SUPERUSER_USERNAME/PASSWORD/EMAIL to enable)."; \
+	fi
 	PYTHONPATH=$(PYTHONPATH) uv run python src/manage.py runserver 0.0.0.0:8000
 
 clean: ## Clean caches and coverage outputs
