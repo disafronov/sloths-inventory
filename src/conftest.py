@@ -6,6 +6,28 @@ import pytest
 from django.db import connections
 
 
+def _env_truthy(name: str) -> bool:
+    return os.environ.get(name) in {"1", "true", "True"}
+
+
+def pytest_configure(config: pytest.Config) -> None:
+    """
+    Validate pytest configuration derived from env vars.
+
+    We allow controlling the PostgreSQL test subset via env vars to keep CI
+    commands simple. Some combinations are invalid and should fail fast.
+    """
+
+    use_postgres = _env_truthy("PYTEST_POSTGRES_USE")
+    postgres_only = _env_truthy("PYTEST_POSTGRES_ONLY")
+
+    if postgres_only and not use_postgres:
+        raise pytest.UsageError(
+            "Invalid pytest configuration: PYTEST_POSTGRES_ONLY=1 requires "
+            "PYTEST_POSTGRES_USE=1 (and PostgreSQL DATABASE_* env vars)."
+        )
+
+
 def pytest_runtest_setup(item: pytest.Item) -> None:
     """
     Enforce database backend requirements for marked tests.
@@ -40,8 +62,8 @@ def pytest_collection_modifyitems(
     marked with `@pytest.mark.postgres` via env vars (without passing `-m`).
     """
 
-    use_postgres = os.environ.get("PYTEST_POSTGRES_USE") in {"1", "true", "True"}
-    postgres_only = os.environ.get("PYTEST_POSTGRES_ONLY") in {"1", "true", "True"}
+    use_postgres = _env_truthy("PYTEST_POSTGRES_USE")
+    postgres_only = _env_truthy("PYTEST_POSTGRES_ONLY")
 
     if not (use_postgres and postgres_only):
         return
