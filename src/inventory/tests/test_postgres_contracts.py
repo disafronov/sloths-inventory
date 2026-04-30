@@ -5,7 +5,6 @@ from datetime import timezone as dt_timezone
 
 import pytest
 from django.contrib.auth.models import User
-from django.db import connections
 from django.test import Client
 
 from catalogs.models import Location, Responsible, Status
@@ -14,19 +13,6 @@ from devices.models import Device
 from inventory.models import Item, Operation
 
 pytestmark = [pytest.mark.postgres]
-
-
-def _require_postgres() -> None:
-    """
-    Skip tests unless running on PostgreSQL.
-
-    These tests validate behaviors that depend on PostgreSQL semantics and query
-    planning. They are intentionally skipped on SQLite to keep the default test
-    run fast and infrastructure-free.
-    """
-
-    if connections["default"].vendor != "postgresql":
-        pytest.skip("PostgreSQL-only contract test")
 
 
 def _make_device() -> Device:
@@ -44,8 +30,6 @@ def _make_device() -> Device:
 
 @pytest.mark.django_db
 def test_my_items_uses_id_tiebreaker_when_operations_share_created_at() -> None:
-    _require_postgres()
-
     device = _make_device()
     status = Status.objects.create(name="In stock")
     location = Location.objects.create(name="Moscow")
@@ -93,8 +77,6 @@ def test_my_items_uses_id_tiebreaker_when_operations_share_created_at() -> None:
 
 @pytest.mark.django_db
 def test_previous_items_ordering_by_last_on_me_created_at_is_stable() -> None:
-    _require_postgres()
-
     device = _make_device()
     status = Status.objects.create(name="In stock")
     location = Location.objects.create(name="Moscow")
