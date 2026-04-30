@@ -11,13 +11,30 @@
   box-sizing: border-box;
 }
 
+:root {
+  /**
+   * Spacing scale for consistent vertical rhythm.
+   * Use relative units (rem) so spacing scales with the base font size.
+   */
+  --space-1: 0.25rem; /* 4px @ 16px base */
+  --space-2: 0.5rem; /* 8px */
+  --space-2-5: 0.625rem; /* 10px */
+  --space-3: 0.75rem; /* 12px */
+  --space-4: 1rem; /* 16px */
+  /* Default vertical rhythm step for "rows" of elements. */
+  --space-row: var(--space-4);
+  /* Tighter step for rows inside a card. */
+  --space-row-inner: var(--space-2);
+}
+
 body {
   font-family: Arial, Helvetica, sans-serif;
   margin: 0;
   /* Respect display cutouts and the home indicator (iOS); 0px fallback for older engines. */
-  padding: max(16px, env(safe-area-inset-top, 0px))
-    max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px))
-    max(16px, env(safe-area-inset-left, 0px));
+  padding: max(var(--space-4), env(safe-area-inset-top, 0px))
+    max(var(--space-4), env(safe-area-inset-right, 0px))
+    max(var(--space-4), env(safe-area-inset-bottom, 0px))
+    max(var(--space-4), env(safe-area-inset-left, 0px));
   background-color: #f5f5f5;
   color: #222;
   line-height: 1.45;
@@ -27,20 +44,20 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   background-color: #fff;
-  padding: 16px;
+  padding: var(--space-4);
   border-radius: 6px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 }
 
 .header {
   position: relative;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
   border-bottom: 1px solid #eee;
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 /**
@@ -51,7 +68,7 @@ body {
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: var(--space-3);
   width: 100%;
   min-width: 0;
 }
@@ -279,18 +296,18 @@ body.nav-open {
 }
 
 .form-container p {
-  margin-bottom: 15px;
+  margin-bottom: var(--space-3);
 }
 
 .form-error {
   color: #b00020;
   font-weight: 700;
-  margin: 0 0 12px;
+  margin: 0 0 var(--space-3);
 }
 
 .form-container label {
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: var(--space-1);
 }
 
 .form-container input {
@@ -304,7 +321,7 @@ body.nav-open {
 
 .form-container button[type="submit"] {
   width: 100%;
-  margin-top: 8px;
+  margin-top: var(--space-2);
 }
 
 /**
@@ -313,11 +330,11 @@ body.nav-open {
 .form-actions {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--space-row);
 }
 
 .item-card .form-actions {
-  margin-top: 10px;
+  margin-top: var(--space-row);
 }
 
 .form-actions .button {
@@ -374,7 +391,7 @@ body.nav-open {
 /* --- Item / operation cards ---------------------------------------------- */
 
 .transfer-section {
-  margin: 16px 0;
+  margin: var(--space-4) 0;
   padding: 12px;
   border-radius: 8px;
   border: 1px solid #e9ecef;
@@ -395,7 +412,7 @@ body.nav-open {
 }
 
 .item-meta {
-  margin: 0 0 16px;
+  margin: 0 0 var(--space-4);
   padding: 12px;
   background: #f8f9fa;
   border-radius: 6px;
@@ -409,19 +426,19 @@ body.nav-open {
 .item-card-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--space-row);
 }
 
 .operation-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--space-row);
 }
 
 .page-stack {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--space-row);
 }
 
 .change-location-form select {
@@ -521,9 +538,9 @@ body.nav-open {
 .search-form {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: var(--space-row);
   align-items: center;
-  margin: 0 0 16px;
+  margin: 0 0 var(--space-row);
 }
 
 .search-form input[type="search"] {
@@ -565,7 +582,7 @@ a.item-card:hover {
 .item-card__title {
   font-weight: 700;
   font-size: 1.05rem;
-  margin-bottom: 8px;
+  margin-bottom: var(--space-row-inner);
   color: #222;
 }
 
@@ -578,7 +595,7 @@ a.item-card:hover {
   display: flex;
   flex-wrap: wrap;
   gap: 6px 10px;
-  margin-top: 4px;
+  margin-top: var(--space-row-inner);
   font-size: 0.95rem;
 }
 
@@ -598,7 +615,7 @@ a.item-card:hover {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 .transfer-card__main {
@@ -622,7 +639,7 @@ a.item-card:hover {
   font-size: 0.85rem;
   color: #666;
   font-weight: 800;
-  margin-bottom: 6px;
+  margin-bottom: var(--space-row-inner);
 }
 
 .transfer-card__party-value {
@@ -665,7 +682,7 @@ a.item-card:hover {
   font-weight: 600;
   font-size: 0.9rem;
   color: #333;
-  margin-bottom: 8px;
+  margin-bottom: var(--space-row-inner);
 }
 
 /* --- Wide screens: optional denser header -------------------------------- */
