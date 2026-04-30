@@ -1,3 +1,11 @@
+## [1.1.0-rc.2](https://github.com/disafronov/sloths-inventory/compare/v1.1.0-rc.1...v1.1.0-rc.2) (2026-04-30)
+
+### Features
+
+* add searchable select component for location filtering ([623564a](https://github.com/disafronov/sloths-inventory/commit/623564a160d5a8f74d2fca6fe320ab24b50ffa49))
+* enhance model ordering and admin autocomplete fields ([a549477](https://github.com/disafronov/sloths-inventory/commit/a549477982173a994d95540e9a7494c46fa6c26d))
+* implement search functionality for inventory items ([c9575d7](https://github.com/disafronov/sloths-inventory/commit/c9575d760e88a5dbed0449ed2b950e2a7bde0ac5))
+
 ## [1.1.0-rc.1](https://github.com/disafronov/sloths-inventory/compare/v1.0.0...v1.1.0-rc.1) (2026-04-30)
 
 ### Features
