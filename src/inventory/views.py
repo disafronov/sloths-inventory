@@ -180,46 +180,76 @@ def item_history(request: HttpRequest, *, item_id: int) -> HttpResponse:
     item = item_qs.filter(pk=item_id).first()
     is_owner = item is not None
     if item is None:
-        # Former owners may only see the history up to their last responsibility,
-        # plus one "handoff" operation after they transferred the item away.
-        #
-        # Rationale: this gives the former owner enough context to understand when
-        # and to whom the item was handed off, while limiting how much of the
-        # subsequent history is exposed.
-        last_mine = (
-            Operation.objects.filter(item_id=item_id, responsible=responsible)
+        # The receiver of an active transfer offer may open the item page to review
+        # the offer and accept it. They are not an owner yet, so we only expose the
+        # current state (the latest operation) and the transfer details.
+        pending_for_me = (
+            PendingTransfer.objects.filter(
+                item_id=item_id,
+                to_responsible=responsible,
+                accepted_at__isnull=True,
+                cancelled_at__isnull=True,
+            )
             .order_by("-created_at", "-id")
             .first()
         )
-        if last_mine is None:
-            raise Http404
-
-        item = get_object_or_404(_items_with_device_relations(), pk=item_id)
-
-        handoff = (
-            Operation.objects.filter(item_id=item_id)
-            .filter(
-                Q(created_at__gt=last_mine.created_at)
-                | Q(created_at=last_mine.created_at, id__gt=last_mine.id)
+        if pending_for_me is not None and pending_for_me.is_active:
+            item = get_object_or_404(_items_with_device_relations(), pk=item_id)
+            latest_op = (
+                Operation.objects.filter(item=item)
+                .select_related("status", "responsible", "location")
+                .order_by("-created_at", "-id")
+                .first()
             )
-            .order_by("created_at", "id")
-            .first()
-        )
-        if handoff is None:
-            raise AssertionError(
-                "Invariant violation: former-owner flow requires a handoff operation"
+            if latest_op is None:
+                raise Http404  # pragma: no cover
+            operations = Operation.objects.filter(pk=latest_op.pk).select_related(
+                "status",
+                "responsible",
+                "location",
             )
-        ops_filter = Q(created_at__lt=last_mine.created_at) | Q(
-            created_at=last_mine.created_at, id__lte=last_mine.id
-        )
-        ops_filter |= Q(pk=handoff.pk)
+        else:
+            # Former owners may only see the history up to their last responsibility,
+            # plus one "handoff" operation after they transferred the item away.
+            #
+            # Rationale: this gives the former owner enough context to understand when
+            # and to whom the item was handed off, while limiting how much of the
+            # subsequent history is exposed.
+            last_mine = (
+                Operation.objects.filter(item_id=item_id, responsible=responsible)
+                .order_by("-created_at", "-id")
+                .first()
+            )
+            if last_mine is None:
+                raise Http404
 
-        operations = (
-            Operation.objects.filter(item=item)
-            .filter(ops_filter)
-            .select_related("status", "responsible", "location")
-            .order_by("-created_at", "-id")
-        )
+            item = get_object_or_404(_items_with_device_relations(), pk=item_id)
+
+            handoff = (
+                Operation.objects.filter(item_id=item_id)
+                .filter(
+                    Q(created_at__gt=last_mine.created_at)
+                    | Q(created_at=last_mine.created_at, id__gt=last_mine.id)
+                )
+                .order_by("created_at", "id")
+                .first()
+            )
+            if handoff is None:
+                raise AssertionError(
+                    "Invariant violation: former-owner flow requires "
+                    "a handoff operation"
+                )
+            ops_filter = Q(created_at__lt=last_mine.created_at) | Q(
+                created_at=last_mine.created_at, id__lte=last_mine.id
+            )
+            ops_filter |= Q(pk=handoff.pk)
+
+            operations = (
+                Operation.objects.filter(item=item)
+                .filter(ops_filter)
+                .select_related("status", "responsible", "location")
+                .order_by("-created_at", "-id")
+            )
     else:
         operations = (
             Operation.objects.filter(item=item)

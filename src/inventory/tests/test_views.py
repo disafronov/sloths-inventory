@@ -1071,3 +1071,60 @@ def test_item_history_shows_pending_transfer_to_owner() -> None:
         b"Pending transfer" in response.content
         or "передач".encode("utf-8") in response.content
     )
+
+
+@pytest.mark.django_db
+def test_item_history_allows_receiver_to_view_item_with_pending_transfer() -> None:
+    user_owner = User.objects.create_user(username="owner", password="pw")
+    user_receiver = User.objects.create_user(username="receiver", password="pw")
+    resp_owner = Responsible.objects.create(
+        last_name="Owner", first_name="User", user=user_owner
+    )
+    resp_receiver = Responsible.objects.create(
+        last_name="Receiver", first_name="User", user=user_receiver
+    )
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    status = Status.objects.create(name="In stock")
+    location = Location.objects.create(name="Moscow")
+    item = Item.objects.create(inventory_number="INV-XFER-RECV", device=device)
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=resp_owner,
+        location=location,
+        notes="owner",
+    )
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=resp_owner,
+        location=location,
+        notes="newest",
+    )
+
+    PendingTransfer.objects.create(
+        item=item,
+        from_responsible=resp_owner,
+        to_responsible=resp_receiver,
+    )
+
+    client = Client()
+    client.force_login(user_receiver)
+    response = client.get(f"/items/{item.pk}/")
+    assert response.status_code == 200
+    assert (
+        b"Pending transfer" in response.content
+        or "передач".encode("utf-8") in response.content
+    )
+    assert b"newest" in response.content
+    assert b"owner" not in response.content
