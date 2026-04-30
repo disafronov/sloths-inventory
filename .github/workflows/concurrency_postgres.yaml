@@ -59,9 +59,9 @@ jobs:
         env:
           UV_PYTHON: ${{ steps.python_version.outputs.version }}
           DJANGO_SETTINGS_MODULE: sloths_inventory.settings
+          SECRET_KEY: unsafe-secret-key-for-tooling
           DATABASE_HOST: 127.0.0.1
           DATABASE_PORT: "5432"
           DATABASE_NAME: database
           DATABASE_USER: user
           DATABASE_PASSWORD: password
-
