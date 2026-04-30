@@ -38,6 +38,25 @@ def test_settings_accepts_secret_key_when_debug_false(monkeypatch) -> None:
     assert module.SECRET_KEY == "not-a-secret-value"
 
 
+def test_settings_defaults_secret_key_when_debug_true(tmp_path, monkeypatch) -> None:
+    """
+    Ensure DEBUG mode has a deterministic SECRET_KEY default.
+
+    `settings.py` reads `.env` at import time; we change CWD to a temporary empty
+    directory to avoid picking up any repository-local `.env` during tests.
+    """
+
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("DEBUG", "1")
+    monkeypatch.delenv("SECRET_KEY", raising=False)
+
+    module = _load_module_from_path(
+        "sloths_inventory._settings_debug_default_secret_key_test",
+        sloths_inventory.settings.__file__,
+    )
+    assert module.SECRET_KEY == "unsafe-secret-key"
+
+
 def test_settings_time_zone_defaults_when_env_is_unset(tmp_path, monkeypatch) -> None:
     """
     Ensure TIME_ZONE is configurable and has a deterministic default.
