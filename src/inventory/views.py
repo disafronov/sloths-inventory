@@ -500,6 +500,10 @@ def accept_transfer(request: HttpRequest, *, transfer_id: int) -> HttpResponse:
 
     Only the transfer receiver may accept. This is the authoritative confirmation
     path that changes the current owner (via a new `Operation`).
+
+    The new operation keeps `notes` empty: the handoff is implied by the new
+    responsible and by `PendingTransfer.accepted_at`, without duplicating prose
+    in the operation timeline.
     """
 
     if request.method != "POST":
@@ -536,7 +540,7 @@ def accept_transfer(request: HttpRequest, *, transfer_id: int) -> HttpResponse:
             status=current_op.status,
             responsible=transfer.to_responsible,
             location=current_op.location,
-            notes=f"Accepted transfer from {transfer.from_responsible}",
+            notes="",
         )
         transfer.accepted_at = timezone.now()
         transfer.save()
