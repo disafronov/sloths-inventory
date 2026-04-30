@@ -8,4 +8,9 @@ urlpatterns = [
     path("", views.my_items, name="my-items"),
     path("previous/", views.previous_items, name="previous-items"),
     path("items/<int:item_id>/", views.item_history, name="item-history"),
+    path(
+        "items/<int:item_id>/change-location/",
+        views.change_location,
+        name="change-location",
+    ),
 ]

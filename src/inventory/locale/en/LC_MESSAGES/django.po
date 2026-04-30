@@ -152,6 +152,21 @@ msgstr "Previously with me"
 msgid "Last on you"
 msgstr "Last on you"
 
+msgid "Change location"
+msgstr "Change location"
+
+msgid "Current location"
+msgstr "Current location"
+
+msgid "New location"
+msgstr "New location"
+
+msgid "Save"
+msgstr "Save"
+
+msgid "Cancel"
+msgstr "Cancel"
+
 #~ msgid "History"
 #~ msgstr "History"
 

@@ -4,9 +4,9 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import OuterRef, QuerySet, Subquery
 from django.db.models.query_utils import Q
 from django.http import Http404, HttpRequest, HttpResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 
-from catalogs.models import Responsible
+from catalogs.models import Location, Responsible
 
 from .models import Item, Operation
 
@@ -129,6 +129,7 @@ def item_history(request: HttpRequest, *, item_id: int) -> HttpResponse:
     # Current owner sees the entire history.
     item_qs = _items_owned_by(responsible)
     item = item_qs.filter(pk=item_id).first()
+    is_owner = item is not None
     if item is None:
         # Former owners may only see the history up to their last responsibility,
         # plus one "handoff" operation after they transferred the item away.
@@ -183,5 +184,49 @@ def item_history(request: HttpRequest, *, item_id: int) -> HttpResponse:
         {
             "item": item,
             "operations": operations,
+            "is_owner": is_owner,
+        },
+    )
+
+
+@login_required
+def change_location(request: HttpRequest, *, item_id: int) -> HttpResponse:
+    responsible = _get_responsible_for_user(request)
+    if responsible is None:
+        raise Http404
+
+    item = _items_owned_by(responsible).filter(pk=item_id).first()
+    if item is None:
+        raise Http404
+
+    current_op = item.current_operation
+    if current_op is None:
+        raise Http404  # pragma: no cover
+
+    if request.method == "POST":
+        location_id = request.POST.get("location_id")
+        if not location_id:
+            raise Http404
+        try:
+            location = Location.objects.get(pk=location_id)
+        except Location.DoesNotExist:
+            raise Http404
+
+        Operation.objects.create(
+            item=item,
+            status=current_op.status,
+            responsible=responsible,
+            location=location,
+        )
+        return redirect("inventory:my-items")
+
+    locations = Location.objects.order_by("name")
+    return render(
+        request,
+        "inventory/change_location.html",
+        {
+            "item": item,
+            "locations": locations,
+            "current_location": current_op.location,
         },
     )

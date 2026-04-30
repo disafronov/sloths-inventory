@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Change location" %} - {% trans "Sloths Inventory" %}{% endblock %}
+
+{% block heading %}{% trans "Change location" %}{% endblock %}
+
+{% block content %}
+<div class="item-meta">
+    <strong>{% trans "Item" %}:</strong> {{ item.inventory_number }}<br>
+    <strong>{% trans "Device" %}:</strong> {{ item.device }}<br>
+    <strong>{% trans "Current location" %}:</strong> {{ current_location }}
+</div>
+
+<form method="post" class="form-container change-location-form">
+    {% csrf_token %}
+    <p>
+        <label for="location_id">{% trans "New location" %}:</label>
+        <select name="location_id" id="location_id">
+            {% for loc in locations %}
+                <option value="{{ loc.pk }}"{% if loc.pk == current_location.pk %} selected{% endif %}>{{ loc.name }}</option>
+            {% endfor %}
+        </select>
+    </p>
+    <p>
+        <button type="submit" class="button">{% trans "Save" %}</button>
+        <a href="{% url 'inventory:my-items' %}" class="button button--secondary">{% trans "Cancel" %}</a>
+    </p>
+</form>
+{% endblock %}

@@ -211,6 +211,20 @@ body.nav-open {
   background-color: #0056b3;
 }
 
+.button--secondary {
+  background-color: #6c757d;
+}
+
+.button--secondary:hover {
+  background-color: #545b62;
+}
+
+.button--sm {
+  padding: 6px 12px;
+  min-height: 36px;
+  font-size: 0.9rem;
+}
+
 .form-container {
   max-width: 400px;
   margin: 0 auto;
@@ -281,6 +295,16 @@ body.nav-open {
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.change-location-form select {
+  width: 100%;
+  padding: 12px 10px;
+  min-height: 44px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #fff;
 }
 
 /**
