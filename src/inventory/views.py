@@ -153,6 +153,23 @@ def my_items(request: HttpRequest) -> HttpResponse:
         from_responsible=responsible
     ).order_by("-created_at", "-id")
 
+    # If an item has an active transfer offer, it must not appear both as a
+    # regular "owned" card and as a transfer card on the same page.
+    #
+    # NOTE: Avoid QuerySet.union() here: SQLite forbids ORDER BY in subqueries of
+    # compound statements, and `incoming_transfers` / `outgoing_transfers` are
+    # ordered for UI rendering.
+    transfer_item_ids = (
+        PendingTransfer.objects.filter(
+            accepted_at__isnull=True,
+            cancelled_at__isnull=True,
+        )
+        .filter(Q(to_responsible=responsible) | Q(from_responsible=responsible))
+        .values_list("item_id", flat=True)
+        .distinct()
+    )
+    items = items.exclude(id__in=transfer_item_ids)
+
     return render(
         request,
         "inventory/my_items.html",
