@@ -1,3 +1,13 @@
+## [1.1.0-rc.1](https://github.com/disafronov/sloths-inventory/compare/v1.0.0...v1.1.0-rc.1) (2026-04-30)
+
+### Features
+
+* add change location functionality for inventory items ([2bc8903](https://github.com/disafronov/sloths-inventory/commit/2bc8903894509ce943410c4187b0383b2c176b71))
+
+### Bug Fixes
+
+* update STATIC_URL in settings.py for correct static file handling ([50b0759](https://github.com/disafronov/sloths-inventory/commit/50b07593435b35b41af29ab00e93b30b82f78bc1))
+
 ## [1.0.0](https://github.com/disafronov/sloths-inventory/compare/v0.11.0...v1.0.0) (2026-04-30)
 
 ### ⚠ BREAKING CHANGES
