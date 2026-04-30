@@ -195,6 +195,12 @@ msgstr "Search location"
 msgid "Type to filter locations…"
 msgstr "Type to filter locations…"
 
+msgid "Decline transfer"
+msgstr "Decline transfer"
+
+msgid "Type to filter people…"
+msgstr "Type to filter people…"
+
 #~ msgid "History"
 #~ msgstr "History"
 
