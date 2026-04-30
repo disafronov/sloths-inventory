@@ -1,3 +1,10 @@
+## [0.11.0](https://github.com/disafronov/sloths-inventory/compare/v0.10.0...v0.11.0) (2026-04-30)
+
+### Features
+
+* add language selection option and improve UI styling ([33acf82](https://github.com/disafronov/sloths-inventory/commit/33acf82a3e72bc3aef9f3f3e65a6aa4aa62fa0f2))
+* **nav:** implement mobile navigation with hamburger menu ([c6087ce](https://github.com/disafronov/sloths-inventory/commit/c6087ce604f164e76c92cb981f7678336700f569))
+
 ## [0.11.0-rc.2](https://github.com/disafronov/sloths-inventory/compare/v0.11.0-rc.1...v0.11.0-rc.2) (2026-04-29)
 
 ## [0.11.0-rc.1](https://github.com/disafronov/sloths-inventory/compare/v0.10.0...v0.11.0-rc.1) (2026-04-29)
