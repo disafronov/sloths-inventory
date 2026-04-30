@@ -184,6 +184,31 @@ body.nav-open {
   color: #555;
 }
 
+.user-menu__user--identity {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid #d7e7ff;
+  border-radius: 999px;
+  background: #f6f9ff;
+  color: #0d47a1;
+  font-weight: 600;
+}
+
+.user-menu__user-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  color: #0d47a1;
+}
+
+.user-menu__user-name {
+  min-width: 0;
+}
+
 .content {
   min-height: 200px;
 }

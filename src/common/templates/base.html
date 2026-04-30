@@ -36,6 +36,19 @@
                 aria-label="{% trans 'Main navigation' %}"
             >
                 <div class="user-menu">
+                    {% if user.is_authenticated %}
+                        <span class="user-menu__user user-menu__user--identity">
+                            <span class="user-menu__user-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" width="18" height="18" focusable="false" aria-hidden="true">
+                                    <path
+                                        fill="currentColor"
+                                        d="M12 12a4 4 0 1 0-4-4a4 4 0 0 0 4 4m0 2c-4.42 0-8 2-8 4.5V21h16v-2.5C20 16 16.42 14 12 14"
+                                    />
+                                </svg>
+                            </span>
+                            <span class="user-menu__user-name">{{ user.username }}</span>
+                        </span>
+                    {% endif %}
                     <form action="{% url 'common:set_language' %}" method="post" class="language-form">
                         {% csrf_token %}
                         <input name="next" type="hidden" value="{{ request.path }}">
@@ -50,7 +63,6 @@
                         </select>
                     </form>
                     {% if user.is_authenticated %}
-                        <span class="user-menu__user">{{ user.username }}</span>
                         <a href="{% url 'inventory:my-items' %}" class="button">{% trans "My items" %}</a>
                         <a href="{% url 'inventory:previous-items' %}" class="button">{% trans "Previously my items" %}</a>
                         <a href="{% url 'admin:index' %}" class="button">{% trans "Admin" %}</a>
