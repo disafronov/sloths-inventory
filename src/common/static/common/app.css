@@ -202,7 +202,11 @@ body.nav-open {
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
-  color: #0d47a1;
+}
+
+.user-menu__user-icon img {
+  display: block;
+  color: inherit;
 }
 
 .user-menu__user-name {
