@@ -1,3 +1,5 @@
+# ! LOCAL DEVELOPMENT ONLY. DO NOT USE THIS COMPOSE FILE IN PRODUCTION.
+
 services:
   django:
     build: .
