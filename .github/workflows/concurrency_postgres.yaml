@@ -54,8 +54,8 @@ jobs:
         env:
           UV_PYTHON: ${{ steps.python_version.outputs.version }}
 
-      - name: Run concurrency tests against Postgres
-        run: PYTHONPATH=src uv run python -m pytest -v src/inventory/tests/test_concurrency.py
+      - name: Run Postgres-only contract tests
+        run: PYTHONPATH=src uv run python -m pytest -v -m postgres
         env:
           UV_PYTHON: ${{ steps.python_version.outputs.version }}
           DJANGO_SETTINGS_MODULE: sloths_inventory.settings
