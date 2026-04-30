@@ -62,10 +62,16 @@ Run using Docker Compose:
 docker compose up --build
 ```
 
-Note: `docker compose` runs `manage.py migrate` on startup (see `compose.yml`
-entrypoint config). The Docker image itself starts Django with `runserver` only
-(see `Dockerfile`), so if you run the image directly you must run migrations
-yourself.
+Notes:
+
+- `docker compose` runs `manage.py migrate` on startup (see the `compose.yml`
+  `entrypoint` config).
+- `docker compose` is intended for local development. It overrides the image
+  entrypoint and starts Django with `runserver`.
+- The Docker image itself starts the application with **Gunicorn** (see
+  `Dockerfile`) and serves static files via **WhiteNoise**.
+- If you run the image directly (without Docker Compose), you must run migrations
+  yourself.
 
 ## Domain rules
 
