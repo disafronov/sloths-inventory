@@ -447,6 +447,11 @@ def create_transfer(request: HttpRequest, *, item_id: int) -> HttpResponse:
     if current_op is None:
         raise Http404  # pragma: no cover
 
+    transfer_expiration_hours = max(
+        0,
+        int(getattr(settings, "INVENTORY_PENDING_TRANSFER_EXPIRATION_HOURS", 168)),
+    )
+
     pending_transfer = _get_active_transfer_for_item(item)
     if pending_transfer is not None:
         return render(
@@ -457,6 +462,7 @@ def create_transfer(request: HttpRequest, *, item_id: int) -> HttpResponse:
                 "responsible": responsible,
                 "responsibles": [],
                 "pending_transfer": pending_transfer,
+                "transfer_expiration_hours": transfer_expiration_hours,
             },
         )
 
@@ -471,12 +477,9 @@ def create_transfer(request: HttpRequest, *, item_id: int) -> HttpResponse:
         if to_responsible.pk == responsible.pk:
             raise Http404
 
-        expiration_hours = int(
-            getattr(settings, "INVENTORY_PENDING_TRANSFER_EXPIRATION_HOURS", 0)
-        )
         expires_at = None
-        if expiration_hours > 0:
-            expires_at = timezone.now() + timedelta(hours=expiration_hours)
+        if transfer_expiration_hours > 0:
+            expires_at = timezone.now() + timedelta(hours=transfer_expiration_hours)
 
         PendingTransfer.objects.create(
             item=item,
@@ -499,6 +502,7 @@ def create_transfer(request: HttpRequest, *, item_id: int) -> HttpResponse:
             "responsible": responsible,
             "responsibles": responsibles,
             "pending_transfer": None,
+            "transfer_expiration_hours": transfer_expiration_hours,
         },
     )
 

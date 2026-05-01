@@ -36,6 +36,7 @@
                     <span class="item-card__value">{{ pending_transfer.to_responsible }}</span>
                 {% endif %}
             </div>
+            {% include "inventory/_transfer_expiry_row.html" with transfer=pending_transfer %}
             <div class="form-actions form-actions--inline">
                 {% if pending_transfer.to_responsible.user_id == user.id %}
                     <form method="post" action="{% url 'inventory:accept-transfer' transfer_id=pending_transfer.id %}">

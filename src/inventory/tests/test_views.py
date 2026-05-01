@@ -748,6 +748,27 @@ def test_create_transfer_get_shows_receiver_options() -> None:
     response = client.get(f"/items/{item.pk}/transfer/")
     assert response.status_code == 200
     assert resp2.last_name.encode("utf-8") in response.content
+    assert b"server time" in response.content.lower()
+
+
+@pytest.mark.django_db
+@override_settings(INVENTORY_PENDING_TRANSFER_EXPIRATION_HOURS=0)
+def test_create_transfer_get_hides_expiry_hint_when_disabled() -> None:
+    """No automatic expiry hint when the configured window is zero."""
+
+    user1 = User.objects.create_user(username="u1z", password="pw")
+    user2 = User.objects.create_user(username="u2z", password="pw")
+    resp1 = Responsible.objects.create(last_name="One", first_name="Zed", user=user1)
+    Responsible.objects.create(last_name="Two", first_name="Zed", user=user2)
+    status = Status.objects.create(name="In use")
+    location = Location.objects.create(name="Home")
+    item = _make_item_with_operation(status, location, resp1, "INV-XFER-NOHINT")
+
+    client = Client()
+    client.force_login(user1)
+    response = client.get(f"/items/{item.pk}/transfer/")
+    assert response.status_code == 200
+    assert b"server time" not in response.content.lower()
 
 
 @pytest.mark.django_db
@@ -774,6 +795,7 @@ def test_create_transfer_get_shows_existing_pending_transfer() -> None:
 
 
 @pytest.mark.django_db
+@override_settings(INVENTORY_PENDING_TRANSFER_EXPIRATION_HOURS=0)
 def test_create_transfer_post_creates_pending_transfer() -> None:
     user1 = User.objects.create_user(username="u1", password="pw")
     user2 = User.objects.create_user(username="u2", password="pw")

@@ -63,7 +63,7 @@ INVENTORY_OPERATION_EDIT_WINDOW_MINUTES = env.int(
 # unless set manually in the admin).
 INVENTORY_PENDING_TRANSFER_EXPIRATION_HOURS = env.int(
     "INVENTORY_PENDING_TRANSFER_EXPIRATION_HOURS",
-    default=0,
+    default=168,
 )
 
 
