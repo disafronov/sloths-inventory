@@ -282,7 +282,7 @@ body.nav-open {
 }
 
 .form-container {
-  max-width: 400px;
+  max-width: 520px;
   margin: 0 auto;
 }
 
@@ -310,7 +310,7 @@ body.nav-open {
 
 /* Short explanatory copy above forms (e.g. transfer expiry policy). */
 .form-hint {
-  max-width: 400px;
+  max-width: 520px;
   margin: 0 auto var(--space-3);
   color: #555;
   font-size: 0.95rem;
@@ -329,6 +329,21 @@ body.nav-open {
   font-size: 16px;
   border: 1px solid #ddd;
   border-radius: 4px;
+}
+
+.form-container select,
+.form-container textarea {
+  width: 100%;
+  padding: 12px 10px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #fff;
+}
+
+.form-container textarea {
+  min-height: 96px;
+  resize: vertical;
 }
 
 .form-container button[type="submit"] {

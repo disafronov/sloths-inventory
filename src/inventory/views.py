@@ -522,11 +522,13 @@ def create_transfer(request: HttpRequest, *, item_id: int) -> HttpResponse:
         if transfer_expiration_hours > 0:
             expires_at = timezone.now() + timedelta(hours=transfer_expiration_hours)
 
+        notes = (request.POST.get("notes") or "").strip()
         PendingTransfer.objects.create(
             item=item,
             from_responsible=responsible,
             to_responsible=to_responsible,
             expires_at=expires_at,
+            notes=notes,
         )
         return redirect("inventory:item-history", item_id=item.pk)
 
@@ -556,9 +558,9 @@ def accept_transfer(request: HttpRequest, *, transfer_id: int) -> HttpResponse:
     Only the transfer receiver may accept. This is the authoritative confirmation
     path that changes the current owner (via a new `Operation`).
 
-    The new operation keeps `notes` empty: the handoff is implied by the new
-    responsible and by `PendingTransfer.accepted_at`, without duplicating prose
-    in the operation timeline.
+    If the sender provided a manual note on the offer, it is copied into the
+    newly appended operation so the history keeps the human context ("why" /
+    "what to check") without any auto-generated prose.
     """
 
     if request.method != "POST":
@@ -595,7 +597,7 @@ def accept_transfer(request: HttpRequest, *, transfer_id: int) -> HttpResponse:
             status=current_op.status,
             responsible=transfer.to_responsible,
             location=current_op.location,
-            notes="",
+            notes=transfer.notes,
         )
         transfer.accepted_at = timezone.now()
         transfer.save()

@@ -67,6 +67,17 @@
                     {% endfor %}
                 </select>
             </p>
+            <p>
+                <label for="notes">{% trans "Notes" %}:</label>
+                <textarea
+                    name="notes"
+                    id="notes"
+                    rows="3"
+                    maxlength="2000"
+                    autocomplete="off"
+                    placeholder="{% trans 'Optional: details (e.g. missing parts, charger, etc.)' %}"
+                ></textarea>
+            </p>
             <div class="form-actions">
                 <button type="submit" class="button">{% trans "Create offer" %}</button>
                 <a href="{% url 'inventory:item-history' item_id=item.id %}" class="button button--secondary">{% trans "Cancel" %}</a>
