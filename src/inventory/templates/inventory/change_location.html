@@ -35,11 +35,14 @@
             <select
                 name="location_id"
                 id="location_id"
+                required
                 data-searchable-select
                 data-search-placeholder="{% trans 'Type to filter locations…' %}"
             >
                 {% for loc in locations %}
-                    <option value="{{ loc.pk }}"{% if loc.pk == current_location.pk %} selected{% endif %}>{{ loc.name }}</option>
+                    {% if loc.pk != current_location.pk %}
+                        <option value="{{ loc.pk }}">{{ loc.name }}</option>
+                    {% endif %}
                 {% endfor %}
             </select>
         </p>
@@ -51,7 +54,7 @@
                 rows="3"
                 maxlength="2000"
                 autocomplete="off"
-                placeholder="{% trans 'Optional: details about the move…' %}"
+                placeholder="{% trans 'Optional: details (e.g. missing parts, charger, etc.)' %}"
             >{{ notes }}</textarea>
         </p>
         <div class="form-actions">

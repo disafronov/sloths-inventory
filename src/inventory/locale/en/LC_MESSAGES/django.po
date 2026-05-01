@@ -216,9 +216,9 @@ msgstr "New location"
 msgid "Type to filter locations…"
 msgstr "Type to filter locations…"
 
-#: src/inventory/templates/inventory/change_location.html:54
-msgid "Optional: details about the move…"
-msgstr "Optional: details about the move…"
+#: src/inventory/templates/inventory/change_location.html:44
+msgid "Select a new location…"
+msgstr "Select a new location…"
 
 #: src/inventory/templates/inventory/change_location.html:47
 msgid "Save"
@@ -370,3 +370,7 @@ msgstr "Create offer"
 #: src/inventory/views.py:404
 msgid "New location must be different from current location."
 msgstr "New location must be different from current location."
+
+#: src/inventory/views.py:434
+msgid "New location is required."
+msgstr "New location is required."
