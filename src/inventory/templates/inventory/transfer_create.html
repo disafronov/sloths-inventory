@@ -22,7 +22,11 @@
     </div>
 
     {% if pending_transfer %}
-        <div class="item-card item-card--outgoing-transfer" aria-label="{% trans 'Item details' %}">
+        <div
+            class="item-card item-card--outgoing-transfer"
+            aria-label="{% trans 'Item details' %}"
+            style="--transfer-t: {{ pending_transfer.deadline_edge_gradient_t }};"
+        >
             <div class="transfer-plaque">
                 <div class="transfer-plaque-tier transfer-plaque-tier--primary">
                     <p class="transfer-plaque-lead">{% trans "A transfer offer is already pending." %}</p>

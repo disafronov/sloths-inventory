@@ -1,6 +1,7 @@
 {% load i18n %}
 <a
     class="item-card{% if direction == 'incoming' %} item-card--incoming-transfer{% else %} item-card--outgoing-transfer{% endif %}"
+    style="--transfer-t: {{ transfer.deadline_edge_gradient_t }};"
     href="{% url 'inventory:item-history' item_id=transfer.item.id %}"
 >
     <div class="transfer-card__layout">
