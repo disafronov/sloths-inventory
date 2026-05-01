@@ -91,6 +91,10 @@ Notes:
   This is a privacy/security invariant: it provides enough context for a handoff
   dispute ("when and to whom it was transferred") without exposing the item's
   subsequent history to former owners.
+- **Transfer offer expiry**: offers created from the user UI get an `expires_at`
+  timestamp when `INVENTORY_PENDING_TRANSFER_EXPIRATION_HOURS` is positive
+  (default: one week). After that moment the offer is no longer active unless
+  changed in the admin.
 
 ## Configuration
 
@@ -114,9 +118,9 @@ See `env.example` for a complete list of supported variables.
   - `LOG_LEVEL` (default: `DEBUG` when `DEBUG=1`, else `INFO`)
 - **Inventory**
   - `INVENTORY_OPERATION_EDIT_WINDOW_MINUTES` (default: `10`)
-  - `INVENTORY_PENDING_TRANSFER_EXPIRATION_HOURS` (default: `0` — no automatic
-    expiry for offers created from the user UI; set to a positive number of hours
-    to set `expires_at` when creating an offer)
+  - `INVENTORY_PENDING_TRANSFER_EXPIRATION_HOURS` (default: `168` — one week;
+    offers created from the user UI get `expires_at` at creation. Set to `0` to
+    disable automatic expiry unless set manually in the admin)
 
 ## Localization
 

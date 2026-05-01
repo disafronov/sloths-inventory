@@ -22,13 +22,25 @@
     </div>
 
     {% if pending_transfer %}
-        <p>
-            {% trans "A transfer offer is already pending." %}
-            <br>
-            <strong>{% trans "To" %}:</strong> {{ pending_transfer.to_responsible }}
-        </p>
+        <div class="item-card" aria-label="{% trans 'Item details' %}">
+            <p>
+                {% trans "A transfer offer is already pending." %}
+                <br>
+                <strong>{% trans "To" %}:</strong> {{ pending_transfer.to_responsible }}
+            </p>
+            {% include "inventory/_transfer_expiry_row.html" with transfer=pending_transfer %}
+        </div>
         <p><a href="{% url 'inventory:item-history' item_id=item.id %}" class="button button--secondary">{% trans "Back" %}</a></p>
     {% else %}
+        {% if transfer_expiration_hours %}
+            <p class="form-hint">
+                {% blocktrans count hours=transfer_expiration_hours trimmed %}
+                    If you send this offer, it expires {{ hours }} hour later (server time).
+                {% plural %}
+                    If you send this offer, it expires {{ hours }} hours later (server time).
+                {% endblocktrans %}
+            </p>
+        {% endif %}
         <form method="post" class="form-container">
             {% csrf_token %}
             <p>

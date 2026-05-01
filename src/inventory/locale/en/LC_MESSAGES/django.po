@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventory\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-30 23:38+0000\n"
+"POT-Creation-Date: 2026-05-01 04:33+0400\n"
 "PO-Revision-Date: 2024-03-19 00:40+0300\n"
 "Last-Translator: \n"
 "Language-Team: English\n"
@@ -17,20 +17,20 @@ msgstr ""
 
 #: src/inventory/admin.py:22 src/inventory/models.py:83
 #: src/inventory/templates/inventory/_transfer_card.html:22
-#: src/inventory/templates/inventory/item_history.html:89
+#: src/inventory/templates/inventory/item_history.html:92
 #: src/inventory/templates/inventory/my_items.html:79
 msgid "Status"
 msgstr "Status"
 
 #: src/inventory/admin.py:26 src/inventory/models.py:89
 #: src/inventory/templates/inventory/_transfer_card.html:18
-#: src/inventory/templates/inventory/item_history.html:85
+#: src/inventory/templates/inventory/item_history.html:88
 #: src/inventory/templates/inventory/my_items.html:75
 msgid "Location"
 msgstr "Location"
 
 #: src/inventory/admin.py:30 src/inventory/admin.py:226
-#: src/inventory/templates/inventory/item_history.html:81
+#: src/inventory/templates/inventory/item_history.html:84
 msgid "Responsible Person"
 msgstr "Responsible Person"
 
@@ -121,7 +121,7 @@ msgid "From"
 msgstr "From"
 
 #: src/inventory/models.py:214
-#: src/inventory/templates/inventory/transfer_create.html:28
+#: src/inventory/templates/inventory/transfer_create.html:29
 msgid "To"
 msgstr "To"
 
@@ -165,23 +165,27 @@ msgstr "Expiration must be in the future"
 msgid "An active transfer already exists for this item"
 msgstr "An active transfer already exists for this item"
 
-#: src/inventory/templates/inventory/_transfer_card.html:26
+#: src/inventory/templates/inventory/_transfer_card.html:27
 msgid "Transfer party"
 msgstr "Transfer party"
 
-#: src/inventory/templates/inventory/_transfer_card.html:28
-#: src/inventory/templates/inventory/item_history.html:27
+#: src/inventory/templates/inventory/_transfer_card.html:29
+#: src/inventory/templates/inventory/item_history.html:29
 msgid "Incoming transfer from"
 msgstr "Incoming transfer from"
 
-#: src/inventory/templates/inventory/_transfer_card.html:31
-#: src/inventory/templates/inventory/item_history.html:29
+#: src/inventory/templates/inventory/_transfer_card.html:32
+#: src/inventory/templates/inventory/item_history.html:31
 msgid "Outgoing transfer for"
 msgstr "Outgoing transfer for"
 
+#: src/inventory/templates/inventory/_transfer_expiry_row.html:5
+msgid "Offer expires"
+msgstr "Offer expires"
+
 #: src/inventory/templates/inventory/change_location.html:5
 #: src/inventory/templates/inventory/change_location.html:12
-#: src/inventory/templates/inventory/item_history.html:65
+#: src/inventory/templates/inventory/item_history.html:68
 msgid "Change location"
 msgstr "Change location"
 
@@ -196,6 +200,7 @@ msgstr "Sloths Inventory"
 #: src/inventory/templates/inventory/change_location.html:13
 #: src/inventory/templates/inventory/item_history.html:11
 #: src/inventory/templates/inventory/transfer_create.html:13
+#: src/inventory/templates/inventory/transfer_create.html:25
 msgid "Item details"
 msgstr "Item details"
 
@@ -216,8 +221,8 @@ msgid "Save"
 msgstr "Save"
 
 #: src/inventory/templates/inventory/change_location.html:51
-#: src/inventory/templates/inventory/item_history.html:53
-#: src/inventory/templates/inventory/transfer_create.html:50
+#: src/inventory/templates/inventory/item_history.html:56
+#: src/inventory/templates/inventory/transfer_create.html:62
 msgid "Cancel"
 msgstr "Cancel"
 
@@ -226,29 +231,29 @@ msgstr "Cancel"
 msgid "Item history"
 msgstr "Item history"
 
-#: src/inventory/templates/inventory/item_history.html:41
+#: src/inventory/templates/inventory/item_history.html:44
 msgid "Accept"
 msgstr "Accept"
 
-#: src/inventory/templates/inventory/item_history.html:46
+#: src/inventory/templates/inventory/item_history.html:49
 msgid "Decline"
 msgstr "Decline"
 
-#: src/inventory/templates/inventory/item_history.html:61
+#: src/inventory/templates/inventory/item_history.html:64
 msgid "Item actions"
 msgstr "Item actions"
 
-#: src/inventory/templates/inventory/item_history.html:70
+#: src/inventory/templates/inventory/item_history.html:73
 #: src/inventory/templates/inventory/transfer_create.html:5
 #: src/inventory/templates/inventory/transfer_create.html:12
 msgid "Transfer"
 msgstr "Transfer"
 
-#: src/inventory/templates/inventory/item_history.html:93
+#: src/inventory/templates/inventory/item_history.html:97
 msgid "Notes"
 msgstr "Notes"
 
-#: src/inventory/templates/inventory/item_history.html:100
+#: src/inventory/templates/inventory/item_history.html:105
 msgid "No operations found."
 msgstr "No operations found."
 
@@ -322,26 +327,34 @@ msgstr "Previously with me"
 msgid "Last on you"
 msgstr "Last on you"
 
-#: src/inventory/templates/inventory/transfer_create.html:26
+#: src/inventory/templates/inventory/transfer_create.html:27
 msgid "A transfer offer is already pending."
 msgstr "A transfer offer is already pending."
 
-#: src/inventory/templates/inventory/transfer_create.html:30
+#: src/inventory/templates/inventory/transfer_create.html:33
 msgid "Back"
 msgstr "Back"
 
-#: src/inventory/templates/inventory/transfer_create.html:35
+#: src/inventory/templates/inventory/transfer_create.html:37
+#, python-format
+msgid "If you send this offer, it expires %(hours)s hour later (server time)."
+msgid_plural ""
+"If you send this offer, it expires %(hours)s hours later (server time)."
+msgstr[0] "If you send this offer, it expires %(hours)s hour later (server time)."
+msgstr[1] "If you send this offer, it expires %(hours)s hours later (server time)."
+
+#: src/inventory/templates/inventory/transfer_create.html:47
 msgid "New responsible"
 msgstr "New responsible"
 
-#: src/inventory/templates/inventory/transfer_create.html:41
+#: src/inventory/templates/inventory/transfer_create.html:53
 msgid "Type to filter people…"
 msgstr "Type to filter people…"
 
-#: src/inventory/templates/inventory/transfer_create.html:49
+#: src/inventory/templates/inventory/transfer_create.html:61
 msgid "Create offer"
 msgstr "Create offer"
 
-#: src/inventory/views.py:402
+#: src/inventory/views.py:404
 msgid "New location must be different from current location."
 msgstr "New location must be different from current location."

@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventory\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-30 23:38+0000\n"
+"POT-Creation-Date: 2026-05-01 04:33+0400\n"
 "PO-Revision-Date: 2024-03-19 00:40+0300\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
@@ -18,20 +18,20 @@ msgstr ""
 
 #: src/inventory/admin.py:22 src/inventory/models.py:83
 #: src/inventory/templates/inventory/_transfer_card.html:22
-#: src/inventory/templates/inventory/item_history.html:89
+#: src/inventory/templates/inventory/item_history.html:92
 #: src/inventory/templates/inventory/my_items.html:79
 msgid "Status"
 msgstr "Статус"
 
 #: src/inventory/admin.py:26 src/inventory/models.py:89
 #: src/inventory/templates/inventory/_transfer_card.html:18
-#: src/inventory/templates/inventory/item_history.html:85
+#: src/inventory/templates/inventory/item_history.html:88
 #: src/inventory/templates/inventory/my_items.html:75
 msgid "Location"
 msgstr "Местоположение"
 
 #: src/inventory/admin.py:30 src/inventory/admin.py:226
-#: src/inventory/templates/inventory/item_history.html:81
+#: src/inventory/templates/inventory/item_history.html:84
 msgid "Responsible Person"
 msgstr "Ответственный"
 
@@ -125,7 +125,7 @@ msgid "From"
 msgstr "От кого"
 
 #: src/inventory/models.py:214
-#: src/inventory/templates/inventory/transfer_create.html:28
+#: src/inventory/templates/inventory/transfer_create.html:29
 msgid "To"
 msgstr "Кому"
 
@@ -170,23 +170,27 @@ msgstr "Срок действия должен быть в будущем"
 msgid "An active transfer already exists for this item"
 msgstr "Для этой вещи уже есть активная передача"
 
-#: src/inventory/templates/inventory/_transfer_card.html:26
+#: src/inventory/templates/inventory/_transfer_card.html:27
 msgid "Transfer party"
 msgstr "Сторона передачи"
 
-#: src/inventory/templates/inventory/_transfer_card.html:28
-#: src/inventory/templates/inventory/item_history.html:27
+#: src/inventory/templates/inventory/_transfer_card.html:29
+#: src/inventory/templates/inventory/item_history.html:29
 msgid "Incoming transfer from"
 msgstr "Входящая передача от"
 
-#: src/inventory/templates/inventory/_transfer_card.html:31
-#: src/inventory/templates/inventory/item_history.html:29
+#: src/inventory/templates/inventory/_transfer_card.html:32
+#: src/inventory/templates/inventory/item_history.html:31
 msgid "Outgoing transfer for"
 msgstr "Исходящая передача для"
 
+#: src/inventory/templates/inventory/_transfer_expiry_row.html:5
+msgid "Offer expires"
+msgstr "Срок предложения"
+
 #: src/inventory/templates/inventory/change_location.html:5
 #: src/inventory/templates/inventory/change_location.html:12
-#: src/inventory/templates/inventory/item_history.html:65
+#: src/inventory/templates/inventory/item_history.html:68
 msgid "Change location"
 msgstr "Переместить"
 
@@ -201,6 +205,7 @@ msgstr "Инвентарь"
 #: src/inventory/templates/inventory/change_location.html:13
 #: src/inventory/templates/inventory/item_history.html:11
 #: src/inventory/templates/inventory/transfer_create.html:13
+#: src/inventory/templates/inventory/transfer_create.html:25
 msgid "Item details"
 msgstr "Сведения о вещи"
 
@@ -221,8 +226,8 @@ msgid "Save"
 msgstr "Сохранить"
 
 #: src/inventory/templates/inventory/change_location.html:51
-#: src/inventory/templates/inventory/item_history.html:53
-#: src/inventory/templates/inventory/transfer_create.html:50
+#: src/inventory/templates/inventory/item_history.html:56
+#: src/inventory/templates/inventory/transfer_create.html:62
 msgid "Cancel"
 msgstr "Отмена"
 
@@ -231,29 +236,29 @@ msgstr "Отмена"
 msgid "Item history"
 msgstr "История вещи"
 
-#: src/inventory/templates/inventory/item_history.html:41
+#: src/inventory/templates/inventory/item_history.html:44
 msgid "Accept"
 msgstr "Принять"
 
-#: src/inventory/templates/inventory/item_history.html:46
+#: src/inventory/templates/inventory/item_history.html:49
 msgid "Decline"
 msgstr "Отклонить"
 
-#: src/inventory/templates/inventory/item_history.html:61
+#: src/inventory/templates/inventory/item_history.html:64
 msgid "Item actions"
 msgstr "Действия с вещью"
 
-#: src/inventory/templates/inventory/item_history.html:70
+#: src/inventory/templates/inventory/item_history.html:73
 #: src/inventory/templates/inventory/transfer_create.html:5
 #: src/inventory/templates/inventory/transfer_create.html:12
 msgid "Transfer"
 msgstr "Передать"
 
-#: src/inventory/templates/inventory/item_history.html:93
+#: src/inventory/templates/inventory/item_history.html:97
 msgid "Notes"
 msgstr "Заметки"
 
-#: src/inventory/templates/inventory/item_history.html:100
+#: src/inventory/templates/inventory/item_history.html:105
 msgid "No operations found."
 msgstr "Назначений пока нет."
 
@@ -327,26 +332,41 @@ msgstr "Были у меня"
 msgid "Last on you"
 msgstr "Дата последнего закрепления"
 
-#: src/inventory/templates/inventory/transfer_create.html:26
+#: src/inventory/templates/inventory/transfer_create.html:27
 msgid "A transfer offer is already pending."
 msgstr "Уже есть ожидающее предложение передачи."
 
-#: src/inventory/templates/inventory/transfer_create.html:30
+#: src/inventory/templates/inventory/transfer_create.html:33
 msgid "Back"
 msgstr "Назад"
 
-#: src/inventory/templates/inventory/transfer_create.html:35
+#: src/inventory/templates/inventory/transfer_create.html:37
+#, python-format
+msgid "If you send this offer, it expires %(hours)s hour later (server time)."
+msgid_plural ""
+"If you send this offer, it expires %(hours)s hours later (server time)."
+msgstr[0] ""
+"После отправки предложение автоматически истекает через %(hours)s ч. (время "
+"сервера)."
+msgstr[1] ""
+"После отправки предложение автоматически истекает через %(hours)s ч. (время "
+"сервера)."
+msgstr[2] ""
+"После отправки предложение автоматически истекает через %(hours)s ч. (время "
+"сервера)."
+
+#: src/inventory/templates/inventory/transfer_create.html:47
 msgid "New responsible"
 msgstr "Новый ответственный"
 
-#: src/inventory/templates/inventory/transfer_create.html:41
+#: src/inventory/templates/inventory/transfer_create.html:53
 msgid "Type to filter people…"
 msgstr "Начните вводить, чтобы отфильтровать людей…"
 
-#: src/inventory/templates/inventory/transfer_create.html:49
+#: src/inventory/templates/inventory/transfer_create.html:61
 msgid "Create offer"
 msgstr "Создать предложение"
 
-#: src/inventory/views.py:402
+#: src/inventory/views.py:404
 msgid "New location must be different from current location."
 msgstr "Новое местоположение должно отличаться от текущего."
