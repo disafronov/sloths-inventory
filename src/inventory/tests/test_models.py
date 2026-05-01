@@ -2,6 +2,7 @@ from datetime import timedelta
 from unittest.mock import patch
 
 import pytest
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
@@ -677,3 +678,70 @@ def test_pending_transfer_update_offer_resets_expires_at_when_receiver_changes()
         <= transfer.expires_at
         <= after + timedelta(hours=72)
     )
+    # Both receivers lack a linked user, so `update_offer` mirrors `create_offer`
+    # and completes the handoff automatically.
+    assert transfer.accepted_at is not None
+    latest = item.operation_set.order_by("-created_at", "-id").first()
+    assert latest is not None
+    assert latest.responsible_id == to_resp2.pk
+
+
+@pytest.mark.django_db
+def test_pending_transfer_update_offer_auto_accepts_no_user_receiver() -> None:
+    """
+    Changing the receiver to a Responsible without a linked user must auto-accept,
+    matching `create_offer` behaviour so the offer cannot stay pending forever.
+    """
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+
+    status = Status.objects.create(name="In use")
+    location = Location.objects.create(name="Home")
+    user_sender = User.objects.create_user(username="snd", password="pw")
+    user_recv = User.objects.create_user(username="rcv", password="pw")
+    from_resp = Responsible.objects.create(
+        last_name="From", first_name="User", user=user_sender
+    )
+    to_with_user = Responsible.objects.create(
+        last_name="To", first_name="WithUser", user=user_recv
+    )
+    to_no_user = Responsible.objects.create(last_name="To", first_name="NoUser")
+
+    item = Item.objects.create(inventory_number="INV-XFER-UPD-AUTO", device=device)
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=from_resp,
+        location=location,
+    )
+
+    transfer = PendingTransfer.objects.create(
+        item=item,
+        from_responsible=from_resp,
+        to_responsible=to_with_user,
+        notes="pending",
+    )
+
+    transfer.update_offer(
+        actor=from_resp,
+        to_responsible=to_no_user,
+        notes="hand to offline profile",
+        auto_expiration_hours=0,
+    )
+
+    transfer.refresh_from_db()
+    assert transfer.to_responsible_id == to_no_user.pk
+    assert transfer.notes == "hand to offline profile"
+    assert transfer.accepted_at is not None
+    latest = item.operation_set.order_by("-created_at", "-id").first()
+    assert latest is not None
+    assert latest.responsible_id == to_no_user.pk
