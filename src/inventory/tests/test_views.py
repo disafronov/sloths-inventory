@@ -961,6 +961,54 @@ def test_create_transfer_post_updates_active_offer_when_receiver_changes() -> No
 
 @pytest.mark.django_db
 @override_settings(INVENTORY_PENDING_TRANSFER_EXPIRATION_HOURS=0)
+def test_create_transfer_post_edit_offer_auto_accepts_no_user_receiver() -> None:
+    """
+    Editing an active offer toward a Responsible without a linked user must
+    auto-complete the transfer (same rule as `create_offer` / `update_offer`).
+    """
+
+    user1 = User.objects.create_user(username="u1nouserupd", password="pw")
+    user2 = User.objects.create_user(username="u2nouserupd", password="pw")
+    resp1 = Responsible.objects.create(
+        last_name="One", first_name="NoUserUpd", user=user1
+    )
+    resp2 = Responsible.objects.create(
+        last_name="Two", first_name="NoUserUpd", user=user2
+    )
+    resp3 = Responsible.objects.create(last_name="Three", first_name="NoUserUpd")
+    assert resp3.user_id is None
+
+    status = Status.objects.create(name="In use")
+    location = Location.objects.create(name="Home")
+    item = _make_item_with_operation(status, location, resp1, "INV-XFER-UPD-NOUS")
+
+    PendingTransfer.objects.create(
+        item=item,
+        from_responsible=resp1,
+        to_responsible=resp2,
+        notes="was pending",
+    )
+
+    client = Client()
+    client.force_login(user1)
+    response = client.post(
+        f"/items/{item.pk}/transfer/",
+        {"to_responsible_id": resp3.pk, "notes": "switch to offline receiver"},
+    )
+    assert response.status_code == 302
+
+    transfer = PendingTransfer.objects.get(item=item)
+    transfer.refresh_from_db()
+    assert transfer.to_responsible_id == resp3.pk
+    assert transfer.notes == "switch to offline receiver"
+    assert transfer.accepted_at is not None
+    latest = item.operation_set.order_by("-created_at", "-id").first()
+    assert latest is not None
+    assert latest.responsible_id == resp3.pk
+
+
+@pytest.mark.django_db
+@override_settings(INVENTORY_PENDING_TRANSFER_EXPIRATION_HOURS=0)
 def test_create_transfer_auto_accepts_when_receiver_has_no_user() -> None:
     """
     If the receiver Responsible has no linked Django user, the transfer offer must be
