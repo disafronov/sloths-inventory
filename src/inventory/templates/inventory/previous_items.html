@@ -45,7 +45,7 @@
                 </div>
                 <div class="item-card__row">
                     <span class="item-card__label">{% trans "Last on you" %}:</span>
-                    <span class="item-card__value">{{ item.last_on_me_created_at|date:"Y-m-d H:i:s"|default:"-" }}</span>
+                    <span class="item-card__value">{{ item.last_on_me_created_at|date:"d.m.Y H:i"|default:"-" }}</span>
                 </div>
             </a>
         {% endfor %}
