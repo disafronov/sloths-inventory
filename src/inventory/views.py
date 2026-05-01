@@ -507,22 +507,95 @@ def create_transfer(request: HttpRequest, *, item_id: int) -> HttpResponse:
     )
 
     pending_transfer = _get_active_transfer_for_item(item)
-    if pending_transfer is not None:
-        return render(
-            request,
-            "inventory/transfer_create.html",
-            {
-                "item": item,
-                "responsible": responsible,
-                "responsibles": [],
-                "pending_transfer": pending_transfer,
-                "transfer_expiration_hours": transfer_expiration_hours,
-                "notes": "",
-                "selected_to_responsible_id": None,
-            },
-        )
 
     if request.method == "POST":
+        # Update flow: sender edits an existing active offer.
+        if pending_transfer is not None:
+            if pending_transfer.from_responsible_id != responsible.pk:
+                raise Http404
+
+            to_id = request.POST.get("to_responsible_id")
+            notes = (request.POST.get("notes") or "").strip()
+            if not to_id:
+                responsibles = (
+                    Responsible.objects.exclude(pk=responsible.pk)
+                    .order_by("last_name", "first_name", "middle_name")
+                    .all()
+                )
+                return render(
+                    request,
+                    "inventory/transfer_create.html",
+                    {
+                        "item": item,
+                        "responsible": responsible,
+                        "responsibles": responsibles,
+                        "pending_transfer": pending_transfer,
+                        "transfer_expiration_hours": transfer_expiration_hours,
+                        "error": _("New responsible is required."),
+                        "notes": notes,
+                        "selected_to_responsible_id": None,
+                    },
+                    status=400,
+                )
+            try:
+                to_responsible_id = int(to_id)
+                to_responsible = Responsible.objects.get(pk=to_responsible_id)
+            except (Responsible.DoesNotExist, ValueError):
+                responsibles = (
+                    Responsible.objects.exclude(pk=responsible.pk)
+                    .order_by("last_name", "first_name", "middle_name")
+                    .all()
+                )
+                return render(
+                    request,
+                    "inventory/transfer_create.html",
+                    {
+                        "item": item,
+                        "responsible": responsible,
+                        "responsibles": responsibles,
+                        "pending_transfer": pending_transfer,
+                        "transfer_expiration_hours": transfer_expiration_hours,
+                        "error": _("New responsible is invalid."),
+                        "notes": notes,
+                        "selected_to_responsible_id": None,
+                    },
+                    status=400,
+                )
+            if to_responsible.pk == responsible.pk:
+                responsibles = (
+                    Responsible.objects.exclude(pk=responsible.pk)
+                    .order_by("last_name", "first_name", "middle_name")
+                    .all()
+                )
+                return render(
+                    request,
+                    "inventory/transfer_create.html",
+                    {
+                        "item": item,
+                        "responsible": responsible,
+                        "responsibles": responsibles,
+                        "pending_transfer": pending_transfer,
+                        "transfer_expiration_hours": transfer_expiration_hours,
+                        "error": _("New responsible must be different."),
+                        "notes": notes,
+                        "selected_to_responsible_id": to_responsible.pk,
+                    },
+                    status=400,
+                )
+
+            pending_transfer.to_responsible = to_responsible
+            pending_transfer.notes = notes
+            # Keep an existing expires_at stable; only set it when it was not set
+            # and the deployment enables automatic expiry.
+            if pending_transfer.expires_at is None and transfer_expiration_hours > 0:
+                pending_transfer.expires_at = timezone.now() + timedelta(
+                    hours=transfer_expiration_hours
+                )
+            pending_transfer.save(
+                update_fields=["to_responsible", "notes", "expires_at", "updated_at"]
+            )
+            return redirect("inventory:item-history", item_id=item.pk)
+
         to_id = request.POST.get("to_responsible_id")
         notes = (request.POST.get("notes") or "").strip()
         if not to_id:
@@ -604,6 +677,44 @@ def create_transfer(request: HttpRequest, *, item_id: int) -> HttpResponse:
             notes=notes,
         )
         return redirect("inventory:item-history", item_id=item.pk)
+
+    if pending_transfer is not None:
+        # Allow the sender to open the form with prefilled values (edit/update flow).
+        # For receivers this page remains informational; they accept/decline on the
+        # item history page.
+        if pending_transfer.from_responsible_id != responsible.pk:
+            return render(
+                request,
+                "inventory/transfer_create.html",
+                {
+                    "item": item,
+                    "responsible": responsible,
+                    "responsibles": [],
+                    "pending_transfer": pending_transfer,
+                    "transfer_expiration_hours": transfer_expiration_hours,
+                    "notes": "",
+                    "selected_to_responsible_id": None,
+                },
+            )
+
+        responsibles = (
+            Responsible.objects.exclude(pk=responsible.pk)
+            .order_by("last_name", "first_name", "middle_name")
+            .all()
+        )
+        return render(
+            request,
+            "inventory/transfer_create.html",
+            {
+                "item": item,
+                "responsible": responsible,
+                "responsibles": responsibles,
+                "pending_transfer": pending_transfer,
+                "transfer_expiration_hours": transfer_expiration_hours,
+                "notes": pending_transfer.notes or "",
+                "selected_to_responsible_id": pending_transfer.to_responsible_id,
+            },
+        )
 
     responsibles = (
         Responsible.objects.exclude(pk=responsible.pk)
