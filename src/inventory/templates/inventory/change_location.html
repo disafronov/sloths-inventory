@@ -43,6 +43,17 @@
                 {% endfor %}
             </select>
         </p>
+        <p>
+            <label for="notes">{% trans "Notes" %}:</label>
+            <textarea
+                name="notes"
+                id="notes"
+                rows="3"
+                maxlength="2000"
+                autocomplete="off"
+                placeholder="{% trans 'Optional: details about the move…' %}"
+            >{{ notes }}</textarea>
+        </p>
         <div class="form-actions">
             <button type="submit" class="button">{% trans "Save" %}</button>
             <a
