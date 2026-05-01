@@ -227,6 +227,9 @@ def previous_items(request: HttpRequest) -> HttpResponse:
             {
                 "responsible": None,
                 "items": [],
+                "incoming_transfers": [],
+                "outgoing_transfers": [],
+                "query": "",
             },
         )
 
@@ -248,6 +251,49 @@ def previous_items(request: HttpRequest) -> HttpResponse:
     )
     items = _apply_item_search(items, query=query)
 
+    # Active offers for items on this page: same cards as "My items" (gradient,
+    # party plaque). Typical case is an incoming offer back to a former owner.
+    latest_location_name = (
+        Operation.objects.filter(item_id=OuterRef("item_id"))
+        .order_by("-created_at", "-id")
+        .values("location__name")[:1]
+    )
+    latest_status_name = (
+        Operation.objects.filter(item_id=OuterRef("item_id"))
+        .order_by("-created_at", "-id")
+        .values("status__name")[:1]
+    )
+    base_transfers_qs = (
+        PendingTransfer.objects.filter(
+            accepted_at__isnull=True,
+            cancelled_at__isnull=True,
+        )
+        .filter(item_id__in=Subquery(items.values("pk")))
+        .filter(Q(to_responsible=responsible) | Q(from_responsible=responsible))
+        .select_related(
+            "item",
+            "item__device",
+            "item__device__category",
+            "item__device__type",
+            "item__device__manufacturer",
+            "item__device__model",
+            "from_responsible",
+            "to_responsible",
+        )
+    )
+    base_transfers_qs = base_transfers_qs.annotate(
+        current_location=Subquery(latest_location_name),
+        current_status=Subquery(latest_status_name),
+    )
+    incoming_transfers = base_transfers_qs.filter(to_responsible=responsible).order_by(
+        "-created_at", "-id"
+    )
+    outgoing_transfers = base_transfers_qs.filter(
+        from_responsible=responsible
+    ).order_by("-created_at", "-id")
+    transfer_item_ids = base_transfers_qs.values_list("item_id", flat=True).distinct()
+    items = items.exclude(id__in=transfer_item_ids)
+
     return render(
         request,
         "inventory/previous_items.html",
@@ -255,6 +301,8 @@ def previous_items(request: HttpRequest) -> HttpResponse:
             "responsible": responsible,
             "items": items,
             "query": query,
+            "incoming_transfers": incoming_transfers,
+            "outgoing_transfers": outgoing_transfers,
         },
     )
 

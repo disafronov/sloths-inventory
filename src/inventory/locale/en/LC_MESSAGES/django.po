@@ -314,7 +314,7 @@ msgid "My items list"
 msgstr "My items list"
 
 #: src/inventory/templates/inventory/my_items.html:93
-#: src/inventory/templates/inventory/previous_items.html:50
+#: src/inventory/templates/inventory/previous_items.html:61
 msgid "No items found."
 msgstr "No items found."
 
@@ -323,7 +323,11 @@ msgstr "No items found."
 msgid "Previously my items"
 msgstr "Previously with me"
 
-#: src/inventory/templates/inventory/previous_items.html:43
+#: src/inventory/templates/inventory/previous_items.html:29
+msgid "Previously my items list"
+msgstr "Previously my items list"
+
+#: src/inventory/templates/inventory/previous_items.html:47
 msgid "Last on you"
 msgstr "Last on you"
 

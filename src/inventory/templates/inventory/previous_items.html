@@ -25,8 +25,12 @@
     {% endif %}
 </form>
 
-{% if items %}
-    <div class="item-card-list">
+{% if incoming_transfers or items or outgoing_transfers %}
+    <div class="item-card-list" aria-label="{% trans 'Previously my items list' %}">
+        {% for t in incoming_transfers %}
+            {% include "inventory/_transfer_card.html" with transfer=t direction="incoming" %}
+        {% endfor %}
+
         {% for item in items %}
             {% url 'inventory:item-history' item_id=item.id as history_url %}
             <a class="item-card" href="{{ history_url }}">
@@ -45,8 +49,16 @@
                 </div>
             </a>
         {% endfor %}
+
+        {% for t in outgoing_transfers %}
+            {% include "inventory/_transfer_card.html" with transfer=t direction="outgoing" %}
+        {% endfor %}
     </div>
-{% else %}
-    <p>{% trans "No items found." %}</p>
+{% endif %}
+
+{% if responsible is not None %}
+    {% if not incoming_transfers and not items and not outgoing_transfers %}
+        <p>{% trans "No items found." %}</p>
+    {% endif %}
 {% endif %}
 {% endblock %}
