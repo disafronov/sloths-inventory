@@ -1,8 +1,11 @@
+from datetime import timedelta
 from typing import Any, Protocol, cast
 
+from django.conf import settings
 from django.contrib import admin
 from django.db.models import Model, QuerySet
 from django.http import HttpRequest
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from common.admin import BaseAdmin
@@ -270,3 +273,19 @@ class PendingTransferAdmin(BaseAdmin):
         "to_responsible",
         "expires_at",
     )
+
+    def get_changeform_initial_data(
+        self, request: HttpRequest
+    ) -> dict[str, str | list[str]]:
+        initial = super().get_changeform_initial_data(request)
+        hours = max(
+            0,
+            int(getattr(settings, "INVENTORY_PENDING_TRANSFER_EXPIRATION_HOURS", 168)),
+        )
+        if hours > 0 and "expires_at" not in initial:
+            # Django admin's default type for initial data is string-based, but
+            # datetime values are accepted by form fields. We keep the public type
+            # signature compatible with stubs and cast locally.
+            initial_any = cast(dict[str, Any], initial)
+            initial_any["expires_at"] = timezone.now() + timedelta(hours=hours)
+        return initial
