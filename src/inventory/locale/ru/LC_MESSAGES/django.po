@@ -186,7 +186,7 @@ msgstr "Исходящая передача для"
 
 #: src/inventory/templates/inventory/_transfer_expiry_row.html:5
 msgid "Offer expires"
-msgstr "Срок предложения"
+msgstr "Действительна до"
 
 #: src/inventory/templates/inventory/change_location.html:5
 #: src/inventory/templates/inventory/change_location.html:12
