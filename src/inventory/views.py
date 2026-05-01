@@ -694,6 +694,9 @@ def cancel_transfer(request: HttpRequest, *, transfer_id: int) -> HttpResponse:
     if responsible.pk not in {transfer.from_responsible_id, transfer.to_responsible_id}:
         raise Http404
 
-    transfer.cancelled_at = timezone.now()
-    transfer.save()
+    try:
+        transfer.cancel()
+    except ValidationError:
+        # Race or invalid state: keep behavior consistent with other inactive paths.
+        raise Http404
     return redirect("inventory:item-history", item_id=transfer.item_id)
