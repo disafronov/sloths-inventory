@@ -67,6 +67,12 @@ msgstr "Previously with me"
 msgid "Admin"
 msgstr "Admin"
 
+#: src/common/templates/base.html:85 src/common/templates/password_change.html:4
+#: src/common/templates/password_change.html:6
+#: src/common/templates/password_change.html:12
+msgid "Change password"
+msgstr "Change password"
+
 #: src/common/templates/base.html:85
 msgid "Logout"
 msgstr "Logout"

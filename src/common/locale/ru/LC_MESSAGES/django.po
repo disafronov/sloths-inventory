@@ -69,6 +69,12 @@ msgstr "Были у меня"
 msgid "Admin"
 msgstr "Админка"
 
+#: src/common/templates/base.html:85 src/common/templates/password_change.html:4
+#: src/common/templates/password_change.html:6
+#: src/common/templates/password_change.html:12
+msgid "Change password"
+msgstr "Сменить пароль"
+
 #: src/common/templates/base.html:85
 msgid "Logout"
 msgstr "Выйти"
