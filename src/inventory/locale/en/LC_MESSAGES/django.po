@@ -374,3 +374,15 @@ msgstr "New location must be different from current location."
 #: src/inventory/views.py:434
 msgid "New location is required."
 msgstr "New location is required."
+
+#: src/inventory/views.py:524
+msgid "New responsible is required."
+msgstr "New responsible is required."
+
+#: src/inventory/views.py:554
+msgid "New responsible is invalid."
+msgstr "New responsible is invalid."
+
+#: src/inventory/views.py:580
+msgid "New responsible must be different."
+msgstr "New responsible must be different."

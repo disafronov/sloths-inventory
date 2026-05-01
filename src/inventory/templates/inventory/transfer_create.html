@@ -53,6 +53,9 @@
         {% endif %}
         <form method="post" class="form-container">
             {% csrf_token %}
+            {% if error %}
+                <p class="form-error" role="alert">{{ error }}</p>
+            {% endif %}
             <p>
                 <label for="to_responsible_id">{% trans "New responsible" %}:</label>
                 <select
@@ -63,7 +66,7 @@
                     data-search-placeholder="{% trans 'Type to filter people…' %}"
                 >
                     {% for r in responsibles %}
-                        <option value="{{ r.pk }}">{{ r }}</option>
+                        <option value="{{ r.pk }}"{% if selected_to_responsible_id == r.pk %} selected{% endif %}>{{ r }}</option>
                     {% endfor %}
                 </select>
             </p>
@@ -76,7 +79,7 @@
                     maxlength="2000"
                     autocomplete="off"
                     placeholder="{% trans 'Optional: details (e.g. missing parts, charger, etc.)' %}"
-                ></textarea>
+                >{{ notes }}</textarea>
             </p>
             <div class="form-actions">
                 <button type="submit" class="button">{% trans "Create offer" %}</button>
