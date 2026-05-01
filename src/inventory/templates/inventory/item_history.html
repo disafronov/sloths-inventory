@@ -3,21 +3,12 @@
 
 {% block title %}{% trans "Item history" %} - {% trans "Sloths Inventory" %}{% endblock %}
 
-{% block heading %}{% trans "Inventory number" %}: {{ item.inventory_number }}{% endblock %}
+{% block heading %}{% trans "Item history" %}{% endblock %}
 
 {% block content %}
 <p class="sr-only">{% trans "Item history" %}</p>
 <div class="page-stack">
-    <div class="item-card" aria-label="{% trans 'Item details' %}">
-        <div class="item-card__row">
-            <span class="item-card__label">{% trans "Device" %}:</span>
-            <span class="item-card__value">{{ item.device }}</span>
-        </div>
-        <div class="item-card__row">
-            <span class="item-card__label">{% trans "Serial number" %}:</span>
-            <span class="item-card__value">{{ item.serial_number|default:"-" }}</span>
-        </div>
-    </div>
+    {% include "inventory/_item_header_card.html" %}
 
     {# Transfer state before move actions so "transfer" stays above "change location" when the offer link is hidden. #}
     {% if pending_transfer %}

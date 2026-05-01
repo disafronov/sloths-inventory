@@ -5,21 +5,12 @@
     {% trans "Transfer" %} - {% trans "Inventory number" %} {{ item.inventory_number }} - {% trans "Sloths Inventory" %}
 {% endblock %}
 
-{% block heading %}{% trans "Inventory number" %}: {{ item.inventory_number }}{% endblock %}
+{% block heading %}{% trans "Transfer" %}{% endblock %}
 
 {% block content %}
 <div class="page-stack">
     <p class="sr-only">{% trans "Transfer" %}</p>
-    <div class="item-card" aria-label="{% trans 'Item details' %}">
-        <div class="item-card__row">
-            <span class="item-card__label">{% trans "Device" %}:</span>
-            <span class="item-card__value">{{ item.device }}</span>
-        </div>
-        <div class="item-card__row">
-            <span class="item-card__label">{% trans "Serial number" %}:</span>
-            <span class="item-card__value">{{ item.serial_number|default:"-" }}</span>
-        </div>
-    </div>
+    {% include "inventory/_item_header_card.html" %}
 
     <div class="form-container">
         {% if pending_transfer %}
