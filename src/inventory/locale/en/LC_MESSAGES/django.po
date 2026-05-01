@@ -345,11 +345,10 @@ msgstr "Back"
 
 #: src/inventory/templates/inventory/transfer_create.html:37
 #, python-format
-msgid "If you send this offer, it expires %(hours)s hour later (server time)."
-msgid_plural ""
-"If you send this offer, it expires %(hours)s hours later (server time)."
-msgstr[0] "If you send this offer, it expires %(hours)s hour later (server time)."
-msgstr[1] "If you send this offer, it expires %(hours)s hours later (server time)."
+msgid "If you send this offer, it expires %(hours)s hour after sending."
+msgid_plural "If you send this offer, it expires %(hours)s hours after sending."
+msgstr[0] "If you send this offer, it expires %(hours)s hour after sending."
+msgstr[1] "If you send this offer, it expires %(hours)s hours after sending."
 
 #: src/inventory/templates/inventory/transfer_create.html:47
 msgid "New responsible"
