@@ -599,15 +599,13 @@ def create_transfer(request: HttpRequest, *, item_id: int) -> HttpResponse:
         if transfer_expiration_hours > 0:
             expires_at = timezone.now() + timedelta(hours=transfer_expiration_hours)
 
-        transfer = PendingTransfer.objects.create(
+        PendingTransfer.create_offer(
             item=item,
             from_responsible=responsible,
             to_responsible=to_responsible,
             expires_at=expires_at,
             notes=notes,
         )
-        if to_responsible.user_id is None:
-            transfer.accept()
         return redirect("inventory:item-history", item_id=item.pk)
 
     responsibles = (

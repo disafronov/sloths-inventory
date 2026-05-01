@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import Any, Optional, overload
 
 from django.conf import settings
@@ -288,6 +288,35 @@ class PendingTransfer(BaseModel):
             Item.objects.select_for_update().only("id").get(pk=self.item_id)
             self.full_clean()
             return super().save(*args, **kwargs)
+
+    @classmethod
+    def create_offer(
+        cls,
+        *,
+        item: Item,
+        from_responsible: Responsible,
+        to_responsible: Responsible,
+        expires_at: datetime | None,
+        notes: str = "",
+    ) -> "PendingTransfer":
+        """
+        Create a transfer offer and accept it automatically when required.
+
+        If the receiver `Responsible` has no linked Django user, they cannot confirm
+        the offer in the UI. In that case we accept the transfer automatically to
+        avoid leaving an un-accept-able pending offer.
+        """
+
+        transfer = cls.objects.create(
+            item=item,
+            from_responsible=from_responsible,
+            to_responsible=to_responsible,
+            expires_at=expires_at,
+            notes=notes,
+        )
+        if to_responsible.user_id is None:
+            transfer.accept()
+        return transfer
 
     def accept(self) -> None:
         """
