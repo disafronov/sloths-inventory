@@ -428,6 +428,7 @@ def change_location(request: HttpRequest, *, item_id: int) -> HttpResponse:
         location_id = request.POST.get("location_id")
         if not location_id:
             raise Http404
+        notes = (request.POST.get("notes") or "").strip()
         try:
             location = Location.objects.get(pk=location_id)
         except Location.DoesNotExist:
@@ -443,6 +444,7 @@ def change_location(request: HttpRequest, *, item_id: int) -> HttpResponse:
                     "locations": locations,
                     "current_location": current_op.location,
                     "error": _("New location must be different from current location."),
+                    "notes": notes,
                 },
                 status=400,
             )
@@ -452,6 +454,7 @@ def change_location(request: HttpRequest, *, item_id: int) -> HttpResponse:
             status=current_op.status,
             responsible=responsible,
             location=location,
+            notes=notes,
         )
         return redirect("inventory:item-history", item_id=item.pk)
 
@@ -463,6 +466,7 @@ def change_location(request: HttpRequest, *, item_id: int) -> HttpResponse:
             "item": item,
             "locations": locations,
             "current_location": current_op.location,
+            "notes": "",
         },
     )
 
