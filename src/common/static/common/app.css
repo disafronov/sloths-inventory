@@ -393,39 +393,6 @@ body.nav-open {
 
 /* --- Item / operation cards ---------------------------------------------- */
 
-.transfer-section {
-  margin: var(--space-4) 0;
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid #e9ecef;
-}
-
-.transfer-section h2 {
-  margin-top: 0;
-}
-
-.transfer-section--incoming {
-  background: linear-gradient(90deg, #ffe1e1 0%, rgba(255, 225, 225, 0) 100%);
-  border-color: #f6caca;
-}
-
-.transfer-section--outgoing {
-  background: linear-gradient(90deg, rgba(242, 255, 245, 0) 0%, #e7ffed 100%);
-  border-color: #c8f0d2;
-}
-
-.item-meta {
-  margin: 0 0 var(--space-4);
-  padding: 12px;
-  background: #f8f9fa;
-  border-radius: 6px;
-  border: 1px solid #e9ecef;
-}
-
-.item-meta strong {
-  color: #444;
-}
-
 .item-card-list {
   display: flex;
   flex-direction: column;
