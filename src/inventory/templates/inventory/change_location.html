@@ -26,6 +26,10 @@
         {% if error %}
             <p class="form-error" role="alert">{{ error }}</p>
         {% endif %}
+        <p class="form-readout">
+            <span class="item-card__label">{% trans "Current location" %}:</span>
+            <span class="item-card__value">{{ current_location }}</span>
+        </p>
         <p>
             <label for="location_id">{% trans "New location" %}:</label>
             <select
