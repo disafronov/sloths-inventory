@@ -1509,3 +1509,49 @@ def test_item_history_allows_receiver_to_view_item_with_pending_transfer() -> No
     )
     assert b"newest" in response.content
     assert b"owner" in response.content
+
+
+@pytest.mark.django_db
+def test_item_history_shows_pending_transfer_notes_when_present() -> None:
+    user_owner = User.objects.create_user(username="owner-notes", password="pw")
+    user_receiver = User.objects.create_user(username="receiver-notes", password="pw")
+    resp_owner = Responsible.objects.create(
+        last_name="Owner", first_name="Notes", user=user_owner
+    )
+    resp_receiver = Responsible.objects.create(
+        last_name="Receiver", first_name="Notes", user=user_receiver
+    )
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    status = Status.objects.create(name="In stock")
+    location = Location.objects.create(name="Moscow")
+    item = Item.objects.create(inventory_number="INV-XFER-NOTES", device=device)
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=resp_owner,
+        location=location,
+    )
+
+    note = "Handle with care"
+    PendingTransfer.objects.create(
+        item=item,
+        from_responsible=resp_owner,
+        to_responsible=resp_receiver,
+        notes=note,
+    )
+
+    client = Client()
+    client.force_login(user_owner)
+    response = client.get(f"/items/{item.pk}/")
+    assert response.status_code == 200
+    assert note.encode("utf-8") in response.content
