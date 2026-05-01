@@ -1,3 +1,31 @@
+## [1.1.0-rc.8](https://github.com/disafronov/sloths-inventory/compare/v1.1.0-rc.7...v1.1.0-rc.8) (2026-05-01)
+
+### Features
+
+* add "Transfer" terminology and translations for improved clarity ([fc234cb](https://github.com/disafronov/sloths-inventory/commit/fc234cb1f1116a22099ba2f36134aef8800dd8c1))
+* add new translation for "View item" in English and Russian ([ab523a6](https://github.com/disafronov/sloths-inventory/commit/ab523a626639cdd1dbd08cf9a6b28bc3637b2f3d))
+* allow both sender and receiver to cancel transfers ([c2cfdee](https://github.com/disafronov/sloths-inventory/commit/c2cfdee6ef97ef1ad0d9b1ef852509cd632462b7))
+* enhance "My items" functionality with filtering options ([df9dd16](https://github.com/disafronov/sloths-inventory/commit/df9dd1682455372a9db2c896a5e850d5b3b97a22))
+* enhance item card and history layout with new styles and structure ([9fb3e4a](https://github.com/disafronov/sloths-inventory/commit/9fb3e4aa238ee151573a8d2a6844e30af4b3b82c))
+* enhance item card display and structure ([5d846e4](https://github.com/disafronov/sloths-inventory/commit/5d846e42f57cd26a116213d51a6b1bf13016e017))
+* enhance transfer and inventory templates with new translations and structure ([bd11087](https://github.com/disafronov/sloths-inventory/commit/bd110873b00ea37c318c1209499dd2d4dca58847))
+* enhance transfer creation form with searchable select ([5c11c7b](https://github.com/disafronov/sloths-inventory/commit/5c11c7b8c332aa2e50db2ffeba68965c6297bf31))
+* implement spacing scale for consistent vertical rhythm in app.css ([02db1e0](https://github.com/disafronov/sloths-inventory/commit/02db1e0899a25cca8ac206cbd8c6ae56ba9a7d4f))
+* improve inline action layout for item history and transfers ([204588f](https://github.com/disafronov/sloths-inventory/commit/204588fe4ab62394c6954072ceb0dbf0cc262271))
+* prevent item duplication in my items view for active transfers ([c8bbaf6](https://github.com/disafronov/sloths-inventory/commit/c8bbaf61e3afdb8cf0958ee88740a3612334cd9a))
+* refactor transfer handling and UI components ([9106c0f](https://github.com/disafronov/sloths-inventory/commit/9106c0fb369e0dc1fbda624430cd6edcca2e483e))
+* update transfer terminology and translations in templates ([53d7950](https://github.com/disafronov/sloths-inventory/commit/53d7950402c547301df4330e922c1d1660f26c20))
+* update translations for transfer and filtering features ([ab3f355](https://github.com/disafronov/sloths-inventory/commit/ab3f3557278d1ef3e7a65b4408bd06dee83666cd))
+
+### Bug Fixes
+
+* add error handling for unchanged location in change location view ([73807f1](https://github.com/disafronov/sloths-inventory/commit/73807f1cbe6dee27e80eb997711993dcb7c54ce1))
+* update card padding and margins for improved layout consistency ([8271c11](https://github.com/disafronov/sloths-inventory/commit/8271c11b3f2fe0a966ba797fac9be281d065ef0f))
+* update English and Russian translations for transfer-related messages ([c298e92](https://github.com/disafronov/sloths-inventory/commit/c298e92f3a7cae13f20d55b4cc7274b8ef2a3d65))
+* update redirection and cancel link in change location view ([c840019](https://github.com/disafronov/sloths-inventory/commit/c8400199bfaa2db4db06c31632bd329b8d32615b))
+* update Russian translations for inventory terminology ([361783c](https://github.com/disafronov/sloths-inventory/commit/361783c7ba983d693d8d8872d90788db03ef967f))
+* update Russian translations for transfer status ([98583a2](https://github.com/disafronov/sloths-inventory/commit/98583a245a3c050e689a2ba6f6cd1c7dc7370876))
+
 ## [1.1.0-rc.7](https://github.com/disafronov/sloths-inventory/compare/v1.1.0-rc.6...v1.1.0-rc.7) (2026-04-30)
 
 ### Features
