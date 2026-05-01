@@ -480,6 +480,56 @@ def test_previous_items_search_filters_results() -> None:
 
 
 @pytest.mark.django_db
+def test_previous_items_incoming_transfer_uses_transfer_card_once() -> None:
+    """
+    Active pending offers for items on the "Previously my items" list reuse the same
+    transfer card as "My items" (tint + party plaque); the item is not duplicated as
+    a plain row.
+    """
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    status = Status.objects.create(name="In stock")
+    location = Location.objects.create(name="Moscow")
+
+    user_former = User.objects.create_user(username="u_prev_xfer", password="pw")
+    user_current = User.objects.create_user(username="u_curr_xfer", password="pw")
+    resp_former = Responsible.objects.create(
+        last_name="Former", first_name="X", user=user_former
+    )
+    resp_current = Responsible.objects.create(
+        last_name="Current", first_name="Y", user=user_current
+    )
+
+    item = Item.objects.create(inventory_number="INV-PREV-XFER-LIST", device=device)
+    Operation.objects.create(
+        item=item, status=status, responsible=resp_former, location=location
+    )
+    Operation.objects.create(
+        item=item, status=status, responsible=resp_current, location=location
+    )
+    PendingTransfer.objects.create(
+        item=item, from_responsible=resp_current, to_responsible=resp_former
+    )
+
+    client = Client()
+    client.force_login(user_former)
+    response = client.get("/previous/")
+    assert response.status_code == 200
+    assert b"item-card--incoming-transfer" in response.content
+    inv = item.inventory_number.encode("utf-8")
+    assert response.content.count(inv) == 1
+
+
+@pytest.mark.django_db
 def test_item_history_for_former_owner_includes_only_one_handoff_after_last_mine() -> (
     None
 ):

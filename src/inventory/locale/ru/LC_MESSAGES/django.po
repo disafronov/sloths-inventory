@@ -319,7 +319,7 @@ msgid "My items list"
 msgstr "Список моих вещей"
 
 #: src/inventory/templates/inventory/my_items.html:93
-#: src/inventory/templates/inventory/previous_items.html:50
+#: src/inventory/templates/inventory/previous_items.html:61
 msgid "No items found."
 msgstr "Вещи не найдены."
 
@@ -328,7 +328,11 @@ msgstr "Вещи не найдены."
 msgid "Previously my items"
 msgstr "Были у меня"
 
-#: src/inventory/templates/inventory/previous_items.html:43
+#: src/inventory/templates/inventory/previous_items.html:29
+msgid "Previously my items list"
+msgstr "Список «Были у меня»"
+
+#: src/inventory/templates/inventory/previous_items.html:47
 msgid "Last on you"
 msgstr "Дата последнего закрепления"
 
