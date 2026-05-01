@@ -42,9 +42,9 @@
                 {% if transfer_expiration_hours %}
                     <p class="form-hint">
                         {% blocktrans count hours=transfer_expiration_hours trimmed %}
-                            If you send this offer, it expires {{ hours }} hour later (server time).
+                            If you send this offer, it expires {{ hours }} hour after sending.
                         {% plural %}
-                            If you send this offer, it expires {{ hours }} hours later (server time).
+                            If you send this offer, it expires {{ hours }} hours after sending.
                         {% endblocktrans %}
                     </p>
                 {% endif %}
