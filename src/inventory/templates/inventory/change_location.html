@@ -21,15 +21,11 @@
         </div>
     </div>
 
-    <form method="post" class="form-container change-location-form">
+    <form method="post" class="form-container">
         {% csrf_token %}
         {% if error %}
             <p class="form-error" role="alert">{{ error }}</p>
         {% endif %}
-        <p class="form-readout">
-            <strong>{% trans "Current location" %}:</strong>
-            {{ current_location }}
-        </p>
         <p>
             <label for="location_id">{% trans "New location" %}:</label>
             <select

@@ -21,72 +21,74 @@
         </div>
     </div>
 
-    {% if pending_transfer %}
-        <div
-            class="item-card item-card--outgoing-transfer"
-            aria-label="{% trans 'Item details' %}"
-            style="--transfer-t: {{ pending_transfer.deadline_edge_gradient_t }};"
-        >
-            <div class="transfer-plaque">
-                <div class="transfer-plaque-tier transfer-plaque-tier--primary">
-                    <p class="transfer-plaque-lead">{% trans "A transfer offer is already pending." %}</p>
-                    <div class="transfer-card__party-label">{% trans "To" %}</div>
-                    <div class="transfer-card__party-value">{{ pending_transfer.to_responsible }}</div>
-                </div>
-                {% if pending_transfer.expires_at %}
-                    <div class="transfer-plaque-tier transfer-plaque-tier--secondary">
-                        {% include "inventory/_transfer_expiry_row.html" with transfer=pending_transfer %}
+    <div class="form-container">
+        {% if pending_transfer %}
+            <div
+                class="item-card item-card--outgoing-transfer"
+                aria-label="{% trans 'Item details' %}"
+                style="--transfer-t: {{ pending_transfer.deadline_edge_gradient_t }};"
+            >
+                <div class="transfer-plaque">
+                    <div class="transfer-plaque-tier transfer-plaque-tier--primary">
+                        <p class="transfer-plaque-lead">{% trans "A transfer offer is already pending." %}</p>
+                        <div class="transfer-card__party-label">{% trans "To" %}</div>
+                        <div class="transfer-card__party-value">{{ pending_transfer.to_responsible }}</div>
                     </div>
+                    {% if pending_transfer.expires_at %}
+                        <div class="transfer-plaque-tier transfer-plaque-tier--secondary">
+                            {% include "inventory/_transfer_expiry_row.html" with transfer=pending_transfer %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <p><a href="{% url 'inventory:item-history' item_id=item.id %}" class="button button--secondary">{% trans "Back" %}</a></p>
+        {% else %}
+            <form method="post">
+                {% csrf_token %}
+                {% if error %}
+                    <p class="form-error" role="alert">{{ error }}</p>
                 {% endif %}
-            </div>
-        </div>
-        <p><a href="{% url 'inventory:item-history' item_id=item.id %}" class="button button--secondary">{% trans "Back" %}</a></p>
-    {% else %}
-        <form method="post" class="form-container">
-            {% csrf_token %}
-            {% if error %}
-                <p class="form-error" role="alert">{{ error }}</p>
-            {% endif %}
-            {% if transfer_expiration_hours %}
-                <p class="form-hint">
-                    {% blocktrans count hours=transfer_expiration_hours trimmed %}
-                        If you send this offer, it expires {{ hours }} hour later (server time).
-                    {% plural %}
-                        If you send this offer, it expires {{ hours }} hours later (server time).
-                    {% endblocktrans %}
+                {% if transfer_expiration_hours %}
+                    <p class="form-hint">
+                        {% blocktrans count hours=transfer_expiration_hours trimmed %}
+                            If you send this offer, it expires {{ hours }} hour later (server time).
+                        {% plural %}
+                            If you send this offer, it expires {{ hours }} hours later (server time).
+                        {% endblocktrans %}
+                    </p>
+                {% endif %}
+                <p>
+                    <label for="to_responsible_id">{% trans "New responsible" %}:</label>
+                    <select
+                        name="to_responsible_id"
+                        id="to_responsible_id"
+                        required
+                        data-searchable-select
+                        data-search-placeholder="{% trans 'Type to filter people…' %}"
+                    >
+                        {% for r in responsibles %}
+                            <option value="{{ r.pk }}"{% if selected_to_responsible_id == r.pk %} selected{% endif %}>{{ r }}</option>
+                        {% endfor %}
+                    </select>
                 </p>
-            {% endif %}
-            <p>
-                <label for="to_responsible_id">{% trans "New responsible" %}:</label>
-                <select
-                    name="to_responsible_id"
-                    id="to_responsible_id"
-                    required
-                    data-searchable-select
-                    data-search-placeholder="{% trans 'Type to filter people…' %}"
-                >
-                    {% for r in responsibles %}
-                        <option value="{{ r.pk }}"{% if selected_to_responsible_id == r.pk %} selected{% endif %}>{{ r }}</option>
-                    {% endfor %}
-                </select>
-            </p>
-            <p>
-                <label for="notes">{% trans "Notes" %}:</label>
-                <textarea
-                    name="notes"
-                    id="notes"
-                    rows="3"
-                    maxlength="2000"
-                    autocomplete="off"
-                    placeholder="{% trans 'Optional: details (e.g. missing parts, charger, etc.)' %}"
-                >{{ notes }}</textarea>
-            </p>
-            <div class="form-actions">
-                <button type="submit" class="button">{% trans "Create offer" %}</button>
-                <a href="{% url 'inventory:item-history' item_id=item.id %}" class="button button--secondary">{% trans "Cancel" %}</a>
-            </div>
-        </form>
-    {% endif %}
+                <p>
+                    <label for="notes">{% trans "Notes" %}:</label>
+                    <textarea
+                        name="notes"
+                        id="notes"
+                        rows="3"
+                        maxlength="2000"
+                        autocomplete="off"
+                        placeholder="{% trans 'Optional: details (e.g. missing parts, charger, etc.)' %}"
+                    >{{ notes }}</textarea>
+                </p>
+                <div class="form-actions">
+                    <button type="submit" class="button">{% trans "Create offer" %}</button>
+                    <a href="{% url 'inventory:item-history' item_id=item.id %}" class="button button--secondary">{% trans "Cancel" %}</a>
+                </div>
+            </form>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}
 
