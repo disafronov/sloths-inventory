@@ -23,6 +23,7 @@
     {% if pending_transfer %}
         <div
             class="item-card{% if pending_transfer.to_responsible.user_id == user.id %} item-card--incoming-transfer{% else %} item-card--outgoing-transfer{% endif %}"
+            style="--transfer-t: {{ pending_transfer.deadline_edge_gradient_t }};"
         >
             <div class="transfer-plaque">
                 <div class="transfer-plaque-tier transfer-plaque-tier--primary">

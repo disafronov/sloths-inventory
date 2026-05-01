@@ -298,3 +298,30 @@ class PendingTransfer(BaseModel):
         if self.expires_at is not None and timezone.now() >= self.expires_at:
             return False
         return True
+
+    def deadline_edge_gradient_t(self) -> str:
+        """
+        Return a ratio in ``[0, 1]`` as a CSS string for the ``--transfer-t`` property.
+
+        The value tracks elapsed time from ``created_at`` toward ``expires_at``:
+        ``0`` means the offer was just created, ``1`` means the deadline has been
+        reached or passed. When ``expires_at`` is unset, returns ``0`` so transfer
+        cards keep their default wide gradient (no deadline-driven edge emphasis).
+        """
+
+        if self.expires_at is None:
+            return "0"
+        start = self.created_at
+        end = self.expires_at
+        now = timezone.now()
+        if now <= start:
+            return "0"
+        if now >= end:
+            return "1"
+        span_seconds = (end - start).total_seconds()
+        if span_seconds <= 0:
+            return "1"
+        ratio = (now - start).total_seconds() / span_seconds
+        ratio = min(1.0, max(0.0, ratio))
+        text = f"{ratio:.6f}".rstrip("0").rstrip(".")
+        return text if text else "0"

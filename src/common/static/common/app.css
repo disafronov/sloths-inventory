@@ -747,16 +747,36 @@ a.item-card:hover {
   }
 }
 
+/*
+ * Transfer tint: one fade only so the far edge stays fully transparent.
+ * Incoming — colour from the left, transparent on the right; outgoing — from the
+ * right, transparent on the left. --transfer-t (0..1) shortens --transfer-spread
+ * so the tint hugs the coloured edge as the expiry approaches.
+ */
 .item-card--incoming-transfer {
+  --transfer-t: 0;
   overflow: hidden;
-  background: linear-gradient(90deg, #ffe1e1 0%, rgba(255, 225, 225, 0) 100%);
   border-color: #f6caca;
+  --transfer-spread: calc(100% - var(--transfer-t) * 45%);
+  background-image: linear-gradient(
+    to right,
+    #ffe1e1 0%,
+    #ffd4d4 10%,
+    rgba(255, 225, 225, 0) var(--transfer-spread)
+  );
 }
 
 .item-card--outgoing-transfer {
+  --transfer-t: 0;
   overflow: hidden;
-  background: linear-gradient(90deg, rgba(242, 255, 245, 0) 0%, #e7ffed 100%);
   border-color: #c8f0d2;
+  --transfer-spread: calc(100% - var(--transfer-t) * 45%);
+  background-image: linear-gradient(
+    to left,
+    #e7ffed 0%,
+    #d2f8e4 10%,
+    rgba(231, 255, 237, 0) var(--transfer-spread)
+  );
 }
 
 .operation-card {
