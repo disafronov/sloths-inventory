@@ -1,8 +1,8 @@
 {% load i18n %}
-{# Expects `transfer` with optional `expires_at` (e.g. PendingTransfer). #}
+{# Compact expiry line for transfer plaques (not the main item facts column). #}
 {% if transfer.expires_at %}
-    <div class="item-card__row">
-        <span class="item-card__label">{% trans "Offer expires" %}:</span>
-        <span class="item-card__value">{{ transfer.expires_at|date:"Y-m-d H:i:s" }}</span>
+    <div class="transfer-plaque-expiry">
+        <span class="transfer-plaque-expiry__label">{% trans "Offer expires" %}</span>
+        <span class="transfer-plaque-expiry__value">{{ transfer.expires_at|date:"Y-m-d H:i:s" }}</span>
     </div>
 {% endif %}

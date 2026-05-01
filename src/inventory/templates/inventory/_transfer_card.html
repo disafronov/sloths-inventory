@@ -22,7 +22,6 @@
         <span class="item-card__label">{% trans "Status" %}:</span>
         <span class="item-card__value">{{ transfer.current_status|default:"-" }}</span>
     </div>
-    {% include "inventory/_transfer_expiry_row.html" %}
         </div>
         <aside class="transfer-card__party" aria-label="{% trans 'Transfer party' %}">
             {% if direction == "incoming" %}
@@ -32,6 +31,7 @@
                 <div class="transfer-card__party-label">{% trans "Outgoing transfer for" %}</div>
                 <div class="transfer-card__party-value">{{ transfer.to_responsible }}</div>
             {% endif %}
+            {% include "inventory/_transfer_expiry_row.html" %}
         </aside>
     </div>
 </a>
