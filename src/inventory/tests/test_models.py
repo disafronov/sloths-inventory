@@ -620,3 +620,60 @@ def test_pending_transfer_deadline_edge_gradient_t_handles_non_positive_span() -
         "django.utils.timezone.now", return_value=frozen_now + timedelta(hours=3)
     ):
         assert transfer.deadline_edge_gradient_t() == "1"
+
+
+@pytest.mark.django_db
+def test_pending_transfer_update_offer_resets_expires_at_when_receiver_changes() -> (
+    None
+):
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+
+    status = Status.objects.create(name="In use")
+    location = Location.objects.create(name="Home")
+    from_resp = Responsible.objects.create(last_name="From", first_name="User")
+    to_resp1 = Responsible.objects.create(last_name="To", first_name="One")
+    to_resp2 = Responsible.objects.create(last_name="To", first_name="Two")
+
+    item = Item.objects.create(inventory_number="INV-XFER-UPD", device=device)
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=from_resp,
+        location=location,
+    )
+
+    transfer = PendingTransfer.objects.create(
+        item=item,
+        from_responsible=from_resp,
+        to_responsible=to_resp1,
+        expires_at=timezone.now() + timedelta(hours=100),
+        notes="old",
+    )
+
+    before = timezone.now()
+    transfer.update_offer(
+        actor=from_resp,
+        to_responsible=to_resp2,
+        notes="new",
+        auto_expiration_hours=72,
+    )
+    after = timezone.now()
+
+    transfer.refresh_from_db()
+    assert transfer.to_responsible_id == to_resp2.pk
+    assert transfer.notes == "new"
+    assert transfer.expires_at is not None
+    assert (
+        before + timedelta(hours=72)
+        <= transfer.expires_at
+        <= after + timedelta(hours=72)
+    )

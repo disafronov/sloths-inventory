@@ -398,6 +398,49 @@ class PendingTransfer(BaseModel):
             transfer.cancelled_at = timezone.now()
             transfer.save(update_fields=["cancelled_at", "updated_at"])
 
+    def update_offer(
+        self,
+        *,
+        actor: Responsible,
+        to_responsible: Responsible,
+        notes: str,
+        auto_expiration_hours: int,
+    ) -> None:
+        """
+        Update an active transfer offer.
+
+        This is the sender-side edit flow for the user-facing UI. We keep the
+        same per-item serialization guarantees as `accept()` / `cancel()`.
+        """
+
+        if auto_expiration_hours < 0:
+            raise ValidationError(_("Expiration window must be non-negative"))
+
+        with transaction.atomic():
+            Item.objects.select_for_update().only("id").get(pk=self.item_id)
+            transfer = PendingTransfer.objects.select_for_update().get(pk=self.pk)
+
+            if not transfer.is_active:
+                raise ValidationError(_("Transfer is not active"))
+            if transfer.from_responsible_id != actor.pk:
+                raise ValidationError(_("Only the sender may update the transfer"))
+
+            receiver_changed = transfer.to_responsible_id != to_responsible.pk
+
+            transfer.to_responsible = to_responsible
+            transfer.notes = notes
+            if receiver_changed:
+                if auto_expiration_hours > 0:
+                    transfer.expires_at = timezone.now() + timedelta(
+                        hours=auto_expiration_hours
+                    )
+                else:
+                    transfer.expires_at = None
+
+            transfer.save(
+                update_fields=["to_responsible", "notes", "expires_at", "updated_at"]
+            )
+
     @property
     def is_active(self) -> bool:
         """Return True when the transfer is pending and not expired."""
