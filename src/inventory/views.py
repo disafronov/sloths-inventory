@@ -446,7 +446,11 @@ def change_location(request: HttpRequest, *, item_id: int) -> HttpResponse:
         except Location.DoesNotExist:
             raise Http404
 
-        if location.pk == current_op.location_id:
+        try:
+            item.change_location(
+                responsible=responsible, location=location, notes=notes
+            )
+        except ValidationError as e:
             locations = Location.objects.order_by("name")
             return render(
                 request,
@@ -455,19 +459,12 @@ def change_location(request: HttpRequest, *, item_id: int) -> HttpResponse:
                     "item": item,
                     "locations": locations,
                     "current_location": current_op.location,
-                    "error": _("New location must be different from current location."),
+                    "error": str(e),
                     "notes": notes,
                 },
                 status=400,
             )
 
-        Operation.objects.create(
-            item=item,
-            status=current_op.status,
-            responsible=responsible,
-            location=location,
-            notes=notes,
-        )
         return redirect("inventory:item-history", item_id=item.pk)
 
     locations = Location.objects.order_by("name")
