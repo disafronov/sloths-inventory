@@ -193,6 +193,18 @@ msgstr "Change location"
 msgid "Hand over"
 msgstr "Hand over"
 
+#: src/inventory/templates/inventory/item_history.html:58
+msgid "Edit"
+msgstr "Edit"
+
+#: src/inventory/models.py:417
+msgid "Expiration window must be non-negative"
+msgstr "Expiration window must be non-negative"
+
+#: src/inventory/models.py:426
+msgid "Only the sender may update the transfer"
+msgstr "Only the sender may update the transfer"
+
 #: src/inventory/templates/inventory/change_location.html:5
 #: src/inventory/templates/inventory/item_history.html:4
 #: src/inventory/templates/inventory/my_items.html:4
