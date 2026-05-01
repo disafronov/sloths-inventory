@@ -1,14 +1,17 @@
+from datetime import timedelta
+
 import pytest
 from django.contrib.admin.sites import AdminSite
 from django.contrib.auth import get_user_model
 from django.db.models import QuerySet
 from django.test import RequestFactory
+from django.utils import timezone
 
 from catalogs.models import Location, Responsible, Status
 from devices.attributes import Category, Manufacturer, Model, Type
 from devices.models import Device
-from inventory.admin import ItemAdmin, OperationAdmin
-from inventory.models import Item, Operation
+from inventory.admin import ItemAdmin, OperationAdmin, PendingTransferAdmin
+from inventory.models import Item, Operation, PendingTransfer
 
 
 @pytest.mark.django_db
@@ -257,3 +260,26 @@ def test_operation_admin_latest_operation_id_is_cached_per_request(
     # Second lookup for the same item within the same request should hit cache.
     with django_assert_num_queries(0):
         assert admin_obj.has_change_permission(request, obj=op2) is True
+
+
+@pytest.mark.django_db
+def test_pending_transfer_admin_prefills_expires_at_on_add_form(
+    settings,
+) -> None:
+    settings.INVENTORY_PENDING_TRANSFER_EXPIRATION_HOURS = 72
+    site = AdminSite()
+    admin_obj = PendingTransferAdmin(PendingTransfer, site)
+
+    rf = RequestFactory()
+    request = rf.get("/admin/inventory/pendingtransfer/add/")
+    request.user = get_user_model().objects.create_superuser(
+        username="admin-xfer", email="admin-xfer@example.com", password="password"
+    )
+
+    before = timezone.now()
+    initial = admin_obj.get_changeform_initial_data(request)
+    after = timezone.now()
+
+    assert "expires_at" in initial
+    expires_at = initial["expires_at"]
+    assert before + timedelta(hours=72) <= expires_at <= after + timedelta(hours=72)
