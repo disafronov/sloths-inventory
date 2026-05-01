@@ -832,17 +832,17 @@ def test_create_transfer_get_shows_existing_pending_transfer() -> None:
     location = Location.objects.create(name="Home")
     item = _make_item_with_operation(status, location, resp1, "INV-XFER-PENDING")
     PendingTransfer.objects.create(
-        item=item, from_responsible=resp1, to_responsible=resp2
+        item=item, from_responsible=resp1, to_responsible=resp2, notes="hello"
     )
 
     client = Client()
     client.force_login(user1)
     response = client.get(f"/items/{item.pk}/transfer/")
     assert response.status_code == 200
-    assert (
-        b"pending" in response.content.lower()
-        or "ожида".encode("utf-8") in response.content
-    )
+    # Sender can open the transfer form with prefilled values.
+    assert b'name="to_responsible_id"' in response.content
+    assert b'name="notes"' in response.content
+    assert b"hello" in response.content
 
 
 @pytest.mark.django_db

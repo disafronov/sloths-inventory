@@ -13,7 +13,7 @@
     {% include "inventory/_item_header_card.html" %}
 
     <div class="form-container">
-        {% if pending_transfer %}
+        {% if pending_transfer and pending_transfer.from_responsible.user_id != user.id %}
             <div
                 class="item-card item-card--outgoing-transfer"
                 aria-label="{% trans 'Item details' %}"

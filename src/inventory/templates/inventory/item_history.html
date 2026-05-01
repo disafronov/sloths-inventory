@@ -52,6 +52,10 @@
                     </form>
                 {% endif %}
                 {% if pending_transfer.from_responsible.user_id == user.id %}
+                    <a
+                        href="{% url 'inventory:create-transfer' item_id=item.id %}"
+                        class="button button--secondary button--sm"
+                    >{% trans "Edit" %}</a>
                     <form method="post" action="{% url 'inventory:cancel-transfer' transfer_id=pending_transfer.id %}">
                         {% csrf_token %}
                         <button type="submit" class="button button--secondary button--sm">{% trans "Cancel" %}</button>
