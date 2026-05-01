@@ -5,10 +5,10 @@ from django.urls import reverse_lazy
 
 class UserPasswordChangeView(LoginRequiredMixin, auth_views.PasswordChangeView):
     """
-    Password change page for non-staff users.
+    Password change page for authenticated users (same entry as in the main nav).
 
-    The menu entry is shown only to non-staff users, but the endpoint itself does
-    not block staff users to avoid surprising 403s for administrators.
+    Staff may use Django Admin for account tasks as well; this view remains open to
+    them so they are not surprised by a 403 when following the app-wide nav link.
     """
 
     template_name = "password_change.html"
