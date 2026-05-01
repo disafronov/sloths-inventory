@@ -511,6 +511,7 @@ def create_transfer(request: HttpRequest, *, item_id: int) -> HttpResponse:
     if request.method == "POST":
         # Update flow: sender edits an existing active offer.
         if pending_transfer is not None:
+            # Authorization is enforced again in `PendingTransfer.update_offer()`.
             if pending_transfer.from_responsible_id != responsible.pk:
                 raise Http404
 
@@ -583,17 +584,34 @@ def create_transfer(request: HttpRequest, *, item_id: int) -> HttpResponse:
                     status=400,
                 )
 
-            pending_transfer.to_responsible = to_responsible
-            pending_transfer.notes = notes
-            # Keep an existing expires_at stable; only set it when it was not set
-            # and the deployment enables automatic expiry.
-            if pending_transfer.expires_at is None and transfer_expiration_hours > 0:
-                pending_transfer.expires_at = timezone.now() + timedelta(
-                    hours=transfer_expiration_hours
+            try:
+                pending_transfer.update_offer(
+                    actor=responsible,
+                    to_responsible=to_responsible,
+                    notes=notes,
+                    auto_expiration_hours=transfer_expiration_hours,
                 )
-            pending_transfer.save(
-                update_fields=["to_responsible", "notes", "expires_at", "updated_at"]
-            )
+            except ValidationError as e:
+                responsibles = (
+                    Responsible.objects.exclude(pk=responsible.pk)
+                    .order_by("last_name", "first_name", "middle_name")
+                    .all()
+                )
+                return render(
+                    request,
+                    "inventory/transfer_create.html",
+                    {
+                        "item": item,
+                        "responsible": responsible,
+                        "responsibles": responsibles,
+                        "pending_transfer": pending_transfer,
+                        "transfer_expiration_hours": transfer_expiration_hours,
+                        "error": str(e),
+                        "notes": notes,
+                        "selected_to_responsible_id": to_responsible.pk,
+                    },
+                    status=400,
+                )
             return redirect("inventory:item-history", item_id=item.pk)
 
         to_id = request.POST.get("to_responsible_id")
