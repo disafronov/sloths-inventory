@@ -230,6 +230,10 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
 
 @admin.register(PendingTransfer)
 class PendingTransferAdmin(BaseAdmin):
+    readonly_fields = list(BaseAdmin.readonly_fields) + [
+        "accepted_at",
+        "cancelled_at",
+    ]
     list_display = [
         "item",
         "from_responsible",
@@ -265,6 +269,4 @@ class PendingTransferAdmin(BaseAdmin):
         "from_responsible",
         "to_responsible",
         "expires_at",
-        "accepted_at",
-        "cancelled_at",
     )
