@@ -48,7 +48,7 @@
                 placeholder="{% trans 'Optional: details (e.g. missing parts, charger, etc.)' %}"
             >{{ notes }}</textarea>
         </p>
-        <div class="form-actions">
+        <div class="form-actions form-actions--inline">
             <button type="submit" class="button">{% trans "Save" %}</button>
             <a
                 href="{% url 'inventory:item-history' item_id=item.id %}"
