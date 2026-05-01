@@ -1,3 +1,19 @@
+## [1.1.0-rc.9](https://github.com/disafronov/sloths-inventory/compare/v1.1.0-rc.8...v1.1.0-rc.9) (2026-05-01)
+
+### Features
+
+* add inventory pending transfer expiration setting ([ef51b4b](https://github.com/disafronov/sloths-inventory/commit/ef51b4be8b05f9572166d400aaf6aa089a2bb2e3))
+* enhance previous items view with transfer details ([ce03522](https://github.com/disafronov/sloths-inventory/commit/ce03522cdc609095340b1663843de94d6ad5ebb6))
+* enhance transfer card layout and styling for improved usability ([505d2e9](https://github.com/disafronov/sloths-inventory/commit/505d2e9a986ad94909bcde4a3cf3a3e241fa3c64))
+* enhance transfer expiry display in UI ([9428f29](https://github.com/disafronov/sloths-inventory/commit/9428f291a9b4c0022900eddd36393d4590899175))
+* implement dynamic gradient for transfer cards based on deadline ([2939830](https://github.com/disafronov/sloths-inventory/commit/293983045a4c5f3a06eb173777200fe678477396))
+* restructure transfer card and expiry display for improved clarity ([4ff7f08](https://github.com/disafronov/sloths-inventory/commit/4ff7f0820c21767c418f305a4684fbc53fc04d80))
+* update transfer offer expiration settings and UI ([11ef12e](https://github.com/disafronov/sloths-inventory/commit/11ef12ec01f9d8344db81295ba2ba76f8709e6ff))
+
+### Bug Fixes
+
+* update date format for last item interaction in previous items view ([e18eba8](https://github.com/disafronov/sloths-inventory/commit/e18eba8045c7a230079f443c4db61202f3f9aabf))
+
 ## [1.1.0-rc.8](https://github.com/disafronov/sloths-inventory/compare/v1.1.0-rc.7...v1.1.0-rc.8) (2026-05-01)
 
 ### Features
