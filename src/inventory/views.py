@@ -320,8 +320,7 @@ def item_history(request: HttpRequest, *, item_id: int) -> HttpResponse:
     is_owner = item is not None
     if item is None:
         # The receiver of an active transfer offer may open the item page to review
-        # the offer and accept it. They are not an owner yet, so we only expose the
-        # current state (the latest operation) and the transfer details.
+        # the offer and accept it. They are not an owner yet.
         pending_for_me = (
             PendingTransfer.objects.filter(
                 item_id=item_id,
@@ -334,19 +333,13 @@ def item_history(request: HttpRequest, *, item_id: int) -> HttpResponse:
         )
         if pending_for_me is not None and pending_for_me.is_active:
             item = get_object_or_404(_items_with_device_relations(), pk=item_id)
-            latest_op = (
+            operations = (
                 Operation.objects.filter(item=item)
                 .select_related("status", "responsible", "location")
                 .order_by("-created_at", "-id")
-                .first()
             )
-            if latest_op is None:
+            if not operations.exists():
                 raise Http404  # pragma: no cover
-            operations = Operation.objects.filter(pk=latest_op.pk).select_related(
-                "status",
-                "responsible",
-                "location",
-            )
         else:
             # Former owners may only see the history up to their last responsibility,
             # plus one "handoff" operation after they transferred the item away.
