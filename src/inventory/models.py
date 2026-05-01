@@ -411,6 +411,10 @@ class PendingTransfer(BaseModel):
 
         This is the sender-side edit flow for the user-facing UI. We keep the
         same per-item serialization guarantees as `accept()` / `cancel()`.
+
+        If the new receiver has no linked Django user, we call `accept()` after
+        persisting the update, matching `create_offer` so the item cannot remain
+        stuck in a pending offer nobody can confirm in the UI.
         """
 
         if auto_expiration_hours < 0:
@@ -440,6 +444,9 @@ class PendingTransfer(BaseModel):
             transfer.save(
                 update_fields=["to_responsible", "notes", "expires_at", "updated_at"]
             )
+
+            if to_responsible.user_id is None:
+                transfer.accept()
 
     @property
     def is_active(self) -> bool:
