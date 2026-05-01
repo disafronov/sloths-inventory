@@ -361,6 +361,11 @@ body.nav-open {
   margin-top: var(--space-2);
 }
 
+.form-container .form-actions--inline button[type="submit"] {
+  width: auto;
+  margin-top: 0;
+}
+
 /**
  * Form actions: keep primary/secondary buttons the same size (especially on mobile).
  */
