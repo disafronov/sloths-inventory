@@ -611,24 +611,34 @@ a.item-card:hover {
   word-break: break-word;
 }
 
-/* Transfer cards: show From/To as a side badge. */
+/*
+ * Transfer list card: main content full width; party plaque pinned to the card’s
+ * top-right with equal inset from the top and right inner edges (same gap to both
+ * “walls” of that corner). Main column keeps a small text-to-plaque gap (--space-2).
+ */
+a.item-card:has(> .transfer-card__layout) {
+  position: relative;
+  --transfer-plaque-corner-inset: var(--space-3);
+}
+
 .transfer-card__layout {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-3);
+  display: block;
 }
 
 .transfer-card__main {
-  flex: 1 1 auto;
   min-width: 0;
+  /* Space so body text does not run under the absolutely positioned plaque. */
+  padding-right: calc(var(--space-2) + min(11.25rem, 40vw));
 }
 
 /* Side badge on transfer list cards: two stacked tiers (party, then expiry). */
 .transfer-card__party {
-  flex: 0 0 auto;
-  min-width: 180px;
-  max-width: 40%;
+  position: absolute;
+  top: var(--transfer-plaque-corner-inset);
+  right: var(--transfer-plaque-corner-inset);
+  z-index: 1;
+  min-width: min(11.25rem, calc(100% - 2 * var(--transfer-plaque-corner-inset)));
+  max-width: min(40%, calc(100% - 2 * var(--transfer-plaque-corner-inset)));
   display: flex;
   flex-direction: column;
   padding: 0;
@@ -737,31 +747,25 @@ a.item-card:hover {
 }
 
 @media (max-width: 520px) {
-  .transfer-card__layout {
-    flex-direction: column;
-  }
-
-  .transfer-card__party {
-    max-width: 100%;
-    width: 100%;
+  .transfer-card__main {
+    padding-right: calc(var(--space-2) + min(11.25rem, 72vw));
   }
 }
 
 /*
- * Transfer tint: one fade only so the far edge stays fully transparent.
- * Incoming — colour from the left, transparent on the right; outgoing — from the
- * right, transparent on the left. --transfer-t (0..1) shortens --transfer-spread
- * so the tint hugs the coloured edge as the expiry approaches.
+ * Transfer tint: one fade; far edge stays transparent.
+ * --transfer-t (0..1) is elapsed share of created_at→expires_at. --transfer-spread
+ * is the fade width: ~100% when the offer is new, shrinking to ~3% at the deadline
+ * so the tint collapses almost to nothing by expiry.
  */
 .item-card--incoming-transfer {
   --transfer-t: 0;
   overflow: hidden;
   border-color: #f6caca;
-  --transfer-spread: calc(100% - var(--transfer-t) * 45%);
+  --transfer-spread: calc(3% + (1 - var(--transfer-t)) * 97%);
   background-image: linear-gradient(
     to right,
     #ffe1e1 0%,
-    #ffd4d4 10%,
     rgba(255, 225, 225, 0) var(--transfer-spread)
   );
 }
@@ -770,11 +774,10 @@ a.item-card:hover {
   --transfer-t: 0;
   overflow: hidden;
   border-color: #c8f0d2;
-  --transfer-spread: calc(100% - var(--transfer-t) * 45%);
+  --transfer-spread: calc(3% + (1 - var(--transfer-t)) * 97%);
   background-image: linear-gradient(
     to left,
     #e7ffed 0%,
-    #d2f8e4 10%,
     rgba(231, 255, 237, 0) var(--transfer-spread)
   );
 }
