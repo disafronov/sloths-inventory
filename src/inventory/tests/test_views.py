@@ -1278,7 +1278,7 @@ def test_transfers_incoming_and_outgoing_urls_are_removed() -> None:
 
 
 @pytest.mark.django_db
-def test_create_transfer_post_returns_404_for_missing_or_invalid_receiver() -> None:
+def test_create_transfer_post_returns_400_for_missing_or_invalid_receiver() -> None:
     user1 = User.objects.create_user(username="u1", password="pw")
     resp1 = Responsible.objects.create(last_name="One", first_name="User", user=user1)
     status = Status.objects.create(name="In use")
