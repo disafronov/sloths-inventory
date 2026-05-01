@@ -1,17 +1,14 @@
-from datetime import timedelta
-
 import pytest
 from django.contrib.admin.sites import AdminSite
 from django.contrib.auth import get_user_model
 from django.db.models import QuerySet
 from django.test import RequestFactory
-from django.utils import timezone
 
 from catalogs.models import Location, Responsible, Status
 from devices.attributes import Category, Manufacturer, Model, Type
 from devices.models import Device
-from inventory.admin import ItemAdmin, OperationAdmin, PendingTransferAdmin
-from inventory.models import Item, Operation, PendingTransfer
+from inventory.admin import ItemAdmin, OperationAdmin
+from inventory.models import Item, Operation
 
 
 @pytest.mark.django_db
@@ -262,64 +259,5 @@ def test_operation_admin_latest_operation_id_is_cached_per_request(
         assert admin_obj.has_change_permission(request, obj=op2) is True
 
 
-@pytest.mark.django_db
-def test_pending_transfer_admin_prefills_expires_at_on_add_form(
-    settings,
-) -> None:
-    settings.INVENTORY_PENDING_TRANSFER_EXPIRATION_HOURS = 72
-    site = AdminSite()
-    admin_obj = PendingTransferAdmin(PendingTransfer, site)
-
-    rf = RequestFactory()
-    request = rf.get("/admin/inventory/pendingtransfer/add/")
-    request.user = get_user_model().objects.create_superuser(
-        username="admin-xfer", email="admin-xfer@example.com", password="password"
-    )
-
-    before = timezone.now()
-    initial = admin_obj.get_changeform_initial_data(request)
-    after = timezone.now()
-
-    assert "expires_at" in initial
-    expires_at = initial["expires_at"]
-    assert before + timedelta(hours=72) <= expires_at <= after + timedelta(hours=72)
-
-
-@pytest.mark.django_db
-def test_pending_transfer_admin_prefills_from_responsible_from_item() -> None:
-    category = Category.objects.create(name="Laptops")
-    device_type = Type.objects.create(name="Laptop")
-    manufacturer = Manufacturer.objects.create(name="ACME")
-    device_model = Model.objects.create(name="Model X")
-    device = Device.objects.create(
-        category=category,
-        type=device_type,
-        manufacturer=manufacturer,
-        model=device_model,
-    )
-
-    status = Status.objects.create(name="In use")
-    location = Location.objects.create(name="Office")
-    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
-
-    item = Item.objects.create(inventory_number="INV-ADMIN-XFER", device=device)
-    Operation.objects.create(
-        item=item,
-        status=status,
-        responsible=responsible,
-        location=location,
-    )
-
-    site = AdminSite()
-    admin_obj = PendingTransferAdmin(PendingTransfer, site)
-    rf = RequestFactory()
-    request = rf.get(f"/admin/inventory/pendingtransfer/add/?item={item.pk}")
-    request.user = get_user_model().objects.create_superuser(
-        username="admin-xfer2", email="admin-xfer2@example.com", password="password"
-    )
-
-    initial = admin_obj.get_changeform_initial_data(request)
-    assert (
-        initial.get("from_responsible") == str(responsible.pk)
-        or initial.get("from_responsible") == responsible.pk
-    )
+# PendingTransfer admin is read-only (no create/edit/delete). Any tests for add-form
+# initial values or auxiliary JSON endpoints are intentionally omitted.
