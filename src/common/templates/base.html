@@ -80,13 +80,11 @@
                             class="button{% if request.path|slice:':7' == '/admin/' %} button--active{% endif %}"
                             {% if request.path|slice:':7' == '/admin/' %}aria-current="page"{% endif %}
                         >{% trans "Admin" %}</a>
-                        {% if not user.is_staff %}
-                            <a
-                                href="{% url 'common:password_change' %}"
-                                class="button{% if request.resolver_match.url_name == 'password_change' %} button--active{% endif %}"
-                                {% if request.resolver_match.url_name == 'password_change' %}aria-current="page"{% endif %}
-                            >{% trans "Change password" %}</a>
-                        {% endif %}
+                        <a
+                            href="{% url 'common:password_change' %}"
+                            class="button{% if request.resolver_match.url_name == 'password_change' %} button--active{% endif %}"
+                            {% if request.resolver_match.url_name == 'password_change' %}aria-current="page"{% endif %}
+                        >{% trans "Change password" %}</a>
                         <form method="post" action="{% url 'common:logout' %}?next=/" class="logout-form">
                             {% csrf_token %}
                             <button type="submit" class="button">{% trans "Logout" %}</button>

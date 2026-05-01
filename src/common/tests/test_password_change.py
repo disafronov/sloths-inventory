@@ -28,8 +28,8 @@ def test_password_change_get_renders_form_for_authenticated_user() -> None:
 
 
 @pytest.mark.django_db
-def test_password_change_link_is_visible_for_non_staff_before_logout() -> None:
-    user = User.objects.create_user(username="alice", password="pw", is_staff=False)
+def test_password_change_link_is_visible_for_authenticated_user_before_logout() -> None:
+    user = User.objects.create_user(username="alice", password="pw", is_staff=True)
 
     client = Client()
     client.force_login(user)
