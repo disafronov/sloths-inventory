@@ -2,7 +2,7 @@ from datetime import timedelta
 
 import pytest
 from django.contrib.auth.models import AnonymousUser, User
-from django.test import Client, RequestFactory
+from django.test import Client, RequestFactory, override_settings
 from django.utils import timezone
 
 from catalogs.models import Location, Responsible, Status
@@ -796,6 +796,39 @@ def test_create_transfer_post_creates_pending_transfer() -> None:
     assert transfer.to_responsible == resp2
     assert transfer.accepted_at is None
     assert transfer.cancelled_at is None
+    assert transfer.expires_at is None
+
+
+@pytest.mark.django_db
+@override_settings(INVENTORY_PENDING_TRANSFER_EXPIRATION_HOURS=72)
+def test_create_transfer_post_sets_expires_at_from_settings() -> None:
+    """UI-created offers get `expires_at` when expiration hours setting is positive."""
+
+    user1 = User.objects.create_user(username="u1e", password="pw")
+    user2 = User.objects.create_user(username="u2e", password="pw")
+    resp1 = Responsible.objects.create(last_name="One", first_name="Expiry", user=user1)
+    resp2 = Responsible.objects.create(last_name="Two", first_name="Expiry", user=user2)
+    status = Status.objects.create(name="In use")
+    location = Location.objects.create(name="Home")
+    item = _make_item_with_operation(status, location, resp1, "INV-XFER-EXP")
+
+    client = Client()
+    client.force_login(user1)
+    before = timezone.now()
+    response = client.post(
+        f"/items/{item.pk}/transfer/",
+        {"to_responsible_id": resp2.pk},
+    )
+    after = timezone.now()
+    assert response.status_code == 302
+
+    transfer = PendingTransfer.objects.get(item=item)
+    assert transfer.expires_at is not None
+    assert (
+        before + timedelta(hours=72)
+        <= transfer.expires_at
+        <= after + timedelta(hours=72)
+    )
 
 
 @pytest.mark.django_db

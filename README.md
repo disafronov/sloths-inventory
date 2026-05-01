@@ -114,6 +114,9 @@ See `env.example` for a complete list of supported variables.
   - `LOG_LEVEL` (default: `DEBUG` when `DEBUG=1`, else `INFO`)
 - **Inventory**
   - `INVENTORY_OPERATION_EDIT_WINDOW_MINUTES` (default: `10`)
+  - `INVENTORY_PENDING_TRANSFER_EXPIRATION_HOURS` (default: `0` — no automatic
+    expiry for offers created from the user UI; set to a positive number of hours
+    to set `expires_at` when creating an offer)
 
 ## Localization
 
