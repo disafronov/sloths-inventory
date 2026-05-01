@@ -24,19 +24,22 @@
         <div
             class="item-card{% if pending_transfer.to_responsible.user_id == user.id %} item-card--incoming-transfer{% else %} item-card--outgoing-transfer{% endif %}"
         >
-            <div class="item-card__row">
-                {% if pending_transfer.to_responsible.user_id == user.id %}
-                    <span class="item-card__label">{% trans "Incoming transfer from" %}:</span>
-                {% else %}
-                    <span class="item-card__label">{% trans "Outgoing transfer for" %}:</span>
-                {% endif %}
-                {% if pending_transfer.to_responsible.user_id == user.id %}
-                    <span class="item-card__value">{{ pending_transfer.from_responsible }}</span>
-                {% else %}
-                    <span class="item-card__value">{{ pending_transfer.to_responsible }}</span>
+            <div class="transfer-plaque">
+                <div class="transfer-plaque-tier transfer-plaque-tier--primary">
+                    {% if pending_transfer.to_responsible.user_id == user.id %}
+                        <div class="transfer-card__party-label">{% trans "Incoming transfer from" %}</div>
+                        <div class="transfer-card__party-value">{{ pending_transfer.from_responsible }}</div>
+                    {% else %}
+                        <div class="transfer-card__party-label">{% trans "Outgoing transfer for" %}</div>
+                        <div class="transfer-card__party-value">{{ pending_transfer.to_responsible }}</div>
+                    {% endif %}
+                </div>
+                {% if pending_transfer.expires_at %}
+                    <div class="transfer-plaque-tier transfer-plaque-tier--secondary">
+                        {% include "inventory/_transfer_expiry_row.html" with transfer=pending_transfer %}
+                    </div>
                 {% endif %}
             </div>
-            {% include "inventory/_transfer_expiry_row.html" with transfer=pending_transfer %}
             <div class="form-actions form-actions--inline">
                 {% if pending_transfer.to_responsible.user_id == user.id %}
                     <form method="post" action="{% url 'inventory:accept-transfer' transfer_id=pending_transfer.id %}">

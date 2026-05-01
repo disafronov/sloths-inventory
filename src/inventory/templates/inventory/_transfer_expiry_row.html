@@ -1,8 +1,8 @@
 {% load i18n %}
-{# Compact expiry line for transfer plaques (not the main item facts column). #}
+{# Expiry line: render inside ``transfer-plaque-tier--secondary`` (or equivalent). #}
 {% if transfer.expires_at %}
     <div class="transfer-plaque-expiry">
-        <span class="transfer-plaque-expiry__label">{% trans "Offer expires" %}</span>
-        <span class="transfer-plaque-expiry__value">{{ transfer.expires_at|date:"Y-m-d H:i:s" }}</span>
+        <div class="transfer-plaque-expiry__label">{% trans "Offer expires" %}</div>
+        <div class="transfer-plaque-expiry__value">{{ transfer.expires_at|date:"Y-m-d H:i:s" }}</div>
     </div>
 {% endif %}

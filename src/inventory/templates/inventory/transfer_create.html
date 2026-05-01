@@ -22,13 +22,19 @@
     </div>
 
     {% if pending_transfer %}
-        <div class="item-card" aria-label="{% trans 'Item details' %}">
-            <p>
-                {% trans "A transfer offer is already pending." %}
-                <br>
-                <strong>{% trans "To" %}:</strong> {{ pending_transfer.to_responsible }}
-            </p>
-            {% include "inventory/_transfer_expiry_row.html" with transfer=pending_transfer %}
+        <div class="item-card item-card--outgoing-transfer" aria-label="{% trans 'Item details' %}">
+            <div class="transfer-plaque">
+                <div class="transfer-plaque-tier transfer-plaque-tier--primary">
+                    <p class="transfer-plaque-lead">{% trans "A transfer offer is already pending." %}</p>
+                    <div class="transfer-card__party-label">{% trans "To" %}</div>
+                    <div class="transfer-card__party-value">{{ pending_transfer.to_responsible }}</div>
+                </div>
+                {% if pending_transfer.expires_at %}
+                    <div class="transfer-plaque-tier transfer-plaque-tier--secondary">
+                        {% include "inventory/_transfer_expiry_row.html" with transfer=pending_transfer %}
+                    </div>
+                {% endif %}
+            </div>
         </div>
         <p><a href="{% url 'inventory:item-history' item_id=item.id %}" class="button button--secondary">{% trans "Back" %}</a></p>
     {% else %}

@@ -624,11 +624,15 @@ a.item-card:hover {
   min-width: 0;
 }
 
+/* Side badge on transfer list cards: two stacked tiers (party, then expiry). */
 .transfer-card__party {
   flex: 0 0 auto;
   min-width: 180px;
   max-width: 40%;
-  padding: var(--space-2-5) var(--space-3);
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
   border-radius: 8px;
   border: 1px solid #bdbdbd;
   background: #f8f9fa;
@@ -637,6 +641,7 @@ a.item-card:hover {
 }
 
 .transfer-card__party-label {
+  display: block;
   font-size: 0.85rem;
   color: #666;
   font-weight: 800;
@@ -644,40 +649,91 @@ a.item-card:hover {
 }
 
 .transfer-card__party-value {
+  display: block;
   font-size: 0.95rem;
   color: #222;
   word-break: break-word;
 }
 
-/* Expiry lives in the transfer “plaque” (aside or compact block), not main facts. */
+/* Shared two-tier “plaque” stack (list aside, history strip, transfer form). */
+.transfer-plaque {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.transfer-plaque-tier {
+  min-width: 0;
+}
+
+.transfer-plaque-tier--primary {
+  padding: var(--space-2-5) var(--space-3);
+}
+
+.transfer-plaque-tier--secondary {
+  padding: var(--space-2) var(--space-3);
+  background: rgba(0, 0, 0, 0.055);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.transfer-card__party .transfer-plaque-tier--secondary {
+  background: rgba(0, 0, 0, 0.06);
+  border-top-color: rgba(0, 0, 0, 0.12);
+}
+
+.item-card--incoming-transfer .transfer-plaque-tier--secondary {
+  background: rgba(0, 0, 0, 0.07);
+  border-top-color: rgba(0, 0, 0, 0.12);
+}
+
+.item-card--outgoing-transfer .transfer-plaque-tier--secondary {
+  background: rgba(0, 0, 0, 0.06);
+  border-top-color: rgba(0, 0, 0, 0.1);
+}
+
+.transfer-plaque-lead {
+  margin: 0 0 var(--space-3);
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: #222;
+}
+
+.transfer-plaque-tier--primary > p:last-child {
+  margin-bottom: 0;
+}
+
+/* Expiry: label and timestamp on separate lines inside the secondary tier. */
 .transfer-plaque-expiry {
   display: block;
-  margin-top: var(--space-2);
+  margin: 0;
   font-size: 0.8rem;
   line-height: 1.35;
   color: #444;
 }
 
 .transfer-plaque-expiry__label {
+  display: block;
   font-weight: 700;
-  margin-right: 0.35em;
+  margin-bottom: var(--space-row-inner);
 }
 
 .transfer-plaque-expiry__value {
+  display: block;
   font-variant-numeric: tabular-nums;
 }
 
-.transfer-card__party .transfer-plaque-expiry {
-  margin-top: var(--space-3);
-  padding-top: var(--space-2);
-  border-top: 1px solid #ddd;
+.item-card--incoming-transfer > .transfer-plaque,
+.item-card--outgoing-transfer > .transfer-plaque {
+  margin-left: calc(-1 * var(--card-padding-x));
+  margin-right: calc(-1 * var(--card-padding-x));
+  margin-top: calc(-1 * var(--card-padding-y));
+  border-radius: 0 0 6px 6px;
+  overflow: hidden;
 }
 
-.item-card--incoming-transfer .transfer-plaque-expiry,
-.item-card--outgoing-transfer .transfer-plaque-expiry {
-  padding-top: var(--space-2);
-  margin-top: var(--space-2);
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
+.item-card--incoming-transfer > .form-actions,
+.item-card--outgoing-transfer > .form-actions {
+  margin-top: var(--space-3);
 }
 
 @media (max-width: 520px) {
