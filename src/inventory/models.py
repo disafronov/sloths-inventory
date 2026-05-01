@@ -319,7 +319,10 @@ class PendingTransfer(BaseModel):
         if now >= end:
             return "1"
         span_seconds = (end - start).total_seconds()
-        if span_seconds <= 0:
+        # Defensive guard: given the comparisons above (now < end and now > start),
+        # a non-positive span is practically unreachable, but we keep it for safety
+        # against inconsistent timestamps or future refactors.
+        if span_seconds <= 0:  # pragma: no cover
             return "1"
         ratio = (now - start).total_seconds() / span_seconds
         ratio = min(1.0, max(0.0, ratio))

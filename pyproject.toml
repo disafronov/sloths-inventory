@@ -88,7 +88,11 @@ omit = [
   "tests/*",
   "src/*/tests/*",
   "src/conftest.py",
-  "src/sloths_inventory/settings_pytest.py"
+  "src/sloths_inventory/settings_pytest.py",
+  # Entry points are exercised manually or by ASGI/WSGI servers, not via unit tests.
+  "src/manage.py",
+  "src/sloths_inventory/asgi.py",
+  "src/sloths_inventory/wsgi.py"
 ]
 branch = true
 
