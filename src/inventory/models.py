@@ -351,6 +351,22 @@ class PendingTransfer(BaseModel):
             transfer.accepted_at = timezone.now()
             transfer.save(update_fields=["accepted_at", "updated_at"])
 
+    def cancel(self) -> None:
+        """
+        Cancel the transfer offer.
+
+        This is used both by the sender ("Cancel") and by the receiver ("Decline").
+        """
+
+        with transaction.atomic():
+            Item.objects.select_for_update().only("id").get(pk=self.item_id)
+            transfer = PendingTransfer.objects.select_for_update().get(pk=self.pk)
+            if not transfer.is_active:
+                raise ValidationError(_("Transfer is not active"))
+
+            transfer.cancelled_at = timezone.now()
+            transfer.save(update_fields=["cancelled_at", "updated_at"])
+
     @property
     def is_active(self) -> bool:
         """Return True when the transfer is pending and not expired."""
