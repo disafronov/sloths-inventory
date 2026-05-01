@@ -288,4 +288,24 @@ class PendingTransferAdmin(BaseAdmin):
             # signature compatible with stubs and cast locally.
             initial_any = cast(dict[str, Any], initial)
             initial_any["expires_at"] = timezone.now() + timedelta(hours=hours)
+
+        if "from_responsible" not in initial and "item" in initial:
+            raw_item: str | list[str] = initial["item"]
+            if isinstance(raw_item, list):
+                raw_item = raw_item[0] if raw_item else ""
+            try:
+                item_id = int(raw_item)
+            except (TypeError, ValueError):
+                item_id = 0
+
+            if item_id:
+                responsible_id = (
+                    Operation.objects.filter(item_id=item_id)
+                    .order_by("-created_at", "-id")
+                    .values_list("responsible_id", flat=True)
+                    .first()
+                )
+                if responsible_id is not None:
+                    initial_any = cast(dict[str, Any], initial)
+                    initial_any["from_responsible"] = responsible_id
         return initial
