@@ -216,6 +216,10 @@ msgstr "New location"
 msgid "Type to filter locations…"
 msgstr "Type to filter locations…"
 
+#: src/inventory/templates/inventory/change_location.html:54
+msgid "Optional: details about the move…"
+msgstr "Optional: details about the move…"
+
 #: src/inventory/templates/inventory/change_location.html:47
 msgid "Save"
 msgstr "Save"
@@ -354,6 +358,10 @@ msgstr "New responsible"
 #: src/inventory/templates/inventory/transfer_create.html:53
 msgid "Type to filter people…"
 msgstr "Type to filter people…"
+
+#: src/inventory/templates/inventory/transfer_create.html:68
+msgid "Optional: details (e.g. missing parts, charger, etc.)"
+msgstr "Optional: details (e.g. missing parts, charger, etc.)"
 
 #: src/inventory/templates/inventory/transfer_create.html:61
 msgid "Create offer"
