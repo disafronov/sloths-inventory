@@ -1,3 +1,19 @@
+## [1.1.0-rc.10](https://github.com/disafronov/sloths-inventory/compare/v1.1.0-rc.9...v1.1.0-rc.10) (2026-05-01)
+
+### Features
+
+* add notes field to change location functionality ([9419879](https://github.com/disafronov/sloths-inventory/commit/9419879709664277bfe556d2073decc7c18a0551))
+* add optional details fields for location and transfer creation ([c872a8f](https://github.com/disafronov/sloths-inventory/commit/c872a8f5bc0de986ea4ae9ef15c967dcfbded3e8))
+* display current location in change location form ([b8e99a3](https://github.com/disafronov/sloths-inventory/commit/b8e99a35cb656520bdead30155b06a16744fe3e4))
+* enhance transfer creation with improved error handling and UI updates ([67f2ed7](https://github.com/disafronov/sloths-inventory/commit/67f2ed721fb1264f94eaf280ebbf657fc0e8393f))
+* enhance transfer creation with notes field and form styling ([6745fd9](https://github.com/disafronov/sloths-inventory/commit/6745fd9042e96d89c0dea3acf01d683f895d662f))
+* improve change location functionality with error handling and UI updates ([b695fca](https://github.com/disafronov/sloths-inventory/commit/b695fca8858fe0a9663b6d643416771a68231df8))
+* update form styling and structure for improved usability ([d2922a4](https://github.com/disafronov/sloths-inventory/commit/d2922a4f0d8a1f4b3380860dc8fc8a96cb675c4c))
+
+### Bug Fixes
+
+* correct placement of transfer expiration message in transfer creation template ([9ea9b53](https://github.com/disafronov/sloths-inventory/commit/9ea9b532e247851bafade96428b8c7a9ce3af57a))
+
 ## [1.1.0-rc.9](https://github.com/disafronov/sloths-inventory/compare/v1.1.0-rc.8...v1.1.0-rc.9) (2026-05-01)
 
 ### Features
