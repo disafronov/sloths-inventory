@@ -1,3 +1,10 @@
+## [1.1.0-rc.12](https://github.com/disafronov/sloths-inventory/compare/v1.1.0-rc.11...v1.1.0-rc.12) (2026-05-01)
+
+### Features
+
+* enhance form action styling for improved layout consistency ([c5994d2](https://github.com/disafronov/sloths-inventory/commit/c5994d22abed632319629c605620d34ba0b64b4a))
+* update transfer plaque styles for improved visual consistency ([38977c1](https://github.com/disafronov/sloths-inventory/commit/38977c12ee69212085820fc9c8b093a73ba92592))
+
 ## [1.1.0-rc.11](https://github.com/disafronov/sloths-inventory/compare/v1.1.0-rc.10...v1.1.0-rc.11) (2026-05-01)
 
 ### Features
