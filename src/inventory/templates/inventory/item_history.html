@@ -31,6 +31,12 @@
                         {% include "inventory/_transfer_expiry_row.html" with transfer=pending_transfer %}
                     </div>
                 {% endif %}
+                {% if pending_transfer.notes %}
+                    <div class="transfer-plaque-tier transfer-plaque-tier--primary transfer-plaque-tier--with-divider">
+                        <div class="transfer-card__party-label">{% trans "Notes" %}</div>
+                        <div class="transfer-card__party-value">{{ pending_transfer.notes }}</div>
+                    </div>
+                {% endif %}
             </div>
             <div class="form-actions form-actions--inline">
                 {% if pending_transfer.to_responsible.user_id == user.id %}
