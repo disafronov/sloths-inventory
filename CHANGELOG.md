@@ -1,3 +1,13 @@
+## [1.3.0-rc.1](https://github.com/disafronov/sloths-inventory/compare/v1.2.0...v1.3.0-rc.1) (2026-05-01)
+
+### Features
+
+* add translations for password change and inventory item edits ([a7613c5](https://github.com/disafronov/sloths-inventory/commit/a7613c5312aaa58c6cdc0988fec9f4a1a0bce450))
+* add user password change functionality ([325bd53](https://github.com/disafronov/sloths-inventory/commit/325bd53e5f6947b2d1c88680663ef3919c2aeced))
+* enhance password change view for non-staff users ([f2a3eaf](https://github.com/disafronov/sloths-inventory/commit/f2a3eafb1f73c621f7253f4a8b27c1c8a0050e6d))
+* enhance transfer creation flow for existing pending transfers ([276aad9](https://github.com/disafronov/sloths-inventory/commit/276aad9831f10ac1d88843863ea0b5f4943ed3d8))
+* implement update_offer method for PendingTransfer ([3d65779](https://github.com/disafronov/sloths-inventory/commit/3d65779b0184cb12047cf331f1b8c78fdf53f9cc))
+
 ## [1.2.0](https://github.com/disafronov/sloths-inventory/compare/v1.1.0...v1.2.0) (2026-05-01)
 
 ### Features
