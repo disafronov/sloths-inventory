@@ -1,3 +1,9 @@
+## [1.1.0-rc.11](https://github.com/disafronov/sloths-inventory/compare/v1.1.0-rc.10...v1.1.0-rc.11) (2026-05-01)
+
+### Features
+
+* introduce item header card for consistent item detail display ([7fb3b37](https://github.com/disafronov/sloths-inventory/commit/7fb3b370d9544b78cbeaada44ddfd203b32ae1e1))
+
 ## [1.1.0-rc.10](https://github.com/disafronov/sloths-inventory/compare/v1.1.0-rc.9...v1.1.0-rc.10) (2026-05-01)
 
 ### Features

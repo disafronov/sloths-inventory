@@ -1,6 +1,6 @@
 [project]
 name = "sloths-inventory"
-version = "1.1.0rc10"
+version = "1.1.0rc11"
 description = "Django-based inventory application."
 readme = "README.md"
 requires-python = ">=3.13,<3.14"
@@ -89,7 +89,6 @@ omit = [
   "src/*/tests/*",
   "src/conftest.py",
   "src/sloths_inventory/settings_pytest.py",
-  # Entry points are exercised manually or by ASGI/WSGI servers, not via unit tests.
   "src/manage.py",
   "src/sloths_inventory/asgi.py",
   "src/sloths_inventory/wsgi.py"
