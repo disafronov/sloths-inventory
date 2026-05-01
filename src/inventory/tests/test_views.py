@@ -904,6 +904,48 @@ def test_create_transfer_post_sets_expires_at_from_settings() -> None:
 
 
 @pytest.mark.django_db
+@override_settings(INVENTORY_PENDING_TRANSFER_EXPIRATION_HOURS=0)
+def test_create_transfer_auto_accepts_when_receiver_has_no_user() -> None:
+    """
+    If the receiver Responsible has no linked Django user, the transfer offer must be
+    accepted automatically (there is nobody who could confirm it in the UI).
+    """
+
+    user_sender = User.objects.create_user(username="sender-auto", password="pw")
+    resp_sender = Responsible.objects.create(
+        last_name="Sender",
+        first_name="Auto",
+        user=user_sender,
+    )
+    resp_receiver = Responsible.objects.create(
+        last_name="Receiver", first_name="NoUser"
+    )
+    assert resp_receiver.user_id is None
+
+    status = Status.objects.create(name="In use")
+    location = Location.objects.create(name="Home")
+    item = _make_item_with_operation(
+        status, location, resp_sender, "INV-XFER-AUTO-ACCEPT"
+    )
+
+    client = Client()
+    client.force_login(user_sender)
+    response = client.post(
+        f"/items/{item.pk}/transfer/",
+        {"to_responsible_id": resp_receiver.pk},
+    )
+    assert response.status_code == 302
+
+    transfer = PendingTransfer.objects.get(item=item)
+    assert transfer.accepted_at is not None
+    assert transfer.cancelled_at is None
+
+    latest = item.operation_set.order_by("-created_at", "-id").first()
+    assert latest is not None
+    assert latest.responsible == resp_receiver
+
+
+@pytest.mark.django_db
 def test_accept_transfer_requires_receiver_confirmation_and_changes_owner() -> None:
     user_sender = User.objects.create_user(username="sender", password="pw")
     user_receiver = User.objects.create_user(username="receiver", password="pw")

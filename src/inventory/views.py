@@ -5,7 +5,7 @@ from typing import TypeVar
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.db import transaction
+from django.core.exceptions import ValidationError
 from django.db.models import OuterRef, QuerySet, Subquery
 from django.db.models.query_utils import Q
 from django.http import Http404, HttpRequest, HttpResponse
@@ -599,13 +599,15 @@ def create_transfer(request: HttpRequest, *, item_id: int) -> HttpResponse:
         if transfer_expiration_hours > 0:
             expires_at = timezone.now() + timedelta(hours=transfer_expiration_hours)
 
-        PendingTransfer.objects.create(
+        transfer = PendingTransfer.objects.create(
             item=item,
             from_responsible=responsible,
             to_responsible=to_responsible,
             expires_at=expires_at,
             notes=notes,
         )
+        if to_responsible.user_id is None:
+            transfer.accept()
         return redirect("inventory:item-history", item_id=item.pk)
 
     responsibles = (
@@ -659,26 +661,11 @@ def accept_transfer(request: HttpRequest, *, transfer_id: int) -> HttpResponse:
     if transfer.to_responsible_id != responsible.pk:
         raise Http404
 
-    with transaction.atomic():
-        Item.objects.select_for_update().only("id").get(pk=transfer.item_id)
-        transfer = PendingTransfer.objects.select_for_update().get(pk=transfer.pk)
-        if not transfer.is_active:
-            raise Http404
-
-        item = Item.objects.get(pk=transfer.item_id)
-        current_op = item.current_operation
-        if current_op is None:
-            raise Http404  # pragma: no cover
-
-        Operation.objects.create(
-            item=item,
-            status=current_op.status,
-            responsible=transfer.to_responsible,
-            location=current_op.location,
-            notes=transfer.notes,
-        )
-        transfer.accepted_at = timezone.now()
-        transfer.save()
+    try:
+        transfer.accept()
+    except ValidationError:
+        # Race or invalid state: keep behavior consistent with other inactive paths.
+        raise Http404
 
     return redirect("inventory:item-history", item_id=transfer.item_id)
 
