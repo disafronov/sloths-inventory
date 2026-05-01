@@ -1,3 +1,24 @@
+## [1.2.0](https://github.com/disafronov/sloths-inventory/compare/v1.1.0...v1.2.0) (2026-05-01)
+
+### Features
+
+* add "Hand over" translation for improved clarity in item history ([92c4d35](https://github.com/disafronov/sloths-inventory/commit/92c4d35dd7c57a675d822984016d2c3a2e19c74f))
+* add cancel method to PendingTransfer for improved transfer management ([84c04a6](https://github.com/disafronov/sloths-inventory/commit/84c04a6a454f4f6a8c48e91741e4b8f73226fe27))
+* add create_offer method to PendingTransfer for streamlined transfer offers ([b20aa3e](https://github.com/disafronov/sloths-inventory/commit/b20aa3e2ae44b65a3683a43cac4de1eb202daf2c))
+* display pending transfer notes in item history template ([796c326](https://github.com/disafronov/sloths-inventory/commit/796c3267066e34953f92cc9635f9a4e4190af66e))
+* implement automatic acceptance of transfers for users without linked accounts ([31d731b](https://github.com/disafronov/sloths-inventory/commit/31d731b8f245cccdebdc9bb639af0b8cc4cc1c60))
+* implement change location functionality for inventory items ([06e4118](https://github.com/disafronov/sloths-inventory/commit/06e4118ed634b0baf9d6feba3ada0ca6f26fae21))
+* prefill expiration date for PendingTransfer in admin add form ([7ec08fa](https://github.com/disafronov/sloths-inventory/commit/7ec08fad745b3e6e195bdfcf07bfa0f925fe2fc5))
+* prefill from_responsible field in PendingTransferAdmin based on item selection ([6a2f154](https://github.com/disafronov/sloths-inventory/commit/6a2f1546f0eaeacbcd83addf4aede7bd4bd5d3db))
+* update button labels for change location and transfer forms ([8e33559](https://github.com/disafronov/sloths-inventory/commit/8e33559d2305023d2a039abca6ed5cf6fec4ada9))
+* update PendingTransferAdmin to include readonly fields for transfer timestamps ([5f095a9](https://github.com/disafronov/sloths-inventory/commit/5f095a93f3fe466770107c51afe72915c39ac95f))
+
+### Bug Fixes
+
+* remove outdated button labels from translation files ([717de39](https://github.com/disafronov/sloths-inventory/commit/717de395d017ec128d569c517fd698bdeb297faf))
+* update offer expiration message in translations ([2022f1c](https://github.com/disafronov/sloths-inventory/commit/2022f1c54497d2d5c75e3fdae134ee5da1b9b3ca))
+* update Russian translation for offer expiration message ([f83df59](https://github.com/disafronov/sloths-inventory/commit/f83df59412c785f3fef3dad599629d364817672b))
+
 ## [1.2.0-rc.2](https://github.com/disafronov/sloths-inventory/compare/v1.2.0-rc.1...v1.2.0-rc.2) (2026-05-01)
 
 ### Bug Fixes
