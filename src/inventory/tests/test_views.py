@@ -798,7 +798,8 @@ def test_create_transfer_get_shows_receiver_options() -> None:
     response = client.get(f"/items/{item.pk}/transfer/")
     assert response.status_code == 200
     assert resp2.last_name.encode("utf-8") in response.content
-    assert b"server time" in response.content.lower()
+    # The hint should not mention server time (UI wording detail).
+    assert b"server time" not in response.content.lower()
 
 
 @pytest.mark.django_db
