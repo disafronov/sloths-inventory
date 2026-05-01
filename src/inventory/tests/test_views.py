@@ -1214,15 +1214,15 @@ def test_create_transfer_post_returns_404_for_missing_or_invalid_receiver() -> N
     client.force_login(user1)
 
     missing = client.post(f"/items/{item.pk}/transfer/", {})
-    assert missing.status_code == 404
+    assert missing.status_code == 400
 
     invalid = client.post(f"/items/{item.pk}/transfer/", {"to_responsible_id": "nope"})
-    assert invalid.status_code == 404
+    assert invalid.status_code == 400
 
     self_id = client.post(
         f"/items/{item.pk}/transfer/", {"to_responsible_id": resp1.pk}
     )
-    assert self_id.status_code == 404
+    assert self_id.status_code == 400
 
 
 @pytest.mark.django_db
