@@ -649,6 +649,37 @@ a.item-card:hover {
   word-break: break-word;
 }
 
+/* Expiry lives in the transfer “plaque” (aside or compact block), not main facts. */
+.transfer-plaque-expiry {
+  display: block;
+  margin-top: var(--space-2);
+  font-size: 0.8rem;
+  line-height: 1.35;
+  color: #444;
+}
+
+.transfer-plaque-expiry__label {
+  font-weight: 700;
+  margin-right: 0.35em;
+}
+
+.transfer-plaque-expiry__value {
+  font-variant-numeric: tabular-nums;
+}
+
+.transfer-card__party .transfer-plaque-expiry {
+  margin-top: var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 1px solid #ddd;
+}
+
+.item-card--incoming-transfer .transfer-plaque-expiry,
+.item-card--outgoing-transfer .transfer-plaque-expiry {
+  padding-top: var(--space-2);
+  margin-top: var(--space-2);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
 @media (max-width: 520px) {
   .transfer-card__layout {
     flex-direction: column;
