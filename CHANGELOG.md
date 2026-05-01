@@ -1,3 +1,9 @@
+## [1.2.0-rc.2](https://github.com/disafronov/sloths-inventory/compare/v1.2.0-rc.1...v1.2.0-rc.2) (2026-05-01)
+
+### Bug Fixes
+
+* update offer expiration message in translations ([6208250](https://github.com/disafronov/sloths-inventory/commit/6208250e7ad4522e763e273a54cc8bdbc15d780e))
+
 ## [1.2.0-rc.1](https://github.com/disafronov/sloths-inventory/compare/v1.1.0...v1.2.0-rc.1) (2026-05-01)
 
 ### Features
