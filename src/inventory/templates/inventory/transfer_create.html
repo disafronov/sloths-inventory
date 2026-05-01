@@ -42,19 +42,19 @@
         </div>
         <p><a href="{% url 'inventory:item-history' item_id=item.id %}" class="button button--secondary">{% trans "Back" %}</a></p>
     {% else %}
-        {% if transfer_expiration_hours %}
-            <p class="form-hint">
-                {% blocktrans count hours=transfer_expiration_hours trimmed %}
-                    If you send this offer, it expires {{ hours }} hour later (server time).
-                {% plural %}
-                    If you send this offer, it expires {{ hours }} hours later (server time).
-                {% endblocktrans %}
-            </p>
-        {% endif %}
         <form method="post" class="form-container">
             {% csrf_token %}
             {% if error %}
                 <p class="form-error" role="alert">{{ error }}</p>
+            {% endif %}
+            {% if transfer_expiration_hours %}
+                <p class="form-hint">
+                    {% blocktrans count hours=transfer_expiration_hours trimmed %}
+                        If you send this offer, it expires {{ hours }} hour later (server time).
+                    {% plural %}
+                        If you send this offer, it expires {{ hours }} hours later (server time).
+                    {% endblocktrans %}
+                </p>
             {% endif %}
             <p>
                 <label for="to_responsible_id">{% trans "New responsible" %}:</label>
