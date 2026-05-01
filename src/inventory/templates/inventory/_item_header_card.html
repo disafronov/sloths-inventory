@@ -1,0 +1,15 @@
+{% load i18n %}
+<div class="item-card" aria-label="{% trans 'Item details' %}">
+    <div class="item-card__row">
+        <span class="item-card__label">{% trans "Inventory number" %}:</span>
+        <span class="item-card__value">{{ item.inventory_number }}</span>
+    </div>
+    <div class="item-card__row">
+        <span class="item-card__label">{% trans "Device" %}:</span>
+        <span class="item-card__value">{{ item.device }}</span>
+    </div>
+    <div class="item-card__row">
+        <span class="item-card__label">{% trans "Serial number" %}:</span>
+        <span class="item-card__value">{{ item.serial_number|default:"-" }}</span>
+    </div>
+</div>
