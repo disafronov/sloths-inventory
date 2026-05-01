@@ -289,6 +289,39 @@ class PendingTransfer(BaseModel):
             self.full_clean()
             return super().save(*args, **kwargs)
 
+    def accept(self) -> None:
+        """
+        Accept the transfer and append an ownership-changing operation.
+
+        This is the authoritative confirmation path that changes the current owner
+        (via a new `Operation`). It is used both by the user-facing "Accept" action
+        and by the automatic acceptance path when the receiver has no linked user.
+        """
+
+        with transaction.atomic():
+            # Serialize per-item to avoid races with other operations/transfers.
+            Item.objects.select_for_update().only("id").get(pk=self.item_id)
+            transfer = PendingTransfer.objects.select_for_update().get(pk=self.pk)
+            if not transfer.is_active:
+                raise ValidationError(_("Transfer is not active"))
+
+            item = Item.objects.get(pk=transfer.item_id)
+            current_op = item.current_operation
+            if current_op is None:
+                raise ValidationError(
+                    _("Cannot accept transfer for an item without operations")
+                )
+
+            Operation.objects.create(
+                item=item,
+                status=current_op.status,
+                responsible=transfer.to_responsible,
+                location=current_op.location,
+                notes=transfer.notes,
+            )
+            transfer.accepted_at = timezone.now()
+            transfer.save(update_fields=["accepted_at", "updated_at"])
+
     @property
     def is_active(self) -> bool:
         """Return True when the transfer is pending and not expired."""
