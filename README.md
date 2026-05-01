@@ -14,7 +14,8 @@ history.
 - **Previously my items**: `GET /previous/` shows items that used to be assigned to
   the logged-in user (requires authentication).
 - **Item history**: `GET /items/<id>/` shows the item's operations history (only
-  for items currently assigned to the logged-in user, or items the user had in the past).
+  for items currently assigned to the logged-in user, items the user had in the past,
+  or items that have an active incoming transfer offer for the logged-in user).
 - **Admin UI**: `GET /admin/`
 - **Health**: `GET /health/liveness/`, `GET /health/readiness/`
 
@@ -86,8 +87,9 @@ Notes:
   limited time window after it was created. The window is configurable via
   `INVENTORY_OPERATION_EDIT_WINDOW_MINUTES` (default: 10 minutes).
 - **Item history visibility**: item history is only accessible to the current
-  owner and former owners. Former owners can only see the history up to the last
-  time the item was assigned to them, plus one subsequent handoff operation.
+  owner, to the receiver of an active incoming transfer offer, and to former owners.
+  Former owners can only see the history up to the last time the item was assigned
+  to them, plus one subsequent handoff operation.
   This is a privacy/security invariant: it provides enough context for a handoff
   dispute ("when and to whom it was transferred") without exposing the item's
   subsequent history to former owners.
