@@ -1,11 +1,8 @@
-from datetime import timedelta
 from typing import Any, Protocol, cast
 
-from django.conf import settings
 from django.contrib import admin
 from django.db.models import Model, QuerySet
 from django.http import HttpRequest
-from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from common.admin import BaseAdmin
@@ -274,38 +271,15 @@ class PendingTransferAdmin(BaseAdmin):
         "expires_at",
     )
 
-    def get_changeform_initial_data(
-        self, request: HttpRequest
-    ) -> dict[str, str | list[str]]:
-        initial = super().get_changeform_initial_data(request)
-        hours = max(
-            0,
-            int(getattr(settings, "INVENTORY_PENDING_TRANSFER_EXPIRATION_HOURS", 168)),
-        )
-        if hours > 0 and "expires_at" not in initial:
-            # Django admin's default type for initial data is string-based, but
-            # datetime values are accepted by form fields. We keep the public type
-            # signature compatible with stubs and cast locally.
-            initial_any = cast(dict[str, Any], initial)
-            initial_any["expires_at"] = timezone.now() + timedelta(hours=hours)
+    def has_add_permission(self, request: HttpRequest) -> bool:
+        return False
 
-        if "from_responsible" not in initial and "item" in initial:
-            raw_item: str | list[str] = initial["item"]
-            if isinstance(raw_item, list):
-                raw_item = raw_item[0] if raw_item else ""
-            try:
-                item_id = int(raw_item)
-            except (TypeError, ValueError):
-                item_id = 0
+    def has_change_permission(
+        self, request: HttpRequest, obj: PendingTransfer | None = None
+    ) -> bool:
+        return False
 
-            if item_id:
-                responsible_id = (
-                    Operation.objects.filter(item_id=item_id)
-                    .order_by("-created_at", "-id")
-                    .values_list("responsible_id", flat=True)
-                    .first()
-                )
-                if responsible_id is not None:
-                    initial_any = cast(dict[str, Any], initial)
-                    initial_any["from_responsible"] = responsible_id
-        return initial
+    def has_delete_permission(
+        self, request: HttpRequest, obj: PendingTransfer | None = None
+    ) -> bool:
+        return False
