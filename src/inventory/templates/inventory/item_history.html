@@ -91,10 +91,12 @@
                         <span class="item-card__label">{% trans "Status" %}:</span>
                         <span class="item-card__value">{{ op.status }}</span>
                     </div>
-                    <div class="item-card__row">
-                        <span class="item-card__label">{% trans "Notes" %}:</span>
-                        <span class="item-card__value">{{ op.notes|default:"-" }}</span>
-                    </div>
+                    {% if op.notes %}
+                        <div class="item-card__row">
+                            <span class="item-card__label">{% trans "Notes" %}:</span>
+                            <span class="item-card__value">{{ op.notes }}</span>
+                        </div>
+                    {% endif %}
                 </article>
             {% endfor %}
         </div>
