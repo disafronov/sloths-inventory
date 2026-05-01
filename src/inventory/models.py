@@ -76,6 +76,37 @@ class Item(BaseModel):
     current_location = CurrentOperationValue("location")
     current_responsible = CurrentOperationValue("responsible")
 
+    def change_location(
+        self, *, responsible: Responsible, location: Location, notes: str = ""
+    ) -> "Operation":
+        """
+        Append a location-changing operation for this item.
+
+        The inventory state is derived from append-only `Operation` records. Changing
+        an item's location is represented by appending a new operation that keeps
+        the current status and responsible person while updating the location.
+        """
+
+        current_op = self.current_operation
+        if current_op is None:
+            raise ValidationError(
+                _("Cannot change location for an item without operations")
+            )
+
+        if location.pk == current_op.location_id:
+            raise ValidationError(
+                _("New location must be different from current location.")
+            )
+
+        op = Operation.objects.create(
+            item=self,
+            status=current_op.status,
+            responsible=responsible,
+            location=location,
+            notes=notes,
+        )
+        return op
+
 
 class Operation(BaseModel):
     item = models.ForeignKey("Item", on_delete=models.CASCADE, verbose_name=_("Item"))
