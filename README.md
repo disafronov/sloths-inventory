@@ -16,7 +16,7 @@ history.
 - **Item history**: `GET /items/<id>/` shows the item's operations history (only
   for items currently assigned to the logged-in user, items the user had in the past,
   or items that have an active incoming transfer offer for the logged-in user).
-- **Admin UI**: `GET /admin/`
+- **Admin UI**: `GET /admin/`. Reference data ("catalogs") management is performed in the admin UI and is limited by the authenticated user's permissions.
 - **Health**: `GET /health/liveness/`, `GET /health/readiness/`
 
 ### Account linking
