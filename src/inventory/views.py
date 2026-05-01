@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+from datetime import timedelta
 from typing import TypeVar
 
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.db.models import OuterRef, QuerySet, Subquery
@@ -469,10 +471,18 @@ def create_transfer(request: HttpRequest, *, item_id: int) -> HttpResponse:
         if to_responsible.pk == responsible.pk:
             raise Http404
 
+        expiration_hours = int(
+            getattr(settings, "INVENTORY_PENDING_TRANSFER_EXPIRATION_HOURS", 0)
+        )
+        expires_at = None
+        if expiration_hours > 0:
+            expires_at = timezone.now() + timedelta(hours=expiration_hours)
+
         PendingTransfer.objects.create(
             item=item,
             from_responsible=responsible,
             to_responsible=to_responsible,
+            expires_at=expires_at,
         )
         return redirect("inventory:item-history", item_id=item.pk)
 

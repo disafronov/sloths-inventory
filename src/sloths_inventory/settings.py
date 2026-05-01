@@ -58,6 +58,14 @@ INVENTORY_OPERATION_EDIT_WINDOW_MINUTES = env.int(
     default=10,
 )
 
+# Pending transfer offers created from the user UI get `expires_at` set to
+# "now + N hours" when N > 0. Zero disables automatic expiry (offers do not expire
+# unless set manually in the admin).
+INVENTORY_PENDING_TRANSFER_EXPIRATION_HOURS = env.int(
+    "INVENTORY_PENDING_TRANSFER_EXPIRATION_HOURS",
+    default=0,
+)
+
 
 # Application definition
 
