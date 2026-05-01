@@ -659,13 +659,26 @@ def create_transfer(request: HttpRequest, *, item_id: int) -> HttpResponse:
         if transfer_expiration_hours > 0:
             expires_at = timezone.now() + timedelta(hours=transfer_expiration_hours)
 
-        PendingTransfer.create_offer(
-            item=item,
-            from_responsible=responsible,
-            to_responsible=to_responsible,
-            expires_at=expires_at,
-            notes=notes,
-        )
+        try:
+            PendingTransfer.create_offer(
+                item=item,
+                from_responsible=responsible,
+                to_responsible=to_responsible,
+                expires_at=expires_at,
+                notes=notes,
+            )
+        except ValidationError as e:
+            return _render_transfer_form(
+                request,
+                item=item,
+                sender=responsible,
+                pending_transfer=None,
+                transfer_expiration_hours=transfer_expiration_hours,
+                error=str(e),
+                notes=notes,
+                selected_to_responsible_id=to_responsible.pk,
+                status=400,
+            )
         return redirect("inventory:item-history", item_id=item.pk)
 
     if pending_transfer is not None:

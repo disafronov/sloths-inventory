@@ -2,6 +2,7 @@ from datetime import timedelta
 
 import pytest
 from django.contrib.auth.models import AnonymousUser, User
+from django.core.exceptions import ValidationError
 from django.test import Client, RequestFactory, override_settings
 from django.utils import timezone
 
@@ -870,6 +871,40 @@ def test_create_transfer_post_creates_pending_transfer() -> None:
     assert transfer.accepted_at is None
     assert transfer.cancelled_at is None
     assert transfer.expires_at is None
+
+
+@pytest.mark.django_db
+@override_settings(INVENTORY_PENDING_TRANSFER_EXPIRATION_HOURS=0)
+def test_create_transfer_post_returns_400_when_create_offer_validation_fails(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """
+    If `create_offer` raises ValidationError (e.g. a concurrent second offer),
+    the view must re-render the form with HTTP 400 instead of returning 500.
+    """
+
+    def _boom(_cls: type[PendingTransfer], **kwargs: object) -> PendingTransfer:
+        raise ValidationError("Offer rejected.")
+
+    monkeypatch.setattr(PendingTransfer, "create_offer", classmethod(_boom))
+
+    user1 = User.objects.create_user(username="u1val", password="pw")
+    user2 = User.objects.create_user(username="u2val", password="pw")
+    resp1 = Responsible.objects.create(last_name="One", first_name="Val", user=user1)
+    resp2 = Responsible.objects.create(last_name="Two", first_name="Val", user=user2)
+    status = Status.objects.create(name="In use")
+    location = Location.objects.create(name="Home")
+    item = _make_item_with_operation(status, location, resp1, "INV-XFER-VAL")
+
+    client = Client()
+    client.force_login(user1)
+    response = client.post(
+        f"/items/{item.pk}/transfer/",
+        {"to_responsible_id": resp2.pk, "notes": "keep notes"},
+    )
+    assert response.status_code == 400
+    assert b"Offer rejected." in response.content
+    assert PendingTransfer.objects.filter(item=item).count() == 0
 
 
 @pytest.mark.django_db
