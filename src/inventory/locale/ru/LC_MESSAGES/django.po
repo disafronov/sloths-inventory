@@ -194,6 +194,10 @@ msgstr "Срок предложения"
 msgid "Change location"
 msgstr "Переместить"
 
+#: src/inventory/templates/inventory/item_history.html:72
+msgid "Hand over"
+msgstr "Передать"
+
 #: src/inventory/templates/inventory/change_location.html:5
 #: src/inventory/templates/inventory/item_history.html:4
 #: src/inventory/templates/inventory/my_items.html:4
