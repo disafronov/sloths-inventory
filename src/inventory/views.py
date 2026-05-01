@@ -426,9 +426,21 @@ def change_location(request: HttpRequest, *, item_id: int) -> HttpResponse:
 
     if request.method == "POST":
         location_id = request.POST.get("location_id")
-        if not location_id:
-            raise Http404
         notes = (request.POST.get("notes") or "").strip()
+        if not location_id:
+            locations = Location.objects.order_by("name")
+            return render(
+                request,
+                "inventory/change_location.html",
+                {
+                    "item": item,
+                    "locations": locations,
+                    "current_location": current_op.location,
+                    "error": _("New location is required."),
+                    "notes": notes,
+                },
+                status=400,
+            )
         try:
             location = Location.objects.get(pk=location_id)
         except Location.DoesNotExist:

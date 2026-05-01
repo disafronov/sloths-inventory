@@ -710,7 +710,7 @@ def test_change_location_post_returns_404_when_location_id_is_missing() -> None:
     client = Client()
     client.force_login(user)
     response = client.post(f"/items/{item.pk}/change-location/", {})
-    assert response.status_code == 404
+    assert response.status_code == 400
 
 
 @pytest.mark.django_db

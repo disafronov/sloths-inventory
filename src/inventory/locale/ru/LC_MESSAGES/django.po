@@ -221,9 +221,9 @@ msgstr "Новое местоположение"
 msgid "Type to filter locations…"
 msgstr "Начните вводить, чтобы отфильтровать местоположения…"
 
-#: src/inventory/templates/inventory/change_location.html:54
-msgid "Optional: details about the move…"
-msgstr "Необязательно: детали перемещения…"
+#: src/inventory/templates/inventory/change_location.html:44
+msgid "Select a new location…"
+msgstr "Выберите новое местоположение…"
 
 #: src/inventory/templates/inventory/change_location.html:47
 msgid "Save"
@@ -382,3 +382,7 @@ msgstr "Создать предложение"
 #: src/inventory/views.py:404
 msgid "New location must be different from current location."
 msgstr "Новое местоположение должно отличаться от текущего."
+
+#: src/inventory/views.py:434
+msgid "New location is required."
+msgstr "Нужно выбрать новое местоположение."
