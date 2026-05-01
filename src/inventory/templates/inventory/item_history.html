@@ -21,7 +21,9 @@
 
     {# Transfer state before move actions so "transfer" stays above "change location" when the offer link is hidden. #}
     {% if pending_transfer %}
-        <div class="item-card">
+        <div
+            class="item-card{% if pending_transfer.to_responsible.user_id == user.id %} item-card--incoming-transfer{% else %} item-card--outgoing-transfer{% endif %}"
+        >
             <div class="item-card__row">
                 {% if pending_transfer.to_responsible.user_id == user.id %}
                     <span class="item-card__label">{% trans "Incoming transfer from" %}:</span>
