@@ -527,3 +527,96 @@ def test_pending_transfer_deadline_edge_gradient_t() -> None:
         "django.utils.timezone.now", return_value=frozen_now + timedelta(hours=3)
     ):
         assert transfer.deadline_edge_gradient_t() == "1"
+
+
+@pytest.mark.django_db
+def test_pending_transfer_deadline_edge_gradient_t_clamps_before_created_at() -> None:
+    """
+    When the clock is behind created_at, the UI ratio should clamp to 0.
+
+    This can happen due to clock skew or data fixes that move created_at forward.
+    """
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    status = Status.objects.create(name="S1")
+    location = Location.objects.create(name="Moscow")
+    sender = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    receiver = Responsible.objects.create(last_name="Petrov", first_name="Petr")
+
+    item = Item.objects.create(inventory_number="INV-XFER-GRAD-CLAMP0", device=device)
+    Operation.objects.create(
+        item=item, status=status, responsible=sender, location=location
+    )
+
+    frozen_now = timezone.now()
+    with patch("django.utils.timezone.now", return_value=frozen_now):
+        transfer = PendingTransfer.objects.create(
+            item=item,
+            from_responsible=sender,
+            to_responsible=receiver,
+            expires_at=frozen_now + timedelta(hours=2),
+        )
+
+    PendingTransfer.objects.filter(pk=transfer.pk).update(
+        created_at=frozen_now + timedelta(seconds=1)
+    )
+    transfer.refresh_from_db()
+
+    with patch("django.utils.timezone.now", return_value=frozen_now):
+        assert transfer.deadline_edge_gradient_t() == "0"
+
+
+@pytest.mark.django_db
+def test_pending_transfer_deadline_edge_gradient_t_handles_non_positive_span() -> None:
+    """
+    When expires_at <= created_at, treat the deadline as reached (ratio 1).
+    """
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    status = Status.objects.create(name="S1")
+    location = Location.objects.create(name="Moscow")
+    sender = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    receiver = Responsible.objects.create(last_name="Petrov", first_name="Petr")
+
+    item = Item.objects.create(inventory_number="INV-XFER-GRAD-BADSPAN", device=device)
+    Operation.objects.create(
+        item=item, status=status, responsible=sender, location=location
+    )
+
+    frozen_now = timezone.now()
+    with patch("django.utils.timezone.now", return_value=frozen_now):
+        transfer = PendingTransfer.objects.create(
+            item=item,
+            from_responsible=sender,
+            to_responsible=receiver,
+            expires_at=frozen_now + timedelta(hours=2),
+        )
+
+    PendingTransfer.objects.filter(pk=transfer.pk).update(
+        created_at=frozen_now + timedelta(hours=2),
+        expires_at=frozen_now + timedelta(hours=2),
+    )
+    transfer.refresh_from_db()
+
+    with patch(
+        "django.utils.timezone.now", return_value=frozen_now + timedelta(hours=3)
+    ):
+        assert transfer.deadline_edge_gradient_t() == "1"
