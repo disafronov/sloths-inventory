@@ -905,6 +905,61 @@ def test_create_transfer_post_sets_expires_at_from_settings() -> None:
 
 
 @pytest.mark.django_db
+@override_settings(INVENTORY_PENDING_TRANSFER_EXPIRATION_HOURS=72)
+def test_create_transfer_post_updates_active_offer_when_receiver_changes() -> None:
+    """
+    Sender POST to the transfer form while an active PendingTransfer exists must hit
+    `update_offer`: receiver and notes change, expiry is refreshed when the receiver
+    changes (same behaviour as the model, exercised through the view).
+    """
+
+    user1 = User.objects.create_user(username="u1upd", password="pw")
+    user2 = User.objects.create_user(username="u2upd", password="pw")
+    user3 = User.objects.create_user(username="u3upd", password="pw")
+    resp1 = Responsible.objects.create(last_name="One", first_name="Upd", user=user1)
+    resp2 = Responsible.objects.create(last_name="Two", first_name="Upd", user=user2)
+    resp3 = Responsible.objects.create(last_name="Three", first_name="Upd", user=user3)
+    status = Status.objects.create(name="In use")
+    location = Location.objects.create(name="Home")
+    item = _make_item_with_operation(status, location, resp1, "INV-XFER-UPDATE-OFFER")
+
+    transfer = PendingTransfer.objects.create(
+        item=item,
+        from_responsible=resp1,
+        to_responsible=resp2,
+        notes="old",
+    )
+
+    client = Client()
+    client.force_login(user1)
+    new_notes = "edited via post"
+    slack = timedelta(seconds=5)
+    before = timezone.now()
+    response = client.post(
+        f"/items/{item.pk}/transfer/",
+        {"to_responsible_id": resp3.pk, "notes": new_notes},
+    )
+    after = timezone.now()
+
+    assert response.status_code == 302
+    assert response["Location"] == f"/items/{item.pk}/"
+
+    transfer.refresh_from_db()
+    assert transfer.to_responsible_id == resp3.pk
+    assert transfer.notes == new_notes
+    assert PendingTransfer.objects.filter(item=item).count() == 1
+    assert transfer.accepted_at is None
+    assert transfer.cancelled_at is None
+
+    assert transfer.expires_at is not None
+    assert (
+        before + timedelta(hours=72) - slack
+        <= transfer.expires_at
+        <= after + timedelta(hours=72) + slack
+    )
+
+
+@pytest.mark.django_db
 @override_settings(INVENTORY_PENDING_TRANSFER_EXPIRATION_HOURS=0)
 def test_create_transfer_auto_accepts_when_receiver_has_no_user() -> None:
     """
