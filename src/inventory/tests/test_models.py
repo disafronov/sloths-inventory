@@ -756,3 +756,70 @@ def test_pending_transfer_update_offer_auto_accepts_no_user_receiver() -> None:
     latest = item.operation_set.order_by("-created_at", "-id").first()
     assert latest is not None
     assert latest.responsible_id == to_no_user.pk
+
+
+@pytest.mark.django_db
+def test_pending_transfer_update_offer_auto_accepts_offline_to_offline_receiver() -> (
+    None
+):
+    """
+    Switching the receiver from one Responsible without a linked user to another
+    must still auto-accept.
+
+    Normal `create_offer` never leaves a pending row for an offline receiver, so
+    we seed with `objects.create` (same pattern as expiry tests). This guards the
+    `to_responsible.user_id is None` branch when the receiver changes but remains
+    offline-only.
+    """
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+
+    status = Status.objects.create(name="In use")
+    location = Location.objects.create(name="Home")
+    user_sender = User.objects.create_user(username="snd-off2off", password="pw")
+    from_resp = Responsible.objects.create(
+        last_name="From", first_name="User", user=user_sender
+    )
+    offline_a = Responsible.objects.create(last_name="Offline", first_name="Alpha")
+    offline_b = Responsible.objects.create(last_name="Offline", first_name="Beta")
+    assert offline_a.user_id is None and offline_b.user_id is None
+
+    item = Item.objects.create(inventory_number="INV-XFER-OFF2OFF", device=device)
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=from_resp,
+        location=location,
+    )
+
+    transfer = PendingTransfer.objects.create(
+        item=item,
+        from_responsible=from_resp,
+        to_responsible=offline_a,
+        notes="seed pending to offline A",
+    )
+
+    transfer.update_offer(
+        actor=from_resp,
+        to_responsible=offline_b,
+        notes="reassign to offline B",
+        auto_expiration_hours=48,
+    )
+
+    transfer.refresh_from_db()
+    assert transfer.to_responsible_id == offline_b.pk
+    assert transfer.notes == "reassign to offline B"
+    assert transfer.accepted_at is not None
+    assert item.operation_set.count() == 2
+    latest = item.operation_set.order_by("-created_at", "-id").first()
+    assert latest is not None
+    assert latest.responsible_id == offline_b.pk
