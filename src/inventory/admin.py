@@ -8,6 +8,7 @@ from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
 from common.admin import BaseAdmin
+from common.edit_window import is_within_inventory_correction_window
 
 from .models import Item, Operation, PendingTransfer
 
@@ -52,8 +53,8 @@ class DeviceFieldsMixin:
 @admin.register(Item)
 class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
     """
-    Item master data edits use ``INVENTORY_OPERATION_EDIT_WINDOW_MINUTES`` from the
-    row's ``updated_at`` (same setting as operation corrections, different anchor).
+    Item field edits use ``INVENTORY_CORRECTION_WINDOW_MINUTES`` from the row's
+    ``updated_at`` (same setting as operation corrections, different anchor).
 
     The admin mirrors ``Item.clean()`` for change/delete permissions for non-super
     users and appends a restriction panel when the window has expired.
@@ -62,7 +63,7 @@ class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
     regardless of ``updated_at``.
 
     Superusers keep full change/delete and get a ModelForm that sets
-    ``Item._bypass_item_master_edit_window`` so ``clean()`` allows repairs after
+    ``Item._bypass_item_correction_window`` so ``clean()`` allows repairs after
     the window.
     """
 
@@ -97,7 +98,7 @@ class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
         "serial_number",
     )
 
-    def _is_item_master_editable(self, obj: Item) -> bool:
+    def _is_item_correction_editable(self, obj: Item) -> bool:
         """
         Return True when ``Item.clean()`` still allows an update save.
 
@@ -107,9 +108,9 @@ class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
 
         if not obj.has_assigned_responsible():
             return True
-        return Operation.is_within_operation_edit_window(obj.updated_at)
+        return is_within_inventory_correction_window(obj.updated_at)
 
-    def _item_edit_lock_user_message(
+    def _item_correction_window_lock_user_message(
         self, request: HttpRequest, obj: Item
     ) -> str | None:
         """Return restriction HTML source text, or None when edits are allowed."""
@@ -117,9 +118,9 @@ class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
         user = getattr(request, "user", None)
         if getattr(user, "is_superuser", False):
             return None
-        if self._is_item_master_editable(obj):
+        if self._is_item_correction_editable(obj):
             return None
-        return Item.master_record_edit_window_expired_user_message()
+        return Item.item_correction_window_expired_user_message()
 
     def has_change_permission(
         self, request: HttpRequest, obj: Item | None = None
@@ -130,7 +131,7 @@ class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
         user = getattr(request, "user", None)
         if getattr(user, "is_superuser", False):
             return True
-        return self._is_item_master_editable(obj)
+        return self._is_item_correction_editable(obj)
 
     def has_delete_permission(
         self, request: HttpRequest, obj: Item | None = None
@@ -141,7 +142,7 @@ class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
         user = getattr(request, "user", None)
         if getattr(user, "is_superuser", False):
             return True
-        return self._is_item_master_editable(obj)
+        return self._is_item_correction_editable(obj)
 
     def get_form(
         self,
@@ -151,7 +152,8 @@ class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
         **kwargs: Any,
     ) -> type[forms.ModelForm]:
         """
-        For superusers, mark the instance so ``Item.clean()`` skips the edit window.
+        For superusers, mark the instance so ``Item.clean()`` skips the correction
+        window.
 
         The flag must be present before ``form.is_valid()`` runs (which calls
         ``full_clean()`` on the model).
@@ -166,7 +168,7 @@ class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
                 if getattr(user, "is_superuser", False) and self.instance.pk:
                     setattr(
                         self.instance,
-                        "_bypass_item_master_edit_window",
+                        "_bypass_item_correction_window",
                         True,
                     )
 
@@ -211,10 +213,10 @@ class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
         if obj is None:
             return fieldsets
         item = cast(Item, obj)
-        message = self._item_edit_lock_user_message(request, item)
+        message = self._item_correction_window_lock_user_message(request, item)
         if message is None:
             return fieldsets
-        desc = format_html('<p class="item-master-edit-lock">{}</p>', message)
+        desc = format_html('<p class="item-correction-window-lock">{}</p>', message)
         lock_panel = (
             _("Editing restrictions"),
             {"fields": (), "description": desc},
@@ -226,7 +228,7 @@ class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
 class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
     """
     Operations are append-only: only the latest row per item may be corrected,
-    and only inside ``INVENTORY_OPERATION_EDIT_WINDOW_MINUTES``.
+    and only inside ``INVENTORY_CORRECTION_WINDOW_MINUTES``.
 
     The admin mirrors ``Operation.clean()`` for permissions. When a row cannot be
     corrected, a trailing fieldset with only a ``description`` (no form rows)
@@ -272,8 +274,9 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
         """
         On change/view, optionally append a restriction summary (fieldset description).
 
-        The panel is shown only when ``_operation_edit_lock_user_message`` returns a
-        reason the row cannot be edited. If corrections are still allowed, there is
+        The panel is shown only when
+        ``_operation_correction_window_lock_user_message`` returns a reason the row
+        cannot be edited. If corrections are still allowed, there is
         nothing to warn about, so no extra fieldset is added.
 
         Using ``fields: ()`` avoids the default two-column label/value row. The add
@@ -284,12 +287,14 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
         if obj is None:
             return fieldsets
         op = cast(Operation, obj)
-        message = self._operation_edit_lock_user_message(
+        message = self._operation_correction_window_lock_user_message(
             obj=op, latest_operation_pk=None
         )
         if message is None:
             return fieldsets
-        desc = format_html('<p class="operation-edit-lock">{}</p>', message)
+        desc = format_html(
+            '<p class="operation-correction-window-lock">{}</p>', message
+        )
         lock_panel = (
             _("Editing restrictions"),
             {"fields": (), "description": desc},
@@ -334,12 +339,7 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
         if item_id in cache:
             return cache[item_id]
 
-        latest_id: int | None = (
-            Operation.objects.filter(item_id=item_id)
-            .order_by("-created_at", "-id")
-            .values_list("id", flat=True)
-            .first()
-        )
+        latest_id = Operation.latest_operation_id_for_item(item_id)
         cache[item_id] = latest_id
         return latest_id
 
@@ -361,9 +361,9 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
 
         if not self._is_latest_for_item(request, obj):
             return False
-        return Operation.is_within_operation_edit_window(obj.created_at)
+        return Operation.is_within_operation_correction_window(obj.created_at)
 
-    def _operation_edit_lock_user_message(
+    def _operation_correction_window_lock_user_message(
         self,
         *,
         obj: Operation,
@@ -378,17 +378,12 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
         """
 
         if latest_operation_pk is None:
-            latest_operation_pk = (
-                Operation.objects.filter(item_id=obj.item_id)
-                .order_by("-created_at", "-id")
-                .values_list("id", flat=True)
-                .first()
-            )
+            latest_operation_pk = Operation.latest_operation_id_for_item(obj.item_id)
         if latest_operation_pk is None:
             return None
         if obj.pk != latest_operation_pk:
-            return str(_("Only the latest operation for this item can be edited"))
-        if Operation.is_within_operation_edit_window(obj.created_at):
+            return Operation.only_latest_operation_may_be_edited_user_message()
+        if Operation.is_within_operation_correction_window(obj.created_at):
             return None
         return Operation.correction_window_expired_user_message()
 

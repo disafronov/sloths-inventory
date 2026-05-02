@@ -81,3 +81,26 @@ msgstr "Logout"
 #: src/common/templates/login.html:6 src/common/templates/login.html:12
 msgid "Login"
 msgstr "Login"
+
+#: src/common/admin.py:130
+msgid "Editing restrictions"
+msgstr "Editing restrictions"
+
+#: src/common/edit_window.py:27
+#, python-format
+msgid ""
+"This catalog entry is in use. "
+"The correction window (%(minutes)d minute) has expired. "
+"To make changes, contact an administrator."
+msgid_plural ""
+"This catalog entry is in use. "
+"The correction window (%(minutes)d minutes) has expired. "
+"To make changes, contact an administrator."
+msgstr[0] ""
+"This catalog entry is in use. "
+"The correction window (%(minutes)d minute) has expired. "
+"To make changes, contact an administrator."
+msgstr[1] ""
+"This catalog entry is in use. "
+"The correction window (%(minutes)d minutes) has expired. "
+"To make changes, contact an administrator."

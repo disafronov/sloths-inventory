@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.db.models import QuerySet
 from django.http import HttpRequest
 
-from common.admin import BaseAdmin, NamedModelAdmin
+from common.admin import BaseAdmin, CatalogReferenceAdminMixin, NamedModelAdmin
 
 from .models import Location, Responsible, Status
 
@@ -13,7 +13,7 @@ class LocationAdmin(NamedModelAdmin):
 
 
 @admin.register(Responsible)
-class ResponsibleAdmin(BaseAdmin):
+class ResponsibleAdmin(CatalogReferenceAdminMixin, BaseAdmin):
     list_display = [
         "last_name",
         "first_name",

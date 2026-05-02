@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 from typing import Any, Optional, overload
 
-from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from django.utils import timezone
@@ -9,6 +8,11 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.translation import ngettext
 
 from catalogs.models import Location, Responsible, Status
+from common.edit_window import (
+    catalog_entry_correction_window_expired_user_message,
+    inventory_correction_window_minutes,
+    is_within_inventory_correction_window,
+)
 from common.models import BaseModel
 from devices.models import Device
 
@@ -17,12 +21,12 @@ class Item(BaseModel):
     """
     Inventory unit (device instance).
 
-    Master-data edits are time-bounded once an accountable party exists (see
-    ``has_assigned_responsible()`` and ``clean()``). Until the first
-    ``Operation`` is recorded, the item has no responsible person in the
-    journal and master data stays editable regardless of ``updated_at``.
+    Item field edits are time-bounded by the correction window once an accountable
+    party exists (see ``has_assigned_responsible()`` and ``clean()``). Until the
+    first ``Operation`` is recorded, the item has no responsible person in the
+    journal and the row stays editable regardless of ``updated_at``.
 
-    The admin sets ``_bypass_item_master_edit_window`` on the instance for
+    The admin sets ``_bypass_item_correction_window`` on the instance for
     superusers only so support can repair rows after the window; do not set that
     flag from other code paths.
     """
@@ -53,8 +57,8 @@ class Item(BaseModel):
         Return True when this item has at least one ``Operation``.
 
         The append-only operation stream defines who is accountable for the unit.
-        With zero operations there is no responsible party yet, so master-data
-        edits are not subject to the ``updated_at`` edit window (see ``clean()``).
+        With zero operations there is no responsible party yet, so item field
+        edits are not subject to the ``updated_at`` correction window (see ``clean()``).
         """
 
         if self._state.adding:
@@ -62,30 +66,22 @@ class Item(BaseModel):
         return self.operation_set.exists()
 
     @classmethod
-    def master_record_edit_window_expired_user_message(cls) -> str:
+    def item_correction_window_expired_user_message(cls) -> str:
         """
-        Return the user-visible message when the item master-record edit window
-        has expired.
+        Return the user-visible message when the item correction window has expired.
 
-        Uses ``INVENTORY_OPERATION_EDIT_WINDOW_MINUTES`` like operation corrections,
+        Uses ``INVENTORY_CORRECTION_WINDOW_MINUTES`` like operation corrections,
         but the anchor timestamp is this row's ``updated_at`` (see ``Item.clean()``).
+
+        Wording is shared with ``CatalogCorrectionWindowMixin`` via
+        ``common.edit_window.catalog_entry_correction_window_expired_user_message``.
         """
 
-        edit_window_minutes = getattr(
-            settings, "INVENTORY_OPERATION_EDIT_WINDOW_MINUTES", 10
-        )
-        return str(
-            ngettext(
-                "The item master data edit window (%(minutes)d minute) has expired.",
-                "The item master data edit window (%(minutes)d minutes) has expired.",
-                edit_window_minutes,
-            )
-            % {"minutes": edit_window_minutes}
-        )
+        return catalog_entry_correction_window_expired_user_message()
 
     def clean(self) -> None:
         """
-        Validate the model and enforce the master-record edit window.
+        Validate the model and enforce the item correction window.
 
         Once a responsible party exists (at least one ``Operation``), any update
         while the row's previous ``updated_at`` falls outside the configured window
@@ -103,17 +99,17 @@ class Item(BaseModel):
             return
 
         # Set only by ``ItemAdmin`` ModelForm for superusers (trusted repair path).
-        if getattr(self, "_bypass_item_master_edit_window", False):
+        if getattr(self, "_bypass_item_correction_window", False):
             return
 
         if not self.has_assigned_responsible():
             return
 
         original_updated_at = Item.objects.only("updated_at").get(pk=self.pk).updated_at
-        if not Operation.is_within_operation_edit_window(original_updated_at):
+        if not is_within_inventory_correction_window(original_updated_at):
             raise ValidationError(
-                type(self).master_record_edit_window_expired_user_message(),
-                code="item_master_edit_window_expired",
+                type(self).item_correction_window_expired_user_message(),
+                code="item_correction_window_expired",
             )
 
     def save(self, *args: Any, **kwargs: Any) -> None:
@@ -220,7 +216,7 @@ class Operation(BaseModel):
         ]
 
     @classmethod
-    def is_within_operation_edit_window(
+    def is_within_operation_correction_window(
         cls,
         operation_created_at: datetime,
         *,
@@ -228,20 +224,37 @@ class Operation(BaseModel):
     ) -> bool:
         """
         Return whether an operation created at ``operation_created_at`` may still be
-        corrected under ``INVENTORY_OPERATION_EDIT_WINDOW_MINUTES``.
+        corrected under ``INVENTORY_CORRECTION_WINDOW_MINUTES``.
 
-        Centralising the timedelta comparison keeps ``Operation.clean()`` and the
-        admin permission/read-only hints in sync: anything the UI calls "open" must
-        still pass validation on ``save()``.
+        Delegates to ``common.edit_window.is_within_inventory_correction_window`` so
+        admin checks and ``Operation.clean()`` stay aligned with ``save()``.
         """
 
-        if reference_time is None:
-            reference_time = timezone.now()
-        edit_window_minutes = getattr(
-            settings, "INVENTORY_OPERATION_EDIT_WINDOW_MINUTES", 10
+        return is_within_inventory_correction_window(
+            operation_created_at, reference_time=reference_time
         )
-        edit_window = timedelta(minutes=edit_window_minutes)
-        return reference_time - operation_created_at <= edit_window
+
+    @classmethod
+    def latest_operation_id_for_item(cls, item_id: int) -> int | None:
+        """Return the PK of the latest ``Operation`` for ``item_id``, if any."""
+
+        return (
+            cls.objects.filter(item_id=item_id)
+            .order_by("-created_at", "-id")
+            .values_list("id", flat=True)
+            .first()
+        )
+
+    @classmethod
+    def only_latest_operation_may_be_edited_user_message(cls) -> str:
+        """
+        Return the user-visible message when a non-latest operation cannot be edited.
+
+        Shared by ``Operation.clean()`` and the admin lock panel so operators see the
+        same wording the model enforces on save (append-only head rule).
+        """
+
+        return str(_("Only the latest operation for this item can be edited"))
 
     @classmethod
     def correction_window_expired_user_message(cls) -> str:
@@ -249,19 +262,19 @@ class Operation(BaseModel):
         Return the user-visible message when the correction window has expired.
 
         Shared by ``Operation.clean()`` and the admin lock panel so operators see
-        the same wording the model enforces on save.
+        the same wording the model enforces on save (correction window expiry only).
         """
 
-        edit_window_minutes = getattr(
-            settings, "INVENTORY_OPERATION_EDIT_WINDOW_MINUTES", 10
-        )
+        minutes = inventory_correction_window_minutes()
         return str(
             ngettext(
-                "The correction window (%(minutes)d minute) has expired.",
-                "The correction window (%(minutes)d minutes) has expired.",
-                edit_window_minutes,
+                "The correction window (%(minutes)d minute) has expired. "
+                "To make changes, contact an administrator.",
+                "The correction window (%(minutes)d minutes) has expired. "
+                "To make changes, contact an administrator.",
+                minutes,
             )
-            % {"minutes": edit_window_minutes}
+            % {"minutes": minutes}
         )
 
     def clean(self) -> None:
@@ -271,6 +284,10 @@ class Operation(BaseModel):
         Only the latest operation for a given item may be edited, and only to
         correct its state fields. This keeps the history stable while allowing
         a human error to be fixed without rewriting older events.
+
+        The latest-row check runs before the correction window so non-head rows
+        surface the append-only reason (aligned with ``OperationAdmin``), not a
+        misleading window-expired message when ``created_at`` is historical.
         """
 
         super().clean()
@@ -292,30 +309,26 @@ class Operation(BaseModel):
         if self.item_id != original.item_id:
             raise ValidationError({"item": _("Operation item cannot be changed")})
 
-        # Correction edits are time-bounded; the cap is intentionally small by default
-        # and configurable per deployment (see INVENTORY_OPERATION_EDIT_WINDOW_MINUTES).
-        if not self.is_within_operation_edit_window(original.created_at):
-            raise ValidationError(
-                type(self).correction_window_expired_user_message(),
-                # Keep a stable error code for tests and possible UI handling.
-                code="correction_window_expired",
-            )
-
-        # Non-latest rows are always immutable; only the head of the append-only
-        # stream may be corrected (subject to the time window checked above).
-        latest_id = (
-            Operation.objects.filter(item_id=self.item_id)
-            .order_by("-created_at", "-id")
-            .values_list("id", flat=True)
-            .first()
-        )
+        # Append-only head rule first so the failure reason matches the admin UI and
+        # does not claim the correction window expired for historical non-head rows.
+        latest_id = type(self).latest_operation_id_for_item(self.item_id)
         if latest_id is None:
             raise AssertionError(
                 "Invariant violation: operation exists but no operations found for item"
             )
         if latest_id != self.pk:
             raise ValidationError(
-                _("Only the latest operation for this item can be edited")
+                type(self).only_latest_operation_may_be_edited_user_message(),
+                code="operation_not_latest_for_item",
+            )
+
+        # Correction edits are time-bounded; the cap is intentionally small by default
+        # and configurable per deployment (see INVENTORY_CORRECTION_WINDOW_MINUTES).
+        if not self.is_within_operation_correction_window(original.created_at):
+            raise ValidationError(
+                type(self).correction_window_expired_user_message(),
+                # Keep a stable error code for tests and possible UI handling.
+                code="correction_window_expired",
             )
 
     def save(self, *args: Any, **kwargs: Any) -> None:
