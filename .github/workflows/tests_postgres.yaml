@@ -55,10 +55,9 @@ jobs:
           UV_PYTHON: ${{ steps.python_version.outputs.version }}
 
       - name: Run Postgres-only tests
-        run: make test
+        run: make test-postgres
         env:
           UV_PYTHON: ${{ steps.python_version.outputs.version }}
-          PYTEST_POSTGRES_USE: "1"
           PYTEST_POSTGRES_ONLY: "1"
           DATABASE_HOST: 127.0.0.1
           DATABASE_PORT: "5432"
