@@ -30,6 +30,7 @@ def item_history(request: HttpRequest, *, item_id: int) -> HttpResponse:
             "operations": ctx.operations,
             "is_owner": ctx.is_owner,
             "pending_transfer": ctx.pending_transfer,
+            "accept_journal_head_operation_id": ctx.accept_journal_head_operation_id,
         },
     )
 
