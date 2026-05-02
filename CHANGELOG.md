@@ -1,3 +1,23 @@
+## [1.3.0](https://github.com/disafronov/sloths-inventory/compare/v1.2.0...v1.3.0) (2026-05-02)
+
+### Features
+
+* add functionality to filter pending transfer offers in UI ([9b7db80](https://github.com/disafronov/sloths-inventory/commit/9b7db80223a0db1822c4383f889b82c5f6922872))
+* add translations for password change and inventory item edits ([3be5a0c](https://github.com/disafronov/sloths-inventory/commit/3be5a0c660494566fa9d70b9101966941d4fe4cd))
+* add user password change functionality ([966c074](https://github.com/disafronov/sloths-inventory/commit/966c074ea207ca600812b1c67720d4696519636e))
+* auto-accept pending transfers for receivers without linked users ([c283452](https://github.com/disafronov/sloths-inventory/commit/c2834520fc25918004d3c9f5907d375e2e7b1f42))
+* enhance operation editing restrictions in admin interface ([ced73da](https://github.com/disafronov/sloths-inventory/commit/ced73dad6a6618718df8dd47af9d463977b2cece))
+* enhance password change view for non-staff users ([3f4bdf8](https://github.com/disafronov/sloths-inventory/commit/3f4bdf83467cd60fdfa8351d06f52de96d7e73b7))
+* enhance transfer creation flow for existing pending transfers ([f357b38](https://github.com/disafronov/sloths-inventory/commit/f357b389d3d247ff5dd4c29e55cadbe4c55fccad))
+* implement catalog correction window for time-bounded edits ([ee5c909](https://github.com/disafronov/sloths-inventory/commit/ee5c90944d737b9e4017d1421d1d0fc30b40d9a4))
+* implement time-bound editing restrictions for item master data ([4febab4](https://github.com/disafronov/sloths-inventory/commit/4febab43da444d1bfa598352940248cc9550e760))
+* implement update_offer method for PendingTransfer ([e032367](https://github.com/disafronov/sloths-inventory/commit/e0323674db18f8cc6b36d6d346afd38808c9057f))
+* refine item editing permissions based on operation history ([5d3ca8c](https://github.com/disafronov/sloths-inventory/commit/5d3ca8c3bd59acb73aea80ae05261c81c30ea1c1))
+
+### Bug Fixes
+
+* handle validation errors in transfer creation ([eeb4c24](https://github.com/disafronov/sloths-inventory/commit/eeb4c24497cb13443ce44cf798b0f3f965a1796c))
+
 ## [1.3.0-rc.2](https://github.com/disafronov/sloths-inventory/compare/v1.3.0-rc.1...v1.3.0-rc.2) (2026-05-02)
 
 ### Features
