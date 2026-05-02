@@ -176,3 +176,330 @@ def test_location_admin_omits_lock_fieldset_without_model_change_permission() ->
     lock_title = str(_("Editing restrictions"))
     fieldsets = admin_obj.get_fieldsets(request, loc)
     assert not any(fs[0] is not None and str(fs[0]) == lock_title for fs in fieldsets)
+
+
+@pytest.mark.django_db
+@override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+def test_location_clean_allows_update_inside_window_when_referenced() -> None:
+    """``clean()`` skips raising while ``updated_at`` stays inside the window."""
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    item = Item.objects.create(inventory_number="INV-CAT-WIN", device=device)
+    status = Status.objects.create(name="In stock")
+    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    loc = Location.objects.create(name="Loc-in-window")
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=responsible,
+        location=loc,
+    )
+    Location.objects.filter(pk=loc.pk).update(
+        updated_at=timezone.now() - timedelta(minutes=2),
+    )
+    loc.refresh_from_db()
+    loc.name = "Loc-in-window-renamed"
+    loc.full_clean()
+    loc.save()
+    loc.refresh_from_db()
+    assert loc.name == "Loc-in-window-renamed"
+
+
+@pytest.mark.django_db
+@override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+def test_location_clean_superuser_bypass_catalog_correction_window_flag() -> None:
+    """
+    ``_bypass_catalog_correction_window`` skips the stale-window check (admin repair).
+    """
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    item = Item.objects.create(inventory_number="INV-CAT-BYPASS", device=device)
+    status = Status.objects.create(name="In stock")
+    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    loc = Location.objects.create(name="Loc-bypass")
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=responsible,
+        location=loc,
+    )
+    Location.objects.filter(pk=loc.pk).update(
+        updated_at=timezone.now() - timedelta(minutes=11),
+    )
+    loc.refresh_from_db()
+    loc.name = "Loc-bypass-renamed"
+    setattr(loc, "_bypass_catalog_correction_window", True)
+    loc.full_clean()
+
+
+@pytest.mark.django_db
+@override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+def test_location_admin_superuser_keeps_change_when_used_and_stale() -> None:
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    item = Item.objects.create(inventory_number="INV-CAT-SU", device=device)
+    status = Status.objects.create(name="In stock")
+    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    loc = Location.objects.create(name="Loc-su")
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=responsible,
+        location=loc,
+    )
+    Location.objects.filter(pk=loc.pk).update(
+        updated_at=timezone.now() - timedelta(minutes=11),
+    )
+    loc.refresh_from_db()
+
+    site = AdminSite()
+    admin_obj = LocationAdmin(Location, site)
+    rf = RequestFactory()
+    request = rf.get("/")
+    request.user = get_user_model().objects.create_superuser(
+        username="admin-loc-su",
+        email="admin-loc-su@example.com",
+        password="password",
+    )
+
+    assert admin_obj.has_change_permission(request, obj=loc) is True
+    assert admin_obj.has_delete_permission(request, obj=loc) is True
+
+
+@pytest.mark.django_db
+@override_settings(LANGUAGE_CODE="en", INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+def test_location_admin_superuser_fieldsets_skip_lock_when_stale() -> None:
+    """Superusers do not get the catalog lock fieldset (no domain restriction copy)."""
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    item = Item.objects.create(inventory_number="INV-CAT-SU-FS", device=device)
+    status = Status.objects.create(name="In stock")
+    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    loc = Location.objects.create(name="Loc-su-fs")
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=responsible,
+        location=loc,
+    )
+    Location.objects.filter(pk=loc.pk).update(
+        updated_at=timezone.now() - timedelta(minutes=11),
+    )
+    loc.refresh_from_db()
+
+    site = AdminSite()
+    admin_obj = LocationAdmin(Location, site)
+    rf = RequestFactory()
+    request = rf.get("/")
+    request.user = get_user_model().objects.create_superuser(
+        username="admin-loc-su-fs",
+        email="admin-loc-su-fs@example.com",
+        password="password",
+    )
+    lock_title = str(_("Editing restrictions"))
+    fieldsets = admin_obj.get_fieldsets(request, loc)
+    assert not any(fs[0] is not None and str(fs[0]) == lock_title for fs in fieldsets)
+
+
+@pytest.mark.django_db
+def test_location_admin_get_fieldsets_add_form_uses_base_fieldsets() -> None:
+    """``obj`` is ``None`` on the add form: no catalog lock fieldset injection."""
+
+    site = AdminSite()
+    admin_obj = LocationAdmin(Location, site)
+    rf = RequestFactory()
+    request = rf.get("/")
+    request.user = get_user_model().objects.create_superuser(
+        username="admin-loc-add",
+        email="admin-loc-add@example.com",
+        password="password",
+    )
+    fieldsets = admin_obj.get_fieldsets(request, None)
+    assert isinstance(fieldsets, list)
+    assert all("catalog-correction-window-lock" not in str(fs) for fs in fieldsets)
+
+
+@pytest.mark.django_db
+def test_location_admin_get_form_sets_catalog_bypass_for_superuser() -> None:
+    """Superuser forms set ``_bypass_catalog_correction_window`` on the instance."""
+
+    loc = Location.objects.create(name="Loc-form-bypass")
+    site = AdminSite()
+    admin_obj = LocationAdmin(Location, site)
+    rf = RequestFactory()
+    request = rf.get("/")
+    request.user = get_user_model().objects.create_superuser(
+        username="admin-loc-form",
+        email="admin-loc-form@example.com",
+        password="password",
+    )
+    form_class = admin_obj.get_form(request, obj=loc, change=True)
+    form = form_class(instance=loc)
+    assert getattr(form.instance, "_bypass_catalog_correction_window", False) is True
+
+
+@pytest.mark.django_db
+@override_settings(LANGUAGE_CODE="en", INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+def test_location_admin_fieldsets_include_lock_for_staff_when_stale_and_used() -> None:
+    """Staff with model change permission see the catalog lock fieldset description."""
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    item = Item.objects.create(inventory_number="INV-CAT-LOCK-FS", device=device)
+    status = Status.objects.create(name="In stock")
+    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    loc = Location.objects.create(name="Loc-lock-fs")
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=responsible,
+        location=loc,
+    )
+    Location.objects.filter(pk=loc.pk).update(
+        updated_at=timezone.now() - timedelta(minutes=11),
+    )
+    loc.refresh_from_db()
+
+    site = AdminSite()
+    admin_obj = LocationAdmin(Location, site)
+    rf = RequestFactory()
+    request = rf.get("/")
+    request.user = _staff_with_location_perms("staff-loc-lock-fs")
+    lock_title = str(_("Editing restrictions"))
+    fieldsets = admin_obj.get_fieldsets(request, loc)
+    lock = next(
+        fs for fs in fieldsets if fs[0] is not None and str(fs[0]) == lock_title
+    )
+    assert "catalog-correction-window-lock" in str(lock[1]["description"])
+
+
+@pytest.mark.django_db
+def test_location_admin_staff_may_edit_unused_catalog_row() -> None:
+    """Unused catalog rows skip the in-use gate for staff edit permission."""
+
+    loc = Location.objects.create(name="Unused-catalog")
+    site = AdminSite()
+    admin_obj = LocationAdmin(Location, site)
+    rf = RequestFactory()
+    request = rf.get("/")
+    request.user = _staff_with_location_perms("staff-unused-catalog")
+    assert admin_obj.has_change_permission(request, obj=loc) is True
+
+
+@pytest.mark.django_db
+@override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+def test_location_admin_staff_no_lock_fieldset_when_unused_even_if_stale() -> None:
+    """Stale but unused catalog rows do not get a correction-window lock fieldset."""
+
+    loc = Location.objects.create(name="Stale-unused")
+    Location.objects.filter(pk=loc.pk).update(
+        updated_at=timezone.now() - timedelta(minutes=11),
+    )
+    loc.refresh_from_db()
+
+    site = AdminSite()
+    admin_obj = LocationAdmin(Location, site)
+    rf = RequestFactory()
+    request = rf.get("/")
+    request.user = _staff_with_location_perms("staff-stale-unused")
+    lock_title = str(_("Editing restrictions"))
+    fieldsets = admin_obj.get_fieldsets(request, loc)
+    assert not any(fs[0] is not None and str(fs[0]) == lock_title for fs in fieldsets)
+
+
+@pytest.mark.django_db
+@override_settings(LANGUAGE_CODE="en", INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+def test_location_admin_staff_no_lock_fieldset_when_in_use_inside_window() -> None:
+    """In-use rows inside the window do not get catalog lock copy."""
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    item = Item.objects.create(inventory_number="INV-CAT-IN-WIN", device=device)
+    status = Status.objects.create(name="In stock")
+    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    loc = Location.objects.create(name="Loc-in-use-win")
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=responsible,
+        location=loc,
+    )
+    Location.objects.filter(pk=loc.pk).update(
+        updated_at=timezone.now() - timedelta(minutes=2),
+    )
+    loc.refresh_from_db()
+
+    site = AdminSite()
+    admin_obj = LocationAdmin(Location, site)
+    rf = RequestFactory()
+    request = rf.get("/")
+    request.user = _staff_with_location_perms("staff-in-use-win")
+    lock_title = str(_("Editing restrictions"))
+    fieldsets = admin_obj.get_fieldsets(request, loc)
+    assert not any(fs[0] is not None and str(fs[0]) == lock_title for fs in fieldsets)
+
+
+@pytest.mark.django_db
+def test_location_admin_staff_get_form_does_not_set_catalog_bypass() -> None:
+    """Non-superusers do not get ``_bypass_catalog_correction_window`` on the form."""
+
+    loc = Location.objects.create(name="Loc-staff-form")
+    site = AdminSite()
+    admin_obj = LocationAdmin(Location, site)
+    rf = RequestFactory()
+    request = rf.get("/")
+    request.user = _staff_with_location_perms("staff-catalog-form")
+    form_class = admin_obj.get_form(request, obj=loc, change=True)
+    form = form_class(instance=loc)
+    assert getattr(form.instance, "_bypass_catalog_correction_window", False) is False

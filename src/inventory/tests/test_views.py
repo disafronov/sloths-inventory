@@ -1,4 +1,5 @@
 from datetime import timedelta
+from unittest.mock import patch
 
 import pytest
 from django.contrib.auth.models import AnonymousUser, User
@@ -48,6 +49,21 @@ def test_validation_error_user_message_message_dict_flattens_fields() -> None:
     assert "field_a: x" in out
     assert "field_b: y" in out
     assert "field_b: z" in out
+
+
+def test_validation_error_user_message_fallback_uses_str_when_no_messages() -> None:
+    """``str(exc)`` path when ``message_dict`` is empty and ``messages`` is empty."""
+
+    class NonDictValidationPayload:
+        """Minimal stand-in: helpers only use ``getattr`` (not ``isinstance``)."""
+
+        message_dict: dict = {}
+        messages: list = []
+
+        def __str__(self) -> str:
+            return "fallback-body"
+
+    assert validation_error_user_message(NonDictValidationPayload()) == "fallback-body"
 
 
 @pytest.mark.django_db
@@ -1866,3 +1882,268 @@ def test_item_history_shows_pending_transfer_notes_when_present() -> None:
     response = client.get(f"/items/{item.pk}/")
     assert response.status_code == 200
     assert note.encode("utf-8") in response.content
+
+
+@pytest.mark.django_db
+def test_create_transfer_post_returns_404_when_pending_sender_mismatches_owner() -> (
+    None
+):
+    """
+    ``POST`` rejects a pending offer whose ``from_responsible`` is not the current
+    owner (append-only journal can move ownership past a stale pending row).
+    """
+
+    user_a = User.objects.create_user(username="a-post-404", password="pw")
+    user_b = User.objects.create_user(username="b-post-404", password="pw")
+    user_c = User.objects.create_user(username="c-post-404", password="pw")
+    resp_a = Responsible.objects.create(last_name="A", first_name="Post", user=user_a)
+    resp_b = Responsible.objects.create(last_name="B", first_name="Post", user=user_b)
+    resp_c = Responsible.objects.create(last_name="C", first_name="Post", user=user_c)
+    status = Status.objects.create(name="In stock")
+    location = Location.objects.create(name="Moscow")
+    item = _make_item_with_operation(status, location, resp_a, "INV-XFER-POST-MISMATCH")
+    PendingTransfer.objects.create(
+        item=item,
+        from_responsible=resp_a,
+        to_responsible=resp_c,
+    )
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=resp_b,
+        location=location,
+    )
+
+    client = Client()
+    client.force_login(user_b)
+    response = client.post(
+        reverse("inventory:create-transfer", kwargs={"item_id": item.pk}),
+        {"to_responsible_id": str(resp_c.pk), "notes": "n"},
+    )
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_create_transfer_get_read_only_card_when_pending_sender_mismatches_owner() -> (
+    None
+):
+    """
+    Current owner sees the read-only transfer card when a stale pending row still
+    names a different ``from_responsible`` (same invariant as ``POST``).
+    """
+
+    user_a = User.objects.create_user(username="a-get-card", password="pw")
+    user_b = User.objects.create_user(username="b-get-card", password="pw")
+    user_c = User.objects.create_user(username="c-get-card", password="pw")
+    resp_a = Responsible.objects.create(last_name="A", first_name="Get", user=user_a)
+    resp_b = Responsible.objects.create(last_name="B", first_name="Get", user=user_b)
+    resp_c = Responsible.objects.create(last_name="C", first_name="Get", user=user_c)
+    status = Status.objects.create(name="In stock")
+    location = Location.objects.create(name="Moscow")
+    item = _make_item_with_operation(status, location, resp_a, "INV-XFER-GET-MISMATCH")
+    PendingTransfer.objects.create(
+        item=item,
+        from_responsible=resp_a,
+        to_responsible=resp_c,
+    )
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=resp_b,
+        location=location,
+    )
+
+    client = Client()
+    client.force_login(user_b)
+    response = client.get(
+        reverse("inventory:create-transfer", kwargs={"item_id": item.pk})
+    )
+    assert response.status_code == 200
+    assert b"item-card--outgoing-transfer" in response.content
+    assert b'name="to_responsible_id"' not in response.content
+
+
+@pytest.mark.django_db
+def test_create_transfer_post_raises_if_parse_returns_receiver_without_response() -> (
+    None
+):
+    """
+    ``parse_transfer_receiver_or_render_error`` must never return ``(None, None)``;
+    this test locks that contract for the pending-offer ``POST`` branch.
+    """
+
+    user_b = User.objects.create_user(username="b-parse-inv", password="pw")
+    user_c = User.objects.create_user(username="c-parse-inv", password="pw")
+    resp_b = Responsible.objects.create(last_name="B", first_name="Inv", user=user_b)
+    resp_c = Responsible.objects.create(last_name="C", first_name="Inv", user=user_c)
+    status = Status.objects.create(name="In stock")
+    location = Location.objects.create(name="Moscow")
+    item = _make_item_with_operation(status, location, resp_b, "INV-XFER-PARSE-INV")
+    PendingTransfer.objects.create(
+        item=item,
+        from_responsible=resp_b,
+        to_responsible=resp_c,
+    )
+
+    client = Client()
+    client.force_login(user_b)
+    with patch(
+        "inventory.views.transfer_views.parse_transfer_receiver_or_render_error",
+        return_value=(None, None),
+    ):
+        with pytest.raises(AssertionError):
+            client.post(
+                reverse("inventory:create-transfer", kwargs={"item_id": item.pk}),
+                {"to_responsible_id": str(resp_c.pk), "notes": "n"},
+            )
+
+
+@pytest.mark.django_db
+def test_create_transfer_post_new_offer_raises_if_parse_returns_broken_tuple() -> None:
+    """Same invariant as the pending-offer branch, but for the initial ``POST`` path."""
+
+    user = User.objects.create_user(username="parse-new", password="pw")
+    resp = Responsible.objects.create(last_name="Own", first_name="Er", user=user)
+    resp_other = Responsible.objects.create(last_name="Oth", first_name="Er")
+    status = Status.objects.create(name="In stock")
+    location = Location.objects.create(name="Moscow")
+    item = _make_item_with_operation(status, location, resp, "INV-XFER-PARSE-NEW")
+
+    client = Client()
+    client.force_login(user)
+    with patch(
+        "inventory.views.transfer_views.parse_transfer_receiver_or_render_error",
+        return_value=(None, None),
+    ):
+        with pytest.raises(AssertionError):
+            client.post(
+                reverse("inventory:create-transfer", kwargs={"item_id": item.pk}),
+                {"to_responsible_id": str(resp_other.pk), "notes": "n"},
+            )
+
+
+@pytest.mark.django_db
+def test_create_transfer_post_invalid_receiver_pending_edit() -> None:
+    """Parse errors short-circuit before ``update_offer`` (pending-offer ``POST``)."""
+
+    user_b = User.objects.create_user(username="b-inv-pend", password="pw")
+    user_c = User.objects.create_user(username="c-inv-pend", password="pw")
+    resp_b = Responsible.objects.create(last_name="B", first_name="Inv", user=user_b)
+    resp_c = Responsible.objects.create(last_name="C", first_name="Inv", user=user_c)
+    status = Status.objects.create(name="In stock")
+    location = Location.objects.create(name="Moscow")
+    item = _make_item_with_operation(status, location, resp_b, "INV-XFER-INV-PEND")
+    PendingTransfer.objects.create(
+        item=item,
+        from_responsible=resp_b,
+        to_responsible=resp_c,
+    )
+
+    client = Client()
+    client.force_login(user_b)
+    response = client.post(
+        reverse("inventory:create-transfer", kwargs={"item_id": item.pk}),
+        {"to_responsible_id": "not-an-int", "notes": "n"},
+    )
+    assert response.status_code == 400
+
+
+@pytest.mark.django_db
+def test_create_transfer_post_update_offer_validation_error() -> None:
+    user_owner = User.objects.create_user(username="own-upd-val", password="pw")
+    user_recv1 = User.objects.create_user(username="r1-upd-val", password="pw")
+    user_recv2 = User.objects.create_user(username="r2-upd-val", password="pw")
+    resp_owner = Responsible.objects.create(
+        last_name="Own", first_name="Upd", user=user_owner
+    )
+    resp_r1 = Responsible.objects.create(
+        last_name="R", first_name="One", user=user_recv1
+    )
+    resp_r2 = Responsible.objects.create(
+        last_name="R", first_name="Two", user=user_recv2
+    )
+    status = Status.objects.create(name="In stock")
+    location = Location.objects.create(name="Moscow")
+    item = _make_item_with_operation(status, location, resp_owner, "INV-XFER-UPD-VAL")
+    PendingTransfer.objects.create(
+        item=item,
+        from_responsible=resp_owner,
+        to_responsible=resp_r1,
+    )
+
+    client = Client()
+    client.force_login(user_owner)
+    with patch.object(
+        PendingTransfer,
+        "update_offer",
+        side_effect=ValidationError("domain failure"),
+    ):
+        response = client.post(
+            reverse("inventory:create-transfer", kwargs={"item_id": item.pk}),
+            {"to_responsible_id": str(resp_r2.pk), "notes": "n"},
+        )
+    assert response.status_code == 400
+
+
+@pytest.mark.django_db
+def test_cancel_transfer_returns_404_when_cancel_raises_validation_error() -> None:
+    user_sender = User.objects.create_user(username="snd-can-val", password="pw")
+    user_receiver = User.objects.create_user(username="rcv-can-val", password="pw")
+    resp_sender = Responsible.objects.create(
+        last_name="S", first_name="Can", user=user_sender
+    )
+    resp_receiver = Responsible.objects.create(
+        last_name="R", first_name="Can", user=user_receiver
+    )
+    status = Status.objects.create(name="In stock")
+    location = Location.objects.create(name="Moscow")
+    item = _make_item_with_operation(status, location, resp_sender, "INV-XFER-CAN-VAL")
+    transfer = PendingTransfer.objects.create(
+        item=item,
+        from_responsible=resp_sender,
+        to_responsible=resp_receiver,
+    )
+
+    client = Client()
+    client.force_login(user_sender)
+    with patch.object(
+        PendingTransfer,
+        "cancel",
+        side_effect=ValidationError("inactive"),
+    ):
+        response = client.post(
+            reverse("inventory:cancel-transfer", kwargs={"transfer_id": transfer.pk}),
+        )
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_accept_transfer_returns_404_when_accept_raises_validation_error() -> None:
+    user_sender = User.objects.create_user(username="snd-acc-val", password="pw")
+    user_receiver = User.objects.create_user(username="rcv-acc-val", password="pw")
+    resp_sender = Responsible.objects.create(
+        last_name="S", first_name="Acc", user=user_sender
+    )
+    resp_receiver = Responsible.objects.create(
+        last_name="R", first_name="Acc", user=user_receiver
+    )
+    status = Status.objects.create(name="In stock")
+    location = Location.objects.create(name="Moscow")
+    item = _make_item_with_operation(status, location, resp_sender, "INV-XFER-ACC-VAL")
+    transfer = PendingTransfer.objects.create(
+        item=item,
+        from_responsible=resp_sender,
+        to_responsible=resp_receiver,
+    )
+
+    client = Client()
+    client.force_login(user_receiver)
+    with patch.object(
+        PendingTransfer,
+        "accept",
+        side_effect=ValidationError("cannot accept"),
+    ):
+        response = client.post(
+            reverse("inventory:accept-transfer", kwargs={"transfer_id": transfer.pk}),
+        )
+    assert response.status_code == 404
