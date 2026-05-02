@@ -20,6 +20,27 @@ from .models import Item, Operation, PendingTransfer
 TItem = TypeVar("TItem", bound=Item)
 
 
+def _validation_error_user_message(exc: ValidationError) -> str:
+    """
+    Collapse a ValidationError into one human-readable string for HTML templates.
+
+    A bare ``str(exc)`` is fine for a single lazy translation but becomes awkward
+    when Django attaches multiple messages or a ``message_dict`` (field errors).
+    """
+
+    message_dict = getattr(exc, "message_dict", None)
+    if message_dict:
+        parts: list[str] = []
+        for field, msgs in message_dict.items():
+            for msg in msgs:
+                parts.append(f"{field}: {msg}")
+        return "; ".join(parts)
+    messages = getattr(exc, "messages", None)
+    if messages is not None and len(messages) > 0:
+        return "; ".join(str(m) for m in messages)
+    return str(exc)
+
+
 def _apply_item_search(qs: QuerySet[TItem], *, query: str) -> QuerySet[TItem]:
     """
     Apply a user-facing search query to an item queryset.
@@ -552,7 +573,7 @@ def change_location(request: HttpRequest, *, item_id: int) -> HttpResponse:
                     "item": item,
                     "locations": locations,
                     "current_location": current_op.location,
-                    "error": str(e),
+                    "error": _validation_error_user_message(e),
                     "notes": notes,
                 },
                 status=400,
@@ -634,7 +655,7 @@ def create_transfer(request: HttpRequest, *, item_id: int) -> HttpResponse:
                     sender=responsible,
                     pending_transfer=pending_transfer,
                     transfer_expiration_hours=transfer_expiration_hours,
-                    error=str(e),
+                    error=_validation_error_user_message(e),
                     notes=notes,
                     selected_to_responsible_id=to_responsible.pk,
                     status=400,
@@ -674,7 +695,7 @@ def create_transfer(request: HttpRequest, *, item_id: int) -> HttpResponse:
                 sender=responsible,
                 pending_transfer=None,
                 transfer_expiration_hours=transfer_expiration_hours,
-                error=str(e),
+                error=_validation_error_user_message(e),
                 notes=notes,
                 selected_to_responsible_id=to_responsible.pk,
                 status=400,
