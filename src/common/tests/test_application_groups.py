@@ -38,6 +38,21 @@ def test_application_groups_exist_after_migrations_without_manual_enforce() -> N
 
 
 @pytest.mark.django_db
+def test_staff_has_view_item_after_migrations_without_manual_enforce() -> None:
+    """
+    ``post_migrate`` must attach ``inventory`` permissions (late ``bulk_create``).
+
+    Regression: a single early ``enforce_application_groups()`` could omit
+    ``view_item`` on Staff before ``inventory`` permissions existed.
+    """
+
+    staff = Group.objects.get(name=STAFF_GROUP_NAME)
+    ct = ContentType.objects.get_for_model(Item)
+    view_perm = Permission.objects.get(content_type=ct, codename="view_item")
+    assert staff.permissions.filter(pk=view_perm.pk).exists()
+
+
+@pytest.mark.django_db
 def test_enforcer_creates_application_groups() -> None:
     enforce_application_groups()
     names = set(
