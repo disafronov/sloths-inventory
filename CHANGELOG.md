@@ -1,3 +1,18 @@
+## [1.3.0-rc.2](https://github.com/disafronov/sloths-inventory/compare/v1.3.0-rc.1...v1.3.0-rc.2) (2026-05-02)
+
+### Features
+
+* add functionality to filter pending transfer offers in UI ([d51897a](https://github.com/disafronov/sloths-inventory/commit/d51897a82b46766c2628136729f9ec616e6ff506))
+* auto-accept pending transfers for receivers without linked users ([b4a7b4e](https://github.com/disafronov/sloths-inventory/commit/b4a7b4e4d6c2621dba079b56656b06ab93b19b11))
+* enhance operation editing restrictions in admin interface ([0b299d8](https://github.com/disafronov/sloths-inventory/commit/0b299d8c9eea11ce0bab5bd00441ecafd6ecfa91))
+* implement catalog correction window for time-bounded edits ([1d46cea](https://github.com/disafronov/sloths-inventory/commit/1d46cea4a5deca8adb137c3fc4febcc3f00a4cdd))
+* implement time-bound editing restrictions for item master data ([a724da0](https://github.com/disafronov/sloths-inventory/commit/a724da076796006ec7a8b0663e9934dda5f02ecd))
+* refine item editing permissions based on operation history ([684a761](https://github.com/disafronov/sloths-inventory/commit/684a7619a2e7f29adcf50409763213ec19357695))
+
+### Bug Fixes
+
+* handle validation errors in transfer creation ([1d28df2](https://github.com/disafronov/sloths-inventory/commit/1d28df230f752bdd03c5222196d4dfb4d3fc54e0))
+
 ## [1.3.0-rc.1](https://github.com/disafronov/sloths-inventory/compare/v1.2.0...v1.3.0-rc.1) (2026-05-01)
 
 ### Features
