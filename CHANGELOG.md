@@ -1,3 +1,19 @@
+## [1.5.0-rc.2](https://github.com/disafronov/sloths-inventory/compare/v1.5.0-rc.1...v1.5.0-rc.2) (2026-05-02)
+
+### Features
+
+* **inventory:** enforce accountability for location changes in Item model ([85ebe60](https://github.com/disafronov/sloths-inventory/commit/85ebe608bca8bf47d22253b1328107c7a58caecc))
+* **inventory:** expose accept journal head id in item history context ([9352da5](https://github.com/disafronov/sloths-inventory/commit/9352da57f20be811b3733f11acf19acc8bdf2dc8))
+* **inventory:** implement ChangeLocationForm for location change validation ([b125605](https://github.com/disafronov/sloths-inventory/commit/b12560572b486bd19530dabb7dca53f36ca0f595))
+* **inventory:** implement flash messages for transfer actions ([6602ace](https://github.com/disafronov/sloths-inventory/commit/6602ace3d81f47189898e94d6b975cc4710a53c6))
+* **inventory:** include journal head in Accept form on item history ([597a450](https://github.com/disafronov/sloths-inventory/commit/597a450c5599d49cd948084f54b6bec73188a0b0))
+* **inventory:** validate accept against latest operation; refine inactive redirects ([db2e351](https://github.com/disafronov/sloths-inventory/commit/db2e351b0e380470aa84ef2fe1312b3ecbedd61c))
+
+### Bug Fixes
+
+* **inventory:** enforce sender validation in PendingTransfer acceptance ([3f8ceaa](https://github.com/disafronov/sloths-inventory/commit/3f8ceaa3dcc9a15ede0058f916ad9a2ebcd3f9d7))
+* **inventory:** update translation files and add new messages ([a97c9a6](https://github.com/disafronov/sloths-inventory/commit/a97c9a6b32f736ed24697bda858db873d450b615))
+
 ## [1.5.0-rc.1](https://github.com/disafronov/sloths-inventory/compare/v1.4.0...v1.5.0-rc.1) (2026-05-02)
 
 ### Features
