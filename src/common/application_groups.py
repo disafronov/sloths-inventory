@@ -2,7 +2,8 @@
 Application-defined auth groups (Staff, Editor) and permission enforcement.
 
 These groups are managed only via ``enforce_application_groups()`` and related
-signals — not through the Django admin for the groups themselves.
+signals (including ``post_migrate``) — not through the Django admin for the groups
+themselves.
 """
 
 from __future__ import annotations
@@ -16,7 +17,8 @@ from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.db import router, transaction
 from django.db.models import Model
-from django.db.models.signals import post_delete, post_save
+from django.db.models.signals import post_delete, post_migrate, post_save
+from django.db.utils import OperationalError, ProgrammingError
 
 # Fixed display names for application-managed groups (not translated: stable keys).
 STAFF_GROUP_NAME = "Staff"
@@ -215,6 +217,26 @@ def _on_permission_post_delete(
     enforce_application_groups()
 
 
+def _on_post_migrate(sender: AppConfig, **kwargs: object) -> None:
+    """
+    Ensure groups exist after ``migrate`` with a fully-ready app registry.
+
+    Django warns when the database is queried from ``AppConfig.ready()`` because
+    ``django.apps.apps.ready`` is still false while other apps' ``ready()`` hooks
+    may not have run. ``post_migrate`` runs later with the registry ready and
+    with schema aligned to models, so permission queries are safe here.
+    """
+
+    del kwargs
+    if sender.label != "common":
+        return
+    try:
+        enforce_application_groups()
+    except (OperationalError, ProgrammingError):
+        # Mirrors the old ``ready()`` guard: empty or partial DB during odd setups.
+        pass
+
+
 def connect_application_group_signals() -> None:
     """
     Register signal handlers for enforcement and Staff membership.
@@ -224,6 +246,11 @@ def connect_application_group_signals() -> None:
     """
 
     from django.contrib.auth import get_user_model
+
+    post_migrate.connect(
+        _on_post_migrate,
+        dispatch_uid="common.application_groups.post_migrate",
+    )
 
     user_model = get_user_model()
     post_save.connect(

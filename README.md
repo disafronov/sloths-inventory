@@ -47,7 +47,8 @@ Two Django auth groups are defined and kept in sync by code (`common.application
   by code.
 
 **When group permissions are refreshed** (`enforce_application_groups()`): on
-`common` app startup (`AppConfig.ready()`, if auth tables exist), and on
+`post_migrate` for the `common` app (once per `migrate` run, after the app registry
+is fully ready — avoids querying the DB from `AppConfig.ready()`), and on
 `post_save` / `post_delete` for `Group` or `Permission`. New default permissions
 created via `bulk_create` (as in `django.contrib.auth.management.create_permissions`)
 do not emit per-row signals; run migrations / restart the app, touch a `Group` or

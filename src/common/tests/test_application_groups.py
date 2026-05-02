@@ -25,6 +25,19 @@ User = get_user_model()
 
 
 @pytest.mark.django_db
+def test_application_groups_exist_after_migrations_without_manual_enforce() -> None:
+    """
+    ``post_migrate`` must seed Staff/Editor during test DB setup.
+
+    Regression guard: enforcement must not rely on ``AppConfig.ready()`` calling
+    ``enforce_application_groups()`` (that triggers Django's DB-during-init warning).
+    """
+
+    assert Group.objects.filter(name=STAFF_GROUP_NAME).exists()
+    assert Group.objects.filter(name=EDITOR_GROUP_NAME).exists()
+
+
+@pytest.mark.django_db
 def test_enforcer_creates_application_groups() -> None:
     enforce_application_groups()
     names = set(
