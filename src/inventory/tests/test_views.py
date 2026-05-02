@@ -4,6 +4,7 @@ import pytest
 from django.contrib.auth.models import AnonymousUser, User
 from django.core.exceptions import ValidationError
 from django.test import Client, RequestFactory, override_settings
+from django.urls import reverse
 from django.utils import timezone
 
 from catalogs.models import Location, Responsible, Status
@@ -1709,6 +1710,12 @@ def test_item_history_shows_pending_transfer_to_owner() -> None:
     assert (
         b"Outgoing transfer for" in response.content
         or "Исходящая передача".encode("utf-8") in response.content
+    )
+    assert (
+        reverse("inventory:create-transfer", kwargs={"item_id": item.pk}).encode(
+            "utf-8"
+        )
+        in response.content
     )
 
 

@@ -1,12 +1,10 @@
 from typing import Any, Protocol, cast
 
-from django.conf import settings
 from django.contrib import admin
 from django.db.models import Model, QuerySet
 from django.http import HttpRequest
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
-from django.utils.translation import ngettext
 
 from common.admin import BaseAdmin
 
@@ -290,17 +288,7 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
             return str(_("Only the latest operation for this item can be edited"))
         if Operation.is_within_operation_edit_window(obj.created_at):
             return None
-        edit_window_minutes = getattr(
-            settings, "INVENTORY_OPERATION_EDIT_WINDOW_MINUTES", 10
-        )
-        return str(
-            ngettext(
-                "The correction window (%(minutes)d minute) has expired.",
-                "The correction window (%(minutes)d minutes) has expired.",
-                edit_window_minutes,
-            )
-            % {"minutes": edit_window_minutes}
-        )
+        return Operation.correction_window_expired_user_message()
 
     def has_change_permission(
         self, request: HttpRequest, obj: Operation | None = None

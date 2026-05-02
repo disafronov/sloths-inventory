@@ -13,12 +13,12 @@
     {# Transfer state before move actions so "transfer" stays above "change location" when the offer link is hidden. #}
     {% if pending_transfer %}
         <div
-            class="item-card{% if pending_transfer.to_responsible.user_id == user.id %} item-card--incoming-transfer{% else %} item-card--outgoing-transfer{% endif %}"
+            class="item-card{% if pending_transfer.to_responsible_id == responsible.pk %} item-card--incoming-transfer{% else %} item-card--outgoing-transfer{% endif %}"
             style="--transfer-t: {{ pending_transfer.deadline_edge_gradient_t }};"
         >
             <div class="transfer-plaque">
                 <div class="transfer-plaque-tier transfer-plaque-tier--primary">
-                    {% if pending_transfer.to_responsible.user_id == user.id %}
+                    {% if pending_transfer.to_responsible_id == responsible.pk %}
                         <div class="transfer-card__party-label">{% trans "Incoming transfer from" %}</div>
                         <div class="transfer-card__party-value">{{ pending_transfer.from_responsible }}</div>
                     {% else %}
@@ -39,7 +39,7 @@
                 {% endif %}
             </div>
             <div class="form-actions form-actions--inline">
-                {% if pending_transfer.to_responsible.user_id == user.id %}
+                {% if pending_transfer.to_responsible_id == responsible.pk %}
                     <form method="post" action="{% url 'inventory:accept-transfer' transfer_id=pending_transfer.id %}">
                         {% csrf_token %}
                         <button type="submit" class="button button--sm">{% trans "Accept" %}</button>
@@ -51,7 +51,7 @@
                         </button>
                     </form>
                 {% endif %}
-                {% if pending_transfer.from_responsible.user_id == user.id %}
+                {% if pending_transfer.from_responsible_id == responsible.pk %}
                     <a
                         href="{% url 'inventory:create-transfer' item_id=item.id %}"
                         class="button button--secondary button--sm"
