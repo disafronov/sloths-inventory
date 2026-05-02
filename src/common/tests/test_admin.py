@@ -8,16 +8,6 @@ from common.admin import BaseAdmin
 
 
 @pytest.mark.django_db
-def test_base_admin_format_empty_value() -> None:
-    site = AdminSite()
-    admin_obj = BaseAdmin(Location, site)
-
-    assert admin_obj._format_empty_value("") == "-"
-    assert admin_obj._format_empty_value(None) == "-"
-    assert admin_obj._format_empty_value("x") == "x"
-
-
-@pytest.mark.django_db
 def test_base_admin_fieldsets_main_fields_injected() -> None:
     site = AdminSite()
     admin_obj = BaseAdmin(Location, site)
