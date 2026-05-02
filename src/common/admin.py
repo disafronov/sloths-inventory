@@ -13,6 +13,23 @@ from common.application_groups import is_application_group
 from common.edit_window import is_within_inventory_correction_window
 
 
+def auth_has_change_permission(
+    model_admin: admin.ModelAdmin,
+    request: HttpRequest,
+    obj: Model | None = None,
+) -> bool:
+    """
+    Whether Django auth grants ``change`` for this model admin (ignores domain rules).
+
+    Inventory and catalog ModelAdmin subclasses tighten ``has_change_permission`` with
+    correction-window logic. Restriction banners should appear only when the user
+    already has model-level change permission but is blocked by those rules — not
+    when the form is read-only because ``change_*`` is missing entirely.
+    """
+
+    return admin.ModelAdmin.has_change_permission(model_admin, request, obj)
+
+
 class CatalogReferenceRow(Protocol):
     """
     Structural type for models using ``CatalogCorrectionWindowMixin``.
@@ -142,6 +159,9 @@ class CatalogReferenceAdminMixin(admin.ModelAdmin):
             request, cast(CatalogReferenceRow, obj)
         )
         if message is None:
+            return fieldsets
+        # View-only: no domain-level lock banner (missing ``change_*``, not the window).
+        if not auth_has_change_permission(self, request, obj):
             return fieldsets
         desc = format_html('<p class="catalog-correction-window-lock">{}</p>', message)
         lock_panel = (

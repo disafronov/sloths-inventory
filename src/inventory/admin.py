@@ -7,7 +7,7 @@ from django.http import HttpRequest
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
-from common.admin import BaseAdmin
+from common.admin import BaseAdmin, auth_has_change_permission
 from common.edit_window import is_within_inventory_correction_window
 
 from .models import Item, Operation, PendingTransfer
@@ -216,6 +216,9 @@ class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
         message = self._item_correction_window_lock_user_message(request, item)
         if message is None:
             return fieldsets
+        # Skip lock copy for view-only users (denial is auth-level, not domain-level).
+        if not auth_has_change_permission(self, request, item):
+            return fieldsets
         desc = format_html('<p class="item-correction-window-lock">{}</p>', message)
         lock_panel = (
             _("Editing restrictions"),
@@ -291,6 +294,9 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
             obj=op, latest_operation_pk=None
         )
         if message is None:
+            return fieldsets
+        # Skip lock copy for view-only users (denial is auth-level, not domain-level).
+        if not auth_has_change_permission(self, request, op):
             return fieldsets
         desc = format_html(
             '<p class="operation-correction-window-lock">{}</p>', message
