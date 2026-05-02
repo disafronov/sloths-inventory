@@ -1069,3 +1069,357 @@ def test_pending_transfer_update_offer_auto_accepts_offline_to_offline_receiver(
     latest = item.operation_set.order_by("-created_at", "-id").first()
     assert latest is not None
     assert latest.responsible_id == offline_b.pk
+
+
+@pytest.mark.django_db
+def test_item_has_assigned_responsible_false_while_adding() -> None:
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    item = Item(inventory_number="INV-ADD-STATE", device=device)
+    assert item.has_assigned_responsible() is False
+
+
+@pytest.mark.django_db
+@override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+def test_item_clean_allows_update_inside_window_when_assigned() -> None:
+    """``clean()`` allows updates while ``updated_at`` stays inside the window."""
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    item = Item.objects.create(inventory_number="INV-ITEM-WIN", device=device)
+    status = Status.objects.create(name="In stock")
+    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    location = Location.objects.create(name="Moscow")
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=responsible,
+        location=location,
+    )
+    Item.objects.filter(pk=item.pk).update(
+        updated_at=timezone.now() - timedelta(minutes=2),
+    )
+    item.refresh_from_db()
+    item.notes = "still inside window"
+    item.full_clean()
+    item.save()
+    item.refresh_from_db()
+    assert "still inside window" in item.notes
+
+
+@pytest.mark.django_db
+def test_item_change_location_requires_operations() -> None:
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    item = Item.objects.create(inventory_number="INV-LOC-NOOP", device=device)
+    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    location = Location.objects.create(name="Moscow")
+
+    with pytest.raises(ValidationError):
+        item.change_location(responsible=responsible, location=location)
+
+
+@pytest.mark.django_db
+def test_pending_transfer_accept_raises_without_journal_head() -> None:
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    item = Item.objects.create(inventory_number="INV-ACC-NOOP", device=device)
+    status = Status.objects.create(name="In stock")
+    sender = Responsible.objects.create(last_name="S", first_name="A")
+    receiver = Responsible.objects.create(last_name="R", first_name="B")
+    location = Location.objects.create(name="L")
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=sender,
+        location=location,
+    )
+    transfer = PendingTransfer.objects.create(
+        item=item,
+        from_responsible=sender,
+        to_responsible=receiver,
+        notes="",
+    )
+    Operation.objects.filter(item=item).delete()
+
+    with pytest.raises(ValidationError):
+        transfer.accept()
+
+
+@pytest.mark.django_db
+def test_pending_transfer_cancel_raises_when_inactive() -> None:
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    item = Item.objects.create(inventory_number="INV-CAN-INACT", device=device)
+    status = Status.objects.create(name="In stock")
+    sender = Responsible.objects.create(last_name="S", first_name="A")
+    receiver = Responsible.objects.create(last_name="R", first_name="B")
+    location = Location.objects.create(name="L")
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=sender,
+        location=location,
+    )
+    transfer = PendingTransfer.objects.create(
+        item=item,
+        from_responsible=sender,
+        to_responsible=receiver,
+        notes="",
+    )
+    transfer.cancel()
+
+    with pytest.raises(ValidationError):
+        transfer.cancel()
+
+
+@pytest.mark.django_db
+def test_pending_transfer_update_offer_rejects_negative_expiration() -> None:
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    status = Status.objects.create(name="In stock")
+    sender = Responsible.objects.create(last_name="S", first_name="A")
+    receiver = Responsible.objects.create(last_name="R", first_name="B")
+    location = Location.objects.create(name="L")
+    item = Item.objects.create(inventory_number="INV-UPD-NEG", device=device)
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=sender,
+        location=location,
+    )
+    transfer = PendingTransfer.objects.create(
+        item=item,
+        from_responsible=sender,
+        to_responsible=receiver,
+        notes="",
+    )
+    with pytest.raises(ValidationError):
+        transfer.update_offer(
+            actor=sender,
+            to_responsible=receiver,
+            notes="x",
+            auto_expiration_hours=-1,
+        )
+
+
+@pytest.mark.django_db
+def test_pending_transfer_update_offer_rejects_wrong_actor() -> None:
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    status = Status.objects.create(name="In stock")
+    sender = Responsible.objects.create(last_name="S", first_name="A")
+    receiver = Responsible.objects.create(last_name="R", first_name="B")
+    other = Responsible.objects.create(last_name="O", first_name="T")
+    location = Location.objects.create(name="L")
+    item = Item.objects.create(inventory_number="INV-UPD-ACT", device=device)
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=sender,
+        location=location,
+    )
+    transfer = PendingTransfer.objects.create(
+        item=item,
+        from_responsible=sender,
+        to_responsible=receiver,
+        notes="",
+    )
+    with pytest.raises(ValidationError):
+        transfer.update_offer(
+            actor=other,
+            to_responsible=receiver,
+            notes="x",
+            auto_expiration_hours=0,
+        )
+
+
+@pytest.mark.django_db
+def test_pending_transfer_update_offer_receiver_change_zero_hours_clears_expiry() -> (
+    None
+):
+    """
+    When the receiver changes and ``auto_expiration_hours`` is ``0``, ``expires_at``
+    is cleared (``else`` branch under ``receiver_changed``).
+    """
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    status = Status.objects.create(name="In stock")
+    sender = Responsible.objects.create(last_name="S", first_name="A")
+    user_b = User.objects.create_user(username="ub", password="pw")
+    user_c = User.objects.create_user(username="uc", password="pw")
+    recv_b = Responsible.objects.create(last_name="B", first_name="One", user=user_b)
+    recv_c = Responsible.objects.create(last_name="C", first_name="Two", user=user_c)
+    location = Location.objects.create(name="L")
+    item = Item.objects.create(inventory_number="INV-UPD-ZERO-EXP", device=device)
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=sender,
+        location=location,
+    )
+    transfer = PendingTransfer.objects.create(
+        item=item,
+        from_responsible=sender,
+        to_responsible=recv_b,
+        expires_at=timezone.now() + timedelta(hours=1),
+        notes="",
+    )
+    transfer.update_offer(
+        actor=sender,
+        to_responsible=recv_c,
+        notes="switch receiver",
+        auto_expiration_hours=0,
+    )
+    transfer.refresh_from_db()
+    assert transfer.expires_at is None
+    assert transfer.to_responsible_id == recv_c.pk
+
+
+@pytest.mark.django_db
+def test_pending_transfer_update_offer_rejects_when_inactive() -> None:
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    status = Status.objects.create(name="In stock")
+    sender = Responsible.objects.create(last_name="S", first_name="A")
+    receiver = Responsible.objects.create(last_name="R", first_name="B")
+    location = Location.objects.create(name="L")
+    item = Item.objects.create(inventory_number="INV-UPD-INACT", device=device)
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=sender,
+        location=location,
+    )
+    transfer = PendingTransfer.objects.create(
+        item=item,
+        from_responsible=sender,
+        to_responsible=receiver,
+        notes="",
+    )
+    transfer.cancel()
+
+    with pytest.raises(ValidationError):
+        transfer.update_offer(
+            actor=sender,
+            to_responsible=receiver,
+            notes="too late",
+            auto_expiration_hours=0,
+        )
+
+
+@pytest.mark.django_db
+def test_pending_transfer_update_offer_same_receiver_skips_expiry_block() -> None:
+    """Unchanged receiver leaves ``expires_at`` untouched (skip inner ``if`` body)."""
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    status = Status.objects.create(name="In stock")
+    sender = Responsible.objects.create(last_name="S", first_name="A")
+    receiver = Responsible.objects.create(last_name="R", first_name="B")
+    location = Location.objects.create(name="L")
+    item = Item.objects.create(inventory_number="INV-UPD-SKIP-EXP", device=device)
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=sender,
+        location=location,
+    )
+    exp = timezone.now() + timedelta(hours=5)
+    transfer = PendingTransfer.objects.create(
+        item=item,
+        from_responsible=sender,
+        to_responsible=receiver,
+        expires_at=exp,
+        notes="seed",
+    )
+    transfer.update_offer(
+        actor=sender,
+        to_responsible=receiver,
+        notes="same path",
+        auto_expiration_hours=99,
+    )
+    transfer.refresh_from_db()
+    assert transfer.expires_at == exp
+    assert transfer.notes == "same path"

@@ -242,7 +242,8 @@ def resolve_item_history_context(
         if pending_for_me is not None and pending_for_me.is_active:
             try:
                 item = Item.objects.with_device_relations().get(pk=item_id)
-            except Item.DoesNotExist:
+            except Item.DoesNotExist:  # pragma: no cover
+                # Defensive: ``item_id`` may race with concurrent deletions.
                 return None
             operations = (
                 Operation.objects.filter(item=item)
@@ -262,7 +263,8 @@ def resolve_item_history_context(
 
             try:
                 item = Item.objects.with_device_relations().get(pk=item_id)
-            except Item.DoesNotExist:
+            except Item.DoesNotExist:  # pragma: no cover
+                # Defensive: same race window as the pending-receiver branch.
                 return None
 
             handoff = (
