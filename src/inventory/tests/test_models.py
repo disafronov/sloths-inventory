@@ -1179,6 +1179,52 @@ def test_pending_transfer_accept_raises_without_journal_head() -> None:
 
 
 @pytest.mark.django_db
+def test_pending_transfer_accept_raises_when_journal_head_not_sender() -> None:
+    """
+    ``accept()`` must reject offers once the append-only head no longer names
+    ``from_responsible`` (stale row after the journal moved past the sender).
+    """
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    item = Item.objects.create(inventory_number="INV-ACC-STALE-OWNER", device=device)
+    status = Status.objects.create(name="In stock")
+    sender = Responsible.objects.create(last_name="S", first_name="A")
+    other = Responsible.objects.create(last_name="O", first_name="B")
+    receiver = Responsible.objects.create(last_name="R", first_name="C")
+    location = Location.objects.create(name="L")
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=sender,
+        location=location,
+    )
+    transfer = PendingTransfer.objects.create(
+        item=item,
+        from_responsible=sender,
+        to_responsible=receiver,
+        notes="",
+    )
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=other,
+        location=location,
+    )
+
+    with pytest.raises(ValidationError):
+        transfer.accept()
+
+
+@pytest.mark.django_db
 def test_pending_transfer_cancel_raises_when_inactive() -> None:
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
