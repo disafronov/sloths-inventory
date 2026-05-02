@@ -10,6 +10,7 @@
     <p>{% trans "Your account is not linked to a responsible person profile yet." %}</p>
 {% endif %}
 
+{% if responsible %}
 <form method="get" class="search-form" role="search" aria-label="{% trans 'Search items' %}">
     <label class="sr-only" for="q">{% trans "Search" %}</label>
     <input
@@ -28,7 +29,6 @@
     {% endif %}
 </form>
 
-{% if responsible %}
     <nav class="my-items-kind-tabs" aria-label="{% trans 'My items list kind' %}">
         <a
             href="{% url 'inventory:my-items' %}{% if query %}?q={{ query|urlencode }}{% endif %}"
