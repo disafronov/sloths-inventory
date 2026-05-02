@@ -526,6 +526,15 @@ def test_item_admin_denies_change_after_master_edit_window() -> None:
     )
 
     item = Item.objects.create(inventory_number="INV-ITEM-WINDOW", device=device)
+    status = Status.objects.create(name="In stock")
+    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    location = Location.objects.create(name="Moscow")
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=responsible,
+        location=location,
+    )
     Item.objects.filter(pk=item.pk).update(
         updated_at=timezone.now() - timedelta(minutes=11),
     )
@@ -539,6 +548,38 @@ def test_item_admin_denies_change_after_master_edit_window() -> None:
 
     assert admin_obj.has_change_permission(request, obj=item) is False
     assert admin_obj.has_delete_permission(request, obj=item) is False
+
+
+@pytest.mark.django_db
+@override_settings(INVENTORY_OPERATION_EDIT_WINDOW_MINUTES=10)
+def test_item_admin_staff_allows_change_after_window_without_responsible() -> None:
+    """No operations yet: staff keep edit/delete past ``updated_at`` window."""
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+
+    item = Item.objects.create(inventory_number="INV-ITEM-NO-RESP", device=device)
+    Item.objects.filter(pk=item.pk).update(
+        updated_at=timezone.now() - timedelta(minutes=11),
+    )
+    item.refresh_from_db()
+
+    site = AdminSite()
+    admin_obj = ItemAdmin(Item, site)
+    rf = RequestFactory()
+    request = rf.get("/")
+    request.user = _staff_user_with_item_admin_permissions("staff-item-noresp")
+
+    assert admin_obj.has_change_permission(request, obj=item) is True
+    assert admin_obj.has_delete_permission(request, obj=item) is True
 
 
 @pytest.mark.django_db
@@ -594,6 +635,15 @@ def test_item_lock_fieldset_description_when_master_edit_window_expired() -> Non
     )
 
     item = Item.objects.create(inventory_number="INV-ITEM-FS", device=device)
+    status = Status.objects.create(name="In stock")
+    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    location = Location.objects.create(name="Moscow")
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=responsible,
+        location=location,
+    )
     Item.objects.filter(pk=item.pk).update(
         updated_at=timezone.now() - timedelta(minutes=11),
     )
@@ -625,6 +675,15 @@ def test_item_change_page_renders_master_edit_lock_after_window() -> None:
     )
 
     item = Item.objects.create(inventory_number="INV-ITEM-HTML", device=device)
+    status = Status.objects.create(name="In stock")
+    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    location = Location.objects.create(name="Moscow")
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=responsible,
+        location=location,
+    )
     Item.objects.filter(pk=item.pk).update(
         updated_at=timezone.now() - timedelta(minutes=11),
     )
@@ -636,6 +695,36 @@ def test_item_change_page_renders_master_edit_lock_after_window() -> None:
     response = client.get(url)
     assert response.status_code == 200
     assert b"item master data edit window" in response.content.lower()
+
+
+@pytest.mark.django_db
+@override_settings(LANGUAGE_CODE="en", INVENTORY_OPERATION_EDIT_WINDOW_MINUTES=10)
+def test_item_change_page_no_lock_without_responsible_past_window() -> None:
+    """Item with no operations: no master-record lock text past ``updated_at``."""
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+
+    item = Item.objects.create(inventory_number="INV-ITEM-DRAFT-OLD", device=device)
+    Item.objects.filter(pk=item.pk).update(
+        updated_at=timezone.now() - timedelta(minutes=11),
+    )
+
+    staff_user = _staff_user_with_item_admin_permissions("staff-item-draft-old")
+    client = Client()
+    client.force_login(staff_user)
+    url = reverse("admin:inventory_item_change", args=[item.pk])
+    response = client.get(url)
+    assert response.status_code == 200
+    assert b"item master data edit window" not in response.content.lower()
 
 
 @pytest.mark.django_db
