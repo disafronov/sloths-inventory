@@ -13,10 +13,20 @@ from inventory.models import Item, Operation, PendingTransfer
 
 
 class _EmptyValueFormatter(Protocol):
+    """Admins that supply empty-value formatting for ``CurrentFieldMixin``."""
+
     def _format_empty_value(self, value: Any) -> str: ...
 
 
 class CurrentFieldMixin:
+    """
+    Read-only ``current_*`` display methods for ``Item`` in the admin.
+
+    Values are read from ``Item`` ``current_*`` descriptors; missing journal
+    state is formatted with the same hyphen placeholder as ``BaseAdmin`` readouts
+    (see ``BaseAdmin._format_empty_value``).
+    """
+
     def get_current_field(self, obj: Item, field_name: str) -> str:
         formatter = cast(_EmptyValueFormatter, self)
         return formatter._format_empty_value(getattr(obj, f"current_{field_name}"))

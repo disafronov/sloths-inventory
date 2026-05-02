@@ -88,9 +88,10 @@ def _staff_user_with_operation_admin_permissions(username: str) -> Any:
 @pytest.mark.django_db
 def test_item_admin_current_fields_are_dash_without_operations() -> None:
     """
-    Empty ``current_*`` values use the admin empty sentinel (via ``CurrentFieldMixin``
-    and ``BaseAdmin._format_empty_value``). Assert on ``ModelAdmin`` display methods,
-    not on Django admin HTML, so tests stay stable across template changes.
+    With no operations, ``ItemAdmin`` ``current_*`` display methods show the hyphen
+    placeholder documented on ``BaseAdmin._format_empty_value``. The test uses the
+    public ``ModelAdmin`` API only (not HTML), so Django admin template changes do
+    not break it.
     """
 
     category = Category.objects.create(name="Laptops")
