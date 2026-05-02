@@ -10,29 +10,24 @@ from django.utils import timezone
 from catalogs.models import Location, Responsible, Status
 from devices.attributes import Category, Manufacturer, Model, Type
 from devices.models import Device
-from inventory.models import Item, Operation, PendingTransfer
+from inventory.models import Item, Operation, PendingTransfer, parse_my_items_list_kind
+
+
+def test_parse_my_items_list_kind_defaults_and_unknown() -> None:
+    assert parse_my_items_list_kind("") == "all"
+    assert parse_my_items_list_kind("  OWNED  ") == "owned"
+    assert parse_my_items_list_kind("bogus") == "all"
 
 
 @pytest.mark.django_db
-def test_item_display_name_and_str() -> None:
-    category = Category.objects.create(name="Laptops")
-    device_type = Type.objects.create(name="Laptop")
-    manufacturer = Manufacturer.objects.create(name="ACME")
-    device_model = Model.objects.create(name="Model X")
-    device = Device.objects.create(
-        category=category,
-        type=device_type,
-        manufacturer=manufacturer,
-        model=device_model,
-    )
-
+def test_item_display_name_and_str(inventory_test_device) -> None:
     item = Item.objects.create(
         inventory_number="INV-001",
-        device=device,
+        device=inventory_test_device,
         serial_number="SN-001",
     )
 
-    assert item.get_display_name() == "INV-001 - " + str(device)
+    assert item.get_display_name() == "INV-001 - " + str(inventory_test_device)
     assert str(item) == item.get_display_name()
 
 
