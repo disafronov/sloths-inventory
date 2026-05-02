@@ -763,13 +763,12 @@ def test_pending_transfer_update_offer_auto_accepts_offline_to_offline_receiver(
     None
 ):
     """
-    Switching the receiver from one Responsible without a linked user to another
-    must still auto-accept.
+    Model contract: `update_offer` must auto-accept when the new receiver has no
+    linked user, even if the previous receiver also had none.
 
-    Normal `create_offer` never leaves a pending row for an offline receiver, so
-    we seed with `objects.create` (same pattern as expiry tests). This guards the
-    `to_responsible.user_id is None` branch when the receiver changes but remains
-    offline-only.
+    This state is not reachable through the logged-in UI (`create_offer` accepts
+    immediately for offline receivers). We seed a pending row with `objects.create`
+    to exercise the branch defensively (migrations, admin, or future code paths).
     """
 
     category = Category.objects.create(name="Laptops")
