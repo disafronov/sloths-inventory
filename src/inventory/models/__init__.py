@@ -1,8 +1,12 @@
+from __future__ import annotations
+
+from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Any, Optional, overload
+from typing import Any, Optional, cast, overload
 
 from django.core.exceptions import ValidationError
 from django.db import models, transaction
+from django.db.models import OuterRef, Q, QuerySet, Subquery
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import ngettext
@@ -15,6 +19,79 @@ from common.edit_window import (
 )
 from common.models import BaseModel
 from devices.models import Device
+
+
+class ItemQuerySet(models.QuerySet):
+    """
+    QuerySet helpers for inventory UI lists.
+
+    Centralizes ``select_related`` for device relations so list/detail templates
+    do not regress into N+1 queries.
+    """
+
+    def with_device_relations(self) -> "ItemQuerySet":
+        """Prefetch device and its catalog FKs for template rendering."""
+
+        return self.select_related(
+            "device",
+            "device__category",
+            "device__type",
+            "device__manufacturer",
+            "device__model",
+        )
+
+    def apply_search(self, query: str) -> "ItemQuerySet":
+        """
+        Apply a user-facing search string to inventory number, serial, and device
+        identifying fields.
+        """
+
+        text = query.strip()
+        if not text:
+            return self
+        return self.filter(
+            Q(inventory_number__icontains=text)
+            | Q(serial_number__icontains=text)
+            | Q(device__manufacturer__name__icontains=text)
+            | Q(device__model__name__icontains=text)
+        )
+
+    def owned_by(self, responsible: Responsible) -> "ItemQuerySet":
+        """
+        Return items whose latest operation names ``responsible``.
+
+        Reflects journal semantics: the latest ``Operation`` per item defines the
+        current responsible person.
+        """
+
+        latest_responsible_id = (
+            Operation.objects.filter(item_id=OuterRef("pk"))
+            .order_by("-created_at", "-id")
+            .values("responsible_id")[:1]
+        )
+        # cast: django-stubs widen ``annotate().filter()`` on a typed QuerySet to Any.
+        return cast(
+            ItemQuerySet,
+            self.with_device_relations()
+            .annotate(_latest_responsible_id=Subquery(latest_responsible_id))
+            .filter(_latest_responsible_id=responsible.pk),
+        )
+
+
+class ItemManager(models.Manager):
+    """Manager for :class:`Item` returning :class:`ItemQuerySet`."""
+
+    def get_queryset(self) -> ItemQuerySet:
+        return ItemQuerySet(self.model, using=self._db)
+
+    def with_device_relations(self) -> ItemQuerySet:
+        return self.get_queryset().with_device_relations()
+
+    def apply_search(self, query: str) -> ItemQuerySet:
+        return self.get_queryset().apply_search(query)
+
+    def owned_by(self, responsible: Responsible) -> ItemQuerySet:
+        return self.get_queryset().owned_by(responsible)
 
 
 class Item(BaseModel):
@@ -40,6 +117,8 @@ class Item(BaseModel):
     serial_number = models.CharField(
         max_length=50, blank=True, verbose_name=_("Serial number")
     )
+
+    objects = ItemManager()
 
     class Meta:
         verbose_name = _("Item")
@@ -373,6 +452,50 @@ class Operation(BaseModel):
         return str(self.responsible)
 
 
+class PendingTransferQuerySet(models.QuerySet):
+    """
+    QuerySet helpers for pending transfer offers shown in the inventory UI.
+
+    Matches ``PendingTransfer.is_active`` semantics without relying on per-row
+    property checks in Python for list views.
+    """
+
+    def offers_visible_in_ui(self) -> "PendingTransferQuerySet":
+        """Exclude finished or expired offers."""
+
+        now = timezone.now()
+        return self.filter(
+            accepted_at__isnull=True,
+            cancelled_at__isnull=True,
+        ).filter(Q(expires_at__isnull=True) | Q(expires_at__gt=now))
+
+    def active_offer_for_item(self, item: Item) -> PendingTransfer | None:
+        """Return the newest visible pending transfer for ``item``, if any."""
+
+        return (
+            self.offers_visible_in_ui()
+            .filter(item=item)
+            .select_related("from_responsible", "to_responsible")
+            .order_by("-created_at", "-id")
+            .first()
+        )
+
+
+class PendingTransferManager(models.Manager):
+    """
+    Manager for :class:`PendingTransfer` returning :class:`PendingTransferQuerySet`.
+    """
+
+    def get_queryset(self) -> PendingTransferQuerySet:
+        return PendingTransferQuerySet(self.model, using=self._db)
+
+    def offers_visible_in_ui(self) -> PendingTransferQuerySet:
+        return self.get_queryset().offers_visible_in_ui()
+
+    def active_offer_for_item(self, item: Item) -> PendingTransfer | None:
+        return self.get_queryset().active_offer_for_item(item)
+
+
 class PendingTransfer(BaseModel):
     """
     Pending item transfer that requires receiver confirmation.
@@ -412,6 +535,8 @@ class PendingTransfer(BaseModel):
         blank=True,
         verbose_name=_("Cancelled at"),
     )
+
+    objects = PendingTransferManager()
 
     class Meta:
         verbose_name = _("Pending transfer")
@@ -642,3 +767,303 @@ class PendingTransfer(BaseModel):
         ratio = min(1.0, max(0.0, ratio))
         text = f"{ratio:.6f}".rstrip("0").rstrip(".")
         return text if text else "0"
+
+
+MY_ITEMS_LIST_KINDS = frozenset({"all", "incoming", "owned", "outgoing"})
+
+
+def parse_my_items_list_kind(raw: str) -> str:
+    """
+    Parse the optional ``kind`` query parameter for the "My items" list.
+
+    Values: ``all`` (default), ``incoming``, ``owned``, ``outgoing``. Unknown
+    values fall back to ``all`` so bookmarked URLs stay safe.
+    """
+
+    value = (raw or "").strip().lower()
+    if value in MY_ITEMS_LIST_KINDS:
+        return value
+    return "all"
+
+
+def pending_transfer_expiration_hours() -> int:
+    """Return configured pending-transfer auto-expiration window in hours."""
+
+    from django.conf import settings
+
+    return max(
+        0,
+        int(getattr(settings, "INVENTORY_PENDING_TRANSFER_EXPIRATION_HOURS", 168)),
+    )
+
+
+@dataclass(frozen=True)
+class MyItemsPageData:
+    """Querysets and metadata for the "My items" inventory page."""
+
+    items: QuerySet[Item]
+    incoming_transfers: QuerySet[PendingTransfer]
+    outgoing_transfers: QuerySet[PendingTransfer]
+
+
+@dataclass(frozen=True)
+class PreviousItemsPageData:
+    """Querysets for the "Previously held" inventory page."""
+
+    items: QuerySet[Item]
+    incoming_transfers: QuerySet[PendingTransfer]
+    outgoing_transfers: QuerySet[PendingTransfer]
+
+
+@dataclass(frozen=True)
+class ItemHistoryContext:
+    """Authorized item history payload for a ``Responsible`` viewer."""
+
+    item: Item
+    operations: QuerySet[Operation]
+    is_owner: bool
+    pending_transfer: PendingTransfer | None
+
+
+def build_my_items_page_data(
+    responsible: Responsible, *, query: str, list_kind: str
+) -> MyItemsPageData:
+    """
+    Build querysets for the "My items" page (owned items and transfer cards).
+
+    Applies the same exclusion rules as the user-facing UI: items with an active
+    transfer offer involving this responsible are listed only as transfer cards,
+    not as duplicate owned rows.
+    """
+
+    items = Item.objects.apply_search(query).owned_by(responsible)
+
+    latest_location_name = (
+        Operation.objects.filter(item_id=OuterRef("item_id"))
+        .order_by("-created_at", "-id")
+        .values("location__name")[:1]
+    )
+    latest_status_name = (
+        Operation.objects.filter(item_id=OuterRef("item_id"))
+        .order_by("-created_at", "-id")
+        .values("status__name")[:1]
+    )
+
+    base_transfers_qs = (
+        PendingTransfer.objects.offers_visible_in_ui()
+        .select_related(
+            "item",
+            "item__device",
+            "item__device__category",
+            "item__device__type",
+            "item__device__manufacturer",
+            "item__device__model",
+            "from_responsible",
+            "to_responsible",
+        )
+        .annotate(
+            current_location=Subquery(latest_location_name),
+            current_status=Subquery(latest_status_name),
+        )
+    )
+    incoming_transfers = base_transfers_qs.filter(to_responsible=responsible).order_by(
+        "-created_at", "-id"
+    )
+    outgoing_transfers = base_transfers_qs.filter(
+        from_responsible=responsible
+    ).order_by("-created_at", "-id")
+
+    transfer_item_ids = (
+        PendingTransfer.objects.offers_visible_in_ui()
+        .filter(Q(to_responsible=responsible) | Q(from_responsible=responsible))
+        .values_list("item_id", flat=True)
+        .distinct()
+    )
+    items = items.exclude(id__in=transfer_item_ids)
+
+    if list_kind == "incoming":
+        items = items.none()
+        outgoing_transfers = outgoing_transfers.none()
+    elif list_kind == "owned":
+        incoming_transfers = incoming_transfers.none()
+        outgoing_transfers = outgoing_transfers.none()
+    elif list_kind == "outgoing":
+        items = items.none()
+        incoming_transfers = incoming_transfers.none()
+
+    return MyItemsPageData(
+        items=items,
+        incoming_transfers=incoming_transfers,
+        outgoing_transfers=outgoing_transfers,
+    )
+
+
+def build_previous_items_page_data(
+    responsible: Responsible, *, query: str
+) -> PreviousItemsPageData:
+    """
+    Build querysets for items this responsible once held but no longer owns.
+
+    Includes the same transfer-card annotations as :func:`build_my_items_page_data`
+    for items on this page.
+    """
+
+    last_on_me_created_at = (
+        Operation.objects.filter(item_id=OuterRef("pk"), responsible=responsible)
+        .order_by("-created_at", "-id")
+        .values("created_at")[:1]
+    )
+
+    current_items = Item.objects.owned_by(responsible).values("pk")
+    items = (
+        Item.objects.with_device_relations()
+        .filter(operation__responsible=responsible)
+        .exclude(pk__in=current_items)
+        .distinct()
+        .annotate(last_on_me_created_at=Subquery(last_on_me_created_at))
+        .order_by("-last_on_me_created_at", "inventory_number")
+    )
+    items = items.apply_search(query)
+
+    latest_location_name = (
+        Operation.objects.filter(item_id=OuterRef("item_id"))
+        .order_by("-created_at", "-id")
+        .values("location__name")[:1]
+    )
+    latest_status_name = (
+        Operation.objects.filter(item_id=OuterRef("item_id"))
+        .order_by("-created_at", "-id")
+        .values("status__name")[:1]
+    )
+    base_transfers_qs = (
+        PendingTransfer.objects.offers_visible_in_ui()
+        .filter(item_id__in=Subquery(items.values("pk")))
+        .filter(Q(to_responsible=responsible) | Q(from_responsible=responsible))
+        .select_related(
+            "item",
+            "item__device",
+            "item__device__category",
+            "item__device__type",
+            "item__device__manufacturer",
+            "item__device__model",
+            "from_responsible",
+            "to_responsible",
+        )
+    )
+    base_transfers_qs = base_transfers_qs.annotate(
+        current_location=Subquery(latest_location_name),
+        current_status=Subquery(latest_status_name),
+    )
+    incoming_transfers = base_transfers_qs.filter(to_responsible=responsible).order_by(
+        "-created_at", "-id"
+    )
+    outgoing_transfers = base_transfers_qs.filter(
+        from_responsible=responsible
+    ).order_by("-created_at", "-id")
+    transfer_item_ids = base_transfers_qs.values_list("item_id", flat=True).distinct()
+    items = items.exclude(id__in=transfer_item_ids)
+
+    return PreviousItemsPageData(
+        items=items,
+        incoming_transfers=incoming_transfers,
+        outgoing_transfers=outgoing_transfers,
+    )
+
+
+def resolve_item_history_context(
+    responsible: Responsible, item_id: int
+) -> ItemHistoryContext | None:
+    """
+    Resolve item, operations, and optional pending transfer for the history page.
+
+    Returns ``None`` when the viewer must not see this item (caller maps to
+    HTTP 404). Implements owner, incoming-offer receiver, and former-owner slice
+    rules in one place so views and other entry points stay aligned.
+    """
+
+    item_qs = Item.objects.owned_by(responsible)
+    item = item_qs.filter(pk=item_id).first()
+    is_owner = item is not None
+
+    if item is None:
+        pending_for_me = (
+            PendingTransfer.objects.offers_visible_in_ui()
+            .filter(
+                item_id=item_id,
+                to_responsible=responsible,
+            )
+            .order_by("-created_at", "-id")
+            .first()
+        )
+        if pending_for_me is not None and pending_for_me.is_active:
+            try:
+                item = Item.objects.with_device_relations().get(pk=item_id)
+            except Item.DoesNotExist:
+                return None
+            operations = (
+                Operation.objects.filter(item=item)
+                .select_related("status", "responsible", "location")
+                .order_by("-created_at", "-id")
+            )
+            if not operations.exists():
+                return None
+        else:
+            last_mine = (
+                Operation.objects.filter(item_id=item_id, responsible=responsible)
+                .order_by("-created_at", "-id")
+                .first()
+            )
+            if last_mine is None:
+                return None
+
+            try:
+                item = Item.objects.with_device_relations().get(pk=item_id)
+            except Item.DoesNotExist:
+                return None
+
+            handoff = (
+                Operation.objects.filter(item_id=item_id)
+                .filter(
+                    Q(created_at__gt=last_mine.created_at)
+                    | Q(created_at=last_mine.created_at, id__gt=last_mine.id)
+                )
+                .order_by("created_at", "id")
+                .first()
+            )
+            if handoff is None:
+                raise AssertionError(
+                    "Invariant violation: former-owner flow requires "
+                    "a handoff operation"
+                )
+            ops_filter = Q(created_at__lt=last_mine.created_at) | Q(
+                created_at=last_mine.created_at, id__lte=last_mine.id
+            )
+            ops_filter |= Q(pk=handoff.pk)
+
+            operations = (
+                Operation.objects.filter(item=item)
+                .filter(ops_filter)
+                .select_related("status", "responsible", "location")
+                .order_by("-created_at", "-id")
+            )
+    else:
+        operations = (
+            Operation.objects.filter(item=item)
+            .select_related("status", "responsible", "location")
+            .order_by("-created_at", "-id")
+        )
+
+    pending_transfer = PendingTransfer.objects.active_offer_for_item(item)
+    if pending_transfer is not None:
+        can_see_transfer = (
+            is_owner or pending_transfer.to_responsible_id == responsible.pk
+        )
+        if not can_see_transfer:
+            pending_transfer = None
+
+    return ItemHistoryContext(
+        item=item,
+        operations=operations,
+        is_owner=is_owner,
+        pending_transfer=pending_transfer,
+    )
