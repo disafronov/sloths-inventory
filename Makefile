@@ -38,7 +38,7 @@ COVERAGE_OPTS = --cov --cov-report=term-missing --cov-report=html
 
 DOCKER_IMAGE = sloths-inventory
 
-.PHONY: all clean dead-code docker docker-build docker-run format help install lint run test test-coverage
+.PHONY: all clean dead-code docker docker-build docker-run format help install lint run test test-coverage test-postgres
 
 help: ## Show this help message
 	@echo "Available commands:"
@@ -70,6 +70,10 @@ dead-code: ## Check for dead code using vulture
 test: ## Run tests
 	@echo "Running tests..."
 	$(PYTEST_CMD)
+
+test-postgres: ## Run tests against PostgreSQL (set DATABASE_*; see README)
+	@echo "Running tests with PYTEST_POSTGRES_USE=1..."
+	PYTEST_POSTGRES_USE=1 $(PYTEST_CMD)
 
 test-coverage: ## Run tests with HTML coverage report
 	@echo "Running tests with coverage..."
