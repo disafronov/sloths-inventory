@@ -73,8 +73,8 @@ def test_item_clean_valid_inventory_number() -> None:
 
 
 @pytest.mark.django_db
-@override_settings(INVENTORY_OPERATION_EDIT_WINDOW_MINUTES=10)
-def test_item_clean_rejects_update_after_master_edit_window() -> None:
+@override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+def test_item_clean_rejects_update_after_correction_window() -> None:
     """Reject updates past the window once an operation assigns a responsible party."""
 
     category = Category.objects.create(name="Laptops")
@@ -108,11 +108,11 @@ def test_item_clean_rejects_update_after_master_edit_window() -> None:
     with pytest.raises(ValidationError) as exc:
         item.full_clean()
 
-    assert exc.value.error_dict["__all__"][0].code == "item_master_edit_window_expired"
+    assert exc.value.error_dict["__all__"][0].code == "item_correction_window_expired"
 
 
 @pytest.mark.django_db
-@override_settings(INVENTORY_OPERATION_EDIT_WINDOW_MINUTES=10)
+@override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
 def test_item_clean_allows_update_after_window_without_responsible() -> None:
     """No operations yet: master data stays editable past ``updated_at`` window."""
 
@@ -170,8 +170,8 @@ def test_item_has_assigned_responsible_tracks_operations() -> None:
 
 
 @pytest.mark.django_db
-@override_settings(INVENTORY_OPERATION_EDIT_WINDOW_MINUTES=10)
-def test_item_save_allows_update_inside_master_edit_window() -> None:
+@override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+def test_item_save_allows_update_inside_correction_window() -> None:
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
     manufacturer = Manufacturer.objects.create(name="ACME")
@@ -191,9 +191,9 @@ def test_item_save_allows_update_inside_master_edit_window() -> None:
 
 
 @pytest.mark.django_db
-@override_settings(INVENTORY_OPERATION_EDIT_WINDOW_MINUTES=10)
-def test_item_save_after_master_edit_window_with_admin_bypass_flag() -> None:
-    """Trusted admin sets ``_bypass_item_master_edit_window`` so repairs can save."""
+@override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+def test_item_save_after_correction_window_with_admin_bypass_flag() -> None:
+    """Trusted admin sets ``_bypass_item_correction_window`` so repairs can save."""
 
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
@@ -222,7 +222,7 @@ def test_item_save_after_master_edit_window_with_admin_bypass_flag() -> None:
     )
     item.refresh_from_db()
     item.serial_number = "SN-FIX"
-    setattr(item, "_bypass_item_master_edit_window", True)
+    setattr(item, "_bypass_item_correction_window", True)
     item.save()
     item.refresh_from_db()
     assert item.serial_number == "SN-FIX"
@@ -331,8 +331,11 @@ def test_operation_only_latest_can_be_edited_and_item_cannot_change() -> None:
 
     # Old operations are append-only: cannot edit.
     op1.status = status2
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValidationError) as exc_info:
         op1.save()
+    assert (
+        exc_info.value.error_dict["__all__"][0].code == "operation_not_latest_for_item"
+    )
 
     # The latest operation may be corrected.
     op2.status = status2
@@ -343,6 +346,58 @@ def test_operation_only_latest_can_be_edited_and_item_cannot_change() -> None:
     op2.item = item2
     with pytest.raises(ValidationError):
         op2.save()
+
+
+@pytest.mark.django_db
+@override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+def test_operation_stale_non_latest_reports_append_only_not_window() -> None:
+    """
+    Non-head rows must fail with the append-only reason, not the correction window.
+
+    If ``clean()`` checked the time window before the latest-row rule, a historical
+    non-latest row would incorrectly surface ``correction_window_expired``.
+    """
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+
+    status1 = Status.objects.create(name="S1")
+    status2 = Status.objects.create(name="S2")
+    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    location = Location.objects.create(name="Moscow")
+
+    item = Item.objects.create(inventory_number="INV-NONHEAD-STALE", device=device)
+    op1 = Operation.objects.create(
+        item=item,
+        status=status1,
+        responsible=responsible,
+        location=location,
+    )
+    Operation.objects.create(
+        item=item,
+        status=status1,
+        responsible=responsible,
+        location=location,
+    )
+    Operation.objects.filter(pk=op1.pk).update(
+        created_at=timezone.now() - timedelta(days=1)
+    )
+    op1.refresh_from_db()
+
+    op1.status = status2
+    with pytest.raises(ValidationError) as exc_info:
+        op1.save()
+    assert (
+        exc_info.value.error_dict["__all__"][0].code == "operation_not_latest_for_item"
+    )
 
 
 @pytest.mark.django_db

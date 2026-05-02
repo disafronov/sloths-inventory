@@ -83,3 +83,30 @@ msgstr "Выйти"
 #: src/common/templates/login.html:6 src/common/templates/login.html:12
 msgid "Login"
 msgstr "Войти"
+
+#: src/common/admin.py:130
+msgid "Editing restrictions"
+msgstr "Ограничения на правку"
+
+#: src/common/edit_window.py:27
+#, python-format
+msgid ""
+"This catalog entry is in use. "
+"The correction window (%(minutes)d minute) has expired. "
+"To make changes, contact an administrator."
+msgid_plural ""
+"This catalog entry is in use. "
+"The correction window (%(minutes)d minutes) has expired. "
+"To make changes, contact an administrator."
+msgstr[0] ""
+"Позиция используется. Истекло окно исправления (%(minutes)d минута). "
+"Для изменения — обратитесь к администратору."
+msgstr[1] ""
+"Позиция используется. Истекло окно исправления (%(minutes)d минуты). "
+"Для изменения — обратитесь к администратору."
+msgstr[2] ""
+"Позиция используется. Истекло окно исправления (%(minutes)d минут). "
+"Для изменения — обратитесь к администратору."
+msgstr[3] ""
+"Позиция используется. Истекло окно исправления (%(minutes)d минут). "
+"Для изменения — обратитесь к администратору."

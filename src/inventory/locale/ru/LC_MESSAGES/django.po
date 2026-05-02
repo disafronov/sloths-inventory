@@ -98,27 +98,23 @@ msgstr "Назначения"
 msgid "Operation item cannot be changed"
 msgstr "Нельзя изменить вещь в назначении"
 
-#: src/inventory/models.py:193
+#: src/inventory/models.py:257
 #, python-format
-msgid "The correction window (%(minutes)d minute) has expired."
-msgid_plural "The correction window (%(minutes)d minutes) has expired."
+msgid ""
+"The correction window (%(minutes)d minute) has expired. "
+"To make changes, contact an administrator."
+msgid_plural ""
+"The correction window (%(minutes)d minutes) has expired. "
+"To make changes, contact an administrator."
 msgstr[0] ""
-"Истекло окно исправления (%(minutes)d минута)."
+"Истекло окно исправления (%(minutes)d минута). "
+"Для изменения — обратитесь к администратору."
 msgstr[1] ""
-"Истекло окно исправления (%(minutes)d минуты)."
+"Истекло окно исправления (%(minutes)d минуты). "
+"Для изменения — обратитесь к администратору."
 msgstr[2] ""
-"Истекло окно исправления (%(minutes)d минут)."
-
-#: src/inventory/models.py:53
-#, python-format
-msgid "The item master data edit window (%(minutes)d minute) has expired."
-msgid_plural "The item master data edit window (%(minutes)d minutes) has expired."
-msgstr[0] ""
-"Истекло окно редактирования карточки предмета (%(minutes)d минута)."
-msgstr[1] ""
-"Истекло окно редактирования карточки предмета (%(minutes)d минуты)."
-msgstr[2] ""
-"Истекло окно редактирования карточки предмета (%(minutes)d минут)."
+"Истекло окно исправления (%(minutes)d минут). "
+"Для изменения — обратитесь к администратору."
 
 #: src/inventory/models.py:164
 msgid "Only the latest operation for this item can be edited"
