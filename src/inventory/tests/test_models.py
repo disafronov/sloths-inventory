@@ -1144,6 +1144,37 @@ def test_item_change_location_requires_operations() -> None:
 
 
 @pytest.mark.django_db
+def test_item_change_location_rejects_non_current_responsible() -> None:
+    """Only the journal head's responsible person may append a location move."""
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    item = Item.objects.create(inventory_number="INV-LOC-WRONG-R", device=device)
+    owner = Responsible.objects.create(last_name="Owner", first_name="O")
+    other = Responsible.objects.create(last_name="Other", first_name="X")
+    status = Status.objects.create(name="In stock")
+    loc_a = Location.objects.create(name="A")
+    loc_b = Location.objects.create(name="B")
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=owner,
+        location=loc_a,
+    )
+
+    with pytest.raises(ValidationError):
+        item.change_location(responsible=other, location=loc_b, notes="")
+
+
+@pytest.mark.django_db
 def test_pending_transfer_accept_raises_without_journal_head() -> None:
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
