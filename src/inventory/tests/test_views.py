@@ -676,17 +676,19 @@ def _make_item_with_operation(
     location: "Location",
     responsible: "Responsible",
     inventory_number: str = "INV-TEST",
+    device: "Device | None" = None,
 ) -> "Item":
-    category = Category.objects.create(name=f"Cat-{inventory_number}")
-    device_type = Type.objects.create(name=f"Type-{inventory_number}")
-    manufacturer = Manufacturer.objects.create(name=f"Mfr-{inventory_number}")
-    device_model = Model.objects.create(name=f"Model-{inventory_number}")
-    device = Device.objects.create(
-        category=category,
-        type=device_type,
-        manufacturer=manufacturer,
-        model=device_model,
-    )
+    if device is None:
+        category, _ = Category.objects.get_or_create(name="TestCategory")
+        device_type, _ = Type.objects.get_or_create(name="TestType")
+        manufacturer, _ = Manufacturer.objects.get_or_create(name="TestManufacturer")
+        device_model, _ = Model.objects.get_or_create(name="TestModel")
+        device, _ = Device.objects.get_or_create(
+            category=category,
+            type=device_type,
+            manufacturer=manufacturer,
+            model=device_model,
+        )
     item = Item.objects.create(inventory_number=inventory_number, device=device)
     Operation.objects.create(
         item=item, status=status, responsible=responsible, location=location
