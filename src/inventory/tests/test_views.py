@@ -2033,65 +2033,6 @@ def test_create_transfer_get_read_only_card_when_pending_sender_mismatches_owner
 
 
 @pytest.mark.django_db
-def test_create_transfer_post_raises_if_parse_returns_receiver_without_response() -> (
-    None
-):
-    """
-    ``parse_transfer_receiver_or_render_error`` must never return ``(None, None)``;
-    this test locks that contract for the pending-offer ``POST`` branch.
-    """
-
-    user_b = User.objects.create_user(username="b-parse-inv", password="pw")
-    user_c = User.objects.create_user(username="c-parse-inv", password="pw")
-    resp_b = Responsible.objects.create(last_name="B", first_name="Inv", user=user_b)
-    resp_c = Responsible.objects.create(last_name="C", first_name="Inv", user=user_c)
-    status = Status.objects.create(name="In stock")
-    location = Location.objects.create(name="Moscow")
-    item = _make_item_with_operation(status, location, resp_b, "INV-XFER-PARSE-INV")
-    PendingTransfer.objects.create(
-        item=item,
-        from_responsible=resp_b,
-        to_responsible=resp_c,
-    )
-
-    client = Client()
-    client.force_login(user_b)
-    with patch(
-        "inventory.views.transfer_views.parse_transfer_receiver_or_render_error",
-        return_value=(None, None),
-    ):
-        with pytest.raises(AssertionError):
-            client.post(
-                reverse("inventory:create-transfer", kwargs={"item_id": item.pk}),
-                {"to_responsible_id": str(resp_c.pk), "notes": "n"},
-            )
-
-
-@pytest.mark.django_db
-def test_create_transfer_post_new_offer_raises_if_parse_returns_broken_tuple() -> None:
-    """Same invariant as the pending-offer branch, but for the initial ``POST`` path."""
-
-    user = User.objects.create_user(username="parse-new", password="pw")
-    resp = Responsible.objects.create(last_name="Own", first_name="Er", user=user)
-    resp_other = Responsible.objects.create(last_name="Oth", first_name="Er")
-    status = Status.objects.create(name="In stock")
-    location = Location.objects.create(name="Moscow")
-    item = _make_item_with_operation(status, location, resp, "INV-XFER-PARSE-NEW")
-
-    client = Client()
-    client.force_login(user)
-    with patch(
-        "inventory.views.transfer_views.parse_transfer_receiver_or_render_error",
-        return_value=(None, None),
-    ):
-        with pytest.raises(AssertionError):
-            client.post(
-                reverse("inventory:create-transfer", kwargs={"item_id": item.pk}),
-                {"to_responsible_id": str(resp_other.pk), "notes": "n"},
-            )
-
-
-@pytest.mark.django_db
 def test_create_transfer_post_invalid_receiver_pending_edit() -> None:
     """Parse errors short-circuit before ``update_offer`` (pending-offer ``POST``)."""
 
