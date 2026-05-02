@@ -199,6 +199,13 @@ Note: use `make` targets for checks (`make all`, `make test`, `make lint`). They
 set a tooling-only `SECRET_KEY` for `pytest` and `mypy` so local runs do not
 depend on developer environment variables.
 
+### Inventory list query plans (PostgreSQL)
+
+To print `EXPLAIN (ANALYZE, BUFFERS)` for the “My items” / “Previously held”
+querysets after changing ORM fragments or indexes, see
+[`docs/inventory-list-query-profiling.md`](docs/inventory-list-query-profiling.md)
+and run `python src/manage.py profile_inventory_list_queries`.
+
 ### PostgreSQL-only tests
 
 The default test configuration runs Django with in-memory SQLite (`sloths_inventory.settings_pytest`) for speed and to avoid requiring a running Postgres instance.
