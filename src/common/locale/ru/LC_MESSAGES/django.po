@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-30 23:19+0000\n"
+"POT-Creation-Date: 2026-05-02 13:18+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,9 +20,39 @@ msgstr ""
 "n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
 "(n%100>=11 && n%100<=14)? 2 : 3);\n"
 
-#: src/common/admin.py:16
+#: src/common/admin.py:56
 msgid "Additional information"
 msgstr "Дополнительная информация"
+
+#: src/common/admin.py:177
+#: src/common/tests/test_catalog_correction_window.py:176
+#: src/common/tests/test_catalog_correction_window.py:334
+#: src/common/tests/test_catalog_correction_window.py:411
+#: src/common/tests/test_catalog_correction_window.py:448
+#: src/common/tests/test_catalog_correction_window.py:488
+msgid "Editing restrictions"
+msgstr "Ограничения на правку"
+
+#: src/common/edit_window.py:27
+#, python-format
+msgid ""
+"This catalog entry is in use. The correction window (%(minutes)d minute) has "
+"expired. To make changes, contact an administrator."
+msgid_plural ""
+"This catalog entry is in use. The correction window (%(minutes)d minutes) "
+"has expired. To make changes, contact an administrator."
+msgstr[0] ""
+"Позиция используется. Истекло окно исправления (%(minutes)d минута). Для "
+"изменения — обратитесь к администратору."
+msgstr[1] ""
+"Позиция используется. Истекло окно исправления (%(minutes)d минуты). Для "
+"изменения — обратитесь к администратору."
+msgstr[2] ""
+"Позиция используется. Истекло окно исправления (%(minutes)d минут). Для "
+"изменения — обратитесь к администратору."
+msgstr[3] ""
+"Позиция используется. Истекло окно исправления (%(minutes)d минут). Для "
+"изменения — обратитесь к администратору."
 
 #: src/common/models.py:12
 msgid "Updated at"
@@ -42,6 +72,7 @@ msgstr "Название"
 
 #: src/common/templates/base.html:7 src/common/templates/base.html:15
 #: src/common/templates/login.html:4
+#: src/common/templates/password_change.html:4
 msgid "Sloths Inventory"
 msgstr "Инвентаризация ленивцев"
 
@@ -66,47 +97,21 @@ msgid "Previously my items"
 msgstr "Были у меня"
 
 #: src/common/templates/base.html:82
-msgid "Admin"
-msgstr "Админка"
-
-#: src/common/templates/base.html:85 src/common/templates/password_change.html:4
+#: src/common/templates/password_change.html:4
 #: src/common/templates/password_change.html:6
 #: src/common/templates/password_change.html:12
 msgid "Change password"
 msgstr "Сменить пароль"
 
-#: src/common/templates/base.html:85
+#: src/common/templates/base.html:87
+msgid "Admin"
+msgstr "Админка"
+
+#: src/common/templates/base.html:90
 msgid "Logout"
 msgstr "Выйти"
 
-#: src/common/templates/base.html:88 src/common/templates/login.html:4
+#: src/common/templates/base.html:93 src/common/templates/login.html:4
 #: src/common/templates/login.html:6 src/common/templates/login.html:12
 msgid "Login"
 msgstr "Войти"
-
-#: src/common/admin.py:130
-msgid "Editing restrictions"
-msgstr "Ограничения на правку"
-
-#: src/common/edit_window.py:27
-#, python-format
-msgid ""
-"This catalog entry is in use. "
-"The correction window (%(minutes)d minute) has expired. "
-"To make changes, contact an administrator."
-msgid_plural ""
-"This catalog entry is in use. "
-"The correction window (%(minutes)d minutes) has expired. "
-"To make changes, contact an administrator."
-msgstr[0] ""
-"Позиция используется. Истекло окно исправления (%(minutes)d минута). "
-"Для изменения — обратитесь к администратору."
-msgstr[1] ""
-"Позиция используется. Истекло окно исправления (%(minutes)d минуты). "
-"Для изменения — обратитесь к администратору."
-msgstr[2] ""
-"Позиция используется. Истекло окно исправления (%(minutes)d минут). "
-"Для изменения — обратитесь к администратору."
-msgstr[3] ""
-"Позиция используется. Истекло окно исправления (%(minutes)d минут). "
-"Для изменения — обратитесь к администратору."
