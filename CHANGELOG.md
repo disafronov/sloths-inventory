@@ -1,3 +1,20 @@
+## [1.5.0-rc.1](https://github.com/disafronov/sloths-inventory/compare/v1.4.0...v1.5.0-rc.1) (2026-05-02)
+
+### Features
+
+* **catalogs:** add Responsible helpers for inventory UI and transfers ([53c3875](https://github.com/disafronov/sloths-inventory/commit/53c3875e5845c31c56e63fee7b93bdac6a02dfdf))
+* **inventory:** add management command to profile list query plans ([f0129f3](https://github.com/disafronov/sloths-inventory/commit/f0129f334bd5302731cb65bc09cf433f2272c4e0))
+* **inventory:** add presentation helper for ValidationError strings ([61f7e8b](https://github.com/disafronov/sloths-inventory/commit/61f7e8b0c5d8b4a5340682179ca440e966fefc21))
+* **inventory:** add query managers and page data builders on models ([219e789](https://github.com/disafronov/sloths-inventory/commit/219e78935dcb12379a8dc2565183489d34533002))
+
+### Bug Fixes
+
+* **devices:** coerce is_catalog_reference_in_use to bool for mypy ([a00b50c](https://github.com/disafronov/sloths-inventory/commit/a00b50c620284c90fcb5dd68478c637022fb5cd6))
+
+### Performance Improvements
+
+* **inventory:** add Operation composite index for list queries ([04118c1](https://github.com/disafronov/sloths-inventory/commit/04118c1511a95106e453cdc65cf42c9bf06fc178))
+
 ## [1.4.0](https://github.com/disafronov/sloths-inventory/compare/v1.3.0...v1.4.0) (2026-05-02)
 
 ### Features
