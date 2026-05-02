@@ -8,6 +8,7 @@ from django.core.exceptions import ValidationError
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.utils.translation import gettext as _
 
 from catalogs.models import Responsible
 from inventory.models import Item, PendingTransfer, pending_transfer_expiration_hours
@@ -81,6 +82,7 @@ def create_transfer(request: HttpRequest, *, item_id: int) -> HttpResponse:
                     selected_to_responsible_id=to_responsible.pk,
                     status=400,
                 )
+            messages.success(request, _("Transfer offer updated."))
             return redirect("inventory:item-history", item_id=item.pk)
 
         notes = (request.POST.get("notes") or "").strip()
@@ -122,6 +124,7 @@ def create_transfer(request: HttpRequest, *, item_id: int) -> HttpResponse:
                 selected_to_responsible_id=to_responsible.pk,
                 status=400,
             )
+        messages.success(request, _("Transfer offer submitted."))
         return redirect("inventory:item-history", item_id=item.pk)
 
     if pending_transfer is not None:
@@ -182,8 +185,19 @@ def accept_transfer(request: HttpRequest, *, transfer_id: int) -> HttpResponse:
         ),
         pk=transfer_id,
     )
-    if not transfer.is_active:
+    if responsible.pk not in {
+        transfer.from_responsible_id,
+        transfer.to_responsible_id,
+    }:
         raise Http404
+    if not transfer.is_active:
+        messages.warning(
+            request,
+            _("This transfer offer is no longer active."),
+        )
+        # Incoming receivers may lose ``item-history`` access once an offer expires
+        # (it drops out of ``offers_visible_in_ui``), so land on a page they always see.
+        return redirect("inventory:my-items")
     if transfer.to_responsible_id != responsible.pk:
         raise Http404
 
@@ -193,6 +207,7 @@ def accept_transfer(request: HttpRequest, *, transfer_id: int) -> HttpResponse:
         messages.error(request, validation_error_user_message(exc))
         return redirect("inventory:item-history", item_id=transfer.item_id)
 
+    messages.success(request, _("Transfer accepted."))
     return redirect("inventory:item-history", item_id=transfer.item_id)
 
 
@@ -213,17 +228,22 @@ def cancel_transfer(request: HttpRequest, *, transfer_id: int) -> HttpResponse:
         ),
         pk=transfer_id,
     )
-    if not transfer.is_active:
-        raise Http404
     if responsible.pk not in {
         transfer.from_responsible_id,
         transfer.to_responsible_id,
     }:
         raise Http404
+    if not transfer.is_active:
+        messages.warning(
+            request,
+            _("This transfer offer is no longer active."),
+        )
+        return redirect("inventory:my-items")
 
     try:
         transfer.cancel()
     except ValidationError as exc:
         messages.error(request, validation_error_user_message(exc))
         return redirect("inventory:item-history", item_id=transfer.item_id)
+    messages.success(request, _("Transfer offer closed."))
     return redirect("inventory:item-history", item_id=transfer.item_id)
