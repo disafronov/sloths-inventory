@@ -1,4 +1,10 @@
-"""Tests for ``common.application_groups``."""
+"""
+Tests for ``common.application_groups`` that assert ``inventory`` permissions.
+
+These tests live under ``inventory.tests`` because they depend on the
+``inventory`` app models and ContentTypes; they are not generic ``common``-only
+unit tests.
+"""
 
 import pytest
 from django.apps import apps
