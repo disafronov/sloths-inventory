@@ -2,11 +2,14 @@ from typing import Any, Protocol, cast
 
 from django import forms
 from django.contrib import admin
+from django.contrib.auth.admin import GroupAdmin
+from django.contrib.auth.models import Group
 from django.db.models import Model
 from django.http import HttpRequest
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
+from common.application_groups import is_application_group
 from common.edit_window import is_within_inventory_correction_window
 
 
@@ -152,3 +155,29 @@ class NamedModelAdmin(CatalogReferenceAdminMixin, BaseAdmin):
     list_display = ["name", "updated_at", "created_at"]
     search_fields = ["name", "created_at", "updated_at", "notes"]
     main_fields = ("name",)
+
+
+class ApplicationGroupProtectedGroupAdmin(GroupAdmin):
+    """
+    ``Staff`` and ``Editor`` are defined and synced in code only.
+
+    Even superusers cannot change or delete these rows in the admin UI.
+    """
+
+    def has_change_permission(
+        self, request: HttpRequest, obj: Group | None = None
+    ) -> bool:
+        if obj is not None and is_application_group(obj):
+            return False
+        return super().has_change_permission(request, obj)
+
+    def has_delete_permission(
+        self, request: HttpRequest, obj: Group | None = None
+    ) -> bool:
+        if obj is not None and is_application_group(obj):
+            return False
+        return super().has_delete_permission(request, obj)
+
+
+admin.site.unregister(Group)
+admin.site.register(Group, ApplicationGroupProtectedGroupAdmin)
