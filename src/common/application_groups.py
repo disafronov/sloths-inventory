@@ -29,6 +29,14 @@ APPLICATION_GROUP_NAMES: frozenset[str] = frozenset(
 )
 
 _run_lock = threading.Lock()
+# Re-entrancy guard: ``Group.save`` / ``permissions.set`` can fire signals that call
+# ``enforce_application_groups()`` again. The lock is not held across the whole body
+# (only around the flag flip) so nested calls can enter, see ``True``, and return
+# immediately without deadlocking.
+#
+# ``finally`` clears the flag for normal Python exits (including exceptions). A
+# ``SIGKILL``-style death can skip ``finally`` in that process, but a new worker loads
+# fresh module state; there is no long-lived shared memory requirement across kills.
 _enforce_running = False
 
 
@@ -107,6 +115,9 @@ def enforce_application_groups() -> None:
     Idempotent: repeated runs converge to the same permission sets. Safe to call
     from signals; re-entrant calls are ignored to avoid recursion when saving
     ``Group`` during enforcement.
+
+    See module-level notes on ``_run_lock`` / ``_enforce_running`` for why the lock
+    is not held for the full function body.
     """
 
     global _enforce_running
