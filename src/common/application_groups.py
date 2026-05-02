@@ -108,9 +108,21 @@ def _add_logentry_permission_pk() -> int:
     )
 
 
+def _view_logentry_permission_pk() -> int:
+    """Return the PK of ``admin.view_logentry`` (global admin audit log changelist)."""
+
+    ct = ContentType.objects.get_for_model(LogEntry)
+    return Permission.objects.values_list("pk", flat=True).get(
+        content_type=ct, codename="view_logentry"
+    )
+
+
 def enforce_application_groups() -> None:
     """
     Ensure Staff and Editor groups exist and hold the correct permissions.
+
+    Editor receives full CRUD on first-party models only; LogEntry gets
+    ``add_logentry`` and ``view_logentry``, not change/delete on that model.
 
     Idempotent: repeated runs converge to the same permission sets. Safe to call
     from signals; re-entrant calls are ignored to avoid recursion when saving
@@ -126,12 +138,14 @@ def enforce_application_groups() -> None:
             return
         _enforce_running = True
     try:
-        logentry_pk = {_add_logentry_permission_pk()}
+        logentry_write_pk = {_add_logentry_permission_pk()}
         staff_pks = (
-            _permission_pks_for_project_models(staff_view_only=True) | logentry_pk
+            _permission_pks_for_project_models(staff_view_only=True) | logentry_write_pk
         )
         editor_pks = (
-            _permission_pks_for_project_models(staff_view_only=False) | logentry_pk
+            _permission_pks_for_project_models(staff_view_only=False)
+            | logentry_write_pk
+            | {_view_logentry_permission_pk()}
         )
 
         staff_group, _ = Group.objects.get_or_create(name=STAFF_GROUP_NAME)

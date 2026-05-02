@@ -42,9 +42,10 @@ Two Django auth groups are defined and kept in sync by code (`common.application
   **`transaction.on_commit`** so it still applies after the admin runs
   `form.save_m2m()` for the `groups` field (which would otherwise overwrite an
   immediate `post_save` assignment).
-- **`Editor`**: same model permissions as full CRUD plus `add_logentry`; group
-  membership is assigned manually. Permissions on the group row are still enforced
-  by code.
+- **`Editor`**: full CRUD on **first-party app models only** (not on Django contrib
+  models such as `LogEntry`). Additionally `admin.add_logentry` and
+  `admin.view_logentry` for the global admin log. Group membership is assigned
+  manually. Permissions on the group row are still enforced by code.
 
 **When group permissions are refreshed** (`enforce_application_groups()`): on
 `post_migrate` for **each** installed app (once per app per `migrate` run; the
