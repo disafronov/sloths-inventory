@@ -1,5 +1,6 @@
 from typing import Any, Protocol, cast
 
+from django import forms
 from django.contrib import admin
 from django.db.models import Model, QuerySet
 from django.http import HttpRequest
@@ -50,6 +51,18 @@ class DeviceFieldsMixin:
 
 @admin.register(Item)
 class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
+    """
+    Item master data edits use ``INVENTORY_OPERATION_EDIT_WINDOW_MINUTES`` from the
+    row's ``updated_at`` (same setting as operation corrections, different anchor).
+
+    The admin mirrors ``Item.clean()`` for change/delete permissions for non-super
+    users and appends a restriction panel when the window has expired.
+
+    Superusers keep full change/delete and get a ModelForm that sets
+    ``Item._bypass_item_master_edit_window`` so ``clean()`` allows repairs after
+    the window.
+    """
+
     list_display = [
         "inventory_number",
         "device",
@@ -80,6 +93,79 @@ class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
         "device",
         "serial_number",
     )
+
+    def _is_item_master_editable(self, obj: Item) -> bool:
+        """
+        Return True when ``Item.clean()`` still allows an update save.
+
+        Without this check, Django admin would show edit/delete until ``save()``
+        raised ``ValidationError`` after the window closed.
+        """
+
+        return Operation.is_within_operation_edit_window(obj.updated_at)
+
+    def _item_edit_lock_user_message(
+        self, request: HttpRequest, obj: Item
+    ) -> str | None:
+        """Return restriction HTML source text, or None when edits are allowed."""
+
+        user = getattr(request, "user", None)
+        if getattr(user, "is_superuser", False):
+            return None
+        if self._is_item_master_editable(obj):
+            return None
+        return Item.master_record_edit_window_expired_user_message()
+
+    def has_change_permission(
+        self, request: HttpRequest, obj: Item | None = None
+    ) -> bool:
+        allowed = super().has_change_permission(request, obj)
+        if not allowed or obj is None:
+            return allowed
+        user = getattr(request, "user", None)
+        if getattr(user, "is_superuser", False):
+            return True
+        return self._is_item_master_editable(obj)
+
+    def has_delete_permission(
+        self, request: HttpRequest, obj: Item | None = None
+    ) -> bool:
+        allowed = super().has_delete_permission(request, obj)
+        if not allowed or obj is None:
+            return allowed
+        user = getattr(request, "user", None)
+        if getattr(user, "is_superuser", False):
+            return True
+        return self._is_item_master_editable(obj)
+
+    def get_form(
+        self,
+        request: HttpRequest,
+        obj: Model | None = None,
+        change: bool = False,
+        **kwargs: Any,
+    ) -> type[forms.ModelForm]:
+        """
+        For superusers, mark the instance so ``Item.clean()`` skips the edit window.
+
+        The flag must be present before ``form.is_valid()`` runs (which calls
+        ``full_clean()`` on the model).
+        """
+
+        form_class = super().get_form(request, obj, change=change, **kwargs)
+        user = getattr(request, "user", None)
+
+        class ItemAdminForm(form_class):  # type: ignore[misc, valid-type]
+            def __init__(self, *args: Any, **kwargs: Any) -> None:
+                super().__init__(*args, **kwargs)
+                if getattr(user, "is_superuser", False) and self.instance.pk:
+                    setattr(
+                        self.instance,
+                        "_bypass_item_master_edit_window",
+                        True,
+                    )
+
+        return ItemAdminForm
 
     def get_queryset(self, request: HttpRequest) -> QuerySet[Item]:
         """
@@ -117,7 +203,18 @@ class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
                 },
             ),
         )
-        return fieldsets
+        if obj is None:
+            return fieldsets
+        item = cast(Item, obj)
+        message = self._item_edit_lock_user_message(request, item)
+        if message is None:
+            return fieldsets
+        desc = format_html('<p class="item-master-edit-lock">{}</p>', message)
+        lock_panel = (
+            _("Editing restrictions"),
+            {"fields": (), "description": desc},
+        )
+        return [*fieldsets, lock_panel]
 
 
 @admin.register(Operation)

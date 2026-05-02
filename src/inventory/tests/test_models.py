@@ -4,6 +4,7 @@ from unittest.mock import patch
 import pytest
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.test import override_settings
 from django.utils import timezone
 
 from catalogs.models import Location, Responsible, Status
@@ -69,6 +70,84 @@ def test_item_clean_valid_inventory_number() -> None:
 
     item = Item(inventory_number="INV-VALID", device=device)
     item.clean()
+
+
+@pytest.mark.django_db
+@override_settings(INVENTORY_OPERATION_EDIT_WINDOW_MINUTES=10)
+def test_item_clean_rejects_update_after_master_edit_window() -> None:
+    """Reject updates when ``updated_at`` is outside the master-record edit window."""
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+
+    item = Item.objects.create(inventory_number="INV-WINDOW", device=device)
+    Item.objects.filter(pk=item.pk).update(
+        updated_at=timezone.now() - timedelta(minutes=11),
+    )
+    item.refresh_from_db()
+    item.serial_number = "SN-NEW"
+
+    with pytest.raises(ValidationError) as exc:
+        item.full_clean()
+
+    assert exc.value.error_dict["__all__"][0].code == "item_master_edit_window_expired"
+
+
+@pytest.mark.django_db
+@override_settings(INVENTORY_OPERATION_EDIT_WINDOW_MINUTES=10)
+def test_item_save_allows_update_inside_master_edit_window() -> None:
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+
+    item = Item.objects.create(inventory_number="INV-WINDOW-OK", device=device)
+    item.serial_number = "SN-NEW"
+    item.save()
+    item.refresh_from_db()
+    assert item.serial_number == "SN-NEW"
+
+
+@pytest.mark.django_db
+@override_settings(INVENTORY_OPERATION_EDIT_WINDOW_MINUTES=10)
+def test_item_save_after_master_edit_window_with_admin_bypass_flag() -> None:
+    """Trusted admin sets ``_bypass_item_master_edit_window`` so repairs can save."""
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+
+    item = Item.objects.create(inventory_number="INV-BYPASS", device=device)
+    Item.objects.filter(pk=item.pk).update(
+        updated_at=timezone.now() - timedelta(minutes=11),
+    )
+    item.refresh_from_db()
+    item.serial_number = "SN-FIX"
+    setattr(item, "_bypass_item_master_edit_window", True)
+    item.save()
+    item.refresh_from_db()
+    assert item.serial_number == "SN-FIX"
 
 
 @pytest.mark.django_db
