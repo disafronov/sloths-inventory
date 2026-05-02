@@ -10,7 +10,7 @@
     <p>{% trans "Your account is not linked to a responsible person profile yet." %}</p>
 {% endif %}
 
-{% if responsible %}{% if incoming_transfers or items or outgoing_transfers %}
+{% if show_search %}
 <form method="get" class="search-form" role="search" aria-label="{% trans 'Search items' %}">
     <label class="sr-only" for="q">{% trans "Search" %}</label>
     <input
@@ -25,7 +25,7 @@
         <a class="button button--secondary" href="{% url 'inventory:previous-items' %}">{% trans "Clear" %}</a>
     {% endif %}
 </form>
-{% endif %}{% endif %}
+{% endif %}
 
 {% if incoming_transfers or items or outgoing_transfers %}
     <div class="item-card-list" aria-label="{% trans 'Previously my items list' %}">

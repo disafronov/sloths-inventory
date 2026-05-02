@@ -10,7 +10,7 @@
     <p>{% trans "Your account is not linked to a responsible person profile yet." %}</p>
 {% endif %}
 
-{% if responsible %}{% if incoming_transfers or items or outgoing_transfers %}
+{% if show_search %}
 <form method="get" class="search-form" role="search" aria-label="{% trans 'Search items' %}">
     <label class="sr-only" for="q">{% trans "Search" %}</label>
     <input
@@ -29,29 +29,29 @@
     {% endif %}
 </form>
 
-    <nav class="my-items-kind-tabs" aria-label="{% trans 'My items list kind' %}">
-        <a
-            href="{% url 'inventory:my-items' %}{% if query %}?q={{ query|urlencode }}{% endif %}"
-            class="button button--secondary button--sm{% if list_kind == 'all' %} button--active{% endif %}"
-            {% if list_kind == 'all' %}aria-current="page"{% endif %}
-        >{% trans "All" %}</a>
-        <a
-            href="{% url 'inventory:my-items' %}?kind=incoming{% if query %}&q={{ query|urlencode }}{% endif %}"
-            class="button button--secondary button--sm{% if list_kind == 'incoming' %} button--active{% endif %}"
-            {% if list_kind == 'incoming' %}aria-current="page"{% endif %}
-        >{% trans "Incoming" %}</a>
-        <a
-            href="{% url 'inventory:my-items' %}?kind=owned{% if query %}&q={{ query|urlencode }}{% endif %}"
-            class="button button--secondary button--sm{% if list_kind == 'owned' %} button--active{% endif %}"
-            {% if list_kind == 'owned' %}aria-current="page"{% endif %}
-        >{% trans "Owned" %}</a>
-        <a
-            href="{% url 'inventory:my-items' %}?kind=outgoing{% if query %}&q={{ query|urlencode }}{% endif %}"
-            class="button button--secondary button--sm{% if list_kind == 'outgoing' %} button--active{% endif %}"
-            {% if list_kind == 'outgoing' %}aria-current="page"{% endif %}
-        >{% trans "Outgoing" %}</a>
-    </nav>
-{% endif %}{% endif %}
+<nav class="my-items-kind-tabs" aria-label="{% trans 'My items list kind' %}">
+    <a
+        href="{% url 'inventory:my-items' %}{% if query %}?q={{ query|urlencode }}{% endif %}"
+        class="button button--secondary button--sm{% if list_kind == 'all' %} button--active{% endif %}"
+        {% if list_kind == 'all' %}aria-current="page"{% endif %}
+    >{% trans "All" %}</a>
+    <a
+        href="{% url 'inventory:my-items' %}?kind=incoming{% if query %}&q={{ query|urlencode }}{% endif %}"
+        class="button button--secondary button--sm{% if list_kind == 'incoming' %} button--active{% endif %}"
+        {% if list_kind == 'incoming' %}aria-current="page"{% endif %}
+    >{% trans "Incoming" %}</a>
+    <a
+        href="{% url 'inventory:my-items' %}?kind=owned{% if query %}&q={{ query|urlencode }}{% endif %}"
+        class="button button--secondary button--sm{% if list_kind == 'owned' %} button--active{% endif %}"
+        {% if list_kind == 'owned' %}aria-current="page"{% endif %}
+    >{% trans "Owned" %}</a>
+    <a
+        href="{% url 'inventory:my-items' %}?kind=outgoing{% if query %}&q={{ query|urlencode }}{% endif %}"
+        class="button button--secondary button--sm{% if list_kind == 'outgoing' %} button--active{% endif %}"
+        {% if list_kind == 'outgoing' %}aria-current="page"{% endif %}
+    >{% trans "Outgoing" %}</a>
+</nav>
+{% endif %}
 
 {% if incoming_transfers or items or outgoing_transfers %}
     <div class="item-card-list" aria-label="{% trans 'My items list' %}">
