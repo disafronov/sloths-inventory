@@ -71,6 +71,15 @@ class BaseAdmin(admin.ModelAdmin):
         return fieldsets
 
     def _format_empty_value(self, value: Any) -> str:
+        """
+        Format a scalar for read-only admin display.
+
+        ``None`` and ``""`` render as ``"-"``; any other value uses ``str(value)``.
+        Inventory ``CurrentFieldMixin`` (on ``ItemAdmin``) calls this via
+        ``BaseAdmin`` subclasses so ``current_*`` columns match the same empty
+        placeholder as the rest of the admin.
+        """
+
         if value is None or value == "":
             return "-"
         return str(value)
