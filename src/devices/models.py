@@ -35,7 +35,7 @@ class Device(CatalogCorrectionWindowMixin, BaseModel):
             return False
         from inventory.models import Item
 
-        return Item.objects.filter(device_id=self.pk).exists()
+        return bool(Item.objects.filter(device_id=self.pk).exists())
 
     def __str__(self) -> str:
         return f"{self.category} | {self.type} | {self.manufacturer} | {self.model}"
