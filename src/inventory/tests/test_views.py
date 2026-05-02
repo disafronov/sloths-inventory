@@ -1397,7 +1397,7 @@ def test_cancel_transfer_returns_404_if_user_is_not_sender_or_receiver() -> None
 
 
 @pytest.mark.django_db
-def test_cancel_transfer_returns_404_for_inactive_transfer() -> None:
+def test_cancel_transfer_warns_when_inactive() -> None:
     user_sender = User.objects.create_user(username="sender", password="pw")
     user_receiver = User.objects.create_user(username="receiver", password="pw")
     resp_sender = Responsible.objects.create(
@@ -1420,7 +1420,10 @@ def test_cancel_transfer_returns_404_for_inactive_transfer() -> None:
 
     client = Client()
     client.force_login(user_sender)
-    assert client.post(f"/transfers/{transfer.pk}/cancel/").status_code == 404
+    response = client.post(f"/transfers/{transfer.pk}/cancel/", follow=True)
+    assert response.status_code == 200
+    assert response.request["PATH_INFO"] == "/"
+    assert b"This transfer offer is no longer active" in response.content
 
 
 @pytest.mark.django_db
@@ -1655,7 +1658,7 @@ def test_accept_and_cancel_transfer_require_post_method() -> None:
 
 
 @pytest.mark.django_db
-def test_accept_transfer_returns_404_for_expired_transfer() -> None:
+def test_accept_transfer_warns_when_expired() -> None:
     user_sender = User.objects.create_user(username="sender", password="pw")
     user_receiver = User.objects.create_user(username="receiver", password="pw")
     resp_sender = Responsible.objects.create(
@@ -1681,7 +1684,10 @@ def test_accept_transfer_returns_404_for_expired_transfer() -> None:
 
     client_receiver = Client()
     client_receiver.force_login(user_receiver)
-    assert client_receiver.post(f"/transfers/{transfer.pk}/accept/").status_code == 404
+    response = client_receiver.post(f"/transfers/{transfer.pk}/accept/", follow=True)
+    assert response.status_code == 200
+    assert response.request["PATH_INFO"] == "/"
+    assert b"This transfer offer is no longer active" in response.content
 
 
 @pytest.mark.django_db

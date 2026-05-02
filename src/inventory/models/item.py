@@ -265,6 +265,16 @@ class Item(BaseModel):
                 _("New location must be different from current location.")
             )
 
+        # Align with transfer acceptance: the journal head defines the accountable
+        # party; callers must not append a location move under another identity.
+        if responsible.pk != current_op.responsible_id:
+            raise ValidationError(
+                _(
+                    "Location changes must be recorded by the current "
+                    "accountable person."
+                )
+            )
+
         op = Operation.objects.create(
             item=self,
             status=current_op.status,
