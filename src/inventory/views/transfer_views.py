@@ -2,6 +2,7 @@
 
 from datetime import timedelta
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.http import Http404, HttpRequest, HttpResponse
@@ -188,8 +189,9 @@ def accept_transfer(request: HttpRequest, *, transfer_id: int) -> HttpResponse:
 
     try:
         transfer.accept()
-    except ValidationError:
-        raise Http404
+    except ValidationError as exc:
+        messages.error(request, validation_error_user_message(exc))
+        return redirect("inventory:item-history", item_id=transfer.item_id)
 
     return redirect("inventory:item-history", item_id=transfer.item_id)
 
@@ -221,6 +223,7 @@ def cancel_transfer(request: HttpRequest, *, transfer_id: int) -> HttpResponse:
 
     try:
         transfer.cancel()
-    except ValidationError:
-        raise Http404
+    except ValidationError as exc:
+        messages.error(request, validation_error_user_message(exc))
+        return redirect("inventory:item-history", item_id=transfer.item_id)
     return redirect("inventory:item-history", item_id=transfer.item_id)
