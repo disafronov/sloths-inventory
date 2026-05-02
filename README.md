@@ -32,6 +32,32 @@ current `User` is not linked, the UI will show a message and no items.
 To link an account, open the Django admin, edit the desired `Responsible` record
 and set its `user` field to the corresponding Django `User`.
 
+### Application auth groups (`Staff`, `Editor`)
+
+Two Django auth groups are defined and kept in sync by code (`common.application_groups`):
+
+- **`Staff`**: permissions are view-only on all first-party app models plus
+  `admin.add_logentry`. Membership is tied to `User.is_staff` when the user is
+  not a superuser: after each successful `User` save, membership is reconciled on
+  **`transaction.on_commit`** so it still applies after the admin runs
+  `form.save_m2m()` for the `groups` field (which would otherwise overwrite an
+  immediate `post_save` assignment).
+- **`Editor`**: same model permissions as full CRUD plus `add_logentry`; group
+  membership is assigned manually. Permissions on the group row are still enforced
+  by code.
+
+**When group permissions are refreshed** (`enforce_application_groups()`): on
+`common` app startup (`AppConfig.ready()`, if auth tables exist), and on
+`post_save` / `post_delete` for `Group` or `Permission`. New default permissions
+created via `bulk_create` (as in `django.contrib.auth.management.create_permissions`)
+do not emit per-row signals; run migrations / restart the app, touch a `Group` or
+`Permission`, or call the enforcer from a management command if you need an
+immediate refresh after bulk permission creation.
+
+In the admin, the `Staff` and `Editor` group records cannot be changed or deleted
+(even for superusers); only membership (for non–application-defined groups) and
+the `Editor` assignment remain user-controlled.
+
 ## Requirements
 
 - `uv` package manager
