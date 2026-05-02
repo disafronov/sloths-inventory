@@ -83,9 +83,17 @@ Notes:
 - **Append-only operations**: an item's state is tracked via `Operation` records.
   Older operations cannot be edited; only the latest operation for an item may be
   corrected.
-- **Correction window**: editing the latest operation is only allowed within a
-  limited time window after it was created. The window is configurable via
-  `INVENTORY_OPERATION_EDIT_WINDOW_MINUTES` (default: 10 minutes).
+- **Correction window** (`INVENTORY_CORRECTION_WINDOW_MINUTES`, default 10 minutes):
+  - **Operations**: only the latest `Operation` per item may be corrected, and only
+    while its `created_at` is still inside the window (`inventory.Operation`).
+  - **Items**: once the item has at least one operation (an accountable party in the
+    journal), edits to core item fields are limited by the same minute cap, anchored
+    on the row's previous `updated_at` (`inventory.Item`).
+  - **Catalog / device definitions**: locations, statuses, responsible records, device
+    taxonomy rows, and `Device` rows use the same cap on `updated_at` when the row is
+    referenced by live inventory data; unreferenced rows stay editable. Enforcement
+    is shared via `common.catalog_correction_window.CatalogCorrectionWindowMixin`.
+    Django superusers bypass these windows in the admin only (trusted repair path).
 - **Item history visibility**: item history is only accessible to the current
   owner, to the receiver of an active incoming transfer offer, and to former owners.
   Former owners can only see the history up to the last time the item was assigned
@@ -121,7 +129,7 @@ See `env.example` for a complete list of supported variables.
 - **Logging**
   - `LOG_LEVEL` (default: `DEBUG` when `DEBUG=1`, else `INFO`)
 - **Inventory**
-  - `INVENTORY_OPERATION_EDIT_WINDOW_MINUTES` (default: `10`)
+  - `INVENTORY_CORRECTION_WINDOW_MINUTES` (default: `10`)
   - `INVENTORY_PENDING_TRANSFER_EXPIRATION_HOURS` (default: `168` — one week;
     offers created from the user UI get `expires_at` at creation. Set to `0` to
     disable automatic expiry unless set manually in the admin)

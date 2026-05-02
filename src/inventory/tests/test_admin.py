@@ -160,7 +160,7 @@ def test_operation_admin_allows_edit_only_for_latest_operation() -> None:
 
 
 @pytest.mark.django_db
-@override_settings(INVENTORY_OPERATION_EDIT_WINDOW_MINUTES=10)
+@override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
 def test_operation_admin_denies_change_after_correction_window() -> None:
     """Admin must hide edit/delete once the operation correction window ends."""
 
@@ -380,7 +380,7 @@ def test_operation_lock_fieldset_description_for_non_latest_operation() -> None:
 
 
 @pytest.mark.django_db
-@override_settings(LANGUAGE_CODE="en", INVENTORY_OPERATION_EDIT_WINDOW_MINUTES=10)
+@override_settings(LANGUAGE_CODE="en", INVENTORY_CORRECTION_WINDOW_MINUTES=10)
 def test_operation_lock_fieldset_description_when_correction_window_expired() -> None:
     """Latest row past the window shows the same wording as model validation."""
 
@@ -419,11 +419,11 @@ def test_operation_lock_fieldset_description_when_correction_window_expired() ->
         username="admin-fs2", email="admin-fs2@example.com", password="password"
     )
     text = str(admin_obj.get_fieldsets(request, op)[-1][1]["description"])
-    assert "correction window" in text.lower()
+    assert "contact an administrator" in text.lower()
 
 
 @pytest.mark.django_db
-@override_settings(LANGUAGE_CODE="en", INVENTORY_OPERATION_EDIT_WINDOW_MINUTES=10)
+@override_settings(LANGUAGE_CODE="en", INVENTORY_CORRECTION_WINDOW_MINUTES=10)
 def test_operation_admin_change_page_renders_edit_lock_description_after_window() -> (
     None
 ):
@@ -464,7 +464,7 @@ def test_operation_admin_change_page_renders_edit_lock_description_after_window(
     url = reverse("admin:inventory_operation_change", args=[op.pk])
     response = client.get(url)
     assert response.status_code == 200
-    assert b"correction window" in response.content.lower()
+    assert b"contact an administrator" in response.content.lower()
 
 
 @pytest.mark.django_db
@@ -510,9 +510,9 @@ def test_operation_admin_change_page_hides_lock_section_when_editable() -> None:
 
 
 @pytest.mark.django_db
-@override_settings(INVENTORY_OPERATION_EDIT_WINDOW_MINUTES=10)
-def test_item_admin_denies_change_after_master_edit_window() -> None:
-    """Non-superuser staff lose edit/delete once the item master-record window ends."""
+@override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+def test_item_admin_denies_change_after_correction_window() -> None:
+    """Non-superuser staff lose edit/delete once the item correction window ends."""
 
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
@@ -551,7 +551,7 @@ def test_item_admin_denies_change_after_master_edit_window() -> None:
 
 
 @pytest.mark.django_db
-@override_settings(INVENTORY_OPERATION_EDIT_WINDOW_MINUTES=10)
+@override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
 def test_item_admin_staff_allows_change_after_window_without_responsible() -> None:
     """No operations yet: staff keep edit/delete past ``updated_at`` window."""
 
@@ -583,8 +583,8 @@ def test_item_admin_staff_allows_change_after_window_without_responsible() -> No
 
 
 @pytest.mark.django_db
-@override_settings(INVENTORY_OPERATION_EDIT_WINDOW_MINUTES=10)
-def test_item_admin_superuser_keeps_change_after_master_edit_window() -> None:
+@override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+def test_item_admin_superuser_keeps_change_after_correction_window() -> None:
     """Superusers can still change and delete items after the window (repair path)."""
 
     category = Category.objects.create(name="Laptops")
@@ -619,8 +619,8 @@ def test_item_admin_superuser_keeps_change_after_master_edit_window() -> None:
 
 
 @pytest.mark.django_db
-@override_settings(LANGUAGE_CODE="en", INVENTORY_OPERATION_EDIT_WINDOW_MINUTES=10)
-def test_item_lock_fieldset_description_when_master_edit_window_expired() -> None:
+@override_settings(LANGUAGE_CODE="en", INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+def test_item_lock_fieldset_description_when_correction_window_expired() -> None:
     """Expired window shows the same wording as ``Item.clean()``."""
 
     category = Category.objects.create(name="Laptops")
@@ -657,12 +657,12 @@ def test_item_lock_fieldset_description_when_master_edit_window_expired() -> Non
     lock_title = str(_("Editing restrictions"))
     fieldsets = admin_obj.get_fieldsets(request, item)
     lock = next(fs for fs in fieldsets if str(fs[0]) == lock_title)
-    assert "item master data edit window" in str(lock[1]["description"]).lower()
+    assert "contact an administrator" in str(lock[1]["description"]).lower()
 
 
 @pytest.mark.django_db
-@override_settings(LANGUAGE_CODE="en", INVENTORY_OPERATION_EDIT_WINDOW_MINUTES=10)
-def test_item_change_page_renders_master_edit_lock_after_window() -> None:
+@override_settings(LANGUAGE_CODE="en", INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+def test_item_change_page_renders_correction_window_lock_after_window() -> None:
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
     manufacturer = Manufacturer.objects.create(name="ACME")
@@ -694,13 +694,13 @@ def test_item_change_page_renders_master_edit_lock_after_window() -> None:
     url = reverse("admin:inventory_item_change", args=[item.pk])
     response = client.get(url)
     assert response.status_code == 200
-    assert b"item master data edit window" in response.content.lower()
+    assert b"contact an administrator" in response.content.lower()
 
 
 @pytest.mark.django_db
-@override_settings(LANGUAGE_CODE="en", INVENTORY_OPERATION_EDIT_WINDOW_MINUTES=10)
+@override_settings(LANGUAGE_CODE="en", INVENTORY_CORRECTION_WINDOW_MINUTES=10)
 def test_item_change_page_no_lock_without_responsible_past_window() -> None:
-    """Item with no operations: no master-record lock text past ``updated_at``."""
+    """Item with no operations: no correction-window lock text past ``updated_at``."""
 
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
@@ -724,12 +724,12 @@ def test_item_change_page_no_lock_without_responsible_past_window() -> None:
     url = reverse("admin:inventory_item_change", args=[item.pk])
     response = client.get(url)
     assert response.status_code == 200
-    assert b"item master data edit window" not in response.content.lower()
+    assert b"contact an administrator" not in response.content.lower()
 
 
 @pytest.mark.django_db
-@override_settings(LANGUAGE_CODE="en", INVENTORY_OPERATION_EDIT_WINDOW_MINUTES=10)
-def test_item_change_page_superuser_hides_lock_after_master_edit_window() -> None:
+@override_settings(LANGUAGE_CODE="en", INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+def test_item_change_page_superuser_hides_lock_after_correction_window() -> None:
     """Superusers do not see the lock banner; they remain able to edit."""
 
     category = Category.objects.create(name="Laptops")
@@ -759,7 +759,7 @@ def test_item_change_page_superuser_hides_lock_after_master_edit_window() -> Non
     response = client.get(url)
     assert response.status_code == 200
     assert b"Editing restrictions" not in response.content
-    assert b"item master data edit window" not in response.content.lower()
+    assert b"contact an administrator" not in response.content.lower()
 
 
 @pytest.mark.django_db

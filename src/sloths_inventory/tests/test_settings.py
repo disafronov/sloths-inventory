@@ -84,3 +84,38 @@ def test_settings_time_zone_can_be_overridden_via_env(tmp_path, monkeypatch) -> 
         sloths_inventory.settings.__file__,
     )
     assert module.TIME_ZONE == "UTC"
+
+
+def test_settings_inventory_correction_window_minutes_defaults_when_env_unset(
+    tmp_path, monkeypatch
+) -> None:
+    """
+    ``INVENTORY_CORRECTION_WINDOW_MINUTES`` defaults to 10 when the env var is absent.
+
+    Uses an isolated CWD so ``environ.Env.read_env()`` does not pick up a repo-local
+    ``.env`` while importing ``settings.py``.
+    """
+
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.delenv("INVENTORY_CORRECTION_WINDOW_MINUTES", raising=False)
+
+    module = _load_module_from_path(
+        "sloths_inventory._settings_inventory_correction_window_default_test",
+        sloths_inventory.settings.__file__,
+    )
+    assert module.INVENTORY_CORRECTION_WINDOW_MINUTES == 10
+
+
+def test_settings_inventory_correction_window_minutes_can_be_overridden_via_env(
+    tmp_path, monkeypatch
+) -> None:
+    """``INVENTORY_CORRECTION_WINDOW_MINUTES`` follows the integer env value."""
+
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("INVENTORY_CORRECTION_WINDOW_MINUTES", "25")
+
+    module = _load_module_from_path(
+        "sloths_inventory._settings_inventory_correction_window_override_test",
+        sloths_inventory.settings.__file__,
+    )
+    assert module.INVENTORY_CORRECTION_WINDOW_MINUTES == 25

@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.db.models import QuerySet
 from django.http import HttpRequest
 
-from common.admin import BaseAdmin, NamedModelAdmin
+from common.admin import BaseAdmin, CatalogReferenceAdminMixin, NamedModelAdmin
 
 from .attributes import Category, Manufacturer, Model, Type
 from .models import Device
@@ -29,7 +29,7 @@ class TypeAdmin(NamedModelAdmin):
 
 
 @admin.register(Device)
-class DeviceAdmin(BaseAdmin):
+class DeviceAdmin(CatalogReferenceAdminMixin, BaseAdmin):
     list_display = [
         "category",
         "type",
