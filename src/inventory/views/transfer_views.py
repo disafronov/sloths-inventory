@@ -20,7 +20,7 @@ from inventory.models import (
 from inventory.models.operation import Operation
 from inventory.presentation import validation_error_user_message
 
-from .http_helpers import parse_transfer_receiver_or_render_error, render_transfer_form
+from .http_helpers import CreateTransferForm, render_transfer_form
 
 
 def _redirect_after_inactive_transfer(
@@ -108,26 +108,31 @@ def create_transfer(request: HttpRequest, *, item_id: int) -> HttpResponse:
     pending_transfer = PendingTransfer.objects.active_offer_for_item(item)
 
     if request.method == "POST":
-        if pending_transfer is not None:
-            if pending_transfer.from_responsible_id != responsible.pk:
-                raise Http404
+        if (
+            pending_transfer is not None
+            and pending_transfer.from_responsible_id != responsible.pk
+        ):
+            raise Http404
 
-            notes = (request.POST.get("notes") or "").strip()
-            to_responsible, error_response = parse_transfer_receiver_or_render_error(
+        form = CreateTransferForm(request.POST, sender=responsible)
+        if not form.is_valid():
+            error = str(form.errors.get("to_responsible_id", [""])[0])
+            return render_transfer_form(
                 request,
                 item=item,
                 sender=responsible,
                 pending_transfer=pending_transfer,
                 transfer_expiration_hours=transfer_expiration_hours,
-                notes=notes,
+                error=error,
+                notes=form.cleaned_data.get("notes", ""),
+                selected_to_responsible_id=None,
+                status=400,
             )
-            if error_response is not None:
-                return error_response
-            if to_responsible is None:
-                # ``parse_transfer_receiver_or_render_error`` always returns a response
-                # when the receiver is missing; this guards internal regressions.
-                raise AssertionError("expected receiver or response")
 
+        to_responsible: Responsible = form.cleaned_data["to_responsible_id"]
+        notes: str = form.cleaned_data["notes"]
+
+        if pending_transfer is not None:
             try:
                 pending_transfer.update_offer(
                     actor=responsible,
@@ -149,21 +154,6 @@ def create_transfer(request: HttpRequest, *, item_id: int) -> HttpResponse:
                 )
             messages.success(request, _("Transfer offer updated."))
             return redirect("inventory:item-history", item_id=item.pk)
-
-        notes = (request.POST.get("notes") or "").strip()
-        to_responsible, error_response = parse_transfer_receiver_or_render_error(
-            request,
-            item=item,
-            sender=responsible,
-            pending_transfer=None,
-            transfer_expiration_hours=transfer_expiration_hours,
-            notes=notes,
-        )
-        if error_response is not None:
-            return error_response
-        if to_responsible is None:
-            # Same invariant as the pending-transfer branch above.
-            raise AssertionError("expected receiver or response")
 
         expires_at = None
         if transfer_expiration_hours > 0:
