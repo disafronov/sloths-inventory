@@ -123,8 +123,9 @@ def build_my_items_page_data(
     ).order_by("-created_at", "-id")
 
     transfer_item_ids = (
-        PendingTransfer.offers_visible_in_ui()
-        .filter(Q(to_responsible=responsible) | Q(from_responsible=responsible))
+        base_transfers_qs.filter(
+            Q(to_responsible=responsible) | Q(from_responsible=responsible)
+        )
         .values_list("item_id", flat=True)
         .distinct()
     )
