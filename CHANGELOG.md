@@ -1,3 +1,14 @@
+## [1.4.0](https://github.com/disafronov/sloths-inventory/compare/v1.3.0...v1.4.0) (2026-05-02)
+
+### Features
+
+* document trusted admin repair and refine operation editing logic ([a499060](https://github.com/disafronov/sloths-inventory/commit/a4990601b87da195953b10d9933fdece6fc2374a))
+* enhance application group enforcement during migrations ([c72a984](https://github.com/disafronov/sloths-inventory/commit/c72a98446530e87935e19d9d95ecf370177dd46f))
+* enhance application group management with post-migrate enforcement ([747a720](https://github.com/disafronov/sloths-inventory/commit/747a7209c804276413cab4fcf3c4e78f1d580d3f))
+* enhance operation editing permissions for superusers ([f947e19](https://github.com/disafronov/sloths-inventory/commit/f947e1944c897ed36840d3e00bd077a4da1851f8))
+* implement application-defined auth groups and permissions enforcement ([2ccf05e](https://github.com/disafronov/sloths-inventory/commit/2ccf05e38ffcf8c6c851bda88901ae5509e4c309))
+* implement view-only user restrictions in admin interface ([f0cd090](https://github.com/disafronov/sloths-inventory/commit/f0cd090e15017ef3dda5f61906ea3701573bdf77))
+
 ## [1.4.0-rc.3](https://github.com/disafronov/sloths-inventory/compare/v1.4.0-rc.2...v1.4.0-rc.3) (2026-05-02)
 
 ### Features
