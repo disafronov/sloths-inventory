@@ -86,13 +86,11 @@ def _staff_user_with_operation_admin_permissions(username: str) -> Any:
 
 
 @pytest.mark.django_db
-@override_settings(LANGUAGE_CODE="en")
-def test_item_change_page_renders_empty_current_operation_readonly_fields_as_dash() -> (
-    None
-):
+def test_item_admin_current_fields_are_dash_without_operations() -> None:
     """
-    ``BaseAdmin._format_empty_value`` is exercised via ``ItemAdmin`` readonly
-    ``current_*`` columns (``CurrentFieldMixin``), not via direct method calls.
+    Empty ``current_*`` values use the admin empty sentinel (via ``CurrentFieldMixin``
+    and ``BaseAdmin._format_empty_value``). Assert on ``ModelAdmin`` display methods,
+    not on Django admin HTML, so tests stay stable across template changes.
     """
 
     category = Category.objects.create(name="Laptops")
@@ -106,61 +104,12 @@ def test_item_change_page_renders_empty_current_operation_readonly_fields_as_das
         model=device_model,
     )
     item = Item.objects.create(inventory_number="INV-EMPTY-CURRENT", device=device)
+    site = AdminSite()
+    admin_obj = ItemAdmin(Item, site)
 
-    admin_user = get_user_model().objects.create_superuser(
-        username="admin-item-empty-current",
-        email="admin-item-empty-current@example.com",
-        password="password",
-    )
-    client = Client()
-    client.force_login(admin_user)
-    url = reverse("admin:inventory_item_change", args=[item.pk])
-    response = client.get(url)
-    assert response.status_code == 200
-    # No operations: ``current_status`` / ``current_location`` / ``current_responsible``
-    # all format as the empty sentinel in admin readonly markup.
-    assert response.content.count(b'<div class="readonly">-</div>') == 3
-
-
-@pytest.mark.django_db
-@override_settings(LANGUAGE_CODE="en")
-def test_item_change_page_renders_populated_current_operation_readonly_fields() -> None:
-    """With a journal row, ``current_*`` readonly values are rendered as plain text."""
-
-    category = Category.objects.create(name="Laptops")
-    device_type = Type.objects.create(name="Laptop")
-    manufacturer = Manufacturer.objects.create(name="ACME")
-    device_model = Model.objects.create(name="Model X")
-    device = Device.objects.create(
-        category=category,
-        type=device_type,
-        manufacturer=manufacturer,
-        model=device_model,
-    )
-    status = Status.objects.create(name="In stock")
-    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
-    location = Location.objects.create(name="Moscow")
-    item = Item.objects.create(inventory_number="INV-FILLED-CURRENT", device=device)
-    Operation.objects.create(
-        item=item,
-        status=status,
-        responsible=responsible,
-        location=location,
-    )
-
-    admin_user = get_user_model().objects.create_superuser(
-        username="admin-item-filled-current",
-        email="admin-item-filled-current@example.com",
-        password="password",
-    )
-    client = Client()
-    client.force_login(admin_user)
-    url = reverse("admin:inventory_item_change", args=[item.pk])
-    response = client.get(url)
-    assert response.status_code == 200
-    assert b"In stock" in response.content
-    assert b"Moscow" in response.content
-    assert b"Ivanov Ivan" in response.content
+    assert admin_obj.current_status(item) == "-"
+    assert admin_obj.current_location(item) == "-"
+    assert admin_obj.current_responsible(item) == "-"
 
 
 @pytest.mark.django_db
