@@ -10,7 +10,7 @@ from catalogs.models import Location, Responsible, Status
 from devices.attributes import Category, Manufacturer, Model, Type
 from devices.models import Device
 from inventory.models import Item, Operation, PendingTransfer
-from inventory.views import _get_responsible_for_user
+from inventory.views import _get_responsible_for_user, _validation_error_user_message
 
 
 @pytest.mark.django_db
@@ -30,6 +30,23 @@ def test_get_responsible_for_user_returns_none_for_anonymous() -> None:
     request = rf.get("/")
     request.user = AnonymousUser()
     assert _get_responsible_for_user(request) is None
+
+
+def test_validation_error_user_message_single_string() -> None:
+    assert _validation_error_user_message(ValidationError("one thing")) == "one thing"
+
+
+def test_validation_error_user_message_list_joins_messages() -> None:
+    exc = ValidationError(["first problem", "second problem"])
+    assert _validation_error_user_message(exc) == "first problem; second problem"
+
+
+def test_validation_error_user_message_message_dict_flattens_fields() -> None:
+    exc = ValidationError({"field_a": ["x"], "field_b": ["y", "z"]})
+    out = _validation_error_user_message(exc)
+    assert "field_a: x" in out
+    assert "field_b: y" in out
+    assert "field_b: z" in out
 
 
 @pytest.mark.django_db
@@ -884,7 +901,7 @@ def test_create_transfer_post_returns_400_when_create_offer_validation_fails(
     """
 
     def _boom(_cls: type[PendingTransfer], **kwargs: object) -> PendingTransfer:
-        raise ValidationError("Offer rejected.")
+        raise ValidationError(["Offer rejected.", "Please try again."])
 
     monkeypatch.setattr(PendingTransfer, "create_offer", classmethod(_boom))
 
@@ -903,8 +920,45 @@ def test_create_transfer_post_returns_400_when_create_offer_validation_fails(
         {"to_responsible_id": resp2.pk, "notes": "keep notes"},
     )
     assert response.status_code == 400
-    assert b"Offer rejected." in response.content
+    assert b"Offer rejected.; Please try again." in response.content
     assert PendingTransfer.objects.filter(item=item).count() == 0
+
+
+@pytest.mark.django_db
+@override_settings(INVENTORY_PENDING_TRANSFER_EXPIRATION_HOURS=0)
+def test_create_offer_duplicate_active_validation_error_formats_for_display() -> None:
+    """
+    Real model `ValidationError` on a second `create_offer` must collapse to a
+    readable template string (same helper as the transfer view).
+    """
+
+    user1 = User.objects.create_user(username="dup1", password="pw")
+    user2 = User.objects.create_user(username="dup2", password="pw")
+    user3 = User.objects.create_user(username="dup3", password="pw")
+    resp1 = Responsible.objects.create(last_name="One", first_name="Dup", user=user1)
+    resp2 = Responsible.objects.create(last_name="Two", first_name="Dup", user=user2)
+    resp3 = Responsible.objects.create(last_name="Three", first_name="Dup", user=user3)
+    status = Status.objects.create(name="In use")
+    location = Location.objects.create(name="Home")
+    item = _make_item_with_operation(status, location, resp1, "INV-XFER-DUP-OFFER")
+
+    PendingTransfer.create_offer(
+        item=item,
+        from_responsible=resp1,
+        to_responsible=resp2,
+        expires_at=None,
+        notes="",
+    )
+    with pytest.raises(ValidationError) as exc_info:
+        PendingTransfer.create_offer(
+            item=item,
+            from_responsible=resp1,
+            to_responsible=resp3,
+            expires_at=None,
+            notes="",
+        )
+    msg = _validation_error_user_message(exc_info.value)
+    assert "An active transfer already exists for this item" in msg
 
 
 @pytest.mark.django_db
