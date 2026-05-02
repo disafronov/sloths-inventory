@@ -11,7 +11,7 @@ from catalogs.models import Location, Responsible, Status
 from devices.attributes import Category, Manufacturer, Model, Type
 from devices.models import Device
 from inventory.models import Item, Operation, PendingTransfer
-from inventory.views import _get_responsible_for_user, _validation_error_user_message
+from inventory.presentation import validation_error_user_message
 
 
 @pytest.mark.django_db
@@ -26,25 +26,25 @@ def test_my_items_requires_login() -> None:
     assert "/login/" in response_prev["Location"]
 
 
-def test_get_responsible_for_user_returns_none_for_anonymous() -> None:
+def test_linked_profile_for_user_returns_none_for_anonymous() -> None:
     rf = RequestFactory()
     request = rf.get("/")
     request.user = AnonymousUser()
-    assert _get_responsible_for_user(request) is None
+    assert Responsible.linked_profile_for_user(request.user) is None
 
 
 def test_validation_error_user_message_single_string() -> None:
-    assert _validation_error_user_message(ValidationError("one thing")) == "one thing"
+    assert validation_error_user_message(ValidationError("one thing")) == "one thing"
 
 
 def test_validation_error_user_message_list_joins_messages() -> None:
     exc = ValidationError(["first problem", "second problem"])
-    assert _validation_error_user_message(exc) == "first problem; second problem"
+    assert validation_error_user_message(exc) == "first problem; second problem"
 
 
 def test_validation_error_user_message_message_dict_flattens_fields() -> None:
     exc = ValidationError({"field_a": ["x"], "field_b": ["y", "z"]})
-    out = _validation_error_user_message(exc)
+    out = validation_error_user_message(exc)
     assert "field_a: x" in out
     assert "field_b: y" in out
     assert "field_b: z" in out
@@ -987,7 +987,7 @@ def test_create_offer_duplicate_active_validation_error_formats_for_display() ->
             expires_at=None,
             notes="",
         )
-    msg = _validation_error_user_message(exc_info.value)
+    msg = validation_error_user_message(exc_info.value)
     assert "An active transfer already exists for this item" in msg
 
 
