@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: catalogs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-30 23:19+0000\n"
+"POT-Creation-Date: 2026-05-02 13:18+0000\n"
 "PO-Revision-Date: 2024-03-19 00:28+0300\n"
 "Last-Translator: \n"
 "Language-Team: English\n"
@@ -19,46 +19,58 @@ msgstr ""
 msgid "Catalogs"
 msgstr "Catalogs"
 
-#: src/catalogs/models.py:10
+#: src/catalogs/models.py:18
 msgid "Location"
 msgstr "Location"
 
-#: src/catalogs/models.py:11
+#: src/catalogs/models.py:19
 msgid "Locations"
 msgstr "Locations"
 
-#: src/catalogs/models.py:16
+#: src/catalogs/models.py:33
 msgid "Last name"
 msgstr "Last name"
 
-#: src/catalogs/models.py:17
+#: src/catalogs/models.py:34
 msgid "First name"
 msgstr "First name"
 
-#: src/catalogs/models.py:19
+#: src/catalogs/models.py:36
 msgid "Middle name"
 msgstr "Middle name"
 
-#: src/catalogs/models.py:22
+#: src/catalogs/models.py:39
 msgid "Employee ID"
 msgstr "Employee ID"
 
-#: src/catalogs/models.py:29
+#: src/catalogs/models.py:46
 msgid "User"
 msgstr "User"
 
-#: src/catalogs/models.py:33
+#: src/catalogs/models.py:50
 msgid "Responsible"
 msgstr "Responsible"
 
-#: src/catalogs/models.py:34
+#: src/catalogs/models.py:51
 msgid "Responsibles"
 msgstr "Responsibles"
 
-#: src/catalogs/models.py:49
+#: src/catalogs/models.py:124
+msgid "New responsible is required."
+msgstr ""
+
+#: src/catalogs/models.py:129
+msgid "New responsible is invalid."
+msgstr ""
+
+#: src/catalogs/models.py:131
+msgid "New responsible must be different."
+msgstr ""
+
+#: src/catalogs/models.py:137
 msgid "Status"
 msgstr "Status"
 
-#: src/catalogs/models.py:50
+#: src/catalogs/models.py:138
 msgid "Statuses"
 msgstr "Statuses"
