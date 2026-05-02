@@ -95,8 +95,10 @@ Notes:
   subsequent history to former owners.
 - **Transfer offer expiry**: offers created from the user UI get an `expires_at`
   timestamp when `INVENTORY_PENDING_TRANSFER_EXPIRATION_HOURS` is positive
-  (default: one week). After that moment the offer is no longer active unless
-  changed in the admin.
+  (default: one week). After that moment the offer is no longer **active** (same
+  rule as `PendingTransfer.is_active`): the inventory UI and list views treat it
+  like an absent offer for cards and actions, even though the row may still exist
+  in the database until cleaned up elsewhere.
 
 ## Configuration
 
@@ -165,7 +167,14 @@ semantics or query planning, for example:
 - transaction isolation / concurrency edge cases
 - PostgreSQL-specific SQL or index/ordering behavior
 
-To run tests on PostgreSQL locally, enable PostgreSQL for pytest:
+To run tests on PostgreSQL locally, enable PostgreSQL for pytest (with a running
+Postgres instance and `DATABASE_*` matching it):
+
+```bash
+make test-postgres
+```
+
+Equivalent manual invocation:
 
 ```bash
 PYTEST_POSTGRES_USE=1 \
@@ -174,6 +183,9 @@ DATABASE_NAME=database DATABASE_USER=user DATABASE_PASSWORD=password \
 PYTHONPATH=src SECRET_KEY=unsafe-secret-key-for-tooling \
 uv run python -m pytest -v
 ```
+
+CI job **Tests Postgres** uses `PYTEST_POSTGRES_ONLY=1` so only `@pytest.mark.postgres`
+tests run there; `make test-postgres` runs the **full** suite on Postgres by default.
 
 Formatting is intentionally not part of `make all` (so checks do not mutate the
 working tree). To auto-format code, use:
