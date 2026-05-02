@@ -230,12 +230,12 @@ class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
 @admin.register(Operation)
 class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
     """
-    Operations are append-only: only the latest row per item may be corrected,
-    and only inside ``INVENTORY_CORRECTION_WINDOW_MINUTES``.
+    Operations are append-only: only the latest row per item may be corrected.
 
-    The admin mirrors ``Operation.clean()`` for permissions. When a row cannot be
-    corrected, a trailing fieldset with only a ``description`` (no form rows)
-    states why; it is omitted entirely while edits are still allowed.
+    Non-superusers are also bound by ``INVENTORY_CORRECTION_WINDOW_MINUTES`` on that
+    head row. Superusers keep change/delete on the latest row after the window
+    (``ModelForm`` sets ``_bypass_operation_correction_window`` so ``clean()`` matches),
+    mirroring ``ItemAdmin`` / ``Item`` behaviour; older rows stay immutable.
     """
 
     list_display = [
@@ -291,7 +291,7 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
             return fieldsets
         op = cast(Operation, obj)
         message = self._operation_correction_window_lock_user_message(
-            obj=op, latest_operation_pk=None
+            obj=op, latest_operation_pk=None, request=request
         )
         if message is None:
             return fieldsets
@@ -306,6 +306,36 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
             {"fields": (), "description": desc},
         )
         return [*fieldsets, lock_panel]
+
+    def get_form(
+        self,
+        request: HttpRequest,
+        obj: Model | None = None,
+        change: bool = False,
+        **kwargs: Any,
+    ) -> type[forms.ModelForm]:
+        """
+        For superusers on the latest operation only, set the bypass flag so
+        ``Operation.clean()`` skips the correction window (cf. ``ItemAdmin``).
+        """
+
+        form_class = super().get_form(request, obj, change=change, **kwargs)
+        user = getattr(request, "user", None)
+
+        class OperationAdminForm(form_class):  # type: ignore[misc, valid-type]
+            def __init__(self, *args: Any, **kwargs: Any) -> None:
+                super().__init__(*args, **kwargs)
+                if not getattr(user, "is_superuser", False) or not self.instance.pk:
+                    return
+                latest = Operation.latest_operation_id_for_item(self.instance.item_id)
+                if latest == self.instance.pk:
+                    setattr(
+                        self.instance,
+                        "_bypass_operation_correction_window",
+                        True,
+                    )
+
+        return OperationAdminForm
 
     def get_queryset(self, request: HttpRequest) -> QuerySet[Operation]:
         """
@@ -357,16 +387,19 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
         self, request: HttpRequest, obj: Operation
     ) -> bool:
         """
-        True only when this row is the latest operation for its item and the
-        correction window from ``Operation.clean()`` has not expired.
+        True when this row is the latest operation for its item and either the user
+        is a superuser (window bypass in admin) or ``created_at`` is still inside the
+        correction window.
 
-        Without the window check, the admin would still show change/delete controls
-        until ``save()`` raised ``ValidationError`` — which matches reports of the
-        "lock after window" rule not applying in the UI.
+        Without these checks, the admin would still show change/delete controls until
+        ``save()`` raised ``ValidationError``.
         """
 
         if not self._is_latest_for_item(request, obj):
             return False
+        user = getattr(request, "user", None)
+        if getattr(user, "is_superuser", False):
+            return True
         return Operation.is_within_operation_correction_window(obj.created_at)
 
     def _operation_correction_window_lock_user_message(
@@ -374,6 +407,7 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
         *,
         obj: Operation,
         latest_operation_pk: int | None,
+        request: HttpRequest | None = None,
     ) -> str | None:
         """
         Return a short user-visible reason when this operation cannot be edited,
@@ -389,6 +423,9 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
             return None
         if obj.pk != latest_operation_pk:
             return Operation.only_latest_operation_may_be_edited_user_message()
+        user = getattr(request, "user", None) if request is not None else None
+        if getattr(user, "is_superuser", False):
+            return None
         if Operation.is_within_operation_correction_window(obj.created_at):
             return None
         return Operation.correction_window_expired_user_message()

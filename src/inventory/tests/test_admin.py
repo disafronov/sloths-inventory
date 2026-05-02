@@ -68,6 +68,23 @@ def _staff_view_only_operation(username: str) -> Any:
     return user
 
 
+def _staff_user_with_operation_admin_permissions(username: str) -> Any:
+    """Non-superuser staff with change/delete/view on ``Operation`` for admin tests."""
+
+    user = get_user_model().objects.create_user(
+        username=username,
+        email=f"{username}@example.com",
+        password="password",
+        is_staff=True,
+    )
+    content_type = ContentType.objects.get_for_model(Operation)
+    for codename in ("change_operation", "delete_operation", "view_operation"):
+        user.user_permissions.add(
+            Permission.objects.get(content_type=content_type, codename=codename)
+        )
+    return user
+
+
 @pytest.mark.django_db
 def test_item_admin_current_fields_and_fieldsets() -> None:
     category = Category.objects.create(name="Laptops")
@@ -194,7 +211,7 @@ def test_operation_admin_allows_edit_only_for_latest_operation() -> None:
 @pytest.mark.django_db
 @override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
 def test_operation_admin_denies_change_after_correction_window() -> None:
-    """Admin must hide edit/delete once the operation correction window ends."""
+    """Staff lose edit/delete on the latest op once the correction window ends."""
 
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
@@ -227,13 +244,56 @@ def test_operation_admin_denies_change_after_correction_window() -> None:
     admin_obj = OperationAdmin(Operation, site)
     rf = RequestFactory()
     request = rf.get("/")
-    user = get_user_model().objects.create_superuser(
-        username="admin-win", email="admin-win@example.com", password="password"
-    )
-    request.user = user
+    request.user = _staff_user_with_operation_admin_permissions("staff-op-window")
 
     assert admin_obj.has_change_permission(request, obj=op) is False
     assert admin_obj.has_delete_permission(request, obj=op) is False
+
+
+@pytest.mark.django_db
+@override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+def test_operation_admin_superuser_keeps_change_after_correction_window() -> None:
+    """Superusers can still change/delete the latest operation after the window."""
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+
+    status = Status.objects.create(name="In stock")
+    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    location = Location.objects.create(name="Moscow")
+
+    item = Item.objects.create(inventory_number="INV-OP-SU-WIN", device=device)
+    op = Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=responsible,
+        location=location,
+    )
+    Operation.objects.filter(pk=op.pk).update(
+        created_at=timezone.now() - timedelta(minutes=11),
+    )
+    op.refresh_from_db()
+
+    site = AdminSite()
+    admin_obj = OperationAdmin(Operation, site)
+    rf = RequestFactory()
+    request = rf.get("/")
+    request.user = get_user_model().objects.create_superuser(
+        username="admin-op-su-win",
+        email="admin-op-su-win@example.com",
+        password="password",
+    )
+
+    assert admin_obj.has_change_permission(request, obj=op) is True
+    assert admin_obj.has_delete_permission(request, obj=op) is True
 
 
 @pytest.mark.django_db
@@ -447,11 +507,11 @@ def test_operation_lock_fieldset_description_when_correction_window_expired() ->
     admin_obj = OperationAdmin(Operation, site)
     rf = RequestFactory()
     request = rf.get("/")
-    request.user = get_user_model().objects.create_superuser(
-        username="admin-fs2", email="admin-fs2@example.com", password="password"
-    )
-    text = str(admin_obj.get_fieldsets(request, op)[-1][1]["description"])
-    assert "contact an administrator" in text.lower()
+    request.user = _staff_user_with_operation_admin_permissions("staff-op-fs2")
+    lock_title = str(_("Editing restrictions"))
+    fieldsets = admin_obj.get_fieldsets(request, op)
+    lock = next(fs for fs in fieldsets if str(fs[0]) == lock_title)
+    assert "contact an administrator" in str(lock[1]["description"]).lower()
 
 
 @pytest.mark.django_db
@@ -488,15 +548,57 @@ def test_operation_admin_change_page_renders_edit_lock_description_after_window(
     )
     op.refresh_from_db()
 
+    staff_user = _staff_user_with_operation_admin_permissions("staff-op-banner")
+    client = Client()
+    client.force_login(staff_user)
+    url = reverse("admin:inventory_operation_change", args=[op.pk])
+    response = client.get(url)
+    assert response.status_code == 200
+    assert b"contact an administrator" in response.content.lower()
+
+
+@pytest.mark.django_db
+@override_settings(LANGUAGE_CODE="en", INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+def test_operation_change_page_superuser_hides_lock_after_correction_window() -> None:
+    """Superusers do not see the operation lock banner; they remain able to edit."""
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+
+    status = Status.objects.create(name="In stock")
+    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    location = Location.objects.create(name="Moscow")
+
+    item = Item.objects.create(inventory_number="INV-OP-SU-HTML", device=device)
+    op = Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=responsible,
+        location=location,
+    )
+    Operation.objects.filter(pk=op.pk).update(
+        created_at=timezone.now() - timedelta(minutes=11),
+    )
+
     admin_user = get_user_model().objects.create_superuser(
-        username="admin-banner", email="admin-banner@example.com", password="password"
+        username="admin-op-su-html",
+        email="admin-op-su-html@example.com",
+        password="password",
     )
     client = Client()
     client.force_login(admin_user)
     url = reverse("admin:inventory_operation_change", args=[op.pk])
     response = client.get(url)
     assert response.status_code == 200
-    assert b"contact an administrator" in response.content.lower()
+    assert b"Editing restrictions" not in response.content
 
 
 @pytest.mark.django_db

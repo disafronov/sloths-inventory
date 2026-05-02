@@ -440,6 +440,46 @@ def test_operation_latest_edit_is_blocked_after_correction_window() -> None:
 
 
 @pytest.mark.django_db
+def test_operation_save_after_window_with_admin_bypass_flag() -> None:
+    """Trusted admin path: bypass flag skips the correction window on the latest row."""
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+
+    status1 = Status.objects.create(name="S1")
+    status2 = Status.objects.create(name="S2")
+    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    location = Location.objects.create(name="Moscow")
+
+    item = Item.objects.create(inventory_number="INV-OP-BYPASS", device=device)
+    op = Operation.objects.create(
+        item=item,
+        status=status1,
+        responsible=responsible,
+        location=location,
+        notes="init",
+    )
+    Operation.objects.filter(pk=op.pk).update(
+        created_at=timezone.now() - timedelta(days=1),
+    )
+    op.refresh_from_db()
+
+    op.status = status2
+    setattr(op, "_bypass_operation_correction_window", True)
+    op.save()
+    op.refresh_from_db()
+    assert op.status_id == status2.pk
+
+
+@pytest.mark.django_db
 def test_operation_default_ordering_and_current_operation_tiebreaker() -> None:
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")

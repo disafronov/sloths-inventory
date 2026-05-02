@@ -193,6 +193,14 @@ class Item(BaseModel):
 
 
 class Operation(BaseModel):
+    """
+    Journal row for item state (append-only stream).
+
+    ``OperationAdmin`` sets ``_bypass_operation_correction_window`` on the instance
+    for superusers on the **latest** row only so ``clean()`` skips the correction
+    window; the head-row rule is never bypassed.
+    """
+
     item = models.ForeignKey("Item", on_delete=models.CASCADE, verbose_name=_("Item"))
     status = models.ForeignKey(
         Status, on_delete=models.PROTECT, verbose_name=_("Status")
@@ -288,6 +296,9 @@ class Operation(BaseModel):
         The latest-row check runs before the correction window so non-head rows
         surface the append-only reason (aligned with ``OperationAdmin``), not a
         misleading window-expired message when ``created_at`` is historical.
+
+        Superusers in ``OperationAdmin`` set ``_bypass_operation_correction_window`` so
+        the time cap is skipped on the head row only (see ``clean()`` order).
         """
 
         super().clean()
@@ -321,6 +332,11 @@ class Operation(BaseModel):
                 type(self).only_latest_operation_may_be_edited_user_message(),
                 code="operation_not_latest_for_item",
             )
+
+        # Set only by ``OperationAdmin`` ModelForm for superusers on the latest row
+        # (trusted repair path); never bypasses the append-only head rule above.
+        if getattr(self, "_bypass_operation_correction_window", False):
+            return
 
         # Correction edits are time-bounded; the cap is intentionally small by default
         # and configurable per deployment (see INVENTORY_CORRECTION_WINDOW_MINUTES).
