@@ -627,6 +627,12 @@ def test_pending_transfer_deadline_edge_gradient_t_handles_non_positive_span() -
 def test_pending_transfer_update_offer_resets_expires_at_when_receiver_changes() -> (
     None
 ):
+    """
+    When both receivers have linked users, `update_offer` must not auto-accept;
+    only receiver, notes, and expiry window change (raw `objects.create` is used
+    to seed a pending row without going through `create_offer`).
+    """
+
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
     manufacturer = Manufacturer.objects.create(name="ACME")
@@ -640,9 +646,18 @@ def test_pending_transfer_update_offer_resets_expires_at_when_receiver_changes()
 
     status = Status.objects.create(name="In use")
     location = Location.objects.create(name="Home")
-    from_resp = Responsible.objects.create(last_name="From", first_name="User")
-    to_resp1 = Responsible.objects.create(last_name="To", first_name="One")
-    to_resp2 = Responsible.objects.create(last_name="To", first_name="Two")
+    user_from = User.objects.create_user(username="from-exp", password="pw")
+    user_to1 = User.objects.create_user(username="to1-exp", password="pw")
+    user_to2 = User.objects.create_user(username="to2-exp", password="pw")
+    from_resp = Responsible.objects.create(
+        last_name="From", first_name="User", user=user_from
+    )
+    to_resp1 = Responsible.objects.create(
+        last_name="To", first_name="One", user=user_to1
+    )
+    to_resp2 = Responsible.objects.create(
+        last_name="To", first_name="Two", user=user_to2
+    )
 
     item = Item.objects.create(inventory_number="INV-XFER-UPD", device=device)
     Operation.objects.create(
@@ -678,12 +693,8 @@ def test_pending_transfer_update_offer_resets_expires_at_when_receiver_changes()
         <= transfer.expires_at
         <= after + timedelta(hours=72)
     )
-    # Both receivers lack a linked user, so `update_offer` mirrors `create_offer`
-    # and completes the handoff automatically.
-    assert transfer.accepted_at is not None
-    latest = item.operation_set.order_by("-created_at", "-id").first()
-    assert latest is not None
-    assert latest.responsible_id == to_resp2.pk
+    assert transfer.accepted_at is None
+    assert item.operation_set.count() == 1
 
 
 @pytest.mark.django_db
