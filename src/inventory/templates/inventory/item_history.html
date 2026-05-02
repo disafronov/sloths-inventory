@@ -42,6 +42,13 @@
                 {% if pending_transfer.to_responsible_id == responsible.pk %}
                     <form method="post" action="{% url 'inventory:accept-transfer' transfer_id=pending_transfer.id %}">
                         {% csrf_token %}
+                        {% if accept_journal_head_operation_id %}
+                            <input
+                                type="hidden"
+                                name="journal_head_operation_id"
+                                value="{{ accept_journal_head_operation_id }}"
+                            >
+                        {% endif %}
                         <button type="submit" class="button button--sm">{% trans "Accept" %}</button>
                     </form>
                     <form method="post" action="{% url 'inventory:cancel-transfer' transfer_id=pending_transfer.id %}">
