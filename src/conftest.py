@@ -1,9 +1,13 @@
 from __future__ import annotations
 
 import os
+from typing import Any
 
 import pytest
 from django.db import connections
+
+from catalogs.models import Location, Status
+from devices.models import Device
 
 
 def _env_truthy(name: str) -> bool:
@@ -79,3 +83,35 @@ def pytest_collection_modifyitems(
     if deselected:
         config.hook.pytest_deselected(items=deselected)
         items[:] = selected
+
+
+@pytest.fixture
+def inventory_test_device(db: Any) -> Device:
+    """
+    Standard ``Device`` row with category/type/manufacturer/model for tests.
+
+    Reduces duplicated catalog graph setup across inventory and related suites.
+    """
+
+    from devices.attributes import Category, Manufacturer, Model, Type
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    return Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+
+
+@pytest.fixture
+def inventory_test_status_location(db: Any) -> dict[str, Location | Status]:
+    """Typical ``Status`` and ``Location`` rows for inventory operation tests."""
+
+    return {
+        "status": Status.objects.create(name="In stock"),
+        "location": Location.objects.create(name="Moscow"),
+    }
