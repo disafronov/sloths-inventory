@@ -319,13 +319,16 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
 
         form_class = super().get_form(request, obj, change=change, **kwargs)
         user = getattr(request, "user", None)
+        admin_self = self
 
         class OperationAdminForm(form_class):  # type: ignore[misc, valid-type]
             def __init__(self, *args: Any, **kwargs: Any) -> None:
                 super().__init__(*args, **kwargs)
                 if not getattr(user, "is_superuser", False) or not self.instance.pk:
                     return
-                latest = Operation.latest_operation_id_for_item(self.instance.item_id)
+                latest = admin_self._get_latest_operation_id_for_item(
+                    request, item_id=self.instance.item_id
+                )
                 if latest == self.instance.pk:
                     setattr(
                         self.instance,
