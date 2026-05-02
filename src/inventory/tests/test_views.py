@@ -1424,7 +1424,7 @@ def test_cancel_transfer_returns_404_for_inactive_transfer() -> None:
 
 
 @pytest.mark.django_db
-def test_accept_transfer_returns_404_when_transfer_becomes_inactive_inside_transaction(
+def test_accept_transfer_surfaces_inactive_message_when_offer_flips_inside_transaction(
     monkeypatch,
 ) -> None:
     user_sender = User.objects.create_user(username="sender", password="pw")
@@ -1452,12 +1452,20 @@ def test_accept_transfer_returns_404_when_transfer_becomes_inactive_inside_trans
         return calls["n"] == 1
 
     monkeypatch.setattr(PendingTransfer, "is_active", property(_fake_is_active))
+    client = Client()
+    client.force_login(user_receiver)
     try:
-        client = Client()
-        client.force_login(user_receiver)
-        assert client.post(f"/transfers/{transfer.pk}/accept/").status_code == 404
+        post_response = client.post(
+            f"/transfers/{transfer.pk}/accept/",
+            follow=False,
+        )
     finally:
         monkeypatch.setattr(PendingTransfer, "is_active", original_prop)
+
+    assert post_response.status_code == 302
+    follow = client.get(post_response["Location"])
+    assert follow.status_code == 200
+    assert b"Transfer is not active" in follow.content
 
 
 @pytest.mark.django_db
@@ -2086,7 +2094,7 @@ def test_create_transfer_post_update_offer_validation_error() -> None:
 
 
 @pytest.mark.django_db
-def test_cancel_transfer_returns_404_when_cancel_raises_validation_error() -> None:
+def test_cancel_transfer_surfaces_validation_error_message() -> None:
     user_sender = User.objects.create_user(username="snd-can-val", password="pw")
     user_receiver = User.objects.create_user(username="rcv-can-val", password="pw")
     resp_sender = Responsible.objects.create(
@@ -2113,12 +2121,14 @@ def test_cancel_transfer_returns_404_when_cancel_raises_validation_error() -> No
     ):
         response = client.post(
             reverse("inventory:cancel-transfer", kwargs={"transfer_id": transfer.pk}),
+            follow=True,
         )
-    assert response.status_code == 404
+    assert response.status_code == 200
+    assert b"inactive" in response.content
 
 
 @pytest.mark.django_db
-def test_accept_transfer_returns_404_when_accept_raises_validation_error() -> None:
+def test_accept_transfer_surfaces_validation_error_message() -> None:
     user_sender = User.objects.create_user(username="snd-acc-val", password="pw")
     user_receiver = User.objects.create_user(username="rcv-acc-val", password="pw")
     resp_sender = Responsible.objects.create(
@@ -2145,5 +2155,52 @@ def test_accept_transfer_returns_404_when_accept_raises_validation_error() -> No
     ):
         response = client.post(
             reverse("inventory:accept-transfer", kwargs={"transfer_id": transfer.pk}),
+            follow=True,
         )
-    assert response.status_code == 404
+    assert response.status_code == 200
+    assert b"cannot accept" in response.content
+
+
+@pytest.mark.django_db
+def test_accept_transfer_shows_error_when_sender_no_longer_holds_item() -> None:
+    """
+    Stale pending row: journal head moved past sender; receiver sees a flash error.
+    """
+
+    user_sender = User.objects.create_user(username="snd-stale", password="pw")
+    user_receiver = User.objects.create_user(username="rcv-stale", password="pw")
+    user_other = User.objects.create_user(username="oth-stale", password="pw")
+    resp_sender = Responsible.objects.create(
+        last_name="S", first_name="Stale", user=user_sender
+    )
+    resp_receiver = Responsible.objects.create(
+        last_name="R", first_name="Stale", user=user_receiver
+    )
+    resp_other = Responsible.objects.create(
+        last_name="O", first_name="Stale", user=user_other
+    )
+    status = Status.objects.create(name="In stock")
+    location = Location.objects.create(name="Moscow")
+    item = _make_item_with_operation(status, location, resp_sender, "INV-XFER-STALE-V")
+    transfer = PendingTransfer.objects.create(
+        item=item,
+        from_responsible=resp_sender,
+        to_responsible=resp_receiver,
+    )
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=resp_other,
+        location=location,
+    )
+
+    client = Client()
+    client.force_login(user_receiver)
+    response = client.post(
+        reverse("inventory:accept-transfer", kwargs={"transfer_id": transfer.pk}),
+        follow=True,
+    )
+    assert response.status_code == 200
+    assert b"sender no longer holds the item" in response.content
+    transfer.refresh_from_db()
+    assert transfer.accepted_at is None
