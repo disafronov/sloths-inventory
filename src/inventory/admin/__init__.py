@@ -9,8 +9,7 @@ from django.utils.translation import gettext_lazy as _
 
 from common.admin import BaseAdmin, auth_has_change_permission
 from common.edit_window import is_within_inventory_correction_window
-
-from .models import Item, Operation, PendingTransfer
+from inventory.models import Item, Operation, PendingTransfer
 
 
 class _EmptyValueFormatter(Protocol):
