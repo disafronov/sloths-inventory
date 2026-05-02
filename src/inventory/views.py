@@ -523,6 +523,7 @@ def item_history(request: HttpRequest, *, item_id: int) -> HttpResponse:
         "inventory/item_history.html",
         {
             "item": item,
+            "responsible": responsible,
             "operations": operations,
             "is_owner": is_owner,
             "pending_transfer": pending_transfer,

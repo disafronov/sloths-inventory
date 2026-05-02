@@ -155,6 +155,27 @@ class Operation(BaseModel):
         edit_window = timedelta(minutes=edit_window_minutes)
         return reference_time - operation_created_at <= edit_window
 
+    @classmethod
+    def correction_window_expired_user_message(cls) -> str:
+        """
+        Return the user-visible message when the correction window has expired.
+
+        Shared by ``Operation.clean()`` and the admin lock panel so operators see
+        the same wording the model enforces on save.
+        """
+
+        edit_window_minutes = getattr(
+            settings, "INVENTORY_OPERATION_EDIT_WINDOW_MINUTES", 10
+        )
+        return str(
+            ngettext(
+                "The correction window (%(minutes)d minute) has expired.",
+                "The correction window (%(minutes)d minutes) has expired.",
+                edit_window_minutes,
+            )
+            % {"minutes": edit_window_minutes}
+        )
+
     def clean(self) -> None:
         """
         Enforce append-only semantics for operations.
@@ -185,18 +206,9 @@ class Operation(BaseModel):
 
         # Correction edits are time-bounded; the cap is intentionally small by default
         # and configurable per deployment (see INVENTORY_OPERATION_EDIT_WINDOW_MINUTES).
-        edit_window_minutes = getattr(
-            settings, "INVENTORY_OPERATION_EDIT_WINDOW_MINUTES", 10
-        )
-
         if not self.is_within_operation_edit_window(original.created_at):
-            message = ngettext(
-                "The correction window (%(minutes)d minute) has expired.",
-                "The correction window (%(minutes)d minutes) has expired.",
-                edit_window_minutes,
-            ) % {"minutes": edit_window_minutes}
             raise ValidationError(
-                message,
+                type(self).correction_window_expired_user_message(),
                 # Keep a stable error code for tests and possible UI handling.
                 code="correction_window_expired",
             )
@@ -434,6 +446,9 @@ class PendingTransfer(BaseModel):
 
         This is the sender-side edit flow for the user-facing UI. We keep the
         same per-item serialization guarantees as `accept()` / `cancel()`.
+
+        Offer edits are limited only by ``PendingTransfer.is_active`` (including
+        ``expires_at`` when set), not by the operation correction window.
 
         If the new receiver has no linked Django user, we call `accept()` after
         persisting the update, matching `create_offer` so the item cannot remain
