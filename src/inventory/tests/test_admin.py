@@ -36,6 +36,38 @@ def _staff_user_with_item_admin_permissions(username: str) -> Any:
     return user
 
 
+def _staff_view_only_item(username: str) -> Any:
+    """Staff with ``view_item`` only (no ``change_item`` / ``delete_item``)."""
+
+    user = get_user_model().objects.create_user(
+        username=username,
+        email=f"{username}@example.com",
+        password="password",
+        is_staff=True,
+    )
+    content_type = ContentType.objects.get_for_model(Item)
+    user.user_permissions.add(
+        Permission.objects.get(content_type=content_type, codename="view_item")
+    )
+    return user
+
+
+def _staff_view_only_operation(username: str) -> Any:
+    """Staff with ``view_operation`` only."""
+
+    user = get_user_model().objects.create_user(
+        username=username,
+        email=f"{username}@example.com",
+        password="password",
+        is_staff=True,
+    )
+    content_type = ContentType.objects.get_for_model(Operation)
+    user.user_permissions.add(
+        Permission.objects.get(content_type=content_type, codename="view_operation")
+    )
+    return user
+
+
 @pytest.mark.django_db
 def test_item_admin_current_fields_and_fieldsets() -> None:
     category = Category.objects.create(name="Laptops")
@@ -658,6 +690,93 @@ def test_item_lock_fieldset_description_when_correction_window_expired() -> None
     fieldsets = admin_obj.get_fieldsets(request, item)
     lock = next(fs for fs in fieldsets if str(fs[0]) == lock_title)
     assert "contact an administrator" in str(lock[1]["description"]).lower()
+
+
+@pytest.mark.django_db
+@override_settings(LANGUAGE_CODE="en", INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+def test_item_fieldset_omits_lock_panel_without_model_change_permission() -> None:
+    """
+    View-only users should not see domain lock copy: they cannot edit for auth reasons.
+    """
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+
+    item = Item.objects.create(inventory_number="INV-ITEM-VIEW-ONLY", device=device)
+    status = Status.objects.create(name="In stock")
+    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    location = Location.objects.create(name="Moscow")
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=responsible,
+        location=location,
+    )
+    Item.objects.filter(pk=item.pk).update(
+        updated_at=timezone.now() - timedelta(minutes=11),
+    )
+    item.refresh_from_db()
+
+    site = AdminSite()
+    admin_obj = ItemAdmin(Item, site)
+    rf = RequestFactory()
+    request = rf.get("/")
+    request.user = _staff_view_only_item("staff-item-view-only")
+    lock_title = str(_("Editing restrictions"))
+    fieldsets = admin_obj.get_fieldsets(request, item)
+    assert not any(fs[0] is not None and str(fs[0]) == lock_title for fs in fieldsets)
+
+
+@pytest.mark.django_db
+@override_settings(LANGUAGE_CODE="en")
+def test_operation_fieldset_omits_lock_panel_without_model_change_permission() -> None:
+    """Same as item: view-only staff must not see append-only / window lock fieldset."""
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+
+    status = Status.objects.create(name="In stock")
+    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    location = Location.objects.create(name="Moscow")
+
+    item = Item.objects.create(inventory_number="INV-OP-VIEW-ONLY", device=device)
+    op1 = Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=responsible,
+        location=location,
+    )
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=responsible,
+        location=location,
+    )
+
+    site = AdminSite()
+    admin_obj = OperationAdmin(Operation, site)
+    rf = RequestFactory()
+    request = rf.get("/")
+    request.user = _staff_view_only_operation("staff-op-view-only")
+    lock_title = str(_("Editing restrictions"))
+    fieldsets = admin_obj.get_fieldsets(request, op1)
+    assert not any(fs[0] is not None and str(fs[0]) == lock_title for fs in fieldsets)
 
 
 @pytest.mark.django_db
