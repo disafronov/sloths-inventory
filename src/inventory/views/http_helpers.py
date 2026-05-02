@@ -2,6 +2,7 @@
 HTTP-only helpers shared by inventory view modules (forms, template rendering).
 """
 
+from django.core.exceptions import ValidationError
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 
@@ -53,8 +54,6 @@ def parse_transfer_receiver_or_render_error(
     Domain validation is delegated to
     :meth:`Responsible.resolve_transfer_receiver_from_form`.
     """
-
-    from django.core.exceptions import ValidationError
 
     try:
         receiver = Responsible.resolve_transfer_receiver_from_form(
