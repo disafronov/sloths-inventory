@@ -149,26 +149,19 @@ depend on developer environment variables.
 
 ### PostgreSQL-only tests
 
-The default test configuration runs Django with in-memory SQLite
-(`sloths_inventory.settings_pytest`) for speed and to avoid requiring a running
-Postgres instance.
+The default test configuration runs Django with in-memory SQLite (`sloths_inventory.settings_pytest`) for speed and to avoid requiring a running Postgres instance.
 
-Some tests validate PostgreSQL-specific behavior (e.g. row-level locking). Such
-tests are marked with `@pytest.mark.postgres` and are automatically skipped
-unless the active database backend is PostgreSQL.
+Some tests validate PostgreSQL-specific behavior (e.g. row-level locking). Such tests are marked with `@pytest.mark.postgres` and are automatically skipped unless the active database backend is PostgreSQL.
 
-Note: `src/conftest.py` is test infrastructure (not application code) and is
-excluded from coverage.
+Note: `src/conftest.py` is test infrastructure (not application code) and is excluded from coverage.
 
-Rule of thumb: add `@pytest.mark.postgres` when a test relies on PostgreSQL
-semantics or query planning, for example:
+Rule of thumb: add `@pytest.mark.postgres` when a test relies on PostgreSQL semantics or query planning, for example:
 
 - row-level locks / blocking behavior (`select_for_update()`)
 - transaction isolation / concurrency edge cases
 - PostgreSQL-specific SQL or index/ordering behavior
 
-To run tests on PostgreSQL locally, enable PostgreSQL for pytest (with a running
-Postgres instance and `DATABASE_*` matching it):
+To run tests on PostgreSQL locally, enable PostgreSQL for pytest (with a running Postgres instance and `DATABASE_*` matching it):
 
 ```bash
 make test-postgres
@@ -178,17 +171,17 @@ Equivalent manual invocation:
 
 ```bash
 PYTEST_POSTGRES_USE=1 \
-DATABASE_HOST=127.0.0.1 DATABASE_PORT=5432 \
-DATABASE_NAME=database DATABASE_USER=user DATABASE_PASSWORD=password \
-PYTHONPATH=src SECRET_KEY=unsafe-secret-key-for-tooling \
+DATABASE_HOST=127.0.0.1 \
+DATABASE_PORT=5432 \
+DATABASE_NAME=database \
+DATABASE_USER=user \
+DATABASE_PASSWORD=password \
+PYTHONPATH=src \
+SECRET_KEY=unsafe-secret-key-for-tooling \
 uv run python -m pytest -v
 ```
 
-CI job **Tests Postgres** uses `PYTEST_POSTGRES_ONLY=1` so only `@pytest.mark.postgres`
-tests run there. Locally, **`make test-postgres`** sets only `PYTEST_POSTGRES_USE=1`
-and runs the **full** pytest suite on PostgreSQL—use that when the CI Postgres job
-fails: the subset may be a narrow symptom; a full run on Postgres catches
-interaction issues elsewhere.
+The **Tests Postgres** CI job sets `PYTEST_POSTGRES_ONLY=1`, so only `@pytest.mark.postgres` tests run there. Locally, `make test-postgres` sets `PYTEST_POSTGRES_USE=1` and runs the **full** pytest suite on PostgreSQL. If that CI job fails, run this full local pass: the Postgres-only subset can be a narrow symptom, and problems may only show up when the whole suite runs against PostgreSQL.
 
 Formatting is intentionally not part of `make all` (so checks do not mutate the
 working tree). To auto-format code, use:
