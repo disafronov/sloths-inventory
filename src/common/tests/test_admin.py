@@ -3,14 +3,14 @@ from django.contrib import admin
 from django.contrib.admin.sites import AdminSite
 from django.test import RequestFactory
 
+from catalogs.models import Location
 from common.admin import BaseAdmin
-from inventory.models import Item
 
 
 @pytest.mark.django_db
 def test_base_admin_format_empty_value() -> None:
     site = AdminSite()
-    admin_obj = BaseAdmin(Item, site)
+    admin_obj = BaseAdmin(Location, site)
 
     assert admin_obj._format_empty_value("") == "-"
     assert admin_obj._format_empty_value(None) == "-"
@@ -20,7 +20,7 @@ def test_base_admin_format_empty_value() -> None:
 @pytest.mark.django_db
 def test_base_admin_fieldsets_main_fields_injected() -> None:
     site = AdminSite()
-    admin_obj = BaseAdmin(Item, site)
+    admin_obj = BaseAdmin(Location, site)
     rf = RequestFactory()
 
     request = rf.get("/")
@@ -34,7 +34,7 @@ def test_base_admin_fieldsets_main_fields_injected() -> None:
 @pytest.mark.django_db
 def test_base_admin_fieldsets_empty_super_result_is_handled(monkeypatch) -> None:
     site = AdminSite()
-    admin_obj = BaseAdmin(Item, site)
+    admin_obj = BaseAdmin(Location, site)
     rf = RequestFactory()
 
     def _empty_fieldsets(_self, request, obj=None):
