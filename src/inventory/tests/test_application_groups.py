@@ -126,6 +126,19 @@ def test_add_logentry_on_both_groups() -> None:
 
 
 @pytest.mark.django_db
+def test_editor_has_view_logentry_staff_does_not() -> None:
+    """Editors may browse the global admin log; read-only Staff may not."""
+
+    enforce_application_groups()
+    ct = ContentType.objects.get_for_model(LogEntry)
+    view_perm = Permission.objects.get(content_type=ct, codename="view_logentry")
+    staff = Group.objects.get(name=STAFF_GROUP_NAME)
+    editor = Group.objects.get(name=EDITOR_GROUP_NAME)
+    assert not staff.permissions.filter(pk=view_perm.pk).exists()
+    assert editor.permissions.filter(pk=view_perm.pk).exists()
+
+
+@pytest.mark.django_db
 def test_is_staff_assigns_staff_group() -> None:
     enforce_application_groups()
     with TestCase.captureOnCommitCallbacks(execute=True):
