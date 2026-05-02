@@ -97,20 +97,12 @@ msgstr "Operations"
 msgid "Operation item cannot be changed"
 msgstr "Operation item cannot be changed"
 
-#: src/inventory/models.py:140
+#: src/inventory/models.py:193
 #, python-format
-msgid ""
-"This operation can no longer be edited (the %(minutes)d minute correction "
-"window has expired)"
-msgid_plural ""
-"This operation can no longer be edited (the %(minutes)d minutes correction "
-"window has expired)"
-msgstr[0] ""
-"This operation can no longer be edited (the %(minutes)d minute correction "
-"window has expired)"
-msgstr[1] ""
-"This operation can no longer be edited (the %(minutes)d minutes correction "
-"window has expired)"
+msgid "The correction window (%(minutes)d minute) has expired."
+msgid_plural "The correction window (%(minutes)d minutes) has expired."
+msgstr[0] "The correction window (%(minutes)d minute) has expired."
+msgstr[1] "The correction window (%(minutes)d minutes) has expired."
 
 #: src/inventory/models.py:164
 msgid "Only the latest operation for this item can be edited"
@@ -393,3 +385,7 @@ msgstr "New responsible is invalid."
 #: src/inventory/views.py:580
 msgid "New responsible must be different."
 msgstr "New responsible must be different."
+
+#: src/inventory/admin.py:194
+msgid "Editing restrictions"
+msgstr "Editing restrictions"
