@@ -130,6 +130,52 @@ def test_my_items_shows_only_items_where_latest_operation_has_my_responsible() -
 
 
 @pytest.mark.django_db
+def test_build_my_items_owned_list_does_not_query_per_row_for_location_status() -> None:
+    """
+    Owned rows on the My items page must not N+1 when templates read
+    ``current_location`` / ``current_status`` (SQL annotations shadow descriptors).
+    """
+
+    from django.db import connection
+    from django.test.utils import CaptureQueriesContext
+
+    from inventory.models import build_my_items_page_data
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    status = Status.objects.create(name="In stock")
+    location = Location.objects.create(name="Moscow")
+
+    user = User.objects.create_user(username="u_nplus", password="pw")
+    resp = Responsible.objects.create(last_name="Nplus", first_name="One", user=user)
+
+    for i in range(25):
+        item = Item.objects.create(inventory_number=f"INV-NP-{i:03d}", device=device)
+        Operation.objects.create(
+            item=item, status=status, responsible=resp, location=location
+        )
+
+    with CaptureQueriesContext(connection) as ctx:
+        page = build_my_items_page_data(resp, query="", list_kind="owned")
+        for row in page.items:
+            assert row.current_location == location.name
+            assert row.current_status == status.name
+
+    assert len(ctx.captured_queries) <= 12, (
+        "Expected a bounded number of SQL statements when resolving many owned "
+        f"rows (got {len(ctx.captured_queries)})"
+    )
+
+
+@pytest.mark.django_db
 def test_my_items_search_filters_by_inventory_number_and_serial() -> None:
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
