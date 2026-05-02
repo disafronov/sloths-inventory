@@ -195,6 +195,9 @@ class PendingTransfer(BaseModel):
         This is the authoritative confirmation path that changes the current owner
         (via a new `Operation`). It is used both by the user-facing "Accept" action
         and by the automatic acceptance path when the receiver has no linked user.
+
+        The latest journal operation must still name ``from_responsible``; otherwise
+        the offer is stale and acceptance is rejected.
         """
 
         from inventory.models.operation import Operation
@@ -211,6 +214,14 @@ class PendingTransfer(BaseModel):
             if current_op is None:
                 raise ValidationError(
                     _("Cannot accept transfer for an item without operations")
+                )
+            # The offer is valid only while the journal head still names the sender.
+            # Ownership may move while a stale PendingTransfer row stays active (e.g.
+            # admin repair); we must not copy state from a non-sender head for the
+            # receiver.
+            if current_op.responsible_id != transfer.from_responsible_id:
+                raise ValidationError(
+                    _("Cannot accept transfer: sender no longer holds the item.")
                 )
 
             Operation.objects.create(
