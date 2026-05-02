@@ -47,13 +47,15 @@ Two Django auth groups are defined and kept in sync by code (`common.application
   by code.
 
 **When group permissions are refreshed** (`enforce_application_groups()`): on
-`post_migrate` for the `common` app (once per `migrate` run, after the app registry
-is fully ready — avoids querying the DB from `AppConfig.ready()`), and on
-`post_save` / `post_delete` for `Group` or `Permission`. New default permissions
-created via `bulk_create` (as in `django.contrib.auth.management.create_permissions`)
-do not emit per-row signals; run migrations / restart the app, touch a `Group` or
-`Permission`, or call the enforcer from a management command if you need an
-immediate refresh after bulk permission creation.
+`post_migrate` for **each** installed app (once per app per `migrate` run; the
+enforcer is idempotent and the last passes converge after
+`create_permissions` / `bulk_create` for later apps — avoids querying the DB from
+`AppConfig.ready()`), and on `post_save` / `post_delete` for `Group` or `Permission`.
+New default permissions created via `bulk_create` (as in
+`django.contrib.auth.management.create_permissions`) do not emit per-row signals;
+run `migrate` (which re-runs the enforcer on later `post_migrate` hooks), touch a
+`Group` or `Permission`, or call the enforcer from a management command if you need
+an immediate refresh outside `migrate`.
 
 In the admin, the `Staff` and `Editor` group records cannot be changed or deleted
 (even for superusers); only membership (for non–application-defined groups) and
