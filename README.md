@@ -112,7 +112,9 @@ Notes:
   corrected.
 - **Correction window** (`INVENTORY_CORRECTION_WINDOW_MINUTES`, default 10 minutes):
   - **Operations**: only the latest `Operation` per item may be corrected, and only
-    while its `created_at` is still inside the window (`inventory.Operation`).
+    while its `created_at` is still inside the window (`inventory.Operation`) for
+    non-superusers. Django superusers bypass that time cap in the admin on the head
+    row only (same repair idea as `Item`); older operations stay immutable.
   - **Items**: once the item has at least one operation (an accountable party in the
     journal), edits to core item fields are limited by the same minute cap, anchored
     on the row's previous `updated_at` (`inventory.Item`).
