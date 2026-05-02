@@ -131,6 +131,30 @@ class Operation(BaseModel):
             ),
         ]
 
+    @classmethod
+    def is_within_operation_edit_window(
+        cls,
+        operation_created_at: datetime,
+        *,
+        reference_time: datetime | None = None,
+    ) -> bool:
+        """
+        Return whether an operation created at ``operation_created_at`` may still be
+        corrected under ``INVENTORY_OPERATION_EDIT_WINDOW_MINUTES``.
+
+        Centralising the timedelta comparison keeps ``Operation.clean()`` and the
+        admin permission/read-only hints in sync: anything the UI calls "open" must
+        still pass validation on ``save()``.
+        """
+
+        if reference_time is None:
+            reference_time = timezone.now()
+        edit_window_minutes = getattr(
+            settings, "INVENTORY_OPERATION_EDIT_WINDOW_MINUTES", 10
+        )
+        edit_window = timedelta(minutes=edit_window_minutes)
+        return reference_time - operation_created_at <= edit_window
+
     def clean(self) -> None:
         """
         Enforce append-only semantics for operations.
@@ -145,15 +169,8 @@ class Operation(BaseModel):
         if self._state.adding:
             return
 
-        # Editing operations is a "correction" path only. The goal is to prevent
-        # silent history rewrites while still allowing quick fixes for recent typos.
-        # The actual limit is configurable because different teams have different
-        # operational workflows.
-        edit_window_minutes = getattr(
-            settings, "INVENTORY_OPERATION_EDIT_WINDOW_MINUTES", 10
-        )
-        edit_window = timedelta(minutes=edit_window_minutes)
-
+        # Always re-fetch authoritative column values from the database. A stale
+        # in-memory instance must not weaken append-only or window checks.
         original = Operation.objects.only(
             "item_id",
             "status_id",
@@ -166,12 +183,16 @@ class Operation(BaseModel):
         if self.item_id != original.item_id:
             raise ValidationError({"item": _("Operation item cannot be changed")})
 
-        if timezone.now() - original.created_at > edit_window:
+        # Correction edits are time-bounded; the cap is intentionally small by default
+        # and configurable per deployment (see INVENTORY_OPERATION_EDIT_WINDOW_MINUTES).
+        edit_window_minutes = getattr(
+            settings, "INVENTORY_OPERATION_EDIT_WINDOW_MINUTES", 10
+        )
+
+        if not self.is_within_operation_edit_window(original.created_at):
             message = ngettext(
-                "This operation can no longer be edited "
-                "(the %(minutes)d minute correction window has expired)",
-                "This operation can no longer be edited "
-                "(the %(minutes)d minutes correction window has expired)",
+                "The correction window (%(minutes)d minute) has expired.",
+                "The correction window (%(minutes)d minutes) has expired.",
                 edit_window_minutes,
             ) % {"minutes": edit_window_minutes}
             raise ValidationError(
@@ -180,6 +201,8 @@ class Operation(BaseModel):
                 code="correction_window_expired",
             )
 
+        # Non-latest rows are always immutable; only the head of the append-only
+        # stream may be corrected (subject to the time window checked above).
         latest_id = (
             Operation.objects.filter(item_id=self.item_id)
             .order_by("-created_at", "-id")
