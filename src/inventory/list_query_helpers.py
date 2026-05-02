@@ -15,6 +15,16 @@ from __future__ import annotations
 from django.db.models import OuterRef, Subquery
 
 
+def _latest_operation_subquery(*, item_ref: str, field: str) -> Subquery:
+    from inventory.models.operation import Operation
+
+    return Subquery(
+        Operation.objects.filter(item_id=OuterRef(item_ref))
+        .order_by("-created_at", "-id")
+        .values(field)[:1]
+    )
+
+
 def latest_operation_location_name_subquery(*, item_ref: str) -> Subquery:
     """
     Return a subquery yielding the latest operation's location name for ``item_ref``.
@@ -24,13 +34,7 @@ def latest_operation_location_name_subquery(*, item_ref: str) -> Subquery:
     ``\"item_id\"`` for :class:`~inventory.models.PendingTransfer` rows).
     """
 
-    from inventory.models.operation import Operation
-
-    return Subquery(
-        Operation.objects.filter(item_id=OuterRef(item_ref))
-        .order_by("-created_at", "-id")
-        .values("location__name")[:1]
-    )
+    return _latest_operation_subquery(item_ref=item_ref, field="location__name")
 
 
 def latest_operation_status_name_subquery(*, item_ref: str) -> Subquery:
@@ -40,10 +44,4 @@ def latest_operation_status_name_subquery(*, item_ref: str) -> Subquery:
     See :func:`latest_operation_location_name_subquery` for ``item_ref`` meaning.
     """
 
-    from inventory.models.operation import Operation
-
-    return Subquery(
-        Operation.objects.filter(item_id=OuterRef(item_ref))
-        .order_by("-created_at", "-id")
-        .values("status__name")[:1]
-    )
+    return _latest_operation_subquery(item_ref=item_ref, field="status__name")
