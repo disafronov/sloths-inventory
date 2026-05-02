@@ -97,7 +97,7 @@ def build_my_items_page_data(
     latest_status_name = latest_operation_status_name_subquery(item_ref="item_id")
 
     base_transfers_qs = (
-        PendingTransfer.objects.offers_visible_in_ui()
+        PendingTransfer.offers_visible_in_ui()
         .select_related(
             "item",
             "item__device",
@@ -121,7 +121,7 @@ def build_my_items_page_data(
     ).order_by("-created_at", "-id")
 
     transfer_item_ids = (
-        PendingTransfer.objects.offers_visible_in_ui()
+        PendingTransfer.offers_visible_in_ui()
         .filter(Q(to_responsible=responsible) | Q(from_responsible=responsible))
         .values_list("item_id", flat=True)
         .distinct()
@@ -180,7 +180,7 @@ def build_previous_items_page_data(
     latest_location_name = latest_operation_location_name_subquery(item_ref="item_id")
     latest_status_name = latest_operation_status_name_subquery(item_ref="item_id")
     base_transfers_qs = (
-        PendingTransfer.objects.offers_visible_in_ui()
+        PendingTransfer.offers_visible_in_ui()
         .filter(item_id__in=Subquery(items.values("pk")))
         .filter(Q(to_responsible=responsible) | Q(from_responsible=responsible))
         .select_related(
@@ -231,7 +231,7 @@ def resolve_item_history_context(
 
     if item is None:
         pending_for_me = (
-            PendingTransfer.objects.offers_visible_in_ui()
+            PendingTransfer.offers_visible_in_ui()
             .filter(
                 item_id=item_id,
                 to_responsible=responsible,
