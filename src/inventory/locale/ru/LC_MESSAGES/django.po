@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventory\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-01 04:33+0400\n"
+"POT-Creation-Date: 2026-05-02 13:18+0000\n"
 "PO-Revision-Date: 2024-03-19 00:40+0300\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
@@ -16,171 +16,215 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
 
-#: src/inventory/admin.py:22 src/inventory/models.py:83
-#: src/inventory/templates/inventory/_transfer_card.html:22
-#: src/inventory/templates/inventory/item_history.html:92
+#: src/inventory/admin/__init__.py:34 src/inventory/models/operation.py:31
+#: src/inventory/templates/inventory/_transfer_card.html:23
+#: src/inventory/templates/inventory/item_history.html:97
 #: src/inventory/templates/inventory/my_items.html:79
 msgid "Status"
 msgstr "Статус"
 
-#: src/inventory/admin.py:26 src/inventory/models.py:89
-#: src/inventory/templates/inventory/_transfer_card.html:18
-#: src/inventory/templates/inventory/item_history.html:88
+#: src/inventory/admin/__init__.py:38 src/inventory/models/operation.py:37
+#: src/inventory/templates/inventory/_transfer_card.html:19
+#: src/inventory/templates/inventory/item_history.html:93
 #: src/inventory/templates/inventory/my_items.html:75
 msgid "Location"
 msgstr "Местоположение"
 
-#: src/inventory/admin.py:30 src/inventory/admin.py:226
-#: src/inventory/templates/inventory/item_history.html:84
+#: src/inventory/admin/__init__.py:42 src/inventory/admin/__init__.py:459
+#: src/inventory/templates/inventory/item_history.html:89
 msgid "Responsible Person"
 msgstr "Ответственный"
 
-#: src/inventory/admin.py:109 src/inventory/models.py:93
+#: src/inventory/admin/__init__.py:212 src/inventory/models/operation.py:41
 msgid "Operation"
 msgstr "Назначение"
+
+#: src/inventory/admin/__init__.py:233 src/inventory/admin/__init__.py:312
+#: src/inventory/tests/test_admin.py:494 src/inventory/tests/test_admin.py:540
+#: src/inventory/tests/test_admin.py:820 src/inventory/tests/test_admin.py:864
+#: src/inventory/tests/test_admin.py:908
+msgid "Editing restrictions"
+msgstr "Ограничения на правку"
 
 #: src/inventory/apps.py:8
 msgid "Inventory"
 msgstr "Инвентарь"
 
-#: src/inventory/models.py:18
+#: src/inventory/models/item.py:112
 #: src/inventory/templates/inventory/_item_card_title_inventory_number.html:3
+#: src/inventory/templates/inventory/_item_header_card.html:4
 #: src/inventory/templates/inventory/change_location.html:5
-#: src/inventory/templates/inventory/change_location.html:8
-#: src/inventory/templates/inventory/item_history.html:6
 #: src/inventory/templates/inventory/transfer_create.html:5
-#: src/inventory/templates/inventory/transfer_create.html:8
 msgid "Inventory number"
 msgstr "Инвентарный номер"
 
-#: src/inventory/models.py:21
-#: src/inventory/templates/inventory/_transfer_card.html:10
-#: src/inventory/templates/inventory/change_location.html:15
-#: src/inventory/templates/inventory/item_history.html:13
+#: src/inventory/models/item.py:115
+#: src/inventory/templates/inventory/_item_header_card.html:8
+#: src/inventory/templates/inventory/_transfer_card.html:11
 #: src/inventory/templates/inventory/my_items.html:67
-#: src/inventory/templates/inventory/previous_items.html:35
-#: src/inventory/templates/inventory/transfer_create.html:15
+#: src/inventory/templates/inventory/previous_items.html:39
 msgid "Device"
 msgstr "Устройство"
 
-#: src/inventory/models.py:24
-#: src/inventory/templates/inventory/_transfer_card.html:14
-#: src/inventory/templates/inventory/change_location.html:19
-#: src/inventory/templates/inventory/item_history.html:17
+#: src/inventory/models/item.py:118
+#: src/inventory/templates/inventory/_item_header_card.html:12
+#: src/inventory/templates/inventory/_transfer_card.html:15
 #: src/inventory/templates/inventory/my_items.html:71
-#: src/inventory/templates/inventory/previous_items.html:39
-#: src/inventory/templates/inventory/transfer_create.html:19
+#: src/inventory/templates/inventory/previous_items.html:43
 msgid "Serial number"
 msgstr "Серийный номер"
 
-#: src/inventory/models.py:28 src/inventory/models.py:81
-#: src/inventory/models.py:203
+#: src/inventory/models/item.py:124 src/inventory/models/operation.py:29
+#: src/inventory/models/pending_transfer.py:71
 msgid "Item"
 msgstr "Вещь"
 
-#: src/inventory/models.py:29
+#: src/inventory/models/item.py:125
 msgid "Items"
 msgstr "Вещи"
 
-#: src/inventory/models.py:42
+#: src/inventory/models/item.py:175
 msgid "Inventory number cannot be empty"
 msgstr "Инвентарный номер не может быть пустым"
 
-#: src/inventory/models.py:86
+#: src/inventory/models/item.py:260
+msgid "Cannot change location for an item without operations"
+msgstr "Нельзя сменить местоположение у вещи без записей в журнале."
+
+#: src/inventory/models/item.py:265
+msgid "New location must be different from current location."
+msgstr "Новое местоположение должно отличаться от текущего."
+
+#: src/inventory/models/item.py:273
+msgid "Location changes must be recorded by the current accountable person."
+msgstr ""
+"Смену местоположения может зафиксировать только текущий ответственный по "
+"журналу."
+
+#: src/inventory/models/operation.py:34
 msgid "Responsible"
 msgstr "Ответственный"
 
-#: src/inventory/models.py:94
+#: src/inventory/models/operation.py:42
 msgid "Operations"
 msgstr "Назначения"
 
-#: src/inventory/models.py:136
-msgid "Operation item cannot be changed"
-msgstr "Нельзя изменить вещь в назначении"
-
-#: src/inventory/models.py:257
-#, python-format
-msgid ""
-"The correction window (%(minutes)d minute) has expired. "
-"To make changes, contact an administrator."
-msgid_plural ""
-"The correction window (%(minutes)d minutes) has expired. "
-"To make changes, contact an administrator."
-msgstr[0] ""
-"Истекло окно исправления (%(minutes)d минута). "
-"Для изменения — обратитесь к администратору."
-msgstr[1] ""
-"Истекло окно исправления (%(minutes)d минуты). "
-"Для изменения — обратитесь к администратору."
-msgstr[2] ""
-"Истекло окно исправления (%(minutes)d минут). "
-"Для изменения — обратитесь к администратору."
-
-#: src/inventory/models.py:164
+#: src/inventory/models/operation.py:96
 msgid "Only the latest operation for this item can be edited"
 msgstr "Можно редактировать только последнее назначение для этой вещи"
 
-#: src/inventory/models.py:208
+#: src/inventory/models/operation.py:110
+#, python-format
+msgid ""
+"The correction window (%(minutes)d minute) has expired. To make changes, "
+"contact an administrator."
+msgid_plural ""
+"The correction window (%(minutes)d minutes) has expired. To make changes, "
+"contact an administrator."
+msgstr[0] ""
+"Истекло окно исправления (%(minutes)d минута). Для изменения — обратитесь к "
+"администратору."
+msgstr[1] ""
+"Истекло окно исправления (%(minutes)d минуты). Для изменения — обратитесь к "
+"администратору."
+msgstr[2] ""
+"Истекло окно исправления (%(minutes)d минут). Для изменения — обратитесь к "
+"администратору."
+
+#: src/inventory/models/operation.py:152
+msgid "Operation item cannot be changed"
+msgstr "Нельзя изменить вещь в назначении"
+
+#: src/inventory/models/pending_transfer.py:76
 msgid "From"
 msgstr "От кого"
 
-#: src/inventory/models.py:214
-#: src/inventory/templates/inventory/transfer_create.html:29
+#: src/inventory/models/pending_transfer.py:82
+#: src/inventory/templates/inventory/transfer_create.html:25
 msgid "To"
 msgstr "Кому"
 
-#: src/inventory/models.py:219
+#: src/inventory/models/pending_transfer.py:87
 msgid "Expires at"
 msgstr "Действительно до"
 
-#: src/inventory/models.py:220
+#: src/inventory/models/pending_transfer.py:88
 msgid "Optional. Transfers are ignored after expiration."
 msgstr ""
 "Необязательно. После указанного момента передача считается недействительной."
 
-#: src/inventory/models.py:225
+#: src/inventory/models/pending_transfer.py:93
 msgid "Accepted at"
 msgstr "Время принятия"
 
-#: src/inventory/models.py:230
+#: src/inventory/models/pending_transfer.py:98
 msgid "Cancelled at"
 msgstr "Время отмены"
 
-#: src/inventory/models.py:234
+#: src/inventory/models/pending_transfer.py:104
 msgid "Pending transfer"
 msgstr "Передача в ожидании"
 
-#: src/inventory/models.py:235
+#: src/inventory/models/pending_transfer.py:105
 msgid "Pending transfers"
 msgstr "Передачи в ожидании"
 
-#: src/inventory/models.py:259
+#: src/inventory/models/pending_transfer.py:129
 msgid "Transfer receiver must be different"
 msgstr "Получатель передачи должен отличаться от отправителя"
 
-#: src/inventory/models.py:263
+#: src/inventory/models/pending_transfer.py:133
 msgid "Transfer cannot be accepted and cancelled"
 msgstr "Передача не может одновременно быть принятой и отменённой"
 
-#: src/inventory/models.py:266
+#: src/inventory/models/pending_transfer.py:136
 msgid "Expiration must be in the future"
 msgstr "Срок действия должен быть в будущем"
 
-#: src/inventory/models.py:276
+#: src/inventory/models/pending_transfer.py:146
 msgid "An active transfer already exists for this item"
 msgstr "Для этой вещи уже есть активная передача"
+
+#: src/inventory/models/pending_transfer.py:210
+#: src/inventory/models/pending_transfer.py:248
+#: src/inventory/models/pending_transfer.py:283
+msgid "Transfer is not active"
+msgstr "Передача неактивна."
+
+#: src/inventory/models/pending_transfer.py:216
+msgid "Cannot accept transfer for an item without operations"
+msgstr "Нельзя принять передачу для вещи без записей в журнале."
+
+#: src/inventory/models/pending_transfer.py:224
+msgid "Cannot accept transfer: sender no longer holds the item."
+msgstr ""
+"Нельзя принять передачу: отправитель больше не является ответственным по "
+"журналу."
+
+#: src/inventory/models/pending_transfer.py:276
+msgid "Expiration window must be non-negative"
+msgstr "Окно истечения должно быть неотрицательным"
+
+#: src/inventory/models/pending_transfer.py:285
+msgid "Only the sender may update the transfer"
+msgstr "Изменять передачу может только отправитель"
+
+#: src/inventory/templates/inventory/_item_header_card.html:2
+#: src/inventory/templates/inventory/transfer_create.html:19
+msgid "Item details"
+msgstr "Сведения о вещи"
 
 #: src/inventory/templates/inventory/_transfer_card.html:27
 msgid "Transfer party"
 msgstr "Сторона передачи"
 
-#: src/inventory/templates/inventory/_transfer_card.html:29
-#: src/inventory/templates/inventory/item_history.html:29
+#: src/inventory/templates/inventory/_transfer_card.html:30
+#: src/inventory/templates/inventory/item_history.html:22
 msgid "Incoming transfer from"
 msgstr "Входящая передача от"
 
-#: src/inventory/templates/inventory/_transfer_card.html:32
-#: src/inventory/templates/inventory/item_history.html:31
+#: src/inventory/templates/inventory/_transfer_card.html:33
+#: src/inventory/templates/inventory/item_history.html:25
 msgid "Outgoing transfer for"
 msgstr "Исходящая передача для"
 
@@ -189,26 +233,12 @@ msgid "Offer expires"
 msgstr "Действительна до"
 
 #: src/inventory/templates/inventory/change_location.html:5
+#: src/inventory/templates/inventory/change_location.html:8
 #: src/inventory/templates/inventory/change_location.html:12
-#: src/inventory/templates/inventory/item_history.html:68
+#: src/inventory/templates/inventory/change_location.html:52
+#: src/inventory/templates/inventory/item_history.html:73
 msgid "Change location"
 msgstr "Переместить"
-
-#: src/inventory/templates/inventory/item_history.html:72
-msgid "Hand over"
-msgstr "Передать"
-
-#: src/inventory/templates/inventory/item_history.html:58
-msgid "Edit"
-msgstr "Изменить"
-
-#: src/inventory/models.py:417
-msgid "Expiration window must be non-negative"
-msgstr "Окно истечения должно быть неотрицательным"
-
-#: src/inventory/models.py:426
-msgid "Only the sender may update the transfer"
-msgstr "Изменять передачу может только отправитель"
 
 #: src/inventory/templates/inventory/change_location.html:5
 #: src/inventory/templates/inventory/item_history.html:4
@@ -218,63 +248,63 @@ msgstr "Изменять передачу может только отправи
 msgid "Sloths Inventory"
 msgstr "Инвентарь"
 
-#: src/inventory/templates/inventory/change_location.html:13
-#: src/inventory/templates/inventory/item_history.html:11
-#: src/inventory/templates/inventory/transfer_create.html:13
-#: src/inventory/templates/inventory/transfer_create.html:25
-msgid "Item details"
-msgstr "Сведения о вещи"
-
-#: src/inventory/templates/inventory/change_location.html:30
+#: src/inventory/templates/inventory/change_location.html:21
 msgid "Current location"
 msgstr "Текущее местоположение"
 
-#: src/inventory/templates/inventory/change_location.html:34
+#: src/inventory/templates/inventory/change_location.html:25
 msgid "New location"
 msgstr "Новое местоположение"
 
-#: src/inventory/templates/inventory/change_location.html:39
+#: src/inventory/templates/inventory/change_location.html:31
 msgid "Type to filter locations…"
 msgstr "Начните вводить, чтобы отфильтровать местоположения…"
 
-#: src/inventory/templates/inventory/change_location.html:44
-msgid "Select a new location…"
-msgstr "Выберите новое местоположение…"
+#: src/inventory/templates/inventory/change_location.html:41
+#: src/inventory/templates/inventory/item_history.html:36
+#: src/inventory/templates/inventory/item_history.html:102
+#: src/inventory/templates/inventory/transfer_create.html:66
+msgid "Notes"
+msgstr "Заметки"
 
-#: src/inventory/templates/inventory/change_location.html:51
-#: src/inventory/templates/inventory/item_history.html:56
-#: src/inventory/templates/inventory/transfer_create.html:62
+#: src/inventory/templates/inventory/change_location.html:48
+#: src/inventory/templates/inventory/transfer_create.html:73
+msgid "Optional: details (e.g. missing parts, charger, etc.)"
+msgstr "Необязательно: детали (например, недостающие части, зарядка и т.д.)"
+
+#: src/inventory/templates/inventory/change_location.html:56
+#: src/inventory/templates/inventory/item_history.html:61
+#: src/inventory/templates/inventory/transfer_create.html:78
 msgid "Cancel"
 msgstr "Отмена"
 
 #: src/inventory/templates/inventory/item_history.html:4
+#: src/inventory/templates/inventory/item_history.html:6
 #: src/inventory/templates/inventory/item_history.html:9
 msgid "Item history"
 msgstr "История вещи"
 
-#: src/inventory/templates/inventory/item_history.html:44
+#: src/inventory/templates/inventory/item_history.html:45
 msgid "Accept"
 msgstr "Принять"
 
-#: src/inventory/templates/inventory/item_history.html:49
+#: src/inventory/templates/inventory/item_history.html:50
 msgid "Decline"
 msgstr "Отклонить"
 
-#: src/inventory/templates/inventory/item_history.html:64
+#: src/inventory/templates/inventory/item_history.html:58
+msgid "Edit"
+msgstr "Изменить"
+
+#: src/inventory/templates/inventory/item_history.html:69
 msgid "Item actions"
 msgstr "Действия с вещью"
 
-#: src/inventory/templates/inventory/item_history.html:73
-#: src/inventory/templates/inventory/transfer_create.html:5
-#: src/inventory/templates/inventory/transfer_create.html:12
-msgid "Transfer"
+#: src/inventory/templates/inventory/item_history.html:78
+msgid "Hand over"
 msgstr "Передать"
 
-#: src/inventory/templates/inventory/item_history.html:97
-msgid "Notes"
-msgstr "Заметки"
-
-#: src/inventory/templates/inventory/item_history.html:105
+#: src/inventory/templates/inventory/item_history.html:110
 msgid "No operations found."
 msgstr "Назначений пока нет."
 
@@ -352,54 +382,71 @@ msgstr "Список «Были у меня»"
 msgid "Last on you"
 msgstr "Дата последнего закрепления"
 
-#: src/inventory/templates/inventory/transfer_create.html:27
+#: src/inventory/templates/inventory/transfer_create.html:5
+#: src/inventory/templates/inventory/transfer_create.html:8
+#: src/inventory/templates/inventory/transfer_create.html:12
+#: src/inventory/templates/inventory/transfer_create.html:77
+msgid "Transfer"
+msgstr "Передать"
+
+#: src/inventory/templates/inventory/transfer_create.html:24
 msgid "A transfer offer is already pending."
 msgstr "Уже есть ожидающее предложение передачи."
 
-#: src/inventory/templates/inventory/transfer_create.html:33
+#: src/inventory/templates/inventory/transfer_create.html:35
 msgid "Back"
 msgstr "Назад"
 
-#: src/inventory/templates/inventory/transfer_create.html:37
+#: src/inventory/templates/inventory/transfer_create.html:44
 #, python-format
 msgid "If you send this offer, it expires %(hours)s hour after sending."
-msgid_plural "If you send this offer, it expires %(hours)s hours after sending."
+msgid_plural ""
+"If you send this offer, it expires %(hours)s hours after sending."
 msgstr[0] "После отправки предложение истекает через %(hours)s час."
 msgstr[1] "После отправки предложение истекает через %(hours)s часа."
 msgstr[2] "После отправки предложение истекает через %(hours)s часов."
 
-#: src/inventory/templates/inventory/transfer_create.html:47
+#: src/inventory/templates/inventory/transfer_create.html:52
 msgid "New responsible"
 msgstr "Новый ответственный"
 
-#: src/inventory/templates/inventory/transfer_create.html:53
+#: src/inventory/templates/inventory/transfer_create.html:58
 msgid "Type to filter people…"
 msgstr "Начните вводить, чтобы отфильтровать людей…"
 
-#: src/inventory/templates/inventory/transfer_create.html:68
-msgid "Optional: details (e.g. missing parts, charger, etc.)"
-msgstr "Необязательно: детали (например, недостающие части, зарядка и т.д.)"
-
-#: src/inventory/views.py:404
-msgid "New location must be different from current location."
-msgstr "Новое местоположение должно отличаться от текущего."
-
-#: src/inventory/views.py:434
+#: src/inventory/views/item_views.py:63
 msgid "New location is required."
 msgstr "Нужно выбрать новое местоположение."
 
-#: src/inventory/views.py:524
-msgid "New responsible is required."
-msgstr "Нужно выбрать нового ответственного."
+#: src/inventory/views/transfer_views.py:85
+msgid "Transfer offer updated."
+msgstr "Предложение передачи обновлено."
 
-#: src/inventory/views.py:554
-msgid "New responsible is invalid."
-msgstr "Новый ответственный указан неверно."
+#: src/inventory/views/transfer_views.py:127
+msgid "Transfer offer submitted."
+msgstr "Предложение передачи отправлено."
 
-#: src/inventory/views.py:580
-msgid "New responsible must be different."
-msgstr "Новый ответственный должен отличаться от текущего."
+#: src/inventory/views/transfer_views.py:196
+#: src/inventory/views/transfer_views.py:239
+msgid "This transfer offer is no longer active."
+msgstr "Это предложение передачи больше не действует."
 
-#: src/inventory/admin.py:194
-msgid "Editing restrictions"
-msgstr "Ограничения на правку"
+#: src/inventory/views/transfer_views.py:210
+msgid "Transfer accepted."
+msgstr "Передача принята."
+
+#: src/inventory/views/transfer_views.py:248
+msgid "Transfer offer closed."
+msgstr "Предложение передачи закрыто."
+
+#~ msgid "Select a new location…"
+#~ msgstr "Выберите новое местоположение…"
+
+#~ msgid "New responsible is required."
+#~ msgstr "Нужно выбрать нового ответственного."
+
+#~ msgid "New responsible is invalid."
+#~ msgstr "Новый ответственный указан неверно."
+
+#~ msgid "New responsible must be different."
+#~ msgstr "Новый ответственный должен отличаться от текущего."
