@@ -26,6 +26,7 @@ def my_items(request: HttpRequest) -> HttpResponse:
                 "outgoing_transfers": [],
                 "query": "",
                 "list_kind": "all",
+                "show_search": False,
             },
         )
 
@@ -42,6 +43,9 @@ def my_items(request: HttpRequest) -> HttpResponse:
             "list_kind": list_kind,
             "incoming_transfers": page.incoming_transfers,
             "outgoing_transfers": page.outgoing_transfers,
+            "show_search": bool(
+                page.items or page.incoming_transfers or page.outgoing_transfers
+            ),
         },
     )
 
@@ -59,6 +63,7 @@ def previous_items(request: HttpRequest) -> HttpResponse:
                 "incoming_transfers": [],
                 "outgoing_transfers": [],
                 "query": "",
+                "show_search": False,
             },
         )
 
@@ -73,5 +78,8 @@ def previous_items(request: HttpRequest) -> HttpResponse:
             "query": query,
             "incoming_transfers": page.incoming_transfers,
             "outgoing_transfers": page.outgoing_transfers,
+            "show_search": bool(
+                page.items or page.incoming_transfers or page.outgoing_transfers
+            ),
         },
     )
