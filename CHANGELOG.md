@@ -1,3 +1,11 @@
+## [1.4.0-rc.1](https://github.com/disafronov/sloths-inventory/compare/v1.3.0...v1.4.0-rc.1) (2026-05-02)
+
+### Features
+
+* enhance application group management with post-migrate enforcement ([b9835a6](https://github.com/disafronov/sloths-inventory/commit/b9835a6ed4b43d5d7d7334daa0a3fa06460119fa))
+* implement application-defined auth groups and permissions enforcement ([1cb6225](https://github.com/disafronov/sloths-inventory/commit/1cb6225dd04ae313b3d2b2751ff0b3f17e96e975))
+* implement view-only user restrictions in admin interface ([50a3a98](https://github.com/disafronov/sloths-inventory/commit/50a3a98243e5b58ca953b274eaec508fd138b07e))
+
 ## [1.3.0](https://github.com/disafronov/sloths-inventory/compare/v1.2.0...v1.3.0) (2026-05-02)
 
 ### Features
