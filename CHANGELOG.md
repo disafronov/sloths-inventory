@@ -1,3 +1,9 @@
+## [1.4.0-rc.3](https://github.com/disafronov/sloths-inventory/compare/v1.4.0-rc.2...v1.4.0-rc.3) (2026-05-02)
+
+### Features
+
+* enhance application group enforcement during migrations ([54d237c](https://github.com/disafronov/sloths-inventory/commit/54d237cb30ee4ee4c8ac50c6f6e814e707f9ca7e))
+
 ## [1.4.0-rc.2](https://github.com/disafronov/sloths-inventory/compare/v1.4.0-rc.1...v1.4.0-rc.2) (2026-05-02)
 
 ### Features
