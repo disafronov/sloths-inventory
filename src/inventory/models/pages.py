@@ -74,6 +74,8 @@ class ItemHistoryContext:
     operations: QuerySet[Operation]
     is_owner: bool
     pending_transfer: PendingTransfer | None
+    #: Latest ``Operation`` pk when the viewer may accept (UI posts this with Accept).
+    accept_journal_head_operation_id: int | None = None
 
 
 def build_my_items_page_data(
@@ -307,9 +309,17 @@ def resolve_item_history_context(
         if not can_see_transfer:
             pending_transfer = None
 
+    accept_head: int | None = None
+    if (
+        pending_transfer is not None
+        and pending_transfer.to_responsible_id == responsible.pk
+    ):
+        accept_head = Operation.latest_operation_id_for_item(item.pk)
+
     return ItemHistoryContext(
         item=item,
         operations=operations,
         is_owner=is_owner,
         pending_transfer=pending_transfer,
+        accept_journal_head_operation_id=accept_head,
     )
