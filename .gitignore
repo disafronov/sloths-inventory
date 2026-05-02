@@ -12,6 +12,9 @@ __pycache__/
 # SQLite
 /src/db.sqlite3
 
+# Django collectstatic output (STATIC_ROOT under src/; do not commit)
+/src/staticfiles/
+
 # Coverage
 .coverage
 .coverage.*
