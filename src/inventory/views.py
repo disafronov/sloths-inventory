@@ -203,6 +203,21 @@ def _items_owned_by(responsible: Responsible) -> QuerySet[Item]:
 _MY_ITEMS_LIST_KINDS = frozenset({"all", "incoming", "owned", "outgoing"})
 
 
+def _pending_transfer_offers_visible_in_ui() -> QuerySet[PendingTransfer]:
+    """
+    Base queryset for transfer offers shown as actionable cards in the UI.
+
+    Excludes accepted, cancelled, and past-deadline rows so behaviour matches
+    `PendingTransfer.is_active` without relying on per-row property checks alone.
+    """
+
+    now = timezone.now()
+    return PendingTransfer.objects.filter(
+        accepted_at__isnull=True,
+        cancelled_at__isnull=True,
+    ).filter(Q(expires_at__isnull=True) | Q(expires_at__gt=now))
+
+
 def _parse_my_items_list_kind(request: HttpRequest) -> str:
     """
     Parse the optional `kind` query parameter for the "My items" list.
@@ -223,11 +238,12 @@ def _get_active_transfer_for_item(item: Item) -> PendingTransfer | None:
 
     Transfers are separate from `Operation` history and only become part of the
     inventory state when accepted (at which point a new `Operation` is created).
+    Past-deadline offers are ignored so the UI matches `PendingTransfer.is_active`.
     """
 
     return (
-        PendingTransfer.objects.filter(item=item)
-        .filter(accepted_at__isnull=True, cancelled_at__isnull=True)
+        _pending_transfer_offers_visible_in_ui()
+        .filter(item=item)
         .select_related("from_responsible", "to_responsible")
         .order_by("-created_at", "-id")
         .first()
@@ -266,10 +282,7 @@ def my_items(request: HttpRequest) -> HttpResponse:
         .values("status__name")[:1]
     )
 
-    base_transfers_qs = PendingTransfer.objects.filter(
-        accepted_at__isnull=True,
-        cancelled_at__isnull=True,
-    ).select_related(
+    base_transfers_qs = _pending_transfer_offers_visible_in_ui().select_related(
         "item",
         "item__device",
         "item__device__category",
@@ -297,10 +310,7 @@ def my_items(request: HttpRequest) -> HttpResponse:
     # compound statements, and `incoming_transfers` / `outgoing_transfers` are
     # ordered for UI rendering.
     transfer_item_ids = (
-        PendingTransfer.objects.filter(
-            accepted_at__isnull=True,
-            cancelled_at__isnull=True,
-        )
+        _pending_transfer_offers_visible_in_ui()
         .filter(Q(to_responsible=responsible) | Q(from_responsible=responsible))
         .values_list("item_id", flat=True)
         .distinct()
@@ -378,10 +388,7 @@ def previous_items(request: HttpRequest) -> HttpResponse:
         .values("status__name")[:1]
     )
     base_transfers_qs = (
-        PendingTransfer.objects.filter(
-            accepted_at__isnull=True,
-            cancelled_at__isnull=True,
-        )
+        _pending_transfer_offers_visible_in_ui()
         .filter(item_id__in=Subquery(items.values("pk")))
         .filter(Q(to_responsible=responsible) | Q(from_responsible=responsible))
         .select_related(
@@ -436,11 +443,10 @@ def item_history(request: HttpRequest, *, item_id: int) -> HttpResponse:
         # The receiver of an active transfer offer may open the item page to review
         # the offer and accept it. They are not an owner yet.
         pending_for_me = (
-            PendingTransfer.objects.filter(
+            _pending_transfer_offers_visible_in_ui()
+            .filter(
                 item_id=item_id,
                 to_responsible=responsible,
-                accepted_at__isnull=True,
-                cancelled_at__isnull=True,
             )
             .order_by("-created_at", "-id")
             .first()

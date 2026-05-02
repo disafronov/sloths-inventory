@@ -864,6 +864,35 @@ def test_create_transfer_get_shows_existing_pending_transfer() -> None:
 
 
 @pytest.mark.django_db
+def test_create_transfer_get_treats_expired_pending_as_absent() -> None:
+    """Past-deadline offers must not appear as an editable pending on the form."""
+
+    user1 = User.objects.create_user(username="u1expget", password="pw")
+    user2 = User.objects.create_user(username="u2expget", password="pw")
+    resp1 = Responsible.objects.create(last_name="One", first_name="ExpGet", user=user1)
+    resp2 = Responsible.objects.create(last_name="Two", first_name="ExpGet", user=user2)
+    status = Status.objects.create(name="In use")
+    location = Location.objects.create(name="Home")
+    item = _make_item_with_operation(status, location, resp1, "INV-XFER-EXP-GET")
+    transfer = PendingTransfer.objects.create(
+        item=item,
+        from_responsible=resp1,
+        to_responsible=resp2,
+        notes="expired-offer-note",
+        expires_at=timezone.now() + timedelta(hours=1),
+    )
+    PendingTransfer.objects.filter(pk=transfer.pk).update(
+        expires_at=timezone.now() - timedelta(seconds=1),
+    )
+
+    client = Client()
+    client.force_login(user1)
+    response = client.get(f"/items/{item.pk}/transfer/")
+    assert response.status_code == 200
+    assert b"expired-offer-note" not in response.content
+
+
+@pytest.mark.django_db
 @override_settings(INVENTORY_PENDING_TRANSFER_EXPIRATION_HOURS=0)
 def test_create_transfer_post_creates_pending_transfer() -> None:
     user1 = User.objects.create_user(username="u1", password="pw")
@@ -1449,6 +1478,42 @@ def test_my_items_does_not_duplicate_item_between_owned_and_outgoing_transfer() 
         response.content.count(b'class="item-card item-card--outgoing-transfer"') == 1
     )
     assert response.content.count(b'class="item-card"') == 0
+
+
+@pytest.mark.django_db
+def test_my_items_lists_owned_row_when_pending_transfer_is_expired() -> None:
+    """
+    Expired offers must not hide the item from the owned list or show as outgoing
+    transfer cards (same non-expired semantics as `PendingTransfer.is_active`).
+    """
+
+    user_sender = User.objects.create_user(username="sndexp", password="pw")
+    user_receiver = User.objects.create_user(username="rcvexp", password="pw")
+    resp_sender = Responsible.objects.create(
+        last_name="Sender", first_name="Exp", user=user_sender
+    )
+    resp_receiver = Responsible.objects.create(
+        last_name="Receiver", first_name="Exp", user=user_receiver
+    )
+    status = Status.objects.create(name="In use")
+    location = Location.objects.create(name="Home")
+    item = _make_item_with_operation(status, location, resp_sender, "INV-XFER-EXP-OWN")
+    transfer = PendingTransfer.objects.create(
+        item=item,
+        from_responsible=resp_sender,
+        to_responsible=resp_receiver,
+        expires_at=timezone.now() + timedelta(hours=1),
+    )
+    PendingTransfer.objects.filter(pk=transfer.pk).update(
+        expires_at=timezone.now() - timedelta(seconds=1),
+    )
+
+    client = Client()
+    client.force_login(user_sender)
+    response = client.get("/")
+    assert response.status_code == 200
+    assert b"INV-XFER-EXP-OWN" in response.content
+    assert b'class="item-card item-card--outgoing-transfer"' not in response.content
 
 
 @pytest.mark.django_db
