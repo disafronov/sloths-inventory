@@ -1012,5 +1012,121 @@ def test_item_change_page_hides_lock_section_when_editable() -> None:
     assert b"Editing restrictions" not in response.content
 
 
+@pytest.mark.django_db
+@override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+def test_operation_admin_superuser_post_saves_after_correction_window() -> None:
+    """Superuser can persist a correction on the latest operation via admin POST."""
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+
+    status1 = Status.objects.create(name="S1")
+    status2 = Status.objects.create(name="S2")
+    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    location = Location.objects.create(name="Moscow")
+
+    item = Item.objects.create(inventory_number="INV-OP-POST-WIN", device=device)
+    op = Operation.objects.create(
+        item=item,
+        status=status1,
+        responsible=responsible,
+        location=location,
+        notes="before",
+    )
+    Operation.objects.filter(pk=op.pk).update(
+        created_at=timezone.now() - timedelta(minutes=11),
+    )
+
+    admin_user = get_user_model().objects.create_superuser(
+        username="admin-op-post",
+        email="admin-op-post@example.com",
+        password="password",
+    )
+    client = Client()
+    client.force_login(admin_user)
+    url = reverse("admin:inventory_operation_change", args=[op.pk])
+    response = client.post(
+        url,
+        {
+            "item": str(item.pk),
+            "responsible": str(responsible.pk),
+            "location": str(location.pk),
+            "status": str(status2.pk),
+            "notes": "after window via admin",
+            "_save": "Save",
+        },
+    )
+    assert response.status_code == 302
+    op.refresh_from_db()
+    assert op.status_id == status2.pk
+    assert "after window via admin" in op.notes
+
+
+@pytest.mark.django_db
+@override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+def test_item_admin_superuser_post_saves_after_correction_window() -> None:
+    """Superuser can persist item field edits via admin POST after the window."""
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+
+    item = Item.objects.create(
+        inventory_number="INV-ITEM-POST-WIN",
+        device=device,
+        serial_number="SN-OLD",
+    )
+    status = Status.objects.create(name="In stock")
+    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    location = Location.objects.create(name="Moscow")
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=responsible,
+        location=location,
+    )
+    Item.objects.filter(pk=item.pk).update(
+        updated_at=timezone.now() - timedelta(minutes=11),
+    )
+
+    admin_user = get_user_model().objects.create_superuser(
+        username="admin-item-post",
+        email="admin-item-post@example.com",
+        password="password",
+    )
+    client = Client()
+    client.force_login(admin_user)
+    url = reverse("admin:inventory_item_change", args=[item.pk])
+    response = client.post(
+        url,
+        {
+            "inventory_number": "INV-ITEM-POST-WIN",
+            "device": str(device.pk),
+            "serial_number": "SN-NEW",
+            "notes": "item post after window",
+            "_save": "Save",
+        },
+    )
+    assert response.status_code == 302
+    item.refresh_from_db()
+    assert item.serial_number == "SN-NEW"
+    assert "item post after window" in item.notes
+
+
 # PendingTransfer admin is read-only (no create/edit/delete). Any tests for add-form
 # initial values or auxiliary JSON endpoints are intentionally omitted.

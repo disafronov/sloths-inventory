@@ -123,6 +123,12 @@ Notes:
     referenced by live inventory data; unreferenced rows stay editable. Enforcement
     is shared via `common.catalog_correction_window.CatalogCorrectionWindowMixin`.
     Django superusers bypass these windows in the admin only (trusted repair path).
+  - **Trusted admin repair**: bypass flags (`_bypass_item_correction_window`,
+    `_bypass_operation_correction_window`, `_bypass_catalog_correction_window`) are
+    set **only** from `ModelAdmin.get_form()` in this codebase — never from request
+    data. They let a Django superuser fix mistakes after the time cap in the admin;
+    the append-only rule for **non-latest** `Operation` rows is not bypassed.
+
 - **Item history visibility**: item history is only accessible to the current
   owner, to the receiver of an active incoming transfer offer, and to former owners.
   Former owners can only see the history up to the last time the item was assigned

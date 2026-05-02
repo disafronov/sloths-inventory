@@ -278,8 +278,8 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
         On change/view, optionally append a restriction summary (fieldset description).
 
         The panel is shown only when
-        ``_operation_correction_window_lock_user_message`` returns a reason the row
-        cannot be edited. If corrections are still allowed, there is
+        ``_operation_correction_window_lock_user_message(request, obj)`` returns a
+        reason the row cannot be edited. If corrections are still allowed, there is
         nothing to warn about, so no extra fieldset is added.
 
         Using ``fields: ()`` avoids the default two-column label/value row. The add
@@ -290,9 +290,7 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
         if obj is None:
             return fieldsets
         op = cast(Operation, obj)
-        message = self._operation_correction_window_lock_user_message(
-            obj=op, latest_operation_pk=None, request=request
-        )
+        message = self._operation_correction_window_lock_user_message(request, op)
         if message is None:
             return fieldsets
         # Skip lock copy for view-only users (denial is auth-level, not domain-level).
@@ -404,17 +402,17 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
 
     def _operation_correction_window_lock_user_message(
         self,
-        *,
+        request: HttpRequest,
         obj: Operation,
-        latest_operation_pk: int | None,
-        request: HttpRequest | None = None,
+        *,
+        latest_operation_pk: int | None = None,
     ) -> str | None:
         """
         Return a short user-visible reason when this operation cannot be edited,
         or None when edits are allowed.
 
-        Text stays aligned with ``Operation.clean()`` so operators see the same story
-        the model enforces on save (including pluralisation for the minutes window).
+        Same argument order as ``ItemAdmin._item_correction_window_lock_user_message``
+        (``request``, then ``obj``). Text stays aligned with ``Operation.clean()``.
         """
 
         if latest_operation_pk is None:
@@ -423,7 +421,7 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
             return None
         if obj.pk != latest_operation_pk:
             return Operation.only_latest_operation_may_be_edited_user_message()
-        user = getattr(request, "user", None) if request is not None else None
+        user = getattr(request, "user", None)
         if getattr(user, "is_superuser", False):
             return None
         if Operation.is_within_operation_correction_window(obj.created_at):
