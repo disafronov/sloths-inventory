@@ -1397,6 +1397,38 @@ def test_cancel_transfer_returns_404_if_user_is_not_sender_or_receiver() -> None
 
 
 @pytest.mark.django_db
+def test_accept_transfer_returns_404_if_user_is_not_sender_or_receiver() -> None:
+    user_sender = User.objects.create_user(username="acc-snd", password="pw")
+    user_receiver = User.objects.create_user(username="acc-rcv", password="pw")
+    user_other = User.objects.create_user(username="acc-oth", password="pw")
+    resp_sender = Responsible.objects.create(
+        last_name="Sender", first_name="Acc", user=user_sender
+    )
+    resp_receiver = Responsible.objects.create(
+        last_name="Receiver", first_name="Acc", user=user_receiver
+    )
+    resp_other = Responsible.objects.create(
+        last_name="Other", first_name="Acc", user=user_other
+    )
+    status = Status.objects.create(name="In use")
+    location = Location.objects.create(name="Home")
+    item = _make_item_with_operation(
+        status, location, resp_sender, "INV-XFER-ACCEPT-FORBID"
+    )
+    transfer = PendingTransfer.objects.create(
+        item=item,
+        from_responsible=resp_sender,
+        to_responsible=resp_receiver,
+    )
+
+    client_other = Client()
+    client_other.force_login(user_other)
+    assert client_other.post(f"/transfers/{transfer.pk}/accept/").status_code == 404
+
+    _ = resp_other
+
+
+@pytest.mark.django_db
 def test_cancel_transfer_warns_when_inactive() -> None:
     user_sender = User.objects.create_user(username="sender", password="pw")
     user_receiver = User.objects.create_user(username="receiver", password="pw")
