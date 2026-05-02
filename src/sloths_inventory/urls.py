@@ -20,6 +20,8 @@ from django.urls import include, path
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    # ``inventory`` must precede ``common`` for duplicate ``path("", ...)`` roots:
+    # the site home (``/``) is inventory "My items", not a common landing page.
     path("", include("inventory.urls")),
     path("", include("common.urls")),
     path("health/", include("health.urls")),

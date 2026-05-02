@@ -1,6 +1,15 @@
 import pytest
 from django.contrib.auth.models import User
 from django.test import Client
+from django.urls import resolve
+
+
+def test_site_root_urlconf_resolves_inventory_before_common_includes() -> None:
+    """``/`` is the inventory app (see ``sloths_inventory.urls`` ordering comment)."""
+
+    match = resolve("/")
+    assert match.namespace == "inventory"
+    assert match.url_name == "my-items"
 
 
 @pytest.mark.django_db
