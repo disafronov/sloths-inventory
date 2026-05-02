@@ -111,6 +111,17 @@ class PendingTransfer(BaseModel):
             ),
         ]
 
+    @classmethod
+    def offers_visible_in_ui(cls) -> PendingTransferQuerySet:
+        """
+        Pending transfers the inventory UI treats as visible offers.
+
+        Delegates to :meth:`PendingTransferQuerySet.offers_visible_in_ui` so
+        filter rules stay centralized; call sites can reference the model class.
+        """
+
+        return cls.objects.offers_visible_in_ui()
+
     def __str__(self) -> str:
         return f"{self.item} -> {self.to_responsible}"
 
