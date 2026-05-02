@@ -1,9 +1,12 @@
 from typing import Any, Protocol, cast
 
+from django.conf import settings
 from django.contrib import admin
 from django.db.models import Model, QuerySet
 from django.http import HttpRequest
+from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ngettext
 
 from common.admin import BaseAdmin
 
@@ -121,6 +124,15 @@ class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
 
 @admin.register(Operation)
 class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
+    """
+    Operations are append-only: only the latest row per item may be corrected,
+    and only inside ``INVENTORY_OPERATION_EDIT_WINDOW_MINUTES``.
+
+    The admin mirrors ``Operation.clean()`` for permissions. When a row cannot be
+    corrected, a trailing fieldset with only a ``description`` (no form rows)
+    states why; it is omitted entirely while edits are still allowed.
+    """
+
     list_display = [
         "item",
         "responsible",
@@ -155,6 +167,34 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
         "location",
         "status",
     )
+
+    def get_fieldsets(self, request: HttpRequest, obj: Model | None = None) -> Any:
+        """
+        On change/view, optionally append a restriction summary (fieldset description).
+
+        The panel is shown only when ``_operation_edit_lock_user_message`` returns a
+        reason the row cannot be edited. If corrections are still allowed, there is
+        nothing to warn about, so no extra fieldset is added.
+
+        Using ``fields: ()`` avoids the default two-column label/value row. The add
+        form is unchanged: there is nothing to describe until the row exists.
+        """
+
+        fieldsets = list(super().get_fieldsets(request, obj))
+        if obj is None:
+            return fieldsets
+        op = cast(Operation, obj)
+        message = self._operation_edit_lock_user_message(
+            obj=op, latest_operation_pk=None
+        )
+        if message is None:
+            return fieldsets
+        desc = format_html('<p class="operation-edit-lock">{}</p>', message)
+        lock_panel = (
+            _("Editing restrictions"),
+            {"fields": (), "description": desc},
+        )
+        return [*fieldsets, lock_panel]
 
     def get_queryset(self, request: HttpRequest) -> QuerySet[Operation]:
         """
@@ -207,13 +247,68 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
         latest_id = self._get_latest_operation_id_for_item(request, item_id=obj.item_id)
         return latest_id == obj.pk
 
+    def _is_editable_latest_operation(
+        self, request: HttpRequest, obj: Operation
+    ) -> bool:
+        """
+        True only when this row is the latest operation for its item and the
+        correction window from ``Operation.clean()`` has not expired.
+
+        Without the window check, the admin would still show change/delete controls
+        until ``save()`` raised ``ValidationError`` — which matches reports of the
+        "lock after window" rule not applying in the UI.
+        """
+
+        if not self._is_latest_for_item(request, obj):
+            return False
+        return Operation.is_within_operation_edit_window(obj.created_at)
+
+    def _operation_edit_lock_user_message(
+        self,
+        *,
+        obj: Operation,
+        latest_operation_pk: int | None,
+    ) -> str | None:
+        """
+        Return a short user-visible reason when this operation cannot be edited,
+        or None when edits are allowed.
+
+        Text stays aligned with ``Operation.clean()`` so operators see the same story
+        the model enforces on save (including pluralisation for the minutes window).
+        """
+
+        if latest_operation_pk is None:
+            latest_operation_pk = (
+                Operation.objects.filter(item_id=obj.item_id)
+                .order_by("-created_at", "-id")
+                .values_list("id", flat=True)
+                .first()
+            )
+        if latest_operation_pk is None:
+            return None
+        if obj.pk != latest_operation_pk:
+            return str(_("Only the latest operation for this item can be edited"))
+        if Operation.is_within_operation_edit_window(obj.created_at):
+            return None
+        edit_window_minutes = getattr(
+            settings, "INVENTORY_OPERATION_EDIT_WINDOW_MINUTES", 10
+        )
+        return str(
+            ngettext(
+                "The correction window (%(minutes)d minute) has expired.",
+                "The correction window (%(minutes)d minutes) has expired.",
+                edit_window_minutes,
+            )
+            % {"minutes": edit_window_minutes}
+        )
+
     def has_change_permission(
         self, request: HttpRequest, obj: Operation | None = None
     ) -> bool:
         allowed = super().has_change_permission(request, obj)
         if not allowed or obj is None:
             return allowed
-        return self._is_latest_for_item(request, obj)
+        return self._is_editable_latest_operation(request, obj)
 
     def has_delete_permission(
         self, request: HttpRequest, obj: Operation | None = None
@@ -221,7 +316,7 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
         allowed = super().has_delete_permission(request, obj)
         if not allowed or obj is None:
             return allowed
-        return self._is_latest_for_item(request, obj)
+        return self._is_editable_latest_operation(request, obj)
 
     @admin.display(description=_("Responsible Person"))
     def get_responsible_display(self, obj: Operation) -> str:
