@@ -75,7 +75,7 @@ def test_item_clean_valid_inventory_number() -> None:
 @pytest.mark.django_db
 @override_settings(INVENTORY_OPERATION_EDIT_WINDOW_MINUTES=10)
 def test_item_clean_rejects_update_after_master_edit_window() -> None:
-    """Reject updates when ``updated_at`` is outside the master-record edit window."""
+    """Reject updates past the window once an operation assigns a responsible party."""
 
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
@@ -88,7 +88,17 @@ def test_item_clean_rejects_update_after_master_edit_window() -> None:
         model=device_model,
     )
 
+    status = Status.objects.create(name="In stock")
+    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    location = Location.objects.create(name="Moscow")
+
     item = Item.objects.create(inventory_number="INV-WINDOW", device=device)
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=responsible,
+        location=location,
+    )
     Item.objects.filter(pk=item.pk).update(
         updated_at=timezone.now() - timedelta(minutes=11),
     )
@@ -99,6 +109,64 @@ def test_item_clean_rejects_update_after_master_edit_window() -> None:
         item.full_clean()
 
     assert exc.value.error_dict["__all__"][0].code == "item_master_edit_window_expired"
+
+
+@pytest.mark.django_db
+@override_settings(INVENTORY_OPERATION_EDIT_WINDOW_MINUTES=10)
+def test_item_clean_allows_update_after_window_without_responsible() -> None:
+    """No operations yet: master data stays editable past ``updated_at`` window."""
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+
+    item = Item.objects.create(inventory_number="INV-NO-RESP", device=device)
+    Item.objects.filter(pk=item.pk).update(
+        updated_at=timezone.now() - timedelta(minutes=11),
+    )
+    item.refresh_from_db()
+    item.serial_number = "SN-DRAFT"
+    item.full_clean()
+    item.save()
+    item.refresh_from_db()
+    assert item.serial_number == "SN-DRAFT"
+
+
+@pytest.mark.django_db
+def test_item_has_assigned_responsible_tracks_operations() -> None:
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+
+    status = Status.objects.create(name="In stock")
+    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    location = Location.objects.create(name="Moscow")
+
+    item = Item.objects.create(inventory_number="INV-HAS-R", device=device)
+    assert item.has_assigned_responsible() is False
+
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=responsible,
+        location=location,
+    )
+    item.refresh_from_db()
+    assert item.has_assigned_responsible() is True
 
 
 @pytest.mark.django_db
@@ -138,7 +206,17 @@ def test_item_save_after_master_edit_window_with_admin_bypass_flag() -> None:
         model=device_model,
     )
 
+    status = Status.objects.create(name="In stock")
+    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    location = Location.objects.create(name="Moscow")
+
     item = Item.objects.create(inventory_number="INV-BYPASS", device=device)
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=responsible,
+        location=location,
+    )
     Item.objects.filter(pk=item.pk).update(
         updated_at=timezone.now() - timedelta(minutes=11),
     )

@@ -53,8 +53,9 @@ CSRF_TRUSTED_ORIGINS = _split_env_list(env("CSRF_TRUSTED_ORIGINS", default=""))
 # We allow editing only the latest operation, and only for a short period of time
 # after it was created, to fix quick typos without rewriting history "after the fact".
 # The same minute cap applies to ``Item`` master data using each row's previous
-# ``updated_at`` as the anchor (see ``Item.clean()``). Django superusers bypass
-# that window in the admin only (``ItemAdmin``).
+# ``updated_at`` as the anchor once the item has at least one ``Operation`` (see
+# ``Item.clean()``). Django superusers bypass that window in the admin only
+# (``ItemAdmin``).
 # This window is intentionally small by default and can be tuned per deployment.
 INVENTORY_OPERATION_EDIT_WINDOW_MINUTES = env.int(
     "INVENTORY_OPERATION_EDIT_WINDOW_MINUTES",

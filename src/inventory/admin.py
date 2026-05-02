@@ -58,6 +58,9 @@ class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
     The admin mirrors ``Item.clean()`` for change/delete permissions for non-super
     users and appends a restriction panel when the window has expired.
 
+    Items with no operations yet (no responsible in the journal) stay editable
+    regardless of ``updated_at``.
+
     Superusers keep full change/delete and get a ModelForm that sets
     ``Item._bypass_item_master_edit_window`` so ``clean()`` allows repairs after
     the window.
@@ -102,6 +105,8 @@ class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
         raised ``ValidationError`` after the window closed.
         """
 
+        if not obj.has_assigned_responsible():
+            return True
         return Operation.is_within_operation_edit_window(obj.updated_at)
 
     def _item_edit_lock_user_message(

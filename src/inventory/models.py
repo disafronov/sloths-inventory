@@ -17,10 +17,14 @@ class Item(BaseModel):
     """
     Inventory unit (device instance).
 
-    Master-data edits are time-bounded (see ``clean()``). The admin sets
-    ``_bypass_item_master_edit_window`` on the instance for superusers only so
-    support can repair rows after the window; do not set that flag from other
-    code paths.
+    Master-data edits are time-bounded once an accountable party exists (see
+    ``has_assigned_responsible()`` and ``clean()``). Until the first
+    ``Operation`` is recorded, the item has no responsible person in the
+    journal and master data stays editable regardless of ``updated_at``.
+
+    The admin sets ``_bypass_item_master_edit_window`` on the instance for
+    superusers only so support can repair rows after the window; do not set that
+    flag from other code paths.
     """
 
     inventory_number = models.CharField(
@@ -43,6 +47,19 @@ class Item(BaseModel):
 
     def get_display_name(self) -> str:
         return f"{self.inventory_number} - {self.device}"
+
+    def has_assigned_responsible(self) -> bool:
+        """
+        Return True when this item has at least one ``Operation``.
+
+        The append-only operation stream defines who is accountable for the unit.
+        With zero operations there is no responsible party yet, so master-data
+        edits are not subject to the ``updated_at`` edit window (see ``clean()``).
+        """
+
+        if self._state.adding:
+            return False
+        return self.operation_set.exists()
 
     @classmethod
     def master_record_edit_window_expired_user_message(cls) -> str:
@@ -70,10 +87,11 @@ class Item(BaseModel):
         """
         Validate the model and enforce the master-record edit window.
 
-        Any update while the row's previous ``updated_at`` falls outside the
-        configured window is rejected. This matches ``Operation`` semantics (same
-        minute cap) and prevents ``save()`` from silently refreshing ``updated_at``
-        after the window should have closed.
+        Once a responsible party exists (at least one ``Operation``), any update
+        while the row's previous ``updated_at`` falls outside the configured window
+        is rejected. This matches ``Operation`` semantics (same minute cap) and
+        prevents ``save()`` from silently refreshing ``updated_at`` after the
+        window should have closed. Items with no operations skip the window check.
         """
 
         super().clean()
@@ -86,6 +104,9 @@ class Item(BaseModel):
 
         # Set only by ``ItemAdmin`` ModelForm for superusers (trusted repair path).
         if getattr(self, "_bypass_item_master_edit_window", False):
+            return
+
+        if not self.has_assigned_responsible():
             return
 
         original_updated_at = Item.objects.only("updated_at").get(pk=self.pk).updated_at
