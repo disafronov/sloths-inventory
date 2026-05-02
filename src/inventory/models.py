@@ -14,6 +14,15 @@ from devices.models import Device
 
 
 class Item(BaseModel):
+    """
+    Inventory unit (device instance).
+
+    Master-data edits are time-bounded (see ``clean()``). The admin sets
+    ``_bypass_item_master_edit_window`` on the instance for superusers only so
+    support can repair rows after the window; do not set that flag from other
+    code paths.
+    """
+
     inventory_number = models.CharField(
         max_length=50, unique=True, verbose_name=_("Inventory number")
     )
@@ -35,12 +44,70 @@ class Item(BaseModel):
     def get_display_name(self) -> str:
         return f"{self.inventory_number} - {self.device}"
 
+    @classmethod
+    def master_record_edit_window_expired_user_message(cls) -> str:
+        """
+        Return the user-visible message when the item master-record edit window
+        has expired.
+
+        Uses ``INVENTORY_OPERATION_EDIT_WINDOW_MINUTES`` like operation corrections,
+        but the anchor timestamp is this row's ``updated_at`` (see ``Item.clean()``).
+        """
+
+        edit_window_minutes = getattr(
+            settings, "INVENTORY_OPERATION_EDIT_WINDOW_MINUTES", 10
+        )
+        return str(
+            ngettext(
+                "The item master data edit window (%(minutes)d minute) has expired.",
+                "The item master data edit window (%(minutes)d minutes) has expired.",
+                edit_window_minutes,
+            )
+            % {"minutes": edit_window_minutes}
+        )
+
     def clean(self) -> None:
-        """Validate the model."""
+        """
+        Validate the model and enforce the master-record edit window.
+
+        Any update while the row's previous ``updated_at`` falls outside the
+        configured window is rejected. This matches ``Operation`` semantics (same
+        minute cap) and prevents ``save()`` from silently refreshing ``updated_at``
+        after the window should have closed.
+        """
+
+        super().clean()
         if not self.inventory_number:
             raise ValidationError(
                 {"inventory_number": _("Inventory number cannot be empty")}
             )
+        if self._state.adding:
+            return
+
+        # Set only by ``ItemAdmin`` ModelForm for superusers (trusted repair path).
+        if getattr(self, "_bypass_item_master_edit_window", False):
+            return
+
+        original_updated_at = Item.objects.only("updated_at").get(pk=self.pk).updated_at
+        if not Operation.is_within_operation_edit_window(original_updated_at):
+            raise ValidationError(
+                type(self).master_record_edit_window_expired_user_message(),
+                code="item_master_edit_window_expired",
+            )
+
+    def save(self, *args: Any, **kwargs: Any) -> None:
+        """
+        Persist after validation.
+
+        Takes a row lock on updates so concurrent saves cannot race past ``clean()``
+        window checks (same pattern as ``Operation.save``).
+        """
+
+        with transaction.atomic():
+            if not self._state.adding:
+                Item.objects.select_for_update().only("id").get(pk=self.pk)
+            self.full_clean()
+            return super().save(*args, **kwargs)
 
     @property
     def current_operation(self) -> Optional["Operation"]:

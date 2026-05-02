@@ -104,6 +104,13 @@ msgid_plural "The correction window (%(minutes)d minutes) has expired."
 msgstr[0] "The correction window (%(minutes)d minute) has expired."
 msgstr[1] "The correction window (%(minutes)d minutes) has expired."
 
+#: src/inventory/models.py:53
+#, python-format
+msgid "The item master data edit window (%(minutes)d minute) has expired."
+msgid_plural "The item master data edit window (%(minutes)d minutes) has expired."
+msgstr[0] "The item master data edit window (%(minutes)d minute) has expired."
+msgstr[1] "The item master data edit window (%(minutes)d minutes) has expired."
+
 #: src/inventory/models.py:164
 msgid "Only the latest operation for this item can be edited"
 msgstr "Only the latest operation for this item can be edited"

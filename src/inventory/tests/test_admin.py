@@ -1,8 +1,11 @@
 from datetime import timedelta
+from typing import Any
 
 import pytest
 from django.contrib.admin.sites import AdminSite
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
 from django.db.models import QuerySet
 from django.test import Client, RequestFactory, override_settings
 from django.urls import reverse
@@ -14,6 +17,23 @@ from devices.attributes import Category, Manufacturer, Model, Type
 from devices.models import Device
 from inventory.admin import ItemAdmin, OperationAdmin
 from inventory.models import Item, Operation
+
+
+def _staff_user_with_item_admin_permissions(username: str) -> Any:
+    """Non-superuser staff with inventory item change/delete/view for admin tests."""
+
+    user = get_user_model().objects.create_user(
+        username=username,
+        email=f"{username}@example.com",
+        password="password",
+        is_staff=True,
+    )
+    content_type = ContentType.objects.get_for_model(Item)
+    for codename in ("change_item", "delete_item", "view_item"):
+        user.user_permissions.add(
+            Permission.objects.get(content_type=content_type, codename=codename)
+        )
+    return user
 
 
 @pytest.mark.django_db
@@ -484,6 +504,199 @@ def test_operation_admin_change_page_hides_lock_section_when_editable() -> None:
     client = Client()
     client.force_login(admin_user)
     url = reverse("admin:inventory_operation_change", args=[op.pk])
+    response = client.get(url)
+    assert response.status_code == 200
+    assert b"Editing restrictions" not in response.content
+
+
+@pytest.mark.django_db
+@override_settings(INVENTORY_OPERATION_EDIT_WINDOW_MINUTES=10)
+def test_item_admin_denies_change_after_master_edit_window() -> None:
+    """Non-superuser staff lose edit/delete once the item master-record window ends."""
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+
+    item = Item.objects.create(inventory_number="INV-ITEM-WINDOW", device=device)
+    Item.objects.filter(pk=item.pk).update(
+        updated_at=timezone.now() - timedelta(minutes=11),
+    )
+    item.refresh_from_db()
+
+    site = AdminSite()
+    admin_obj = ItemAdmin(Item, site)
+    rf = RequestFactory()
+    request = rf.get("/")
+    request.user = _staff_user_with_item_admin_permissions("staff-item-win")
+
+    assert admin_obj.has_change_permission(request, obj=item) is False
+    assert admin_obj.has_delete_permission(request, obj=item) is False
+
+
+@pytest.mark.django_db
+@override_settings(INVENTORY_OPERATION_EDIT_WINDOW_MINUTES=10)
+def test_item_admin_superuser_keeps_change_after_master_edit_window() -> None:
+    """Superusers can still change and delete items after the window (repair path)."""
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+
+    item = Item.objects.create(inventory_number="INV-ITEM-SU-WIN", device=device)
+    Item.objects.filter(pk=item.pk).update(
+        updated_at=timezone.now() - timedelta(minutes=11),
+    )
+    item.refresh_from_db()
+
+    site = AdminSite()
+    admin_obj = ItemAdmin(Item, site)
+    rf = RequestFactory()
+    request = rf.get("/")
+    request.user = get_user_model().objects.create_superuser(
+        username="admin-item-su-win",
+        email="admin-item-su-win@example.com",
+        password="password",
+    )
+
+    assert admin_obj.has_change_permission(request, obj=item) is True
+    assert admin_obj.has_delete_permission(request, obj=item) is True
+
+
+@pytest.mark.django_db
+@override_settings(LANGUAGE_CODE="en", INVENTORY_OPERATION_EDIT_WINDOW_MINUTES=10)
+def test_item_lock_fieldset_description_when_master_edit_window_expired() -> None:
+    """Expired window shows the same wording as ``Item.clean()``."""
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+
+    item = Item.objects.create(inventory_number="INV-ITEM-FS", device=device)
+    Item.objects.filter(pk=item.pk).update(
+        updated_at=timezone.now() - timedelta(minutes=11),
+    )
+    item.refresh_from_db()
+
+    site = AdminSite()
+    admin_obj = ItemAdmin(Item, site)
+    rf = RequestFactory()
+    request = rf.get("/")
+    request.user = _staff_user_with_item_admin_permissions("staff-item-fs")
+    lock_title = str(_("Editing restrictions"))
+    fieldsets = admin_obj.get_fieldsets(request, item)
+    lock = next(fs for fs in fieldsets if str(fs[0]) == lock_title)
+    assert "item master data edit window" in str(lock[1]["description"]).lower()
+
+
+@pytest.mark.django_db
+@override_settings(LANGUAGE_CODE="en", INVENTORY_OPERATION_EDIT_WINDOW_MINUTES=10)
+def test_item_change_page_renders_master_edit_lock_after_window() -> None:
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+
+    item = Item.objects.create(inventory_number="INV-ITEM-HTML", device=device)
+    Item.objects.filter(pk=item.pk).update(
+        updated_at=timezone.now() - timedelta(minutes=11),
+    )
+
+    staff_user = _staff_user_with_item_admin_permissions("staff-item-html")
+    client = Client()
+    client.force_login(staff_user)
+    url = reverse("admin:inventory_item_change", args=[item.pk])
+    response = client.get(url)
+    assert response.status_code == 200
+    assert b"item master data edit window" in response.content.lower()
+
+
+@pytest.mark.django_db
+@override_settings(LANGUAGE_CODE="en", INVENTORY_OPERATION_EDIT_WINDOW_MINUTES=10)
+def test_item_change_page_superuser_hides_lock_after_master_edit_window() -> None:
+    """Superusers do not see the lock banner; they remain able to edit."""
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+
+    item = Item.objects.create(inventory_number="INV-ITEM-SU-HTML", device=device)
+    Item.objects.filter(pk=item.pk).update(
+        updated_at=timezone.now() - timedelta(minutes=11),
+    )
+
+    admin_user = get_user_model().objects.create_superuser(
+        username="admin-item-su-html",
+        email="admin-item-su-html@example.com",
+        password="password",
+    )
+    client = Client()
+    client.force_login(admin_user)
+    url = reverse("admin:inventory_item_change", args=[item.pk])
+    response = client.get(url)
+    assert response.status_code == 200
+    assert b"Editing restrictions" not in response.content
+    assert b"item master data edit window" not in response.content.lower()
+
+
+@pytest.mark.django_db
+@override_settings(LANGUAGE_CODE="en")
+def test_item_change_page_hides_lock_section_when_editable() -> None:
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+
+    item = Item.objects.create(inventory_number="INV-ITEM-NO-LOCK", device=device)
+
+    admin_user = get_user_model().objects.create_superuser(
+        username="admin-item-nolock",
+        email="admin-item-nolock@example.com",
+        password="password",
+    )
+    client = Client()
+    client.force_login(admin_user)
+    url = reverse("admin:inventory_item_change", args=[item.pk])
     response = client.get(url)
     assert response.status_code == 200
     assert b"Editing restrictions" not in response.content
