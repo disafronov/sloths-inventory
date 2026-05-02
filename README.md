@@ -144,6 +144,13 @@ Notes:
   rule as `PendingTransfer.is_active`): the inventory UI and list views treat it
   like an absent offer for cards and actions, even though the row may still exist
   in the database until cleaned up elsewhere.
+- **Automatic transfer acceptance when the receiver has no linked user**: if the
+  receiver `Responsible` has no `User`, they cannot press “Accept” in the web UI.
+  In that case the application accepts the offer immediately (appends the
+  ownership `Operation` and sets `accepted_at`) so the item never remains in a
+  pending state that cannot be cleared from the user-facing flows. If you need a
+  real pending confirmation, link a Django `User` to the receiver `Responsible`
+  before creating the offer.
 
 ## Configuration
 
