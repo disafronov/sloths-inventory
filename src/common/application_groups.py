@@ -2,8 +2,8 @@
 Application-defined auth groups (Staff, Editor) and permission enforcement.
 
 These groups are managed only via ``enforce_application_groups()`` and related
-signals (including ``post_migrate``) — not through the Django admin for the groups
-themselves.
+signals (``post_migrate`` runs the enforcer for every installed app per ``migrate``,
+idempotent) — not through the Django admin for the groups themselves.
 """
 
 from __future__ import annotations
@@ -219,17 +219,22 @@ def _on_permission_post_delete(
 
 def _on_post_migrate(sender: AppConfig, **kwargs: object) -> None:
     """
-    Ensure groups exist after ``migrate`` with a fully-ready app registry.
+    Re-sync groups after each app emits ``post_migrate`` (during ``migrate``).
 
-    Django warns when the database is queried from ``AppConfig.ready()`` because
-    ``django.apps.apps.ready`` is still false while other apps' ``ready()`` hooks
-    may not have run. ``post_migrate`` runs later with the registry ready and
-    with schema aligned to models, so permission queries are safe here.
+    Django emits ``post_migrate`` once per installed app, in order. Early passes may
+    run before ``django.contrib.auth.management.create_permissions`` has bulk-created
+    permissions for later apps (no per-row signals), so ``enforce_application_groups()``
+    is **idempotent** and must run again on later apps until the final pass converges.
+
+    We do not filter on ``sender``: tying this only to ``common`` could run once
+    before ``inventory`` permissions exist and leave Staff/Editor under-assigned
+    until an unrelated manual trigger.
+
+    ``AppConfig.ready()`` is avoided here: querying the DB during ``ready()`` warns
+    because ``django.apps.apps.ready`` is still false while other apps' hooks run.
     """
 
-    del kwargs
-    if sender.label != "common":
-        return
+    del sender, kwargs
     try:
         enforce_application_groups()
     except (OperationalError, ProgrammingError):
