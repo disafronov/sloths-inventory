@@ -1,3 +1,10 @@
+## [1.4.0-rc.2](https://github.com/disafronov/sloths-inventory/compare/v1.4.0-rc.1...v1.4.0-rc.2) (2026-05-02)
+
+### Features
+
+* document trusted admin repair and refine operation editing logic ([5528df5](https://github.com/disafronov/sloths-inventory/commit/5528df5304eeb276fac7bad212b6a372a608d95b))
+* enhance operation editing permissions for superusers ([00e3147](https://github.com/disafronov/sloths-inventory/commit/00e31470c1d316856cc2a3420e35b6a6ad29d4f7))
+
 ## [1.4.0-rc.1](https://github.com/disafronov/sloths-inventory/compare/v1.3.0...v1.4.0-rc.1) (2026-05-02)
 
 ### Features
