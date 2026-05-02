@@ -11,10 +11,75 @@ from django.utils import timezone
 from django.utils.translation import gettext as _
 
 from catalogs.models import Responsible
-from inventory.models import Item, PendingTransfer, pending_transfer_expiration_hours
+from inventory.models import (
+    Item,
+    PendingTransfer,
+    pending_transfer_expiration_hours,
+    resolve_item_history_context,
+)
+from inventory.models.operation import Operation
 from inventory.presentation import validation_error_user_message
 
 from .http_helpers import parse_transfer_receiver_or_render_error, render_transfer_form
+
+
+def _redirect_after_inactive_transfer(
+    request: HttpRequest,
+    responsible: Responsible,
+    transfer: PendingTransfer,
+) -> HttpResponse:
+    """Warn and send the user somewhere they can still navigate from."""
+
+    messages.warning(
+        request,
+        _("This transfer offer is no longer active."),
+    )
+    if resolve_item_history_context(responsible, transfer.item_id) is not None:
+        return redirect("inventory:item-history", item_id=transfer.item_id)
+    return redirect("inventory:my-items")
+
+
+def _redirect_journal_head_stale(
+    request: HttpRequest,
+    responsible: Responsible,
+    *,
+    item_id: int,
+) -> HttpResponse:
+    """The Accept form was built for an older journal head than the server sees now."""
+
+    messages.error(
+        request,
+        _(
+            "The inventory record changed since this page was loaded. "
+            "Refresh the page and try again."
+        ),
+    )
+    if resolve_item_history_context(responsible, item_id) is not None:
+        return redirect("inventory:item-history", item_id=item_id)
+    return redirect("inventory:my-items")
+
+
+def _redirect_accept_without_journal_head(
+    request: HttpRequest,
+    _responsible: Responsible,
+) -> HttpResponse:
+    """
+    Accept requires a journal head; without operations the item has none.
+
+    The receiver branch in ``resolve_item_history_context`` returns ``None``
+    when there are no operations while an offer is pending, so there is no
+    item-history page to send them to—only the list view remains useful.
+    """
+
+    messages.error(
+        request,
+        validation_error_user_message(
+            ValidationError(
+                _("Cannot accept transfer for an item without operations"),
+            ),
+        ),
+    )
+    return redirect("inventory:my-items")
 
 
 @login_required
@@ -169,7 +234,10 @@ def accept_transfer(request: HttpRequest, *, transfer_id: int) -> HttpResponse:
     """
     Accept a pending transfer and append an ownership-changing operation.
 
-    Only the transfer receiver may accept.
+    Only the transfer receiver may accept. POST must include
+    ``journal_head_operation_id`` matching the latest ``Operation`` for the item
+    (the item history template sets this when rendering Accept) so the server
+    rejects submissions built from stale UI state.
     """
 
     if request.method != "POST":
@@ -191,15 +259,24 @@ def accept_transfer(request: HttpRequest, *, transfer_id: int) -> HttpResponse:
     }:
         raise Http404
     if not transfer.is_active:
-        messages.warning(
-            request,
-            _("This transfer offer is no longer active."),
-        )
-        # Incoming receivers may lose ``item-history`` access once an offer expires
-        # (it drops out of ``offers_visible_in_ui``), so land on a page they always see.
-        return redirect("inventory:my-items")
+        return _redirect_after_inactive_transfer(request, responsible, transfer)
     if transfer.to_responsible_id != responsible.pk:
         raise Http404
+
+    latest_head = Operation.latest_operation_id_for_item(transfer.item_id)
+    raw_baseline = (request.POST.get("journal_head_operation_id") or "").strip()
+    try:
+        posted_baseline = int(raw_baseline) if raw_baseline else None
+    except ValueError:
+        posted_baseline = None
+
+    if latest_head is None:
+        return _redirect_accept_without_journal_head(request, responsible)
+
+    if posted_baseline is None or posted_baseline != latest_head:
+        return _redirect_journal_head_stale(
+            request, responsible, item_id=transfer.item_id
+        )
 
     try:
         transfer.accept()
@@ -234,11 +311,7 @@ def cancel_transfer(request: HttpRequest, *, transfer_id: int) -> HttpResponse:
     }:
         raise Http404
     if not transfer.is_active:
-        messages.warning(
-            request,
-            _("This transfer offer is no longer active."),
-        )
-        return redirect("inventory:my-items")
+        return _redirect_after_inactive_transfer(request, responsible, transfer)
 
     try:
         transfer.cancel()
