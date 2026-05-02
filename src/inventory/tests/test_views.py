@@ -694,6 +694,14 @@ def _make_item_with_operation(
     return item
 
 
+def _accept_journal_baseline_post(item: Item) -> dict[str, str]:
+    """POST fields for ``accept_transfer`` (``journal_head_operation_id``)."""
+
+    head_id = Operation.latest_operation_id_for_item(item.pk)
+    assert head_id is not None
+    return {"journal_head_operation_id": str(head_id)}
+
+
 @pytest.mark.django_db
 def test_change_location_requires_login() -> None:
     client = Client()
@@ -1253,13 +1261,19 @@ def test_accept_transfer_requires_receiver_confirmation_and_changes_owner() -> N
     # Sender cannot accept.
     client_sender = Client()
     client_sender.force_login(user_sender)
-    forbidden = client_sender.post(f"/transfers/{transfer.pk}/accept/")
+    forbidden = client_sender.post(
+        f"/transfers/{transfer.pk}/accept/",
+        _accept_journal_baseline_post(item),
+    )
     assert forbidden.status_code == 404
 
     # Receiver accepts: ownership changes via a new Operation.
     client_receiver = Client()
     client_receiver.force_login(user_receiver)
-    ok = client_receiver.post(f"/transfers/{transfer.pk}/accept/")
+    ok = client_receiver.post(
+        f"/transfers/{transfer.pk}/accept/",
+        _accept_journal_baseline_post(item),
+    )
     assert ok.status_code == 302
 
     transfer.refresh_from_db()
@@ -1423,7 +1437,13 @@ def test_accept_transfer_returns_404_if_user_is_not_sender_or_receiver() -> None
 
     client_other = Client()
     client_other.force_login(user_other)
-    assert client_other.post(f"/transfers/{transfer.pk}/accept/").status_code == 404
+    assert (
+        client_other.post(
+            f"/transfers/{transfer.pk}/accept/",
+            _accept_journal_baseline_post(item),
+        ).status_code
+        == 404
+    )
 
     _ = resp_other
 
@@ -1454,7 +1474,7 @@ def test_cancel_transfer_warns_when_inactive() -> None:
     client.force_login(user_sender)
     response = client.post(f"/transfers/{transfer.pk}/cancel/", follow=True)
     assert response.status_code == 200
-    assert response.request["PATH_INFO"] == "/"
+    assert response.request["PATH_INFO"] == f"/items/{item.pk}/"
     assert b"This transfer offer is no longer active" in response.content
 
 
@@ -1492,6 +1512,7 @@ def test_accept_transfer_surfaces_inactive_message_when_offer_flips_inside_trans
     try:
         post_response = client.post(
             f"/transfers/{transfer.pk}/accept/",
+            _accept_journal_baseline_post(item),
             follow=False,
         )
     finally:
@@ -2193,6 +2214,7 @@ def test_accept_transfer_surfaces_validation_error_message() -> None:
     ):
         response = client.post(
             reverse("inventory:accept-transfer", kwargs={"transfer_id": transfer.pk}),
+            _accept_journal_baseline_post(item),
             follow=True,
         )
     assert response.status_code == 200
@@ -2236,9 +2258,216 @@ def test_accept_transfer_shows_error_when_sender_no_longer_holds_item() -> None:
     client.force_login(user_receiver)
     response = client.post(
         reverse("inventory:accept-transfer", kwargs={"transfer_id": transfer.pk}),
+        _accept_journal_baseline_post(item),
         follow=True,
     )
     assert response.status_code == 200
     assert b"sender no longer holds the item" in response.content
     transfer.refresh_from_db()
     assert transfer.accepted_at is None
+
+
+@pytest.mark.django_db
+def test_accept_transfer_rejects_non_numeric_journal_baseline() -> None:
+    user_sender = User.objects.create_user(username="snd-bl-bad", password="pw")
+    user_receiver = User.objects.create_user(username="rcv-bl-bad", password="pw")
+    resp_sender = Responsible.objects.create(
+        last_name="S", first_name="Bad", user=user_sender
+    )
+    resp_receiver = Responsible.objects.create(
+        last_name="R", first_name="Bad", user=user_receiver
+    )
+    status = Status.objects.create(name="In stock")
+    location = Location.objects.create(name="Moscow")
+    item = _make_item_with_operation(
+        status, location, resp_sender, "INV-XFER-BL-BADNUM"
+    )
+    transfer = PendingTransfer.objects.create(
+        item=item,
+        from_responsible=resp_sender,
+        to_responsible=resp_receiver,
+    )
+
+    client = Client()
+    client.force_login(user_receiver)
+    response = client.post(
+        reverse("inventory:accept-transfer", kwargs={"transfer_id": transfer.pk}),
+        {"journal_head_operation_id": "not-an-int"},
+        follow=True,
+    )
+    assert response.status_code == 200
+    assert b"Refresh the page" in response.content
+    transfer.refresh_from_db()
+    assert transfer.accepted_at is None
+
+
+@pytest.mark.django_db
+def test_accept_transfer_rejects_missing_journal_baseline() -> None:
+    user_sender = User.objects.create_user(username="snd-bl-miss", password="pw")
+    user_receiver = User.objects.create_user(username="rcv-bl-miss", password="pw")
+    resp_sender = Responsible.objects.create(
+        last_name="S", first_name="Bl", user=user_sender
+    )
+    resp_receiver = Responsible.objects.create(
+        last_name="R", first_name="Bl", user=user_receiver
+    )
+    status = Status.objects.create(name="In stock")
+    location = Location.objects.create(name="Moscow")
+    item = _make_item_with_operation(status, location, resp_sender, "INV-XFER-BL-MISS")
+    transfer = PendingTransfer.objects.create(
+        item=item,
+        from_responsible=resp_sender,
+        to_responsible=resp_receiver,
+    )
+
+    client = Client()
+    client.force_login(user_receiver)
+    response = client.post(
+        reverse("inventory:accept-transfer", kwargs={"transfer_id": transfer.pk}),
+        follow=True,
+    )
+    assert response.status_code == 200
+    assert b"Refresh the page" in response.content
+    transfer.refresh_from_db()
+    assert transfer.accepted_at is None
+
+
+@pytest.mark.django_db
+def test_accept_transfer_rejects_stale_journal_baseline() -> None:
+    user_sender = User.objects.create_user(username="snd-bl-old", password="pw")
+    user_receiver = User.objects.create_user(username="rcv-bl-old", password="pw")
+    resp_sender = Responsible.objects.create(
+        last_name="S", first_name="Old", user=user_sender
+    )
+    resp_receiver = Responsible.objects.create(
+        last_name="R", first_name="Old", user=user_receiver
+    )
+    status = Status.objects.create(name="In stock")
+    loc_a = Location.objects.create(name="A")
+    loc_b = Location.objects.create(name="B")
+    item = _make_item_with_operation(status, loc_a, resp_sender, "INV-XFER-BL-STALE")
+    stale_id = Operation.latest_operation_id_for_item(item.pk)
+    assert stale_id is not None
+    transfer = PendingTransfer.objects.create(
+        item=item,
+        from_responsible=resp_sender,
+        to_responsible=resp_receiver,
+    )
+    item.change_location(responsible=resp_sender, location=loc_b, notes="move")
+
+    client = Client()
+    client.force_login(user_receiver)
+    response = client.post(
+        reverse("inventory:accept-transfer", kwargs={"transfer_id": transfer.pk}),
+        {"journal_head_operation_id": str(stale_id)},
+        follow=True,
+    )
+    assert response.status_code == 200
+    assert b"Refresh the page" in response.content
+    transfer.refresh_from_db()
+    assert transfer.accepted_at is None
+
+
+@pytest.mark.django_db
+def test_accept_transfer_stale_baseline_goes_my_items_when_no_history_context(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    user_sender = User.objects.create_user(username="snd-bl-nctx", password="pw")
+    user_receiver = User.objects.create_user(username="rcv-bl-nctx", password="pw")
+    resp_sender = Responsible.objects.create(
+        last_name="S", first_name="Nctx", user=user_sender
+    )
+    resp_receiver = Responsible.objects.create(
+        last_name="R", first_name="Nctx", user=user_receiver
+    )
+    status = Status.objects.create(name="In stock")
+    loc_a = Location.objects.create(name="A")
+    loc_b = Location.objects.create(name="B")
+    item = _make_item_with_operation(status, loc_a, resp_sender, "INV-XFER-BL-NCTX")
+    stale_id = Operation.latest_operation_id_for_item(item.pk)
+    assert stale_id is not None
+    transfer = PendingTransfer.objects.create(
+        item=item,
+        from_responsible=resp_sender,
+        to_responsible=resp_receiver,
+    )
+    item.change_location(responsible=resp_sender, location=loc_b, notes="move")
+
+    monkeypatch.setattr(
+        "inventory.views.transfer_views.resolve_item_history_context",
+        lambda *args, **kwargs: None,
+    )
+
+    client = Client()
+    client.force_login(user_receiver)
+    response = client.post(
+        reverse("inventory:accept-transfer", kwargs={"transfer_id": transfer.pk}),
+        {"journal_head_operation_id": str(stale_id)},
+        follow=True,
+    )
+    assert response.status_code == 200
+    assert response.request["PATH_INFO"] == "/"
+    assert b"Refresh the page" in response.content
+
+
+@pytest.mark.django_db
+def test_accept_transfer_when_journal_deleted_shows_error() -> None:
+    user_sender = User.objects.create_user(username="snd-bl-emp", password="pw")
+    user_receiver = User.objects.create_user(username="rcv-bl-emp", password="pw")
+    resp_sender = Responsible.objects.create(
+        last_name="S", first_name="Emp", user=user_sender
+    )
+    resp_receiver = Responsible.objects.create(
+        last_name="R", first_name="Emp", user=user_receiver
+    )
+    status = Status.objects.create(name="In stock")
+    location = Location.objects.create(name="Moscow")
+    item = _make_item_with_operation(status, location, resp_sender, "INV-XFER-BL-EMPTY")
+    transfer = PendingTransfer.objects.create(
+        item=item,
+        from_responsible=resp_sender,
+        to_responsible=resp_receiver,
+    )
+    Operation.objects.filter(item=item).delete()
+
+    client = Client()
+    client.force_login(user_receiver)
+    response = client.post(
+        reverse("inventory:accept-transfer", kwargs={"transfer_id": transfer.pk}),
+        {"journal_head_operation_id": "1"},
+        follow=True,
+    )
+    assert response.status_code == 200
+    assert response.request["PATH_INFO"] == "/"
+    assert b"without operations" in response.content
+    transfer.refresh_from_db()
+    assert transfer.accepted_at is None
+
+
+@pytest.mark.django_db
+def test_item_history_includes_accept_journal_baseline_for_receiver() -> None:
+    user_sender = User.objects.create_user(username="snd-hid", password="pw")
+    user_receiver = User.objects.create_user(username="rcv-hid", password="pw")
+    resp_sender = Responsible.objects.create(
+        last_name="S", first_name="Hid", user=user_sender
+    )
+    resp_receiver = Responsible.objects.create(
+        last_name="R", first_name="Hid", user=user_receiver
+    )
+    status = Status.objects.create(name="In stock")
+    location = Location.objects.create(name="Moscow")
+    item = _make_item_with_operation(status, location, resp_sender, "INV-XFER-HIDDEN")
+    PendingTransfer.objects.create(
+        item=item,
+        from_responsible=resp_sender,
+        to_responsible=resp_receiver,
+    )
+    head = Operation.latest_operation_id_for_item(item.pk)
+    assert head is not None
+
+    client = Client()
+    client.force_login(user_receiver)
+    response = client.get(f"/items/{item.pk}/")
+    assert response.status_code == 200
+    assert b"journal_head_operation_id" in response.content
+    assert str(head).encode("utf-8") in response.content
