@@ -185,7 +185,10 @@ uv run python -m pytest -v
 ```
 
 CI job **Tests Postgres** uses `PYTEST_POSTGRES_ONLY=1` so only `@pytest.mark.postgres`
-tests run there; `make test-postgres` runs the **full** suite on Postgres by default.
+tests run there. Locally, **`make test-postgres`** sets only `PYTEST_POSTGRES_USE=1`
+and runs the **full** pytest suite on PostgreSQL—use that when the CI Postgres job
+fails: the subset may be a narrow symptom; a full run on Postgres catches
+interaction issues elsewhere.
 
 Formatting is intentionally not part of `make all` (so checks do not mutate the
 working tree). To auto-format code, use:
