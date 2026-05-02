@@ -1,5 +1,6 @@
 from datetime import timedelta
 from typing import Any
+from unittest.mock import patch
 
 import pytest
 from django.contrib.admin.sites import AdminSite
@@ -1154,6 +1155,292 @@ def test_item_admin_superuser_post_saves_after_correction_window() -> None:
     item.refresh_from_db()
     assert item.serial_number == "SN-NEW"
     assert "item post after window" in item.notes
+
+
+@pytest.mark.django_db
+def test_item_admin_get_fieldsets_add_form_skips_item_lock_branch() -> None:
+    """``obj`` is ``None`` on add: ``ItemAdmin`` returns base fieldsets without lock."""
+
+    site = AdminSite()
+    admin_obj = ItemAdmin(Item, site)
+    rf = RequestFactory()
+    request = rf.get("/")
+    request.user = get_user_model().objects.create_superuser(
+        username="admin-item-add-fs",
+        email="admin-item-add-fs@example.com",
+        password="password",
+    )
+    fieldsets = admin_obj.get_fieldsets(request, None)
+    assert isinstance(fieldsets, list)
+    assert len(fieldsets) >= 1
+
+
+@pytest.mark.django_db
+def test_operation_admin_get_fieldsets_add_form_skips_operation_lock_branch() -> None:
+    """``obj`` is ``None`` on add: ``OperationAdmin`` skips lock fieldset logic."""
+
+    site = AdminSite()
+    admin_obj = OperationAdmin(Operation, site)
+    rf = RequestFactory()
+    request = rf.get("/")
+    request.user = get_user_model().objects.create_superuser(
+        username="admin-op-add-fs",
+        email="admin-op-add-fs@example.com",
+        password="password",
+    )
+    fieldsets = admin_obj.get_fieldsets(request, None)
+    assert isinstance(fieldsets, list)
+
+
+@pytest.mark.django_db
+def test_operation_admin_form_skips_window_bypass_for_non_latest_operation() -> None:
+    """
+    Superuser bypass applies only on the latest operation row for the item
+    (``OperationAdminForm`` early exit).
+    """
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    status = Status.objects.create(name="In stock")
+    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    location = Location.objects.create(name="Moscow")
+    item = Item.objects.create(inventory_number="INV-OP-FORM-OLD", device=device)
+    op1 = Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=responsible,
+        location=location,
+    )
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=responsible,
+        location=location,
+    )
+
+    site = AdminSite()
+    admin_obj = OperationAdmin(Operation, site)
+    rf = RequestFactory()
+    request = rf.get("/")
+    request.user = get_user_model().objects.create_superuser(
+        username="admin-op-form-old",
+        email="admin-op-form-old@example.com",
+        password="password",
+    )
+    form_class = admin_obj.get_form(request, obj=op1, change=True)
+    form = form_class(instance=op1)
+    assert getattr(form.instance, "_bypass_operation_correction_window", False) is False
+
+
+@pytest.mark.django_db
+@override_settings(LANGUAGE_CODE="en")
+def test_operation_admin_lock_message_for_non_latest_operation_row() -> None:
+    """``_operation_correction_window_lock_user_message`` surfaces append-only copy."""
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    status = Status.objects.create(name="In stock")
+    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    location = Location.objects.create(name="Moscow")
+    item = Item.objects.create(inventory_number="INV-OP-LOCK-MSG", device=device)
+    op1 = Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=responsible,
+        location=location,
+    )
+    op2 = Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=responsible,
+        location=location,
+    )
+
+    site = AdminSite()
+    admin_obj = OperationAdmin(Operation, site)
+    rf = RequestFactory()
+    request = rf.get("/")
+    request.user = _staff_user_with_operation_admin_permissions("staff-op-lock-msg")
+
+    msg = admin_obj._operation_correction_window_lock_user_message(
+        request,
+        op1,
+        latest_operation_pk=op2.pk,
+    )
+    assert msg is not None
+    assert "Only the latest operation" in msg
+
+
+@pytest.mark.django_db
+@override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+def test_operation_admin_lock_message_none_when_latest_id_unresolved() -> None:
+    """Admin lock helper returns ``None`` when the journal head cannot be resolved."""
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    status = Status.objects.create(name="In stock")
+    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    location = Location.objects.create(name="Moscow")
+    item = Item.objects.create(inventory_number="INV-OP-LOCK-NONE", device=device)
+    op = Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=responsible,
+        location=location,
+    )
+
+    site = AdminSite()
+    admin_obj = OperationAdmin(Operation, site)
+    rf = RequestFactory()
+    request = rf.get("/")
+    request.user = _staff_user_with_operation_admin_permissions("staff-op-lock-none")
+
+    with patch.object(Operation, "latest_operation_id_for_item", return_value=None):
+        msg = admin_obj._operation_correction_window_lock_user_message(request, op)
+    assert msg is None
+
+
+@pytest.mark.django_db
+@override_settings(LANGUAGE_CODE="en", INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+def test_operation_admin_lock_message_staff_latest_past_correction_window() -> None:
+    """Non-superusers on the latest row past the window see expiry copy."""
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    status = Status.objects.create(name="In stock")
+    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    location = Location.objects.create(name="Moscow")
+    item = Item.objects.create(inventory_number="INV-OP-LOCK-STAFF", device=device)
+    op = Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=responsible,
+        location=location,
+    )
+    Operation.objects.filter(pk=op.pk).update(
+        created_at=timezone.now() - timedelta(minutes=30),
+    )
+    op.refresh_from_db()
+
+    site = AdminSite()
+    admin_obj = OperationAdmin(Operation, site)
+    rf = RequestFactory()
+    request = rf.get("/")
+    request.user = _staff_user_with_operation_admin_permissions("staff-op-lock-exp")
+
+    msg = admin_obj._operation_correction_window_lock_user_message(request, op)
+    assert msg is not None
+    assert Operation.correction_window_expired_user_message() in msg
+
+
+@pytest.mark.django_db
+@override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+def test_operation_admin_lock_message_none_inside_window_for_staff() -> None:
+    """Latest row still inside the window: no restriction copy for non-superusers."""
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    status = Status.objects.create(name="In stock")
+    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    location = Location.objects.create(name="Moscow")
+    item = Item.objects.create(inventory_number="INV-OP-LOCK-WIN", device=device)
+    op = Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=responsible,
+        location=location,
+    )
+
+    site = AdminSite()
+    admin_obj = OperationAdmin(Operation, site)
+    rf = RequestFactory()
+    request = rf.get("/")
+    request.user = _staff_user_with_operation_admin_permissions("staff-op-lock-win")
+
+    msg = admin_obj._operation_correction_window_lock_user_message(request, op)
+    assert msg is None
+
+
+@pytest.mark.django_db
+@override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+def test_operation_admin_lock_message_none_for_superuser_on_latest_row() -> None:
+    site = AdminSite()
+    admin_obj = OperationAdmin(Operation, site)
+    rf = RequestFactory()
+    request = rf.get("/")
+    request.user = get_user_model().objects.create_superuser(
+        username="admin-op-lock-su",
+        email="admin-op-lock-su@example.com",
+        password="password",
+    )
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    status = Status.objects.create(name="In stock")
+    responsible = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    location = Location.objects.create(name="Moscow")
+    item = Item.objects.create(inventory_number="INV-OP-LOCK-SU", device=device)
+    op = Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=responsible,
+        location=location,
+    )
+    Operation.objects.filter(pk=op.pk).update(
+        created_at=timezone.now() - timedelta(minutes=11),
+    )
+    op.refresh_from_db()
+
+    msg = admin_obj._operation_correction_window_lock_user_message(request, op)
+    assert msg is None
 
 
 # PendingTransfer admin is read-only (no create/edit/delete). Any tests for add-form

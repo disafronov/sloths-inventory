@@ -57,6 +57,8 @@ def create_transfer(request: HttpRequest, *, item_id: int) -> HttpResponse:
             if error_response is not None:
                 return error_response
             if to_responsible is None:
+                # ``parse_transfer_receiver_or_render_error`` always returns a response
+                # when the receiver is missing; this guards internal regressions.
                 raise AssertionError("expected receiver or response")
 
             try:
@@ -92,6 +94,7 @@ def create_transfer(request: HttpRequest, *, item_id: int) -> HttpResponse:
         if error_response is not None:
             return error_response
         if to_responsible is None:
+            # Same invariant as the pending-transfer branch above.
             raise AssertionError("expected receiver or response")
 
         expires_at = None
