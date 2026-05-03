@@ -101,7 +101,10 @@ class Item(BaseModel):
     Item field edits are time-bounded by the correction window once an accountable
     party exists (see ``has_assigned_responsible()`` and ``clean()``). Until the
     first ``Operation`` is recorded, the item has no responsible person in the
-    journal and the row stays editable regardless of ``updated_at``.
+    journal and the row stays editable regardless of ``created_at``.
+
+    The correction window is anchored on the item's ``created_at`` timestamp
+    (immutable), not ``updated_at``, so the window does not reset on each save.
 
     The admin sets ``_bypass_item_correction_window`` on the instance for
     superusers only so support can repair rows after the window; do not set that
@@ -150,7 +153,7 @@ class Item(BaseModel):
         Return the user-visible message when the item correction window has expired.
 
         Uses ``INVENTORY_CORRECTION_WINDOW_MINUTES`` like operation corrections,
-        but the anchor timestamp is this row's ``updated_at`` (see ``Item.clean()``).
+        but the anchor timestamp is this row's ``created_at`` (see ``Item.clean()``).
 
         Wording is shared with ``CatalogCorrectionWindowMixin`` via
         ``common.edit_window.catalog_entry_correction_window_expired_user_message``.
@@ -163,10 +166,9 @@ class Item(BaseModel):
         Validate the model and enforce the item correction window.
 
         Once a responsible party exists (at least one ``Operation``), any update
-        while the row's previous ``updated_at`` falls outside the configured window
-        is rejected. This matches ``Operation`` semantics (same minute cap) and
-        prevents ``save()`` from silently refreshing ``updated_at`` after the
-        window should have closed. Items with no operations skip the window check.
+        while the row's ``created_at`` falls outside the configured window
+        is rejected. This matches ``Operation`` semantics (same minute cap and
+        immutable anchor). Items with no operations skip the window check.
         """
 
         super().clean()
@@ -184,8 +186,8 @@ class Item(BaseModel):
         if not self.has_assigned_responsible():
             return
 
-        original_updated_at = Item.objects.only("updated_at").get(pk=self.pk).updated_at
-        if not is_within_inventory_correction_window(original_updated_at):
+        original_created_at = Item.objects.only("created_at").get(pk=self.pk).created_at
+        if not is_within_inventory_correction_window(original_created_at):
             raise ValidationError(
                 type(self).item_correction_window_expired_user_message(),
                 code="item_correction_window_expired",

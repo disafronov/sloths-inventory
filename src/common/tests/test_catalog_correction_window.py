@@ -53,7 +53,7 @@ def _staff_view_only_location(username: str):
 def test_location_clean_allows_stale_window_when_unused() -> None:
     loc = Location.objects.create(name="Loc-unused")
     Location.objects.filter(pk=loc.pk).update(
-        updated_at=timezone.now() - timedelta(minutes=11),
+        created_at=timezone.now() - timedelta(minutes=11),
     )
     loc.refresh_from_db()
     loc.name = "Loc-unused-renamed"
@@ -87,7 +87,7 @@ def test_location_clean_rejects_stale_window_when_referenced() -> None:
         location=loc,
     )
     Location.objects.filter(pk=loc.pk).update(
-        updated_at=timezone.now() - timedelta(minutes=11),
+        created_at=timezone.now() - timedelta(minutes=11),
     )
     loc.refresh_from_db()
     loc.name = "Loc-should-fail"
@@ -124,7 +124,7 @@ def test_location_admin_staff_denies_change_when_used_and_stale() -> None:
         location=loc,
     )
     Location.objects.filter(pk=loc.pk).update(
-        updated_at=timezone.now() - timedelta(minutes=11),
+        created_at=timezone.now() - timedelta(minutes=11),
     )
     loc.refresh_from_db()
 
@@ -164,7 +164,7 @@ def test_location_admin_omits_lock_fieldset_without_model_change_permission() ->
         location=loc,
     )
     Location.objects.filter(pk=loc.pk).update(
-        updated_at=timezone.now() - timedelta(minutes=11),
+        created_at=timezone.now() - timedelta(minutes=11),
     )
     loc.refresh_from_db()
 
@@ -204,7 +204,7 @@ def test_location_clean_allows_update_inside_window_when_referenced() -> None:
         location=loc,
     )
     Location.objects.filter(pk=loc.pk).update(
-        updated_at=timezone.now() - timedelta(minutes=2),
+        created_at=timezone.now() - timedelta(minutes=2),
     )
     loc.refresh_from_db()
     loc.name = "Loc-in-window-renamed"
@@ -242,7 +242,7 @@ def test_location_clean_superuser_bypass_catalog_correction_window_flag() -> Non
         location=loc,
     )
     Location.objects.filter(pk=loc.pk).update(
-        updated_at=timezone.now() - timedelta(minutes=11),
+        created_at=timezone.now() - timedelta(minutes=11),
     )
     loc.refresh_from_db()
     loc.name = "Loc-bypass-renamed"
@@ -274,7 +274,7 @@ def test_location_admin_superuser_keeps_change_when_used_and_stale() -> None:
         location=loc,
     )
     Location.objects.filter(pk=loc.pk).update(
-        updated_at=timezone.now() - timedelta(minutes=11),
+        created_at=timezone.now() - timedelta(minutes=11),
     )
     loc.refresh_from_db()
 
@@ -318,7 +318,7 @@ def test_location_admin_superuser_fieldsets_skip_lock_when_stale() -> None:
         location=loc,
     )
     Location.objects.filter(pk=loc.pk).update(
-        updated_at=timezone.now() - timedelta(minutes=11),
+        created_at=timezone.now() - timedelta(minutes=11),
     )
     loc.refresh_from_db()
 
@@ -399,7 +399,7 @@ def test_location_admin_fieldsets_include_lock_for_staff_when_stale_and_used() -
         location=loc,
     )
     Location.objects.filter(pk=loc.pk).update(
-        updated_at=timezone.now() - timedelta(minutes=11),
+        created_at=timezone.now() - timedelta(minutes=11),
     )
     loc.refresh_from_db()
 
@@ -436,7 +436,7 @@ def test_location_admin_staff_no_lock_fieldset_when_unused_even_if_stale() -> No
 
     loc = Location.objects.create(name="Stale-unused")
     Location.objects.filter(pk=loc.pk).update(
-        updated_at=timezone.now() - timedelta(minutes=11),
+        created_at=timezone.now() - timedelta(minutes=11),
     )
     loc.refresh_from_db()
 
@@ -476,7 +476,7 @@ def test_location_admin_staff_no_lock_fieldset_when_in_use_inside_window() -> No
         location=loc,
     )
     Location.objects.filter(pk=loc.pk).update(
-        updated_at=timezone.now() - timedelta(minutes=2),
+        created_at=timezone.now() - timedelta(minutes=2),
     )
     loc.refresh_from_db()
 

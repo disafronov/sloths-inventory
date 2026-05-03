@@ -21,6 +21,9 @@ class CatalogCorrectionWindowMixin(models.Model):
     Abstract mixin: enforce ``INVENTORY_CORRECTION_WINDOW_MINUTES`` on updates
     when ``is_catalog_reference_in_use()`` is true.
 
+    The correction window is anchored on the row's ``created_at`` timestamp
+    (immutable), not ``updated_at``, so the window does not reset on each save.
+
     Subclasses must implement ``is_catalog_reference_in_use`` (no DB hits while
     ``_state.adding``).
     """
@@ -53,10 +56,10 @@ class CatalogCorrectionWindowMixin(models.Model):
         # ``type(self)`` is a concrete model class; mypy cannot derive ``.objects`` from
         # the abstract mixin base.
         concrete_model_cls = cast(Any, type(self))
-        original_updated_at = (
-            concrete_model_cls.objects.only("updated_at").get(pk=self.pk).updated_at
+        original_created_at = (
+            concrete_model_cls.objects.only("created_at").get(pk=self.pk).created_at
         )
-        if not is_within_inventory_correction_window(original_updated_at):
+        if not is_within_inventory_correction_window(original_created_at):
             raise ValidationError(
                 type(self).catalog_correction_window_expired_user_message(),
                 code="catalog_correction_window_expired",

@@ -37,7 +37,7 @@ class CatalogReferenceRow(Protocol):
     Mypy cannot infer this from the abstract mixin on ``Model`` subclasses.
     """
 
-    updated_at: Any
+    created_at: Any
     pk: Any
 
     def is_catalog_reference_in_use(self) -> bool: ...
@@ -91,7 +91,7 @@ class CatalogReferenceAdminMixin(admin.ModelAdmin):
 
     Superusers may always edit. Rows not referenced by inventory data may always
     edit. Referenced rows are bound by ``INVENTORY_CORRECTION_WINDOW_MINUTES``
-    from ``updated_at``.
+    from ``created_at``.
     """
 
     def _is_catalog_reference_editable(
@@ -102,7 +102,7 @@ class CatalogReferenceAdminMixin(admin.ModelAdmin):
             return True
         if not obj.is_catalog_reference_in_use():
             return True
-        return is_within_inventory_correction_window(obj.updated_at)
+        return is_within_inventory_correction_window(obj.created_at)
 
     def _catalog_correction_window_lock_user_message(
         self, request: HttpRequest, obj: CatalogReferenceRow
@@ -112,7 +112,7 @@ class CatalogReferenceAdminMixin(admin.ModelAdmin):
             return None
         if not obj.is_catalog_reference_in_use():
             return None
-        if is_within_inventory_correction_window(obj.updated_at):
+        if is_within_inventory_correction_window(obj.created_at):
             return None
         model_cls = type(obj)
         return model_cls.catalog_correction_window_expired_user_message()

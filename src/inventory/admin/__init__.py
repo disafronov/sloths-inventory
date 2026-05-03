@@ -63,13 +63,13 @@ class DeviceFieldsMixin:
 class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
     """
     Item field edits use ``INVENTORY_CORRECTION_WINDOW_MINUTES`` from the row's
-    ``updated_at`` (same setting as operation corrections, different anchor).
+    ``created_at`` (same setting as operation corrections, same anchor).
 
     The admin mirrors ``Item.clean()`` for change/delete permissions for non-super
     users and appends a restriction panel when the window has expired.
 
     Items with no operations yet (no responsible in the journal) stay editable
-    regardless of ``updated_at``.
+    regardless of ``created_at``.
 
     Superusers keep full change/delete and get a ModelForm that sets
     ``Item._bypass_item_correction_window`` so ``clean()`` allows repairs after
@@ -117,7 +117,7 @@ class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
 
         if not obj.has_assigned_responsible():
             return True
-        return is_within_inventory_correction_window(obj.updated_at)
+        return is_within_inventory_correction_window(obj.created_at)
 
     def _item_correction_window_lock_user_message(
         self, request: HttpRequest, obj: Item

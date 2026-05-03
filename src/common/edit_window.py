@@ -15,7 +15,7 @@ from django.utils.translation import ngettext
 def catalog_entry_correction_window_expired_user_message() -> str:
     """
     Return the message when a referenced catalog-style row is in use and its
-    ``updated_at`` correction window has closed.
+    ``created_at`` correction window has closed.
 
     Used by ``CatalogCorrectionWindowMixin`` and ``Item`` so gettext keeps a single
     msgid (translations live under ``common/locale`` only).
