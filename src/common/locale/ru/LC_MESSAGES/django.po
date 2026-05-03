@@ -115,3 +115,119 @@ msgstr "Выйти"
 #: src/common/templates/login.html:6 src/common/templates/login.html:12
 msgid "Login"
 msgstr "Войти"
+
+#: src/common/templates/login.html:13
+msgid "Forgot your password?"
+msgstr "Забыли пароль?"
+
+#: src/common/templates/password_reset_form.html:4
+#: src/common/templates/password_reset_form.html:7
+msgid "Password Reset"
+msgstr "Сброс пароля"
+
+#: src/common/templates/password_reset_form.html:8
+msgid "Forgotten your password? Enter your email address below, and we'll send you instructions to set a new one."
+msgstr "Забыли пароль? Введите ваш email ниже, и мы отправим вам инструкции для установки нового пароля."
+
+#: src/common/templates/password_reset_form.html:13
+msgid "Send reset link"
+msgstr "Отправить ссылку для сброса"
+
+#: src/common/templates/password_reset_done.html:4
+#: src/common/templates/password_reset_done.html:7
+msgid "Password Reset Sent"
+msgstr "Письмо для сброса пароля отправлено"
+
+#: src/common/templates/password_reset_done.html:8
+msgid "We've emailed you instructions for setting your password. If an account exists with the email you entered, you should receive them shortly."
+msgstr "Мы отправили вам инструкции для установки пароля на email. Если учетная запись с указанным адресом существует, вы получите письмо в ближайшее время."
+
+#: src/common/templates/password_reset_done.html:9
+msgid "If you don't receive an email, please make sure you've entered the address you registered with, and check your spam folder."
+msgstr "Если вы не получили письмо, убедитесь, что указали адрес, с которым регистрировались, и проверьте папку со спамом."
+
+#: src/common/templates/password_reset_done.html:10
+msgid "Return to login"
+msgstr "Вернуться ко входу"
+
+#: src/common/templates/password_reset_confirm.html:4
+#: src/common/templates/password_reset_confirm.html:8
+msgid "Set New Password"
+msgstr "Установить новый пароль"
+
+#: src/common/templates/password_reset_confirm.html:9
+msgid "Please enter your new password twice so we can verify you typed it in correctly."
+msgstr "Пожалуйста, введите новый пароль дважды, чтобы мы могли убедиться, что вы ввели его правильно."
+
+#: src/common/templates/password_reset_confirm.html:17
+msgid "Password Reset Failed"
+msgstr "Ошибка сброса пароля"
+
+#: src/common/templates/password_reset_confirm.html:18
+msgid "The password reset link was invalid, possibly because it has already been used. Please request a new password reset."
+msgstr "Ссылка для сброса пароля недействительна, возможно, она уже была использована. Пожалуйста, запросите новый сброс пароля."
+
+#: src/common/templates/password_reset_confirm.html:19
+msgid "Request new password reset"
+msgstr "Запросить новый сброс пароля"
+
+#: src/common/templates/password_reset_complete.html:4
+#: src/common/templates/password_reset_complete.html:7
+msgid "Password Reset Complete"
+msgstr "Сброс пароля завершен"
+
+#: src/common/templates/password_reset_complete.html:8
+msgid "Your password has been set. You can now log in with your new password."
+msgstr "Ваш пароль установлен. Теперь вы можете войти с новым паролем."
+
+#: src/common/templates/password_reset_complete.html:9
+msgid "Log in"
+msgstr "Войти"
+
+#: src/common/templates/emails/password_reset_subject.txt:1
+msgid "Password reset for"
+msgstr "Сброс пароля для"
+
+#: src/common/templates/emails/password_reset_body.txt:1
+#: src/common/templates/emails/password_reset_body.html:36
+msgid "Hello"
+msgstr "Здравствуйте"
+
+#: src/common/templates/emails/password_reset_body.txt:3
+#: src/common/templates/emails/password_reset_body.html:38
+msgid "You're receiving this email because you requested a password reset for your account at"
+msgstr "Вы получили это письмо, потому что запросили сброс пароля для вашей учетной записи на"
+
+#: src/common/templates/emails/password_reset_body.txt:5
+msgid "Please click the following link to set a new password:"
+msgstr "Пожалуйста, перейдите по следующей ссылке, чтобы установить новый пароль:"
+
+#: src/common/templates/emails/password_reset_body.html:35
+msgid "Password Reset Request"
+msgstr "Запрос на сброс пароля"
+
+#: src/common/templates/emails/password_reset_body.html:40
+msgid "Please click the button below to set a new password:"
+msgstr "Пожалуйста, нажмите на кнопку ниже, чтобы установить новый пароль:"
+
+#: src/common/templates/emails/password_reset_body.html:43
+msgid "Reset Password"
+msgstr "Сбросить пароль"
+
+#: src/common/templates/emails/password_reset_body.html:46
+msgid "If the button doesn't work, copy and paste this link into your browser:"
+msgstr "Если кнопка не работает, скопируйте и вставьте эту ссылку в браузер:"
+
+#: src/common/templates/emails/password_reset_body.txt:9
+#: src/common/templates/emails/password_reset_body.html:50
+msgid "If you didn't request this, please ignore this email. Your password won't change until you access the link above and create a new one."
+msgstr "Если вы не запрашивали это, просто проигнорируйте это письмо. Ваш пароль не изменится, пока вы не перейдете по ссылке выше и не создадите новый."
+
+#: src/common/templates/emails/password_reset_body.txt:11
+#: src/common/templates/emails/password_reset_body.html:51
+msgid "Thanks"
+msgstr "Спасибо"
+
+#: src/common/templates/emails/password_reset_body.html:51
+msgid "Team"
+msgstr "Команда"
