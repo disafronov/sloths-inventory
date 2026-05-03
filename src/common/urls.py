@@ -2,7 +2,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import path, reverse_lazy
 from django.views.i18n import set_language
 
-from .views import UserPasswordChangeView
+from .views import EmailChangeConfirmView, ProfileView, UserPasswordChangeView
 
 app_name = "common"
 
@@ -13,6 +13,12 @@ urlpatterns = [
             template_name="login.html", redirect_authenticated_user=True
         ),
         name="login",
+    ),
+    path("profile/", ProfileView.as_view(), name="profile"),
+    path(
+        "email/change/confirm/<uidb64>/<token>/<new_email>/",
+        EmailChangeConfirmView.as_view(),
+        name="email_change_confirm",
     ),
     path(
         "password/change/",
