@@ -120,12 +120,15 @@ Notes:
     row only (same repair idea as `Item`); older operations stay immutable.
   - **Items**: once the item has at least one operation (an accountable party in the
     journal), edits to core item fields are limited by the same minute cap, anchored
-    on the row's previous `updated_at` (`inventory.Item`).
+    on the row's `created_at` (`inventory.Item`).
   - **Catalog / device definitions**: locations, statuses, responsible records, device
-    taxonomy rows, and `Device` rows use the same cap on `updated_at` when the row is
+    taxonomy rows, and `Device` rows use the same cap on `created_at` when the row is
     referenced by live inventory data; unreferenced rows stay editable. Enforcement
     is shared via `common.catalog_correction_window.CatalogCorrectionWindowMixin`.
     Django superusers bypass these windows in the admin only (trusted repair path).
+  - **Immutable anchor**: The correction window is anchored on `created_at` (immutable
+    timestamp), not `updated_at`, so the window does not reset on each save. This
+    ensures consistent behavior and prevents accidental window extension.
   - **Trusted admin repair**: bypass flags (`_bypass_item_correction_window`,
     `_bypass_operation_correction_window`, `_bypass_catalog_correction_window`) are
     set **only** from `ModelAdmin.get_form()` in this codebase — never from request

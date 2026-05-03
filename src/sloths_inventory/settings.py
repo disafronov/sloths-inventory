@@ -52,12 +52,15 @@ CSRF_TRUSTED_ORIGINS = _split_env_list(env("CSRF_TRUSTED_ORIGINS", default=""))
 # The inventory state is derived from an append-only stream of `Operation` records.
 # We allow editing only the latest operation, and only for a short period of time
 # after it was created, to fix quick typos without rewriting history "after the fact".
-# The same minute cap applies to ``Item`` rows using each row's previous
-# ``updated_at`` as the anchor once the item has at least one ``Operation`` (see
-# ``Item.clean()``), and to catalog / device definition rows once referenced (see
+# The same minute cap applies to ``Item`` rows using each row's ``created_at`` as
+# the anchor once the item has at least one ``Operation`` (see ``Item.clean()``),
+# and to catalog / device definition rows once referenced (see
 # ``common.catalog_correction_window.CatalogCorrectionWindowMixin``). Django superusers
 # bypass that correction window in the admin only (``ItemAdmin`` and catalog admins).
 # The window is intentionally small by default and can be tuned per deployment.
+#
+# Note: The correction window is anchored on ``created_at`` (immutable timestamp),
+# not ``updated_at``, so the window does not reset on each save.
 INVENTORY_CORRECTION_WINDOW_MINUTES = env.int(
     "INVENTORY_CORRECTION_WINDOW_MINUTES",
     default=10,

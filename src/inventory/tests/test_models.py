@@ -95,7 +95,7 @@ def test_item_clean_rejects_update_after_correction_window() -> None:
         location=location,
     )
     Item.objects.filter(pk=item.pk).update(
-        updated_at=timezone.now() - timedelta(minutes=11),
+        created_at=timezone.now() - timedelta(minutes=11),
     )
     item.refresh_from_db()
     item.serial_number = "SN-NEW"
@@ -109,7 +109,7 @@ def test_item_clean_rejects_update_after_correction_window() -> None:
 @pytest.mark.django_db
 @override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
 def test_item_clean_allows_update_after_window_without_responsible() -> None:
-    """No operations yet: master data stays editable past ``updated_at`` window."""
+    """No operations yet: master data stays editable past ``created_at`` window."""
 
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
@@ -124,7 +124,7 @@ def test_item_clean_allows_update_after_window_without_responsible() -> None:
 
     item = Item.objects.create(inventory_number="INV-NO-RESP", device=device)
     Item.objects.filter(pk=item.pk).update(
-        updated_at=timezone.now() - timedelta(minutes=11),
+        created_at=timezone.now() - timedelta(minutes=11),
     )
     item.refresh_from_db()
     item.serial_number = "SN-DRAFT"
@@ -213,7 +213,7 @@ def test_item_save_after_correction_window_with_admin_bypass_flag() -> None:
         location=location,
     )
     Item.objects.filter(pk=item.pk).update(
-        updated_at=timezone.now() - timedelta(minutes=11),
+        created_at=timezone.now() - timedelta(minutes=11),
     )
     item.refresh_from_db()
     item.serial_number = "SN-FIX"
@@ -1090,7 +1090,7 @@ def test_item_has_assigned_responsible_false_while_adding() -> None:
 @pytest.mark.django_db
 @override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
 def test_item_clean_allows_update_inside_window_when_assigned() -> None:
-    """``clean()`` allows updates while ``updated_at`` stays inside the window."""
+    """``clean()`` allows updates while ``created_at`` stays inside the window."""
 
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
@@ -1113,7 +1113,7 @@ def test_item_clean_allows_update_inside_window_when_assigned() -> None:
         location=location,
     )
     Item.objects.filter(pk=item.pk).update(
-        updated_at=timezone.now() - timedelta(minutes=2),
+        created_at=timezone.now() - timedelta(minutes=2),
     )
     item.refresh_from_db()
     item.notes = "still inside window"

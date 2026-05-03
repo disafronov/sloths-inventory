@@ -699,7 +699,7 @@ def test_item_admin_denies_change_after_correction_window() -> None:
         location=location,
     )
     Item.objects.filter(pk=item.pk).update(
-        updated_at=timezone.now() - timedelta(minutes=11),
+        created_at=timezone.now() - timedelta(minutes=11),
     )
     item.refresh_from_db()
 
@@ -716,7 +716,7 @@ def test_item_admin_denies_change_after_correction_window() -> None:
 @pytest.mark.django_db
 @override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
 def test_item_admin_staff_allows_change_after_window_without_responsible() -> None:
-    """No operations yet: staff keep edit/delete past ``updated_at`` window."""
+    """No operations yet: staff keep edit/delete past ``created_at`` window."""
 
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
@@ -731,7 +731,7 @@ def test_item_admin_staff_allows_change_after_window_without_responsible() -> No
 
     item = Item.objects.create(inventory_number="INV-ITEM-NO-RESP", device=device)
     Item.objects.filter(pk=item.pk).update(
-        updated_at=timezone.now() - timedelta(minutes=11),
+        created_at=timezone.now() - timedelta(minutes=11),
     )
     item.refresh_from_db()
 
@@ -763,7 +763,7 @@ def test_item_admin_superuser_keeps_change_after_correction_window() -> None:
 
     item = Item.objects.create(inventory_number="INV-ITEM-SU-WIN", device=device)
     Item.objects.filter(pk=item.pk).update(
-        updated_at=timezone.now() - timedelta(minutes=11),
+        created_at=timezone.now() - timedelta(minutes=11),
     )
     item.refresh_from_db()
 
@@ -808,7 +808,7 @@ def test_item_lock_fieldset_description_when_correction_window_expired() -> None
         location=location,
     )
     Item.objects.filter(pk=item.pk).update(
-        updated_at=timezone.now() - timedelta(minutes=11),
+        created_at=timezone.now() - timedelta(minutes=11),
     )
     item.refresh_from_db()
 
@@ -852,7 +852,7 @@ def test_item_fieldset_omits_lock_panel_without_model_change_permission() -> Non
         location=location,
     )
     Item.objects.filter(pk=item.pk).update(
-        updated_at=timezone.now() - timedelta(minutes=11),
+        created_at=timezone.now() - timedelta(minutes=11),
     )
     item.refresh_from_db()
 
@@ -935,7 +935,7 @@ def test_item_change_page_renders_correction_window_lock_after_window() -> None:
         location=location,
     )
     Item.objects.filter(pk=item.pk).update(
-        updated_at=timezone.now() - timedelta(minutes=11),
+        created_at=timezone.now() - timedelta(minutes=11),
     )
 
     staff_user = _staff_user_with_item_admin_permissions("staff-item-html")
@@ -950,7 +950,7 @@ def test_item_change_page_renders_correction_window_lock_after_window() -> None:
 @pytest.mark.django_db
 @override_settings(LANGUAGE_CODE="en", INVENTORY_CORRECTION_WINDOW_MINUTES=10)
 def test_item_change_page_no_lock_without_responsible_past_window() -> None:
-    """Item with no operations: no correction-window lock text past ``updated_at``."""
+    """Item with no operations: no correction-window lock text past ``created_at``."""
 
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
@@ -965,7 +965,7 @@ def test_item_change_page_no_lock_without_responsible_past_window() -> None:
 
     item = Item.objects.create(inventory_number="INV-ITEM-DRAFT-OLD", device=device)
     Item.objects.filter(pk=item.pk).update(
-        updated_at=timezone.now() - timedelta(minutes=11),
+        created_at=timezone.now() - timedelta(minutes=11),
     )
 
     staff_user = _staff_user_with_item_admin_permissions("staff-item-draft-old")
@@ -995,7 +995,7 @@ def test_item_change_page_superuser_hides_lock_after_correction_window() -> None
 
     item = Item.objects.create(inventory_number="INV-ITEM-SU-HTML", device=device)
     Item.objects.filter(pk=item.pk).update(
-        updated_at=timezone.now() - timedelta(minutes=11),
+        created_at=timezone.now() - timedelta(minutes=11),
     )
 
     admin_user = get_user_model().objects.create_superuser(
@@ -1130,7 +1130,7 @@ def test_item_admin_superuser_post_saves_after_correction_window() -> None:
         location=location,
     )
     Item.objects.filter(pk=item.pk).update(
-        updated_at=timezone.now() - timedelta(minutes=11),
+        created_at=timezone.now() - timedelta(minutes=11),
     )
 
     admin_user = get_user_model().objects.create_superuser(
