@@ -90,7 +90,11 @@
 
 {% if responsible is not None %}
     {% if not incoming_transfers and not items and not outgoing_transfers %}
-        <p>{% trans "No items found." %}</p>
+        {% if show_search %}
+            <p>{% trans "No items found." %}</p>
+        {% else %}
+            <p>{% trans "You have no items." %}</p>
+        {% endif %}
     {% endif %}
 {% endif %}
 {% endblock %}
