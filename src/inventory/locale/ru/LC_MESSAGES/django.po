@@ -367,7 +367,16 @@ msgstr "Список моих вещей"
 #: src/inventory/templates/inventory/my_items.html:93
 #: src/inventory/templates/inventory/previous_items.html:61
 msgid "No items found."
-msgstr "Вещи не найдены."
+msgstr "Таких вещей у вас нет."
+
+msgid "No previously held items found."
+msgstr "Таких вещей у вас не было."
+
+msgid "You have no items."
+msgstr "У вас нет вещей."
+
+msgid "You have no previously held items."
+msgstr "У вас не было вещей."
 
 #: src/inventory/templates/inventory/previous_items.html:4
 #: src/inventory/templates/inventory/previous_items.html:6

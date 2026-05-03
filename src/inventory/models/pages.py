@@ -55,6 +55,7 @@ class MyItemsPageData:
     items: QuerySet[Item]
     incoming_transfers: QuerySet[PendingTransfer]
     outgoing_transfers: QuerySet[PendingTransfer]
+    has_any: bool
 
 
 @dataclass(frozen=True)
@@ -64,6 +65,7 @@ class PreviousItemsPageData:
     items: QuerySet[Item]
     incoming_transfers: QuerySet[PendingTransfer]
     outgoing_transfers: QuerySet[PendingTransfer]
+    has_any: bool
 
 
 @dataclass(frozen=True)
@@ -94,6 +96,13 @@ def build_my_items_page_data(
     """
 
     items = Item.objects.apply_search(query).owned_by(responsible)
+
+    has_any = (
+        Item.objects.owned_by(responsible).exists()
+        or PendingTransfer.offers_visible_in_ui()
+        .filter(Q(to_responsible=responsible) | Q(from_responsible=responsible))
+        .exists()
+    )
 
     latest_location_name = latest_operation_location_name_subquery(item_ref="item_id")
     latest_status_name = latest_operation_status_name_subquery(item_ref="item_id")
@@ -150,6 +159,7 @@ def build_my_items_page_data(
         items=items,
         incoming_transfers=incoming_transfers,
         outgoing_transfers=outgoing_transfers,
+        has_any=has_any,
     )
 
 
@@ -178,6 +188,7 @@ def build_previous_items_page_data(
         .annotate(last_on_me_created_at=Subquery(last_on_me_created_at))
         .order_by("-last_on_me_created_at", "inventory_number")
     )
+    has_any = items.exists()
     items = items.apply_search(query)
 
     latest_location_name = latest_operation_location_name_subquery(item_ref="item_id")
@@ -214,6 +225,7 @@ def build_previous_items_page_data(
         items=items,
         incoming_transfers=incoming_transfers,
         outgoing_transfers=outgoing_transfers,
+        has_any=has_any,
     )
 
 
