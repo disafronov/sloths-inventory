@@ -119,7 +119,7 @@ directory = "htmlcov"
 [tool.vulture]
 min_confidence = 80
 exclude = [ ".venv", "__pycache__" ]
-ignore_names = [ "cls", "owner" ]
+ignore_names = [ "cls", "owner", "UserType" ]
 paths = [ "." ]
 
 [tool.pytest.ini_options]
