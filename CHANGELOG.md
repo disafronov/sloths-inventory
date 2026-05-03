@@ -1,3 +1,5 @@
+## [1.6.0-rc.2](https://github.com/disafronov/sloths-inventory/compare/v1.6.0-rc.1...v1.6.0-rc.2) (2026-05-03)
+
 ## [1.6.0-rc.1](https://github.com/disafronov/sloths-inventory/compare/v1.5.0...v1.6.0-rc.1) (2026-05-03)
 
 ### Features
