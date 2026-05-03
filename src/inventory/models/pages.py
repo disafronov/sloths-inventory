@@ -124,12 +124,16 @@ def build_my_items_page_data(
             current_status=latest_status_name,
         )
     )
-    incoming_transfers = base_transfers_qs.filter(to_responsible=responsible).order_by(
-        "-created_at", "-id"
+    incoming_transfers = (
+        base_transfers_qs.filter(to_responsible=responsible)
+        .apply_search(query)
+        .order_by("-created_at", "-id")
     )
-    outgoing_transfers = base_transfers_qs.filter(
-        from_responsible=responsible
-    ).order_by("-created_at", "-id")
+    outgoing_transfers = (
+        base_transfers_qs.filter(from_responsible=responsible)
+        .apply_search(query)
+        .order_by("-created_at", "-id")
+    )
 
     transfer_item_ids = (
         base_transfers_qs.filter(

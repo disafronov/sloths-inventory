@@ -31,6 +31,17 @@ class PendingTransferQuerySet(models.QuerySet):
             cancelled_at__isnull=True,
         ).filter(Q(expires_at__isnull=True) | Q(expires_at__gt=now))
 
+    def apply_search(self, query: str) -> "PendingTransferQuerySet":
+        text = query.strip()
+        if not text:
+            return self
+        return self.filter(
+            Q(item__inventory_number__icontains=text)
+            | Q(item__serial_number__icontains=text)
+            | Q(item__device__manufacturer__name__icontains=text)
+            | Q(item__device__model__name__icontains=text)
+        )
+
     def active_offer_for_item(self, item: Item) -> PendingTransfer | None:
         """Return the newest visible pending transfer for ``item``, if any."""
 
