@@ -231,3 +231,169 @@ msgstr "Спасибо"
 #: src/common/templates/emails/password_reset_body.html:51
 msgid "Team"
 msgstr "Команда"
+
+#: src/common/templates/base.html:82
+#: src/common/templates/profile.html:4
+#: src/common/templates/profile.html:6
+msgid "Profile"
+msgstr "Профиль"
+
+#: src/common/templates/profile.html:12
+msgid "Email Address"
+msgstr "Адрес электронной почты"
+
+#: src/common/templates/profile.html:14
+msgid "Current email:"
+msgstr "Текущий email:"
+
+#: src/common/templates/profile.html:18
+msgid "Change Email Address"
+msgstr "Изменить адрес электронной почты"
+
+#: src/common/templates/profile.html:20
+msgid "Change Email"
+msgstr "Изменить email"
+
+#: src/common/templates/profile.html:26
+msgid "Password"
+msgstr "Пароль"
+
+#: src/common/templates/profile.html:30
+msgid "Change Password"
+msgstr "Изменить пароль"
+
+#: src/common/forms.py:13
+msgid "New email address"
+msgstr "Новый адрес электронной почты"
+
+#: src/common/forms.py:17
+msgid "Confirm new email address"
+msgstr "Подтвердите новый адрес электронной почты"
+
+#: src/common/forms.py:29
+msgid "The new email address must be different from the current one."
+msgstr "Новый адрес электронной почты должен отличаться от текущего."
+
+#: src/common/forms.py:38
+msgid "This email address is already in use."
+msgstr "Этот адрес электронной почты уже используется."
+
+#: src/common/forms.py:48
+msgid "The two email addresses do not match."
+msgstr "Адреса электронной почты не совпадают."
+
+#: src/common/views.py:67
+#, python-format
+msgid ""
+"A confirmation email has been sent to %(email)s. "
+"Please check your inbox and click the link to confirm the change."
+msgstr ""
+"Письмо с подтверждением отправлено на %(email)s. "
+"Пожалуйста, проверьте почту и перейдите по ссылке для подтверждения изменения."
+
+#: src/common/views.py:90
+msgid "Your password has been changed successfully."
+msgstr "Ваш пароль успешно изменен."
+
+#: src/common/views.py:159
+msgid "This email address is already in use by another account."
+msgstr "Этот адрес электронной почты уже используется другой учетной записью."
+
+#: src/common/views.py:165
+msgid "Your email address has been changed successfully."
+msgstr "Ваш адрес электронной почты успешно изменен."
+
+#: src/common/views.py:176
+msgid ""
+"The email confirmation link is invalid or has expired. "
+"Please request a new email change."
+msgstr ""
+"Ссылка подтверждения email недействительна или истекла. "
+"Пожалуйста, запросите новое изменение email."
+
+#: src/common/templates/emails/email_change_subject.txt:1
+msgid "Confirm your email address change"
+msgstr "Подтвердите изменение адреса электронной почты"
+
+#: src/common/templates/emails/email_change_body.txt:1
+#: src/common/templates/emails/email_change_body.html:11
+#: src/common/templates/emails/email_changed_notification_body.txt:1
+#: src/common/templates/emails/email_changed_notification_body.html:11
+#, python-format
+msgid "Hello %(username)s,"
+msgstr "Здравствуйте, %(username)s!"
+
+#: src/common/templates/emails/email_change_body.txt:3
+#: src/common/templates/emails/email_change_body.html:13
+msgid "You have requested to change your email address in Sloths Inventory."
+msgstr "Вы запросили изменение адреса электронной почты в Sloths Inventory."
+
+#: src/common/templates/emails/email_change_body.txt:5
+#: src/common/templates/emails/email_change_body.html:16
+#, python-format
+msgid "New email address: %(email)s"
+msgstr "Новый адрес электронной почты: %(email)s"
+
+#: src/common/templates/emails/email_change_body.txt:7
+msgid "To confirm this change, please click the link below:"
+msgstr "Чтобы подтвердить это изменение, перейдите по ссылке ниже:"
+
+#: src/common/templates/emails/email_change_body.html:19
+msgid "To confirm this change, please click the button below:"
+msgstr "Чтобы подтвердить это изменение, нажмите на кнопку ниже:"
+
+#: src/common/templates/emails/email_change_body.html:23
+msgid "Confirm Email Change"
+msgstr "Подтвердить изменение email"
+
+#: src/common/templates/emails/email_change_body.html:27
+msgid "Or copy and paste this link into your browser:"
+msgstr "Или скопируйте и вставьте эту ссылку в браузер:"
+
+#: src/common/templates/emails/email_change_body.txt:11
+#: src/common/templates/emails/email_change_body.html:32
+msgid "This link will expire in 3 days."
+msgstr "Эта ссылка действительна в течение 3 дней."
+
+#: src/common/templates/emails/email_change_body.txt:13
+#: src/common/templates/emails/email_change_body.html:36
+msgid "If you did not request this change, please ignore this email. Your email address will remain unchanged."
+msgstr "Если вы не запрашивали это изменение, просто проигнорируйте это письмо. Ваш адрес электронной почты останется без изменений."
+
+#: src/common/templates/emails/email_change_body.txt:15
+#: src/common/templates/emails/email_change_body.html:41
+#: src/common/templates/emails/email_changed_notification_body.txt:9
+#: src/common/templates/emails/email_changed_notification_body.html:27
+msgid "Best regards,"
+msgstr "С уважением,"
+
+#: src/common/templates/emails/email_change_body.txt:16
+#: src/common/templates/emails/email_change_body.html:41
+#: src/common/templates/emails/email_changed_notification_body.txt:10
+#: src/common/templates/emails/email_changed_notification_body.html:27
+msgid "Sloths Inventory Team"
+msgstr "Команда Sloths Inventory"
+
+#: src/common/templates/emails/email_changed_notification_subject.txt:1
+msgid "Your email address has been changed"
+msgstr "Ваш адрес электронной почты был изменен"
+
+#: src/common/templates/emails/email_changed_notification_body.txt:3
+#: src/common/templates/emails/email_changed_notification_body.html:13
+msgid "This is a notification that your email address in Sloths Inventory has been successfully changed."
+msgstr "Это уведомление о том, что ваш адрес электронной почты в Sloths Inventory был успешно изменен."
+
+#: src/common/templates/emails/email_changed_notification_body.txt:5
+#: src/common/templates/emails/email_changed_notification_body.html:16
+#, python-format
+msgid "Previous email address: %(email)s"
+msgstr "Предыдущий адрес электронной почты: %(email)s"
+
+#: src/common/templates/emails/email_changed_notification_body.html:21
+msgid "Security Notice"
+msgstr "Уведомление о безопасности"
+
+#: src/common/templates/emails/email_changed_notification_body.txt:7
+#: src/common/templates/emails/email_changed_notification_body.html:22
+msgid "If you did not make this change, please contact your administrator immediately as your account may have been compromised."
+msgstr "Если вы не делали это изменение, немедленно свяжитесь с администратором, так как ваша учетная запись могла быть скомпрометирована."
