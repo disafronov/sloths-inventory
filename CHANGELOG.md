@@ -1,3 +1,15 @@
+## [1.6.0](https://github.com/disafronov/sloths-inventory/compare/v1.5.0...v1.6.0) (2026-05-03)
+
+### Features
+
+* **inventory:** apply search query to pending transfers ([cba2407](https://github.com/disafronov/sloths-inventory/commit/cba2407c101e674ba6fcfc6cdc19c68d87eae7d4))
+* **inventory:** disable search form for users with no responsible person attached ([f3c6a91](https://github.com/disafronov/sloths-inventory/commit/f3c6a918aac96efacf236331a1b09e60a48c2c16))
+* **inventory:** update item and previous item messages for clarity ([3c33610](https://github.com/disafronov/sloths-inventory/commit/3c336106741e07d2100e9a2eabc5df416f0354e0))
+
+### Bug Fixes
+
+* **inventory:** update conditional rendering for search forms in item templates ([fedbe80](https://github.com/disafronov/sloths-inventory/commit/fedbe80265842e504c856f5bccabc4d6f466f53a))
+
 ## [1.6.0-rc.2](https://github.com/disafronov/sloths-inventory/compare/v1.6.0-rc.1...v1.6.0-rc.2) (2026-05-03)
 
 ## [1.6.0-rc.1](https://github.com/disafronov/sloths-inventory/compare/v1.5.0...v1.6.0-rc.1) (2026-05-03)
