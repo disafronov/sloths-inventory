@@ -38,9 +38,10 @@ def test_password_change_link_is_visible_for_authenticated_user_before_logout() 
     assert response.status_code == 200
 
     body = response.content
-    idx_change = body.find(b"/password/change/")
+    # Profile link now contains password change functionality
+    idx_profile = body.find(b"/profile/")
     idx_logout = body.find(b'action="/logout/')
 
-    assert idx_change != -1
+    assert idx_profile != -1
     assert idx_logout != -1
-    assert idx_change < idx_logout
+    assert idx_profile < idx_logout

@@ -1,0 +1,11 @@
+{% load i18n %}{% blocktrans with username=user.username %}Hello {{ username }},{% endblocktrans %}
+
+{% trans "This is a notification that your email address in Sloths Inventory has been successfully changed." %}
+
+{% blocktrans with email=old_email %}Previous email address: {{ email }}{% endblocktrans %}
+{% blocktrans with email=new_email %}New email address: {{ email }}{% endblocktrans %}
+
+{% trans "If you did not make this change, please contact your administrator immediately as your account may have been compromised." %}
+
+{% trans "Best regards," %}
+{% trans "Sloths Inventory Team" %}
