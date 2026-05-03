@@ -359,7 +359,16 @@ msgstr "My items list"
 #: src/inventory/templates/inventory/my_items.html:93
 #: src/inventory/templates/inventory/previous_items.html:61
 msgid "No items found."
-msgstr "No items found."
+msgstr "You have no such items."
+
+msgid "No previously held items found."
+msgstr "You had no such items."
+
+msgid "You have no items."
+msgstr "You have no items."
+
+msgid "You have no previously held items."
+msgstr "You have no previously held items."
 
 #: src/inventory/templates/inventory/previous_items.html:4
 #: src/inventory/templates/inventory/previous_items.html:6
