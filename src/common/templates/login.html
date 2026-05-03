@@ -10,5 +10,6 @@
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit" class="button">{% trans "Login" %}</button>
+    <p><a href="{% url 'common:password_reset' %}">{% trans "Forgot your password?" %}</a></p>
 </form>
-{% endblock %} 
+{% endblock %}
