@@ -1,3 +1,10 @@
+## [1.7.0-rc.1](https://github.com/disafronov/sloths-inventory/compare/v1.6.0...v1.7.0-rc.1) (2026-05-03)
+
+### Features
+
+* add password reset functionality with email support ([c974c53](https://github.com/disafronov/sloths-inventory/commit/c974c53d340282f2eb1745c3dd6b80ebee2b3156))
+* **auth:** add email change functionality with confirmation flow ([28d0151](https://github.com/disafronov/sloths-inventory/commit/28d0151220c069cc64de8673ff851aa1b8cdbf49))
+
 ## [1.6.0](https://github.com/disafronov/sloths-inventory/compare/v1.5.0...v1.6.0) (2026-05-03)
 
 ### Features
