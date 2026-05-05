@@ -36,3 +36,8 @@ dist/
 # Example environment files
 env.example
 env.docker
+
+# Test files
+src/**/tests/
+src/conftest.py
+src/sloths_inventory/settings_pytest.py
