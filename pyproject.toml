@@ -118,9 +118,9 @@ directory = "htmlcov"
 
 [tool.vulture]
 min_confidence = 80
-exclude = [ ".venv", "__pycache__" ]
-ignore_names = [ "cls", "owner", "UserType" ]
-paths = [ "." ]
+paths = [ "src" ]
+exclude = [ ".venv", "__pycache__", "*/tests/*", "src/conftest.py" ]
+ignore_names = [ "cls", "owner", "UserType", "db", "obj", "args", "kwargs" ]
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "sloths_inventory.settings_pytest"
