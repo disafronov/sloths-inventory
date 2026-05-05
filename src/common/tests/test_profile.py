@@ -122,6 +122,36 @@ class TestProfileView:
         assert response.status_code == 200
         assert "already in use" in response.content.decode()
 
+    def test_profile_view_post_no_submit_button(
+        self, client: Client, django_user_model
+    ):
+        """Posting to profile without a submit button should just return the page."""
+        django_user_model.objects.create_user(username="testuser", password="password")
+        client.login(username="testuser", password="password")
+        response = client.post(reverse("common:profile"), {})
+        assert response.status_code == 200
+
+    def test_profile_view_password_change_invalid(
+        self, client: Client, django_user_model
+    ):
+        """Invalid password change submission should return the form with errors."""
+        django_user_model.objects.create_user(
+            username="testuser", password="oldpassword"
+        )
+        client.login(username="testuser", password="oldpassword")
+        # Invalid password (mismatch)
+        response = client.post(
+            reverse("common:profile"),
+            {
+                "password_submit": "1",
+                "old_password": "oldpassword",
+                "new_password1": "newpassword1",
+                "new_password2": "newpassword2",
+            },
+        )
+        assert response.status_code == 200
+        assert "password_form" in response.context
+
     def test_password_change_success(self, client: Client, django_user_model):
         """Password change should work and keep user logged in."""
         django_user_model.objects.create_user(
@@ -208,6 +238,36 @@ class TestEmailChangeConfirmation:
         assert response.status_code == 302
         user.refresh_from_db()
         assert user.email == "old@example.com"  # Email unchanged
+
+    def test_email_change_confirm_invalid_uid(self, client: Client):
+        """Invalid UID in email change confirmation should redirect to profile."""
+        response = client.get(
+            reverse(
+                "common:email_change_confirm",
+                kwargs={
+                    "uidb64": "invalid",
+                    "token": "token",
+                    "new_email": "bmV3QGV4YW1wbGUuY29t",  # new@example.com
+                },
+            )
+        )
+        assert response.status_code == 302
+        assert response.url == reverse("common:profile")
+
+    def test_email_change_confirm_user_does_not_exist(self, client: Client):
+        """If user does not exist for UID, confirmation should redirect."""
+        # uidb64 for ID 99999
+        response = client.get(
+            reverse(
+                "common:email_change_confirm",
+                kwargs={
+                    "uidb64": "OTk5OTk",
+                    "token": "token",
+                    "new_email": "bmV3QGV4YW1wbGUuY29t",
+                },
+            )
+        )
+        assert response.status_code == 302
 
     def test_email_taken_by_another_user_during_confirmation(
         self, client: Client, django_user_model
