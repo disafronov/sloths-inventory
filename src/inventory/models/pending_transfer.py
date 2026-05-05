@@ -54,21 +54,6 @@ class PendingTransferQuerySet(models.QuerySet):
         )
 
 
-class PendingTransferManager(models.Manager):
-    """
-    Manager for :class:`PendingTransfer` returning :class:`PendingTransferQuerySet`.
-    """
-
-    def get_queryset(self) -> PendingTransferQuerySet:
-        return PendingTransferQuerySet(self.model, using=self._db)
-
-    def offers_visible_in_ui(self) -> PendingTransferQuerySet:
-        return self.get_queryset().offers_visible_in_ui()
-
-    def active_offer_for_item(self, item: Item) -> PendingTransfer | None:
-        return self.get_queryset().active_offer_for_item(item)
-
-
 class PendingTransfer(BaseModel):
     """
     Pending item transfer that requires receiver confirmation.
@@ -109,7 +94,7 @@ class PendingTransfer(BaseModel):
         verbose_name=_("Cancelled at"),
     )
 
-    objects = PendingTransferManager()
+    objects = PendingTransferQuerySet.as_manager()
 
     class Meta:
         verbose_name = _("Pending transfer")

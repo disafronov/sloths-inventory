@@ -6,7 +6,7 @@ Submodules split the former monolith for maintainability; import from
 package).
 """
 
-from inventory.models.item import Item, ItemManager, ItemQuerySet
+from inventory.models.item import Item, ItemQuerySet
 from inventory.models.operation import Operation
 from inventory.models.pages import (
     MY_ITEMS_LIST_KINDS,
@@ -21,7 +21,6 @@ from inventory.models.pages import (
 )
 from inventory.models.pending_transfer import (
     PendingTransfer,
-    PendingTransferManager,
     PendingTransferQuerySet,
 )
 
@@ -29,12 +28,10 @@ __all__ = [
     "MY_ITEMS_LIST_KINDS",
     "Item",
     "ItemHistoryContext",
-    "ItemManager",
     "ItemQuerySet",
     "MyItemsPageData",
     "Operation",
     "PendingTransfer",
-    "PendingTransferManager",
     "PendingTransferQuerySet",
     "PreviousItemsPageData",
     "build_my_items_page_data",
