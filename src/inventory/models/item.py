@@ -78,22 +78,6 @@ class ItemQuerySet(models.QuerySet):
         )
 
 
-class ItemManager(models.Manager):
-    """Manager for :class:`Item` returning :class:`ItemQuerySet`."""
-
-    def get_queryset(self) -> ItemQuerySet:
-        return ItemQuerySet(self.model, using=self._db)
-
-    def with_device_relations(self) -> ItemQuerySet:
-        return self.get_queryset().with_device_relations()
-
-    def apply_search(self, query: str) -> ItemQuerySet:
-        return self.get_queryset().apply_search(query)
-
-    def owned_by(self, responsible: Responsible) -> ItemQuerySet:
-        return self.get_queryset().owned_by(responsible)
-
-
 class Item(BaseModel):
     """
     Inventory unit (device instance).
@@ -121,7 +105,7 @@ class Item(BaseModel):
         max_length=50, blank=True, verbose_name=_("Serial number")
     )
 
-    objects = ItemManager()
+    objects = ItemQuerySet.as_manager()
 
     class Meta:
         verbose_name = _("Item")
