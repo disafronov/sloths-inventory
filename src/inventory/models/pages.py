@@ -8,10 +8,14 @@ rules stay on models.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import TYPE_CHECKING, cast
 
 from django.db.models import OuterRef, Q, QuerySet, Subquery
 
 from catalogs.models import Responsible
+
+if TYPE_CHECKING:
+    from inventory.models.pending_transfer import PendingTransferQuerySet
 from inventory.list_query_helpers import (
     latest_operation_location_name_subquery,
     latest_operation_status_name_subquery,
@@ -21,6 +25,37 @@ from inventory.models.operation import Operation
 from inventory.models.pending_transfer import PendingTransfer
 
 MY_ITEMS_LIST_KINDS = frozenset({"all", "incoming", "owned", "outgoing"})
+
+
+def _build_annotated_transfers_queryset() -> PendingTransferQuerySet:
+    """
+    Build base transfer queryset with relations and annotations.
+
+    Centralizes select_related and annotate logic for transfer cards
+    so My items and Previously held pages stay aligned.
+    """
+
+    latest_location_name = latest_operation_location_name_subquery(item_ref="item_id")
+    latest_status_name = latest_operation_status_name_subquery(item_ref="item_id")
+
+    return cast(
+        "PendingTransferQuerySet",
+        PendingTransfer.offers_visible_in_ui()
+        .select_related(
+            "item",
+            "item__device",
+            "item__device__category",
+            "item__device__type",
+            "item__device__manufacturer",
+            "item__device__model",
+            "from_responsible",
+            "to_responsible",
+        )
+        .annotate(
+            current_location=latest_location_name,
+            current_status=latest_status_name,
+        ),
+    )
 
 
 def parse_my_items_list_kind(raw: str) -> str:
@@ -104,26 +139,7 @@ def build_my_items_page_data(
         .exists()
     )
 
-    latest_location_name = latest_operation_location_name_subquery(item_ref="item_id")
-    latest_status_name = latest_operation_status_name_subquery(item_ref="item_id")
-
-    base_transfers_qs = (
-        PendingTransfer.offers_visible_in_ui()
-        .select_related(
-            "item",
-            "item__device",
-            "item__device__category",
-            "item__device__type",
-            "item__device__manufacturer",
-            "item__device__model",
-            "from_responsible",
-            "to_responsible",
-        )
-        .annotate(
-            current_location=latest_location_name,
-            current_status=latest_status_name,
-        )
-    )
+    base_transfers_qs = _build_annotated_transfers_queryset()
     incoming_transfers = (
         base_transfers_qs.filter(to_responsible=responsible)
         .apply_search(query)
@@ -195,26 +211,10 @@ def build_previous_items_page_data(
     has_any = items.exists()
     items = items.apply_search(query)
 
-    latest_location_name = latest_operation_location_name_subquery(item_ref="item_id")
-    latest_status_name = latest_operation_status_name_subquery(item_ref="item_id")
     base_transfers_qs = (
-        PendingTransfer.offers_visible_in_ui()
+        _build_annotated_transfers_queryset()
         .filter(item_id__in=Subquery(items.values("pk")))
         .filter(Q(to_responsible=responsible) | Q(from_responsible=responsible))
-        .select_related(
-            "item",
-            "item__device",
-            "item__device__category",
-            "item__device__type",
-            "item__device__manufacturer",
-            "item__device__model",
-            "from_responsible",
-            "to_responsible",
-        )
-    )
-    base_transfers_qs = base_transfers_qs.annotate(
-        current_location=latest_location_name,
-        current_status=latest_status_name,
     )
     incoming_transfers = base_transfers_qs.filter(to_responsible=responsible).order_by(
         "-created_at", "-id"
