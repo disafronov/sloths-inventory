@@ -222,9 +222,9 @@ LOGOUT_REDIRECT_URL = "/"
 
 EMAIL_BACKEND = env.str(
     "EMAIL_BACKEND",
-    default="django.core.mail.backends.console.EmailBackend",
+    default="django.core.mail.backends.smtp.EmailBackend",
 )
-EMAIL_HOST = env.str("EMAIL_HOST", default="localhost")
+EMAIL_HOST = env.str("EMAIL_HOST", default="")
 EMAIL_PORT = env.int("EMAIL_PORT", default=587)
 EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
 EMAIL_USE_SSL = env.bool("EMAIL_USE_SSL", default=False)
@@ -243,7 +243,7 @@ EMAIL_RETRY_BASE_DELAY_SECONDS = env.float(
 EMAIL_RETRY_BACKOFF_FACTOR = env.float("EMAIL_RETRY_BACKOFF_FACTOR", default=2.0)
 
 # Site URL for email links (required for password reset emails)
-SITE_URL = env.str("SITE_URL", default="http://localhost:8000")
+SITE_URL = env.str("SITE_URL", default="")
 
 # Password reset token expiration (Django default is 3 days)
 PASSWORD_RESET_TIMEOUT = 60 * 60 * 24 * 3  # 3 days in seconds

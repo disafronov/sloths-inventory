@@ -53,3 +53,4 @@ ALLOWED_HOSTS = [h for h in ALLOWED_HOSTS if h]  # noqa: F405
 CSRF_TRUSTED_ORIGINS = [o for o in CSRF_TRUSTED_ORIGINS if o]  # noqa: F405
 
 EMAIL_SEND_ASYNC = False
+EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
