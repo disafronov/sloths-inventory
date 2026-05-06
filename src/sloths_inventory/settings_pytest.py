@@ -54,3 +54,5 @@ CSRF_TRUSTED_ORIGINS = [o for o in CSRF_TRUSTED_ORIGINS if o]  # noqa: F405
 
 EMAIL_SEND_ASYNC = False
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
+
+INVENTORY_CORRECTION_WINDOW_MINUTES = 10
