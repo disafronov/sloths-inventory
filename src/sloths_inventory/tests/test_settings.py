@@ -90,7 +90,7 @@ def test_settings_inventory_correction_window_minutes_defaults_when_env_unset(
     tmp_path, monkeypatch
 ) -> None:
     """
-    ``INVENTORY_CORRECTION_WINDOW_MINUTES`` defaults to 10 when the env var is absent.
+    ``INVENTORY_CORRECTION_WINDOW_MINUTES`` defaults to 0 when the env var is absent.
 
     Uses an isolated CWD so ``environ.Env.read_env()`` does not pick up a repo-local
     ``.env`` while importing ``settings.py``.
@@ -103,7 +103,7 @@ def test_settings_inventory_correction_window_minutes_defaults_when_env_unset(
         "sloths_inventory._settings_inventory_correction_window_default_test",
         sloths_inventory.settings.__file__,
     )
-    assert module.INVENTORY_CORRECTION_WINDOW_MINUTES == 10
+    assert module.INVENTORY_CORRECTION_WINDOW_MINUTES == 0
 
 
 def test_settings_inventory_correction_window_minutes_can_be_overridden_via_env(
