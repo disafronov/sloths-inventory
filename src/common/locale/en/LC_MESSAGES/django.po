@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-02 13:18+0000\n"
+"POT-Creation-Date: 2026-05-06 13:38+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -46,6 +46,26 @@ msgstr[1] ""
 "This catalog entry is in use. The correction window (%(minutes)d minutes) "
 "has expired. To make changes, contact an administrator."
 
+#: src/common/forms.py:18
+msgid "New email address"
+msgstr "New email address"
+
+#: src/common/forms.py:23
+msgid "Confirm new email address"
+msgstr "Confirm new email address"
+
+#: src/common/forms.py:36
+msgid "The new email address must be different from the current one."
+msgstr "The new email address must be different from the current one."
+
+#: src/common/forms.py:45
+msgid "This email address is already in use."
+msgstr "This email address is already in use."
+
+#: src/common/forms.py:57
+msgid "The two email addresses do not match."
+msgstr "The two email addresses do not match."
+
 #: src/common/models.py:12
 msgid "Updated at"
 msgstr "Updated at"
@@ -65,6 +85,7 @@ msgstr "Name"
 #: src/common/templates/base.html:7 src/common/templates/base.html:15
 #: src/common/templates/login.html:4
 #: src/common/templates/password_change.html:4
+#: src/common/templates/profile.html:4
 msgid "Sloths Inventory"
 msgstr "Sloths Inventory"
 
@@ -88,12 +109,10 @@ msgstr "My items"
 msgid "Previously my items"
 msgstr "Previously with me"
 
-#: src/common/templates/base.html:82
-#: src/common/templates/password_change.html:4
-#: src/common/templates/password_change.html:6
-#: src/common/templates/password_change.html:12
-msgid "Change password"
-msgstr "Change password"
+#: src/common/templates/base.html:82 src/common/templates/profile.html:4
+#: src/common/templates/profile.html:6
+msgid "Profile"
+msgstr "Profile"
 
 #: src/common/templates/base.html:87
 msgid "Admin"
@@ -108,127 +127,368 @@ msgstr "Logout"
 msgid "Login"
 msgstr "Login"
 
-#: src/common/templates/login.html:13
-msgid "Forgot your password?"
-msgstr "Forgot your password?"
+#: src/common/templates/emails/email_change_body.html:6
+#: src/common/templates/emails/email_change_body.html:10
+#: src/common/templates/emails/email_change_subject.txt:1
+msgid "Confirm your email address change"
+msgstr "Confirm your email address change"
 
-#: src/common/templates/password_reset_form.html:4
-#: src/common/templates/password_reset_form.html:7
-msgid "Password Reset"
-msgstr "Password Reset"
+#: src/common/templates/emails/email_change_body.html:12
+#: src/common/templates/emails/email_changed_notification_body.html:12
+#, fuzzy, python-format
+#| msgid "Hello %(username)s,"
+msgid "Hello <strong>%(username)s</strong>,"
+msgstr "Hello %(username)s,"
 
-#: src/common/templates/password_reset_form.html:8
-msgid "Forgotten your password? Enter your email address below, and we'll send you instructions to set a new one."
-msgstr "Forgotten your password? Enter your email address below, and we'll send you instructions to set a new one."
+#: src/common/templates/emails/email_change_body.html:14
+#: src/common/templates/emails/email_change_body.txt:3
+msgid "You have requested to change your email address in Sloths Inventory."
+msgstr "You have requested to change your email address in Sloths Inventory."
 
-#: src/common/templates/password_reset_form.html:13
-msgid "Send reset link"
-msgstr "Send reset link"
+#: src/common/templates/emails/email_change_body.html:17
+#: src/common/templates/emails/email_changed_notification_body.html:18
+#, fuzzy
+#| msgid "New email address"
+msgid "New email address:"
+msgstr "New email address"
 
-#: src/common/templates/password_reset_done.html:4
-#: src/common/templates/password_reset_done.html:7
-msgid "Password Reset Sent"
-msgstr "Password Reset Sent"
+#: src/common/templates/emails/email_change_body.html:20
+msgid "To confirm this change, please click the button below:"
+msgstr "To confirm this change, please click the button below:"
 
-#: src/common/templates/password_reset_done.html:8
-msgid "We've emailed you instructions for setting your password. If an account exists with the email you entered, you should receive them shortly."
-msgstr "We've emailed you instructions for setting your password. If an account exists with the email you entered, you should receive them shortly."
+#: src/common/templates/emails/email_change_body.html:24
+msgid "Confirm Email Change"
+msgstr "Confirm Email Change"
 
-#: src/common/templates/password_reset_done.html:9
-msgid "If you don't receive an email, please make sure you've entered the address you registered with, and check your spam folder."
-msgstr "If you don't receive an email, please make sure you've entered the address you registered with, and check your spam folder."
+#: src/common/templates/emails/email_change_body.html:29
+msgid "Or copy and paste this link into your browser:"
+msgstr "Or copy and paste this link into your browser:"
 
-#: src/common/templates/password_reset_done.html:10
-msgid "Return to login"
-msgstr "Return to login"
+#: src/common/templates/emails/email_change_body.html:34
+#: src/common/templates/emails/email_change_body.txt:11
+msgid "This link will expire in 3 days."
+msgstr "This link will expire in 3 days."
 
-#: src/common/templates/password_reset_confirm.html:4
-#: src/common/templates/password_reset_confirm.html:8
-msgid "Set New Password"
-msgstr "Set New Password"
+#: src/common/templates/emails/email_change_body.html:38
+#: src/common/templates/emails/email_change_body.txt:13
+msgid ""
+"If you did not request this change, please ignore this email. Your email "
+"address will remain unchanged."
+msgstr ""
+"If you did not request this change, please ignore this email. Your email "
+"address will remain unchanged."
 
-#: src/common/templates/password_reset_confirm.html:9
-msgid "Please enter your new password twice so we can verify you typed it in correctly."
-msgstr "Please enter your new password twice so we can verify you typed it in correctly."
+#: src/common/templates/emails/email_change_body.html:43
+#: src/common/templates/emails/email_change_body.txt:15
+#: src/common/templates/emails/email_changed_notification_body.html:30
+#: src/common/templates/emails/email_changed_notification_body.txt:10
+#: src/common/templates/emails/transfer_accepted_body.html:24
+#: src/common/templates/emails/transfer_cancelled_body.html:24
+#: src/common/templates/emails/transfer_created_body.html:24
+msgid "Best regards,"
+msgstr "Best regards,"
 
-#: src/common/templates/password_reset_confirm.html:17
-msgid "Password Reset Failed"
-msgstr "Password Reset Failed"
+#: src/common/templates/emails/email_change_body.html:43
+#: src/common/templates/emails/email_change_body.txt:16
+#: src/common/templates/emails/email_changed_notification_body.html:30
+#: src/common/templates/emails/email_changed_notification_body.txt:11
+#: src/common/templates/emails/transfer_accepted_body.html:24
+#: src/common/templates/emails/transfer_cancelled_body.html:24
+#: src/common/templates/emails/transfer_created_body.html:24
+msgid "Sloths Inventory Team"
+msgstr "Sloths Inventory Team"
 
-#: src/common/templates/password_reset_confirm.html:18
-msgid "The password reset link was invalid, possibly because it has already been used. Please request a new password reset."
-msgstr "The password reset link was invalid, possibly because it has already been used. Please request a new password reset."
+#: src/common/templates/emails/email_change_body.txt:1
+#: src/common/templates/emails/email_changed_notification_body.txt:1
+#, python-format
+msgid "Hello %(username)s,"
+msgstr "Hello %(username)s,"
 
-#: src/common/templates/password_reset_confirm.html:19
-msgid "Request new password reset"
-msgstr "Request new password reset"
+#: src/common/templates/emails/email_change_body.txt:5
+#: src/common/templates/emails/email_changed_notification_body.txt:6
+#, python-format
+msgid "New email address: %(email)s"
+msgstr "New email address: %(email)s"
 
-#: src/common/templates/password_reset_complete.html:4
-#: src/common/templates/password_reset_complete.html:7
-msgid "Password Reset Complete"
-msgstr "Password Reset Complete"
+#: src/common/templates/emails/email_change_body.txt:7
+msgid "To confirm this change, please click the link below:"
+msgstr "To confirm this change, please click the link below:"
 
-#: src/common/templates/password_reset_complete.html:8
-msgid "Your password has been set. You can now log in with your new password."
-msgstr "Your password has been set. You can now log in with your new password."
+#: src/common/templates/emails/email_changed_notification_body.html:6
+#: src/common/templates/emails/email_changed_notification_body.html:10
+#: src/common/templates/emails/email_changed_notification_subject.txt:1
+msgid "Your email address has been changed"
+msgstr "Your email address has been changed"
 
-#: src/common/templates/password_reset_complete.html:9
-msgid "Log in"
-msgstr "Log in"
+#: src/common/templates/emails/email_changed_notification_body.html:14
+#: src/common/templates/emails/email_changed_notification_body.txt:3
+msgid ""
+"This is a notification that your email address in Sloths Inventory has been "
+"successfully changed."
+msgstr ""
+"This is a notification that your email address in Sloths Inventory has been "
+"successfully changed."
 
-#: src/common/templates/emails/password_reset_subject.txt:1
-msgid "Password reset for"
-msgstr "Password reset for"
+#: src/common/templates/emails/email_changed_notification_body.html:17
+#, fuzzy
+#| msgid "Previous email address: %(email)s"
+msgid "Previous email address:"
+msgstr "Previous email address: %(email)s"
 
-#: src/common/templates/emails/password_reset_body.txt:1
+#: src/common/templates/emails/email_changed_notification_body.html:23
+msgid "Security Notice"
+msgstr "Security Notice"
+
+#: src/common/templates/emails/email_changed_notification_body.html:24
+#: src/common/templates/emails/email_changed_notification_body.txt:8
+msgid ""
+"If you did not make this change, please contact your administrator "
+"immediately as your account may have been compromised."
+msgstr ""
+"If you did not make this change, please contact your administrator "
+"immediately as your account may have been compromised."
+
+#: src/common/templates/emails/email_changed_notification_body.txt:5
+#, python-format
+msgid "Previous email address: %(email)s"
+msgstr "Previous email address: %(email)s"
+
 #: src/common/templates/emails/password_reset_body.html:36
+msgid "Password Reset Request"
+msgstr "Password Reset Request"
+
+#: src/common/templates/emails/password_reset_body.html:38
+#: src/common/templates/emails/password_reset_body.txt:1
 msgid "Hello"
 msgstr "Hello"
 
+#: src/common/templates/emails/password_reset_body.html:40
 #: src/common/templates/emails/password_reset_body.txt:3
-#: src/common/templates/emails/password_reset_body.html:38
-msgid "You're receiving this email because you requested a password reset for your account at"
-msgstr "You're receiving this email because you requested a password reset for your account at"
+msgid ""
+"You're receiving this email because you requested a password reset for your "
+"account at"
+msgstr ""
+"You're receiving this email because you requested a password reset for your "
+"account at"
+
+#: src/common/templates/emails/password_reset_body.html:42
+msgid "Please click the button below to set a new password:"
+msgstr "Please click the button below to set a new password:"
+
+#: src/common/templates/emails/password_reset_body.html:45
+msgid "Reset Password"
+msgstr "Reset Password"
+
+#: src/common/templates/emails/password_reset_body.html:48
+msgid "If the button doesn't work, copy and paste this link into your browser:"
+msgstr ""
+"If the button doesn't work, copy and paste this link into your browser:"
+
+#: src/common/templates/emails/password_reset_body.html:52
+#: src/common/templates/emails/password_reset_body.txt:9
+msgid ""
+"If you didn't request this, please ignore this email. Your password won't "
+"change until you access the link above and create a new one."
+msgstr ""
+"If you didn't request this, please ignore this email. Your password won't "
+"change until you access the link above and create a new one."
+
+#: src/common/templates/emails/password_reset_body.html:53
+#: src/common/templates/emails/password_reset_body.txt:11
+msgid "Thanks"
+msgstr "Thanks"
+
+#: src/common/templates/emails/password_reset_body.html:53
+#: src/common/templates/emails/password_reset_body.txt:12
+msgid "Team"
+msgstr "Team"
 
 #: src/common/templates/emails/password_reset_body.txt:5
 msgid "Please click the following link to set a new password:"
 msgstr "Please click the following link to set a new password:"
 
-#: src/common/templates/emails/password_reset_body.html:35
-msgid "Password Reset Request"
-msgstr "Password Reset Request"
+#: src/common/templates/emails/password_reset_subject.txt:1
+msgid "Password reset for"
+msgstr "Password reset for"
 
-#: src/common/templates/emails/password_reset_body.html:40
-msgid "Please click the button below to set a new password:"
-msgstr "Please click the button below to set a new password:"
+#: src/common/templates/emails/transfer_accepted_body.html:6
+#: src/common/templates/emails/transfer_accepted_body.html:10
+#: src/common/templates/emails/transfer_accepted_subject.txt:1
+msgid "Transfer offer accepted"
+msgstr "Transfer offer accepted"
 
-#: src/common/templates/emails/password_reset_body.html:43
-msgid "Reset Password"
-msgstr "Reset Password"
+#: src/common/templates/emails/transfer_accepted_body.html:12
+msgid "The following transfer offer has been accepted:"
+msgstr "The following transfer offer has been accepted:"
 
-#: src/common/templates/emails/password_reset_body.html:46
-msgid "If the button doesn't work, copy and paste this link into your browser:"
-msgstr "If the button doesn't work, copy and paste this link into your browser:"
+#: src/common/templates/emails/transfer_accepted_body.html:15
+#: src/common/templates/emails/transfer_cancelled_body.html:15
+#: src/common/templates/emails/transfer_created_body.html:15
+msgid "Item:"
+msgstr "Item:"
 
-#: src/common/templates/emails/password_reset_body.txt:9
-#: src/common/templates/emails/password_reset_body.html:50
-msgid "If you didn't request this, please ignore this email. Your password won't change until you access the link above and create a new one."
-msgstr "If you didn't request this, please ignore this email. Your password won't change until you access the link above and create a new one."
+#: src/common/templates/emails/transfer_accepted_body.html:16
+#: src/common/templates/emails/transfer_accepted_body.txt:3
+#: src/common/templates/emails/transfer_cancelled_body.html:16
+#: src/common/templates/emails/transfer_cancelled_body.txt:3
+#: src/common/templates/emails/transfer_created_body.html:16
+#: src/common/templates/emails/transfer_created_body.txt:3
+msgid "Sender:"
+msgstr "Sender:"
 
-#: src/common/templates/emails/password_reset_body.txt:11
-#: src/common/templates/emails/password_reset_body.html:51
-msgid "Thanks"
-msgstr "Thanks"
+#: src/common/templates/emails/transfer_accepted_body.html:17
+#: src/common/templates/emails/transfer_accepted_body.txt:4
+#: src/common/templates/emails/transfer_cancelled_body.html:17
+#: src/common/templates/emails/transfer_cancelled_body.txt:4
+#: src/common/templates/emails/transfer_created_body.html:17
+#: src/common/templates/emails/transfer_created_body.txt:4
+msgid "Receiver:"
+msgstr "Receiver:"
 
-#: src/common/templates/emails/password_reset_body.html:51
-msgid "Team"
-msgstr "Team"
+#: src/common/templates/emails/transfer_accepted_body.html:20
+#: src/common/templates/emails/transfer_accepted_body.txt:6
+msgid "The item ownership has been transferred."
+msgstr "The item ownership has been transferred."
 
-#: src/common/templates/base.html:82
-#: src/common/templates/profile.html:4
-#: src/common/templates/profile.html:6
-msgid "Profile"
-msgstr "Profile"
+#: src/common/templates/emails/transfer_accepted_body.txt:1
+#, python-format
+msgid "Transfer offer for item %(item)s has been accepted."
+msgstr "Transfer offer for item %(item)s has been accepted."
+
+#: src/common/templates/emails/transfer_cancelled_body.html:6
+#: src/common/templates/emails/transfer_cancelled_body.html:10
+#: src/common/templates/emails/transfer_cancelled_subject.txt:1
+msgid "Transfer offer cancelled"
+msgstr "Transfer offer cancelled"
+
+#: src/common/templates/emails/transfer_cancelled_body.html:12
+msgid "The following transfer offer has been cancelled:"
+msgstr "The following transfer offer has been cancelled:"
+
+#: src/common/templates/emails/transfer_cancelled_body.html:20
+#: src/common/templates/emails/transfer_cancelled_body.txt:6
+msgid "No changes were made to the item."
+msgstr "No changes were made to the item."
+
+#: src/common/templates/emails/transfer_cancelled_body.txt:1
+#, python-format
+msgid "Transfer offer for item %(item)s has been cancelled."
+msgstr "Transfer offer for item %(item)s has been cancelled."
+
+#: src/common/templates/emails/transfer_created_body.html:6
+#: src/common/templates/emails/transfer_created_body.html:10
+#: src/common/templates/emails/transfer_created_subject.txt:1
+msgid "Transfer offer created"
+msgstr "Transfer offer created"
+
+#: src/common/templates/emails/transfer_created_body.html:12
+msgid "A new transfer offer has been created for the following item:"
+msgstr "A new transfer offer has been created for the following item:"
+
+#: src/common/templates/emails/transfer_created_body.html:20
+#: src/common/templates/emails/transfer_created_body.txt:6
+msgid "Please review the offer in the inventory system."
+msgstr "Please review the offer in the inventory system."
+
+#: src/common/templates/emails/transfer_created_body.txt:1
+#, python-format
+msgid "Transfer offer for item %(item)s has been created."
+msgstr "Transfer offer for item %(item)s has been created."
+
+#: src/common/templates/login.html:13
+msgid "Forgot your password?"
+msgstr "Forgot your password?"
+
+#: src/common/templates/password_change.html:4
+#: src/common/templates/password_change.html:6
+#: src/common/templates/password_change.html:12
+#: src/common/templates/password_reset_confirm.html:15
+msgid "Change password"
+msgstr "Change password"
+
+#: src/common/templates/password_reset_complete.html:4
+#: src/common/templates/password_reset_complete.html:8
+msgid "Password Reset Complete"
+msgstr "Password Reset Complete"
+
+#: src/common/templates/password_reset_complete.html:9
+msgid "Your password has been set. You can now log in with your new password."
+msgstr "Your password has been set. You can now log in with your new password."
+
+#: src/common/templates/password_reset_complete.html:10
+msgid "Log in"
+msgstr "Log in"
+
+#: src/common/templates/password_reset_confirm.html:4
+#: src/common/templates/password_reset_confirm.html:9
+msgid "Set New Password"
+msgstr "Set New Password"
+
+#: src/common/templates/password_reset_confirm.html:10
+msgid ""
+"Please enter your new password twice so we can verify you typed it in "
+"correctly."
+msgstr ""
+"Please enter your new password twice so we can verify you typed it in "
+"correctly."
+
+#: src/common/templates/password_reset_confirm.html:18
+msgid "Password Reset Failed"
+msgstr "Password Reset Failed"
+
+#: src/common/templates/password_reset_confirm.html:19
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used. Please request a new password reset."
+msgstr ""
+"The password reset link was invalid, possibly because it has already been "
+"used. Please request a new password reset."
+
+#: src/common/templates/password_reset_confirm.html:20
+msgid "Request new password reset"
+msgstr "Request new password reset"
+
+#: src/common/templates/password_reset_done.html:4
+#: src/common/templates/password_reset_done.html:8
+msgid "Password Reset Sent"
+msgstr "Password Reset Sent"
+
+#: src/common/templates/password_reset_done.html:9
+msgid ""
+"We've emailed you instructions for setting your password. If an account "
+"exists with the email you entered, you should receive them shortly."
+msgstr ""
+"We've emailed you instructions for setting your password. If an account "
+"exists with the email you entered, you should receive them shortly."
+
+#: src/common/templates/password_reset_done.html:10
+msgid ""
+"If you don't receive an email, please make sure you've entered the address "
+"you registered with, and check your spam folder."
+msgstr ""
+"If you don't receive an email, please make sure you've entered the address "
+"you registered with, and check your spam folder."
+
+#: src/common/templates/password_reset_done.html:11
+msgid "Return to login"
+msgstr "Return to login"
+
+#: src/common/templates/password_reset_form.html:4
+#: src/common/templates/password_reset_form.html:8
+msgid "Password Reset"
+msgstr "Password Reset"
+
+#: src/common/templates/password_reset_form.html:9
+msgid ""
+"Forgotten your password? Enter your email address below, and we'll send you "
+"instructions to set a new one."
+msgstr ""
+"Forgotten your password? Enter your email address below, and we'll send you "
+"instructions to set a new one."
+
+#: src/common/templates/password_reset_form.html:14
+msgid "Send reset link"
+msgstr "Send reset link"
 
 #: src/common/templates/profile.html:12
 msgid "Email Address"
@@ -250,142 +510,35 @@ msgstr "Change Email"
 msgid "Password"
 msgstr "Password"
 
-#: src/common/templates/profile.html:30
+#: src/common/templates/profile.html:29 src/common/templates/profile.html:31
 msgid "Change Password"
 msgstr "Change Password"
 
-#: src/common/forms.py:13
-msgid "New email address"
-msgstr "New email address"
-
-#: src/common/forms.py:17
-msgid "Confirm new email address"
-msgstr "Confirm new email address"
-
-#: src/common/forms.py:29
-msgid "The new email address must be different from the current one."
-msgstr "The new email address must be different from the current one."
-
-#: src/common/forms.py:38
-msgid "This email address is already in use."
-msgstr "This email address is already in use."
-
-#: src/common/forms.py:48
-msgid "The two email addresses do not match."
-msgstr "The two email addresses do not match."
-
-#: src/common/views.py:67
+#: src/common/views.py:79
 #, python-format
 msgid ""
-"A confirmation email has been sent to %(email)s. "
-"Please check your inbox and click the link to confirm the change."
+"A confirmation email has been sent to %(email)s. Please check your inbox and "
+"click the link to confirm the change."
 msgstr ""
-"A confirmation email has been sent to %(email)s. "
-"Please check your inbox and click the link to confirm the change."
+"A confirmation email has been sent to %(email)s. Please check your inbox and "
+"click the link to confirm the change."
 
-#: src/common/views.py:90
+#: src/common/views.py:102
 msgid "Your password has been changed successfully."
 msgstr "Your password has been changed successfully."
 
-#: src/common/views.py:159
+#: src/common/views.py:189
 msgid "This email address is already in use by another account."
 msgstr "This email address is already in use by another account."
 
-#: src/common/views.py:165
+#: src/common/views.py:198
 msgid "Your email address has been changed successfully."
 msgstr "Your email address has been changed successfully."
 
-#: src/common/views.py:176
+#: src/common/views.py:211
 msgid ""
-"The email confirmation link is invalid or has expired. "
-"Please request a new email change."
+"The email confirmation link is invalid or has expired. Please request a new "
+"email change."
 msgstr ""
-"The email confirmation link is invalid or has expired. "
-"Please request a new email change."
-
-#: src/common/templates/emails/email_change_subject.txt:1
-msgid "Confirm your email address change"
-msgstr "Confirm your email address change"
-
-#: src/common/templates/emails/email_change_body.txt:1
-#: src/common/templates/emails/email_change_body.html:11
-#: src/common/templates/emails/email_changed_notification_body.txt:1
-#: src/common/templates/emails/email_changed_notification_body.html:11
-#, python-format
-msgid "Hello %(username)s,"
-msgstr "Hello %(username)s,"
-
-#: src/common/templates/emails/email_change_body.txt:3
-#: src/common/templates/emails/email_change_body.html:13
-msgid "You have requested to change your email address in Sloths Inventory."
-msgstr "You have requested to change your email address in Sloths Inventory."
-
-#: src/common/templates/emails/email_change_body.txt:5
-#: src/common/templates/emails/email_change_body.html:16
-#, python-format
-msgid "New email address: %(email)s"
-msgstr "New email address: %(email)s"
-
-#: src/common/templates/emails/email_change_body.txt:7
-msgid "To confirm this change, please click the link below:"
-msgstr "To confirm this change, please click the link below:"
-
-#: src/common/templates/emails/email_change_body.html:19
-msgid "To confirm this change, please click the button below:"
-msgstr "To confirm this change, please click the button below:"
-
-#: src/common/templates/emails/email_change_body.html:23
-msgid "Confirm Email Change"
-msgstr "Confirm Email Change"
-
-#: src/common/templates/emails/email_change_body.html:27
-msgid "Or copy and paste this link into your browser:"
-msgstr "Or copy and paste this link into your browser:"
-
-#: src/common/templates/emails/email_change_body.txt:11
-#: src/common/templates/emails/email_change_body.html:32
-msgid "This link will expire in 3 days."
-msgstr "This link will expire in 3 days."
-
-#: src/common/templates/emails/email_change_body.txt:13
-#: src/common/templates/emails/email_change_body.html:36
-msgid "If you did not request this change, please ignore this email. Your email address will remain unchanged."
-msgstr "If you did not request this change, please ignore this email. Your email address will remain unchanged."
-
-#: src/common/templates/emails/email_change_body.txt:15
-#: src/common/templates/emails/email_change_body.html:41
-#: src/common/templates/emails/email_changed_notification_body.txt:9
-#: src/common/templates/emails/email_changed_notification_body.html:27
-msgid "Best regards,"
-msgstr "Best regards,"
-
-#: src/common/templates/emails/email_change_body.txt:16
-#: src/common/templates/emails/email_change_body.html:41
-#: src/common/templates/emails/email_changed_notification_body.txt:10
-#: src/common/templates/emails/email_changed_notification_body.html:27
-msgid "Sloths Inventory Team"
-msgstr "Sloths Inventory Team"
-
-#: src/common/templates/emails/email_changed_notification_subject.txt:1
-msgid "Your email address has been changed"
-msgstr "Your email address has been changed"
-
-#: src/common/templates/emails/email_changed_notification_body.txt:3
-#: src/common/templates/emails/email_changed_notification_body.html:13
-msgid "This is a notification that your email address in Sloths Inventory has been successfully changed."
-msgstr "This is a notification that your email address in Sloths Inventory has been successfully changed."
-
-#: src/common/templates/emails/email_changed_notification_body.txt:5
-#: src/common/templates/emails/email_changed_notification_body.html:16
-#, python-format
-msgid "Previous email address: %(email)s"
-msgstr "Previous email address: %(email)s"
-
-#: src/common/templates/emails/email_changed_notification_body.html:21
-msgid "Security Notice"
-msgstr "Security Notice"
-
-#: src/common/templates/emails/email_changed_notification_body.txt:7
-#: src/common/templates/emails/email_changed_notification_body.html:22
-msgid "If you did not make this change, please contact your administrator immediately as your account may have been compromised."
-msgstr "If you did not make this change, please contact your administrator immediately as your account may have been compromised."
+"The email confirmation link is invalid or has expired. Please request a new "
+"email change."

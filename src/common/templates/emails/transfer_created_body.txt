@@ -1,0 +1,6 @@
+{% load i18n %}{% blocktrans with item=item %}Transfer offer for item {{ item }} has been created.{% endblocktrans %}
+
+{% trans "Sender:" %} {{ sender }}
+{% trans "Receiver:" %} {{ receiver }}
+
+{% trans "Please review the offer in the inventory system." %}
