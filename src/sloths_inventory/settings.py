@@ -129,10 +129,10 @@ WSGI_APPLICATION = "sloths_inventory.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": env("DATABASE_NAME", default="database"),
-        "USER": env("DATABASE_USER", default="user"),
-        "PASSWORD": env("DATABASE_PASSWORD", default="password"),
-        "HOST": env("DATABASE_HOST", default="127.0.0.1"),
+        "NAME": env("DATABASE_NAME", default=""),
+        "USER": env("DATABASE_USER", default=""),
+        "PASSWORD": env("DATABASE_PASSWORD", default=""),
+        "HOST": env("DATABASE_HOST", default=""),
         "PORT": env("DATABASE_PORT", default="5432"),
     }
 }
