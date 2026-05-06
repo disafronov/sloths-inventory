@@ -5,7 +5,7 @@ from unittest.mock import call, patch
 
 from django.test import override_settings
 
-from common.email_utils import _send_with_retry, send_transfer_email
+from common.email_utils import _send_with_retry, send_email_async, send_transfer_email
 
 _RETRY_0 = dict(
     EMAIL_RETRY_MAX_RETRIES=0,
@@ -87,37 +87,54 @@ class TestSendWithRetry:
         assert mock_send.call_count == 1
 
 
-class TestSendTransferEmail:
-    def test_empty_string_recipient_does_not_spawn_thread(self):
-        with patch("common.email_utils.threading.Thread") as mock_thread:
-            send_transfer_email("subj.txt", "body.txt", {}, "")
-        mock_thread.assert_not_called()
+class TestSendEmailAsync:
+    def test_empty_string_recipient_skips_send(self):
+        with patch("common.email_utils._send_with_retry") as mock_retry:
+            send_email_async("subj", "body", "")
+        mock_retry.assert_not_called()
 
-    def test_list_of_empty_strings_does_not_spawn_thread(self):
-        with patch("common.email_utils.threading.Thread") as mock_thread:
-            send_transfer_email("subj.txt", "body.txt", {}, ["", ""])
-        mock_thread.assert_not_called()
+    def test_list_of_empty_strings_skips_send(self):
+        with patch("common.email_utils._send_with_retry") as mock_retry:
+            send_email_async("subj", "body", ["", ""])
+        mock_retry.assert_not_called()
 
-    def test_spawns_daemon_thread_with_rendered_content(self):
-        with (
-            patch("common.email_utils.render_to_string", return_value="rendered"),
-            patch("common.email_utils.threading.Thread") as mock_thread_cls,
-        ):
+    @override_settings(EMAIL_SEND_ASYNC=True)
+    def test_spawns_daemon_thread_when_async_enabled(self):
+        with patch("common.email_utils.threading.Thread") as mock_thread_cls:
             instance = mock_thread_cls.return_value
-            send_transfer_email("subj.txt", "body.txt", {}, "a@example.com")
+            send_email_async("subj", "body", "a@example.com", "<p>html</p>")
         mock_thread_cls.assert_called_once_with(
             target=_send_with_retry,
-            args=("rendered", "rendered", ["a@example.com"], None),
+            args=("subj", "body", ["a@example.com"], "<p>html</p>"),
             daemon=True,
         )
         instance.start.assert_called_once()
 
-    def test_html_template_rendered_and_passed_to_thread(self):
+    @override_settings(EMAIL_SEND_ASYNC=False, **_RETRY_0)
+    def test_calls_retry_directly_when_async_disabled(self):
+        with patch("common.email_utils._send_with_retry") as mock_retry:
+            send_email_async("subj", "body", "a@example.com", "<p>html</p>")
+        mock_retry.assert_called_once_with(
+            "subj", "body", ["a@example.com"], "<p>html</p>"
+        )
+
+
+class TestSendTransferEmail:
+    def test_renders_templates_and_delegates(self):
         with (
             patch("common.email_utils.render_to_string", return_value="rendered"),
-            patch("common.email_utils.threading.Thread") as mock_thread_cls,
+            patch("common.email_utils.send_email_async") as mock_async,
         ):
-            instance = mock_thread_cls.return_value
+            send_transfer_email("subj.txt", "body.txt", {}, "a@example.com")
+        mock_async.assert_called_once_with(
+            "rendered", "rendered", "a@example.com", None
+        )
+
+    def test_html_template_rendered_and_passed(self):
+        with (
+            patch("common.email_utils.render_to_string", return_value="rendered"),
+            patch("common.email_utils.send_email_async") as mock_async,
+        ):
             send_transfer_email(
                 "subj.txt",
                 "body.txt",
@@ -125,6 +142,6 @@ class TestSendTransferEmail:
                 "a@example.com",
                 html_template="body.html",
             )
-        args = mock_thread_cls.call_args.kwargs["args"]
-        assert args[3] == "rendered"
-        instance.start.assert_called_once()
+        mock_async.assert_called_once_with(
+            "rendered", "rendered", "a@example.com", "rendered"
+        )

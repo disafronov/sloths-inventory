@@ -60,6 +60,27 @@ def _send_with_retry(
             return
 
 
+def send_email_async(
+    subject: str,
+    message: str,
+    recipient: str | list[str],
+    html_message: str | None = None,
+) -> None:
+    recipients = [recipient] if isinstance(recipient, str) else list(recipient)
+    recipients = [r for r in recipients if r]
+    if not recipients:
+        return
+
+    if settings.EMAIL_SEND_ASYNC:
+        threading.Thread(
+            target=_send_with_retry,
+            args=(subject, message, recipients, html_message),
+            daemon=True,
+        ).start()
+    else:
+        _send_with_retry(subject, message, recipients, html_message)
+
+
 def send_transfer_email(
     subject_template: str,
     body_template: str,
@@ -67,17 +88,7 @@ def send_transfer_email(
     recipient: str | list[str],
     html_template: str | None = None,
 ) -> None:
-    recipients = [recipient] if isinstance(recipient, str) else list(recipient)
-    recipients = [r for r in recipients if r]
-    if not recipients:
-        return
-
     subject = render_to_string(subject_template, context).strip()
     message = render_to_string(body_template, context)
     html_message = render_to_string(html_template, context) if html_template else None
-
-    threading.Thread(
-        target=_send_with_retry,
-        args=(subject, message, recipients, html_message),
-        daemon=True,
-    ).start()
+    send_email_async(subject, message, recipient, html_message)
