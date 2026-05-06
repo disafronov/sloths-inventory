@@ -63,7 +63,7 @@ CSRF_TRUSTED_ORIGINS = _split_env_list(env("CSRF_TRUSTED_ORIGINS", default=""))
 # not ``updated_at``, so the window does not reset on each save.
 INVENTORY_CORRECTION_WINDOW_MINUTES = env.int(
     "INVENTORY_CORRECTION_WINDOW_MINUTES",
-    default=10,
+    default=0,
 )
 
 # Pending transfer offers created from the user UI get `expires_at` set to
