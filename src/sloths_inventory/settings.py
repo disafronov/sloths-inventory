@@ -235,6 +235,7 @@ EMAIL_TIMEOUT = env.int("EMAIL_TIMEOUT", default=10)
 DEFAULT_FROM_EMAIL = env.str("DEFAULT_FROM_EMAIL", default="noreply@example.com")
 SERVER_EMAIL = env.str("SERVER_EMAIL", default="noreply@example.com")
 
+EMAIL_SEND_ASYNC = env.bool("EMAIL_SEND_ASYNC", default=True)
 EMAIL_RETRY_MAX_RETRIES = env.int("EMAIL_RETRY_MAX_RETRIES", default=2)
 EMAIL_RETRY_BASE_DELAY_SECONDS = env.float(
     "EMAIL_RETRY_BASE_DELAY_SECONDS", default=60.0

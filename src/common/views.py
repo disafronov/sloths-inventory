@@ -8,7 +8,6 @@ from django.contrib.auth import (
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.mail import send_mail
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
@@ -18,6 +17,8 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic import TemplateView
+
+from common.email_utils import send_email_async
 
 if TYPE_CHECKING:
     from django.contrib.auth.models import User as UserType
@@ -147,13 +148,7 @@ class ProfileView(LoginRequiredMixin, TemplateView):
             },
         )
 
-        send_mail(
-            subject=subject,
-            message=text_body,
-            from_email=None,  # Use DEFAULT_FROM_EMAIL
-            recipient_list=[new_email],
-            html_message=html_body,
-        )
+        send_email_async(subject, text_body, new_email, html_body)
 
 
 class EmailChangeConfirmView(View):
@@ -230,10 +225,4 @@ class EmailChangeConfirmView(View):
             {"user": user, "old_email": old_email, "new_email": new_email},
         )
 
-        send_mail(
-            subject=subject,
-            message=text_body,
-            from_email=None,
-            recipient_list=[old_email],
-            html_message=html_body,
-        )
+        send_email_async(subject, text_body, old_email, html_body)
