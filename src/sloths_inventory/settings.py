@@ -235,6 +235,12 @@ EMAIL_TIMEOUT = env.int("EMAIL_TIMEOUT", default=10)
 DEFAULT_FROM_EMAIL = env.str("DEFAULT_FROM_EMAIL", default="noreply@example.com")
 SERVER_EMAIL = env.str("SERVER_EMAIL", default="noreply@example.com")
 
+EMAIL_RETRY_MAX_RETRIES = env.int("EMAIL_RETRY_MAX_RETRIES", default=2)
+EMAIL_RETRY_BASE_DELAY_SECONDS = env.float(
+    "EMAIL_RETRY_BASE_DELAY_SECONDS", default=60.0
+)
+EMAIL_RETRY_BACKOFF_FACTOR = env.float("EMAIL_RETRY_BACKOFF_FACTOR", default=2.0)
+
 # Site URL for email links (required for password reset emails)
 SITE_URL = env.str("SITE_URL", default="http://localhost:8000")
 
