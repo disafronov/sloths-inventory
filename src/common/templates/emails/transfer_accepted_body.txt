@@ -1,0 +1,6 @@
+{% load i18n %}{% blocktrans with item=item %}Transfer offer for item {{ item }} has been accepted.{% endblocktrans %}
+
+{% trans "Sender:" %} {{ sender }}
+{% trans "Receiver:" %} {{ receiver }}
+
+{% trans "The item ownership has been transferred." %}

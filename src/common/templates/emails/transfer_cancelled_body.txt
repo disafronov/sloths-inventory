@@ -1,0 +1,6 @@
+{% load i18n %}{% blocktrans with item=item %}Transfer offer for item {{ item }} has been cancelled.{% endblocktrans %}
+
+{% trans "Sender:" %} {{ sender }}
+{% trans "Receiver:" %} {{ receiver }}
+
+{% trans "No changes were made to the item." %}
