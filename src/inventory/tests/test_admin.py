@@ -451,7 +451,6 @@ def test_operation_admin_latest_operation_id_is_cached_per_request(
 
 
 @pytest.mark.django_db
-@override_settings(LANGUAGE_CODE="en")
 def test_operation_lock_fieldset_description_for_non_latest_operation() -> None:
     """Lock fieldset only for frozen rows; no extra panel when editing is allowed."""
 
@@ -501,7 +500,7 @@ def test_operation_lock_fieldset_description_for_non_latest_operation() -> None:
 
 
 @pytest.mark.django_db
-@override_settings(LANGUAGE_CODE="en", INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+@override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
 def test_operation_lock_fieldset_description_when_correction_window_expired() -> None:
     """Latest row past the window shows the same wording as model validation."""
 
@@ -544,7 +543,7 @@ def test_operation_lock_fieldset_description_when_correction_window_expired() ->
 
 
 @pytest.mark.django_db
-@override_settings(LANGUAGE_CODE="en", INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+@override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
 def test_operation_admin_change_page_renders_edit_lock_description_after_window() -> (
     None
 ):
@@ -587,7 +586,7 @@ def test_operation_admin_change_page_renders_edit_lock_description_after_window(
 
 
 @pytest.mark.django_db
-@override_settings(LANGUAGE_CODE="en", INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+@override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
 def test_operation_change_page_superuser_hides_lock_after_correction_window() -> None:
     """Superusers do not see the operation lock banner; they remain able to edit."""
 
@@ -631,7 +630,6 @@ def test_operation_change_page_superuser_hides_lock_after_correction_window() ->
 
 
 @pytest.mark.django_db
-@override_settings(LANGUAGE_CODE="en")
 def test_operation_admin_change_page_hides_lock_section_when_editable() -> None:
     """Within the correction window, the restriction fieldset is not rendered."""
 
@@ -782,7 +780,7 @@ def test_item_admin_superuser_keeps_change_after_correction_window() -> None:
 
 
 @pytest.mark.django_db
-@override_settings(LANGUAGE_CODE="en", INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+@override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
 def test_item_lock_fieldset_description_when_correction_window_expired() -> None:
     """Expired window shows the same wording as ``Item.clean()``."""
 
@@ -824,7 +822,7 @@ def test_item_lock_fieldset_description_when_correction_window_expired() -> None
 
 
 @pytest.mark.django_db
-@override_settings(LANGUAGE_CODE="en", INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+@override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
 def test_item_fieldset_omits_lock_panel_without_model_change_permission() -> None:
     """
     View-only users should not see domain lock copy: they cannot edit for auth reasons.
@@ -867,7 +865,6 @@ def test_item_fieldset_omits_lock_panel_without_model_change_permission() -> Non
 
 
 @pytest.mark.django_db
-@override_settings(LANGUAGE_CODE="en")
 def test_operation_fieldset_omits_lock_panel_without_model_change_permission() -> None:
     """Same as item: view-only staff must not see append-only / window lock fieldset."""
 
@@ -911,7 +908,7 @@ def test_operation_fieldset_omits_lock_panel_without_model_change_permission() -
 
 
 @pytest.mark.django_db
-@override_settings(LANGUAGE_CODE="en", INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+@override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
 def test_item_change_page_renders_correction_window_lock_after_window() -> None:
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
@@ -948,7 +945,7 @@ def test_item_change_page_renders_correction_window_lock_after_window() -> None:
 
 
 @pytest.mark.django_db
-@override_settings(LANGUAGE_CODE="en", INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+@override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
 def test_item_change_page_no_lock_without_responsible_past_window() -> None:
     """Item with no operations: no correction-window lock text past ``created_at``."""
 
@@ -978,7 +975,7 @@ def test_item_change_page_no_lock_without_responsible_past_window() -> None:
 
 
 @pytest.mark.django_db
-@override_settings(LANGUAGE_CODE="en", INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+@override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
 def test_item_change_page_superuser_hides_lock_after_correction_window() -> None:
     """Superusers do not see the lock banner; they remain able to edit."""
 
@@ -1013,7 +1010,6 @@ def test_item_change_page_superuser_hides_lock_after_correction_window() -> None
 
 
 @pytest.mark.django_db
-@override_settings(LANGUAGE_CODE="en")
 def test_item_change_page_hides_lock_section_when_editable() -> None:
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
@@ -1241,7 +1237,6 @@ def test_operation_admin_form_skips_window_bypass_for_non_latest_operation() -> 
 
 
 @pytest.mark.django_db
-@override_settings(LANGUAGE_CODE="en")
 def test_operation_admin_lock_message_for_non_latest_operation_row() -> None:
     """``_operation_correction_window_lock_user_message`` surfaces append-only copy."""
 
@@ -1325,7 +1320,7 @@ def test_operation_admin_lock_message_none_when_latest_id_unresolved() -> None:
 
 
 @pytest.mark.django_db
-@override_settings(LANGUAGE_CODE="en", INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+@override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
 def test_operation_admin_lock_message_staff_latest_past_correction_window() -> None:
     """Non-superusers on the latest row past the window see expiry copy."""
 

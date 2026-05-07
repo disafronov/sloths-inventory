@@ -139,7 +139,7 @@ def test_location_admin_staff_denies_change_when_used_and_stale() -> None:
 
 
 @pytest.mark.django_db
-@override_settings(LANGUAGE_CODE="en", INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+@override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
 def test_location_admin_omits_lock_fieldset_without_model_change_permission() -> None:
     """View-only staff must not see catalog correction-window copy."""
 
@@ -293,7 +293,7 @@ def test_location_admin_superuser_keeps_change_when_used_and_stale() -> None:
 
 
 @pytest.mark.django_db
-@override_settings(LANGUAGE_CODE="en", INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+@override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
 def test_location_admin_superuser_fieldsets_skip_lock_when_stale() -> None:
     """Superusers do not get the catalog lock fieldset (no domain restriction copy)."""
 
@@ -374,7 +374,7 @@ def test_location_admin_get_form_sets_catalog_bypass_for_superuser() -> None:
 
 
 @pytest.mark.django_db
-@override_settings(LANGUAGE_CODE="en", INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+@override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
 def test_location_admin_fieldsets_include_lock_for_staff_when_stale_and_used() -> None:
     """Staff with model change permission see the catalog lock fieldset description."""
 
@@ -451,7 +451,7 @@ def test_location_admin_staff_no_lock_fieldset_when_unused_even_if_stale() -> No
 
 
 @pytest.mark.django_db
-@override_settings(LANGUAGE_CODE="en", INVENTORY_CORRECTION_WINDOW_MINUTES=10)
+@override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
 def test_location_admin_staff_no_lock_fieldset_when_in_use_inside_window() -> None:
     """In-use rows inside the window do not get catalog lock copy."""
 
