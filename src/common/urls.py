@@ -2,7 +2,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import path, reverse_lazy
 from django.views.i18n import set_language
 
-from .views import EmailChangeConfirmView, ProfileView, UserPasswordChangeView
+from .views import EmailChangeConfirmView, ProfileView
 
 app_name = "common"
 
@@ -20,11 +20,7 @@ urlpatterns = [
         EmailChangeConfirmView.as_view(),
         name="email_change_confirm",
     ),
-    path(
-        "password/change/",
-        UserPasswordChangeView.as_view(),
-        name="password_change",
-    ),
+    # Password change now handled via ProfileView; separate URL removed.
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),
     path("i18n/setlang/", set_language, name="set_language"),
     # Password reset flow

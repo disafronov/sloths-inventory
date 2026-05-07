@@ -77,8 +77,8 @@
                         >{% trans "Previously my items" %}</a>
                         <a
                             href="{% url 'common:profile' %}"
-                            class="button{% if request.resolver_match.url_name == 'profile' or request.resolver_match.url_name == 'password_change' %} button--active{% endif %}"
-                            {% if request.resolver_match.url_name == 'profile' or request.resolver_match.url_name == 'password_change' %}aria-current="page"{% endif %}
+                            class="button{% if request.resolver_match.url_name == 'profile' %} button--active{% endif %}"
+                            {% if request.resolver_match.url_name == 'profile' %}aria-current="page"{% endif %}
                         >{% trans "Profile" %}</a>
                         <a
                             href="{% url 'admin:index' %}"
