@@ -1,3 +1,4 @@
+import logging
 from typing import Any
 
 from django.db.models.signals import post_save
@@ -8,6 +9,8 @@ from common.email_utils import send_transfer_email
 from inventory.models.item import Item
 from inventory.models.operation import Operation
 from inventory.models.pending_transfer import PendingTransfer
+
+logger = logging.getLogger(__name__)
 
 
 def _responsible_email(responsible: Responsible) -> str:
@@ -57,31 +60,36 @@ def notify_operation_saved(
         pre_responsible_id is not None and pre_responsible_id != instance.responsible_id
     )
 
-    item = Item.objects.select_related("device__manufacturer", "device__model").get(
-        pk=instance.item_id
-    )
-    new_responsible = Responsible.objects.select_related("user").get(
-        pk=instance.responsible_id
-    )
+    try:
+        item = Item.objects.select_related("device__manufacturer", "device__model").get(
+            pk=instance.item_id
+        )
+        new_responsible = Responsible.objects.select_related("user").get(
+            pk=instance.responsible_id
+        )
 
-    if created and responsible_changed and pre_responsible_id is not None:
-        _notify("assigned", new_responsible, item, instance)
-        prev_responsible = Responsible.objects.select_related("user").get(
-            pk=pre_responsible_id
+        if created and responsible_changed and pre_responsible_id is not None:
+            _notify("assigned", new_responsible, item, instance)
+            prev_responsible = Responsible.objects.select_related("user").get(
+                pk=pre_responsible_id
+            )
+            _notify("unassigned", prev_responsible, item, instance)
+        elif created and pre_responsible_id is None:
+            _notify("assigned", new_responsible, item, instance)
+        elif created:
+            _notify("updated", new_responsible, item, instance)
+        elif responsible_changed and pre_responsible_id is not None:
+            _notify("assigned", new_responsible, item, instance)
+            prev_responsible = Responsible.objects.select_related("user").get(
+                pk=pre_responsible_id
+            )
+            _notify("unassigned", prev_responsible, item, instance)
+        else:
+            _notify("updated", new_responsible, item, instance)
+    except Exception:
+        logger.exception(
+            "Failed to send operation notification for operation %s", instance.pk
         )
-        _notify("unassigned", prev_responsible, item, instance)
-    elif created and pre_responsible_id is None:
-        _notify("assigned", new_responsible, item, instance)
-    elif created:
-        _notify("updated", new_responsible, item, instance)
-    elif responsible_changed and pre_responsible_id is not None:
-        _notify("assigned", new_responsible, item, instance)
-        prev_responsible = Responsible.objects.select_related("user").get(
-            pk=pre_responsible_id
-        )
-        _notify("unassigned", prev_responsible, item, instance)
-    else:
-        _notify("updated", new_responsible, item, instance)
 
 
 @receiver(post_save, sender=PendingTransfer)
@@ -107,37 +115,54 @@ def notify_transfer_saved(
     if not (created or just_accepted or just_cancelled or receiver_changed):
         return
 
-    item = Item.objects.select_related("device__manufacturer", "device__model").get(
-        pk=instance.item_id
-    )
-    from_responsible = Responsible.objects.select_related("user").get(
-        pk=instance.from_responsible_id
-    )
-    to_responsible = Responsible.objects.select_related("user").get(
-        pk=instance.to_responsible_id
-    )
-    from_email = _responsible_email(from_responsible)
-    to_email = _responsible_email(to_responsible)
+    try:
+        item = Item.objects.select_related("device__manufacturer", "device__model").get(
+            pk=instance.item_id
+        )
+        from_responsible = Responsible.objects.select_related("user").get(
+            pk=instance.from_responsible_id
+        )
+        to_responsible = Responsible.objects.select_related("user").get(
+            pk=instance.to_responsible_id
+        )
+        from_email = _responsible_email(from_responsible)
+        to_email = _responsible_email(to_responsible)
 
-    if created:
-        _notify_transfer("created", item, from_responsible, to_responsible, [to_email])
-    elif receiver_changed and pre_to_responsible_id is not None:
-        old_receiver = Responsible.objects.select_related("user").get(
-            pk=pre_to_responsible_id
-        )
-        _notify_transfer(
-            "cancelled",
-            item,
-            from_responsible,
-            old_receiver,
-            [_responsible_email(old_receiver)],
-        )
-        _notify_transfer("created", item, from_responsible, to_responsible, [to_email])
-    elif just_accepted:
-        _notify_transfer(
-            "accepted", item, from_responsible, to_responsible, [from_email, to_email]
-        )
-    else:
-        _notify_transfer(
-            "cancelled", item, from_responsible, to_responsible, [from_email, to_email]
+        if created:
+            _notify_transfer(
+                "created", item, from_responsible, to_responsible, [to_email]
+            )
+        elif receiver_changed and pre_to_responsible_id is not None:
+            old_receiver = Responsible.objects.select_related("user").get(
+                pk=pre_to_responsible_id
+            )
+            _notify_transfer(
+                "cancelled",
+                item,
+                from_responsible,
+                old_receiver,
+                [_responsible_email(old_receiver)],
+            )
+            _notify_transfer(
+                "created", item, from_responsible, to_responsible, [to_email]
+            )
+        elif just_accepted:
+            _notify_transfer(
+                "accepted",
+                item,
+                from_responsible,
+                to_responsible,
+                [from_email, to_email],
+            )
+        else:
+            _notify_transfer(
+                "cancelled",
+                item,
+                from_responsible,
+                to_responsible,
+                [from_email, to_email],
+            )
+    except Exception:
+        logger.exception(
+            "Failed to send transfer notification for transfer %s", instance.pk
         )

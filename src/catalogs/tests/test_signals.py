@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 import pytest
 from django.contrib.auth.models import User
 from django.core import mail
@@ -103,3 +105,16 @@ def test_linking_user_without_email_raises_validation_error() -> None:
     with pytest.raises(ValidationError):
         resp.save()
     assert len(mail.outbox) == 0
+
+
+@pytest.mark.django_db
+def test_responsible_notification_failure_does_not_roll_back_save() -> None:
+    """Email failure in notify_responsible_user_changed must not roll back the save."""
+    user = _user("notify_err", "notify_err@example.com")
+
+    with patch(
+        "catalogs.signals.send_transfer_email", side_effect=RuntimeError("boom")
+    ):
+        resp = Responsible.objects.create(last_name="Test", first_name="Err", user=user)
+
+    assert Responsible.objects.filter(pk=resp.pk).exists()

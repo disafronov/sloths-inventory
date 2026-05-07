@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 import pytest
 from django.contrib.auth.models import User
 from django.core import mail
@@ -255,6 +257,61 @@ def test_transfer_cancelled_notifies_both(
     all_recipients = {addr for m in mail.outbox for addr in m.to}
     assert "s4@example.com" in all_recipients
     assert "r4@example.com" in all_recipients
+
+
+@pytest.mark.django_db
+def test_operation_notification_failure_does_not_roll_back_save(
+    inventory_test_device, inventory_test_status_location
+) -> None:
+    """Email failure in notify_operation_saved must not roll back the Operation."""
+    item = Item.objects.create(
+        inventory_number="SIG-ERR-OP", device=inventory_test_device
+    )
+    resp = _responsible("sig_err_op", "err_op@example.com")
+
+    with patch(
+        "inventory.signals.send_transfer_email", side_effect=RuntimeError("boom")
+    ):
+        op = Operation.objects.create(
+            item=item,
+            status=inventory_test_status_location["status"],
+            responsible=resp,
+            location=inventory_test_status_location["location"],
+        )
+
+    assert Operation.objects.filter(pk=op.pk).exists()
+
+
+@pytest.mark.django_db
+def test_transfer_notification_failure_does_not_roll_back_save(
+    inventory_test_device, inventory_test_status_location
+) -> None:
+    """Email failure in notify_transfer_saved must not roll back the PendingTransfer."""
+    item = Item.objects.create(
+        inventory_number="SIG-ERR-TR", device=inventory_test_device
+    )
+    sender = _responsible("sig_err_s", "err_s@example.com")
+    receiver = _responsible("sig_err_r", "err_r@example.com")
+    Operation.objects.create(
+        item=item,
+        status=inventory_test_status_location["status"],
+        responsible=sender,
+        location=inventory_test_status_location["location"],
+    )
+    mail.outbox.clear()
+
+    with patch(
+        "inventory.signals.send_transfer_email", side_effect=RuntimeError("boom")
+    ):
+        transfer = PendingTransfer.create_offer(
+            item=item,
+            from_responsible=sender,
+            to_responsible=receiver,
+            expires_at=None,
+            notes="",
+        )
+
+    assert PendingTransfer.objects.filter(pk=transfer.pk).exists()
 
 
 @pytest.mark.django_db
