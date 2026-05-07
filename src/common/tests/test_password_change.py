@@ -1,12 +1,13 @@
 import pytest
 from django.contrib.auth.models import User
 from django.test import Client
+from django.urls import reverse
 
 
 @pytest.mark.django_db
 def test_password_change_requires_login() -> None:
     client = Client()
-    response = client.get("/password/change/")
+    response = client.get(reverse("common:profile"))
     assert response.status_code == 302
     assert "/login/" in response["Location"]
 
@@ -18,7 +19,7 @@ def test_password_change_get_renders_form_for_authenticated_user() -> None:
     client = Client()
     client.force_login(user)
 
-    response = client.get("/password/change/")
+    response = client.get(reverse("common:profile"))
     assert response.status_code == 200
 
     # Form fields from Django's PasswordChangeForm.
