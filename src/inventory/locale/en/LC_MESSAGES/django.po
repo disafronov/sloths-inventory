@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventory\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-06 13:38+0400\n"
+"POT-Creation-Date: 2026-05-07 22:45+0000\n"
 "PO-Revision-Date: 2024-03-19 00:40+0300\n"
 "Last-Translator: \n"
 "Language-Team: English\n"
@@ -39,9 +39,6 @@ msgid "Operation"
 msgstr "Operation"
 
 #: src/inventory/admin/__init__.py:233 src/inventory/admin/__init__.py:312
-#: src/inventory/tests/test_admin.py:494 src/inventory/tests/test_admin.py:540
-#: src/inventory/tests/test_admin.py:820 src/inventory/tests/test_admin.py:864
-#: src/inventory/tests/test_admin.py:908
 msgid "Editing restrictions"
 msgstr "Editing restrictions"
 
@@ -178,26 +175,26 @@ msgstr "Expiration must be in the future"
 msgid "An active transfer already exists for this item"
 msgstr "An active transfer already exists for this item"
 
-#: src/inventory/models/pending_transfer.py:217
-#: src/inventory/models/pending_transfer.py:255
-#: src/inventory/models/pending_transfer.py:290
+#: src/inventory/models/pending_transfer.py:226
+#: src/inventory/models/pending_transfer.py:264
+#: src/inventory/models/pending_transfer.py:299
 msgid "Transfer is not active"
 msgstr "Transfer is not active"
 
-#: src/inventory/models/pending_transfer.py:223
-#: src/inventory/views/transfer_views.py:79
+#: src/inventory/models/pending_transfer.py:232
+#: src/inventory/views/transfer_views.py:78
 msgid "Cannot accept transfer for an item without operations"
 msgstr "Cannot accept transfer for an item without operations"
 
-#: src/inventory/models/pending_transfer.py:231
+#: src/inventory/models/pending_transfer.py:240
 msgid "Cannot accept transfer: sender no longer holds the item."
 msgstr "Cannot accept transfer: sender no longer holds the item."
 
-#: src/inventory/models/pending_transfer.py:283
+#: src/inventory/models/pending_transfer.py:292
 msgid "Expiration window must be non-negative"
 msgstr "Expiration window must be non-negative"
 
-#: src/inventory/models/pending_transfer.py:292
+#: src/inventory/models/pending_transfer.py:301
 msgid "Only the sender may update the transfer"
 msgstr "Only the sender may update the transfer"
 
@@ -420,31 +417,53 @@ msgstr "Type to filter people…"
 msgid "New location is required."
 msgstr "New location is required."
 
-#: src/inventory/views/transfer_views.py:36
+#: src/inventory/views/transfer_views.py:35
 msgid "This transfer offer is no longer active."
 msgstr "This transfer offer is no longer active."
 
-#: src/inventory/views/transfer_views.py:54
+#: src/inventory/views/transfer_views.py:53
 msgid ""
 "The inventory record changed since this page was loaded. Refresh the page "
 "and try again."
 msgstr ""
+"The inventory record changed since this page was loaded. Refresh the page "
+"and try again."
 
-#: src/inventory/views/transfer_views.py:156
+#: src/inventory/views/transfer_views.py:155
 msgid "Transfer offer updated."
 msgstr "Transfer offer updated."
 
-#: src/inventory/views/transfer_views.py:183
+#: src/inventory/views/transfer_views.py:182
 msgid "Transfer offer submitted."
 msgstr "Transfer offer submitted."
 
-#: src/inventory/views/transfer_views.py:288
+#: src/inventory/views/transfer_views.py:276
 msgid "Transfer accepted."
 msgstr "Transfer accepted."
 
-#: src/inventory/views/transfer_views.py:340
+#: src/inventory/views/transfer_views.py:310
 msgid "Transfer offer closed."
 msgstr "Transfer offer closed."
+
+#, fuzzy, python-format
+#~| msgid ""
+#~| "The correction window (%(minutes)d minute) has expired. To make changes, "
+#~| "contact an administrator."
+#~| msgid_plural ""
+#~| "The correction window (%(minutes)d minutes) has expired. To make "
+#~| "changes, contact an administrator."
+#~ msgid ""
+#~ "This catalog entry is in use. The correction window (%(minutes)d minute) "
+#~ "has expired. To make changes, contact an administrator."
+#~ msgid_plural ""
+#~ "This catalog entry is in use. The correction window (%(minutes)d minutes) "
+#~ "has expired. To make changes, contact an administrator."
+#~ msgstr[0] ""
+#~ "The correction window (%(minutes)d minute) has expired. To make changes, "
+#~ "contact an administrator."
+#~ msgstr[1] ""
+#~ "The correction window (%(minutes)d minutes) has expired. To make changes, "
+#~ "contact an administrator."
 
 #~ msgid "Select a new location…"
 #~ msgstr "Select a new location…"
