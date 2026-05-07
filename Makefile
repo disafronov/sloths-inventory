@@ -71,7 +71,7 @@ dead-code: ## Check for dead code using vulture
 
 locale: ## Make & compile locale messages
 	@echo "Make translation messages..."
-	SECRET_KEY=$(TOOLING_SECRET_KEY) $(UV) python src/manage.py makemessages --all
+	SECRET_KEY=$(TOOLING_SECRET_KEY) $(UV) python src/manage.py makemessages --all --ignore="*/tests/*" --ignore="conftest.py"
 	@echo "Compile translation messages..."
 	SECRET_KEY=$(TOOLING_SECRET_KEY) $(UV) python src/manage.py compilemessages
 
