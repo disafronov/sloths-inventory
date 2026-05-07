@@ -116,7 +116,19 @@ def notify_transfer_saved(
     from_email = _responsible_email(from_responsible)
     to_email = _responsible_email(to_responsible)
 
-    if created or receiver_changed:
+    if created:
+        _notify_transfer("created", item, from_responsible, to_responsible, [to_email])
+    elif receiver_changed and pre_to_responsible_id is not None:
+        old_receiver = Responsible.objects.select_related("user").get(
+            pk=pre_to_responsible_id
+        )
+        _notify_transfer(
+            "cancelled",
+            item,
+            from_responsible,
+            old_receiver,
+            [_responsible_email(old_receiver)],
+        )
         _notify_transfer("created", item, from_responsible, to_responsible, [to_email])
     elif just_accepted:
         _notify_transfer(
