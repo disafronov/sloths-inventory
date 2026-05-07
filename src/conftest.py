@@ -1,13 +1,24 @@
 from __future__ import annotations
 
 import os
-from typing import Any
+from typing import Any, Generator
 
 import pytest
+from django.conf import settings
 from django.db import connections
 
 from catalogs.models import Location, Status
 from devices.models import Device
+
+
+# Autouse fixture to run each test under all supported locales
+@pytest.fixture(autouse=True, params=[code for code, _ in settings.LANGUAGES])
+def _set_locale(request: pytest.FixtureRequest) -> Generator[None, None, None]:
+    from django.utils import translation
+
+    translation.activate(request.param)
+    yield
+    translation.deactivate()
 
 
 def _env_truthy(name: str) -> bool:
