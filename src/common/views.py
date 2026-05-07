@@ -5,7 +5,8 @@ from django.contrib.auth import (
     get_user_model,
     update_session_auth_hash,
 )
-from django.contrib.auth import views as auth_views
+
+# import removed – UserPasswordChangeView no longer used
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, HttpResponse
@@ -31,17 +32,7 @@ from .forms import EmailChangeForm
 User = get_user_model()
 
 
-class UserPasswordChangeView(LoginRequiredMixin, auth_views.PasswordChangeView):
-    """
-    Password change page for authenticated users (same entry as in the main nav).
-
-    Staff may use Django Admin for account tasks as well; this view remains open to
-    them so they are not surprised by a 403 when following the app-wide nav link.
-    """
-
-    template_name = "password_change.html"
-    success_url = reverse_lazy("inventory:my-items")
-    login_url = reverse_lazy("common:login")
+# UserPasswordChangeView removed – password change handled via ProfileView.
 
 
 class ProfileView(LoginRequiredMixin, TemplateView):
@@ -80,15 +71,15 @@ class ProfileView(LoginRequiredMixin, TemplateView):
                 request,
                 _(
                     "A confirmation email has been sent to %(email)s. "
-                    "Please check your inbox and click the link to confirm the change."
+                    "Please check your email to confirm the change."
                 )
                 % {"email": new_email},
             )
             return redirect("common:profile")
-
+        # Render form with errors
         return render(
             request,
-            self.template_name,
+            "profile.html",
             {"email_form": email_form, "password_form": password_form},
         )
 
@@ -104,10 +95,10 @@ class ProfileView(LoginRequiredMixin, TemplateView):
             update_session_auth_hash(request, user)
             messages.success(request, _("Your password has been changed successfully."))
             return redirect("common:profile")
-
+        # Render form with errors
         return render(
             request,
-            self.template_name,
+            "profile.html",
             {"email_form": email_form, "password_form": password_form},
         )
 
