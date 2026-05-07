@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 import environ
@@ -19,11 +20,29 @@ env = environ.Env()
 # reading .env file
 environ.Env.read_env()
 
+
+def _env_int(name: str, default: int) -> int:
+    v = os.environ.get(name, "").strip()
+    return int(v) if v else default
+
+
+def _env_float(name: str, default: float) -> float:
+    v = os.environ.get(name, "").strip()
+    return float(v) if v else default
+
+
+def _env_bool(name: str, default: bool) -> bool:
+    v = os.environ.get(name, "").strip().lower()
+    if not v:
+        return default
+    return v in ("true", "1", "yes", "on")
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env.bool("DEBUG", default=False)
+DEBUG = _env_bool("DEBUG", default=False)
 
 # SECURITY WARNING: keep the secret key used in production secret!
 #
@@ -61,17 +80,15 @@ CSRF_TRUSTED_ORIGINS = _split_env_list(env("CSRF_TRUSTED_ORIGINS", default=""))
 #
 # Note: The correction window is anchored on ``created_at`` (immutable timestamp),
 # not ``updated_at``, so the window does not reset on each save.
-INVENTORY_CORRECTION_WINDOW_MINUTES = env.int(
-    "INVENTORY_CORRECTION_WINDOW_MINUTES",
-    default=0,
+INVENTORY_CORRECTION_WINDOW_MINUTES = _env_int(
+    "INVENTORY_CORRECTION_WINDOW_MINUTES", default=0
 )
 
 # Pending transfer offers created from the user UI get `expires_at` set to
 # "now + N hours" when N > 0. Zero disables automatic expiry (offers do not expire
 # unless set manually in the admin).
-INVENTORY_PENDING_TRANSFER_EXPIRATION_HOURS = env.int(
-    "INVENTORY_PENDING_TRANSFER_EXPIRATION_HOURS",
-    default=168,
+INVENTORY_PENDING_TRANSFER_EXPIRATION_HOURS = _env_int(
+    "INVENTORY_PENDING_TRANSFER_EXPIRATION_HOURS", default=168
 )
 
 
@@ -225,22 +242,22 @@ EMAIL_BACKEND = env.str(
     default="django.core.mail.backends.smtp.EmailBackend",
 )
 EMAIL_HOST = env.str("EMAIL_HOST", default="")
-EMAIL_PORT = env.int("EMAIL_PORT", default=587)
-EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
-EMAIL_USE_SSL = env.bool("EMAIL_USE_SSL", default=False)
+EMAIL_PORT = _env_int("EMAIL_PORT", default=587)
+EMAIL_USE_TLS = _env_bool("EMAIL_USE_TLS", default=True)
+EMAIL_USE_SSL = _env_bool("EMAIL_USE_SSL", default=False)
 EMAIL_HOST_USER = env.str("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = env.str("EMAIL_HOST_PASSWORD", default="")
-EMAIL_TIMEOUT = env.int("EMAIL_TIMEOUT", default=10)
+EMAIL_TIMEOUT = _env_int("EMAIL_TIMEOUT", default=10)
 
 DEFAULT_FROM_EMAIL = env.str("DEFAULT_FROM_EMAIL", default="noreply@example.com")
 SERVER_EMAIL = env.str("SERVER_EMAIL", default="noreply@example.com")
 
-EMAIL_SEND_ASYNC = env.bool("EMAIL_SEND_ASYNC", default=True)
-EMAIL_RETRY_MAX_RETRIES = env.int("EMAIL_RETRY_MAX_RETRIES", default=2)
-EMAIL_RETRY_BASE_DELAY_SECONDS = env.float(
+EMAIL_SEND_ASYNC = _env_bool("EMAIL_SEND_ASYNC", default=True)
+EMAIL_RETRY_MAX_RETRIES = _env_int("EMAIL_RETRY_MAX_RETRIES", default=2)
+EMAIL_RETRY_BASE_DELAY_SECONDS = _env_float(
     "EMAIL_RETRY_BASE_DELAY_SECONDS", default=60.0
 )
-EMAIL_RETRY_BACKOFF_FACTOR = env.float("EMAIL_RETRY_BACKOFF_FACTOR", default=2.0)
+EMAIL_RETRY_BACKOFF_FACTOR = _env_float("EMAIL_RETRY_BACKOFF_FACTOR", default=2.0)
 
 # Site URL for email links (required for password reset emails)
 SITE_URL = env.str("SITE_URL", default="")

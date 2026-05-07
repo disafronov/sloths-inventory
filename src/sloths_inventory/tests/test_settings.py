@@ -119,3 +119,17 @@ def test_settings_inventory_correction_window_minutes_can_be_overridden_via_env(
         sloths_inventory.settings.__file__,
     )
     assert module.INVENTORY_CORRECTION_WINDOW_MINUTES == 25
+
+
+def test_settings_bool_env_var_empty_string_uses_default(tmp_path, monkeypatch) -> None:
+    """Empty string for a bool env var should fall back to the declared default."""
+
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("DEBUG", "")
+    monkeypatch.setenv("SECRET_KEY", "test-secret-key")
+
+    module = _load_module_from_path(
+        "sloths_inventory._settings_bool_empty_string_test",
+        sloths_inventory.settings.__file__,
+    )
+    assert module.DEBUG is False
