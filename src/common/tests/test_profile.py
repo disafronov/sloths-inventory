@@ -217,8 +217,7 @@ class TestEmailChangeConfirmation:
         )
 
         new_email = "new@example.com"
-        user._new_email_for_token = new_email
-        token = email_change_token_generator.make_token(user)
+        token = email_change_token_generator.make_token_for_email(user, new_email)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         new_email_encoded = urlsafe_base64_encode(force_bytes(new_email))
 
@@ -303,8 +302,7 @@ class TestEmailChangeConfirmation:
         )
 
         new_email = "new@example.com"
-        user1._new_email_for_token = new_email
-        token = email_change_token_generator.make_token(user1)
+        token = email_change_token_generator.make_token_for_email(user1, new_email)
         uid = urlsafe_base64_encode(force_bytes(user1.pk))
         new_email_encoded = urlsafe_base64_encode(force_bytes(new_email))
 
