@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-07 13:54+0400\n"
+"POT-Creation-Date: 2026-05-07 22:45+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,11 +25,6 @@ msgid "Additional information"
 msgstr "Дополнительная информация"
 
 #: src/common/admin.py:177
-#: src/common/tests/test_catalog_correction_window.py:176
-#: src/common/tests/test_catalog_correction_window.py:334
-#: src/common/tests/test_catalog_correction_window.py:411
-#: src/common/tests/test_catalog_correction_window.py:448
-#: src/common/tests/test_catalog_correction_window.py:488
 msgid "Editing restrictions"
 msgstr "Ограничения на правку"
 
@@ -135,9 +130,14 @@ msgstr "Выйти"
 msgid "Login"
 msgstr "Войти"
 
-#: src/common/templates/base.html
-msgid "Your account has no email address. <a href=\"%(url)s\">Add one in your profile</a> to receive notifications."
-msgstr "У вашего аккаунта не указан email. <a href=\"%(url)s\">Добавьте его в профиле</a>, чтобы получать уведомления."
+#: src/common/templates/base.html:102
+#, python-format
+msgid ""
+"Your account has no email address. <a href=\"%(url)s\">Add one in your "
+"profile</a> to receive notifications."
+msgstr ""
+"У вашего аккаунта не указан email. <a href=\"%(url)s\">Добавьте его в "
+"профиле</a>, чтобы получать уведомления."
 
 #: src/common/templates/emails/email_change_body.html:6
 #: src/common/templates/emails/email_change_body.html:10
@@ -197,6 +197,12 @@ msgstr ""
 #: src/common/templates/emails/operation_assigned_body.html:23
 #: src/common/templates/emails/operation_unassigned_body.html:23
 #: src/common/templates/emails/operation_updated_body.html:23
+#: src/common/templates/emails/responsible_linked_body.html:23
+#: src/common/templates/emails/responsible_linked_body.txt:7
+#: src/common/templates/emails/responsible_unlinked_body.html:23
+#: src/common/templates/emails/responsible_unlinked_body.txt:7
+#: src/common/templates/emails/responsible_updated_body.html:23
+#: src/common/templates/emails/responsible_updated_body.txt:5
 #: src/common/templates/emails/transfer_accepted_body.html:24
 #: src/common/templates/emails/transfer_cancelled_body.html:24
 #: src/common/templates/emails/transfer_created_body.html:24
@@ -210,6 +216,12 @@ msgstr "С уважением,"
 #: src/common/templates/emails/operation_assigned_body.html:23
 #: src/common/templates/emails/operation_unassigned_body.html:23
 #: src/common/templates/emails/operation_updated_body.html:23
+#: src/common/templates/emails/responsible_linked_body.html:23
+#: src/common/templates/emails/responsible_linked_body.txt:8
+#: src/common/templates/emails/responsible_unlinked_body.html:23
+#: src/common/templates/emails/responsible_unlinked_body.txt:8
+#: src/common/templates/emails/responsible_updated_body.html:23
+#: src/common/templates/emails/responsible_updated_body.txt:6
 #: src/common/templates/emails/transfer_accepted_body.html:24
 #: src/common/templates/emails/transfer_cancelled_body.html:24
 #: src/common/templates/emails/transfer_created_body.html:24
@@ -218,6 +230,12 @@ msgstr "Команда Sloths Inventory"
 
 #: src/common/templates/emails/email_change_body.txt:1
 #: src/common/templates/emails/email_changed_notification_body.txt:1
+#: src/common/templates/emails/responsible_linked_body.html:12
+#: src/common/templates/emails/responsible_linked_body.txt:1
+#: src/common/templates/emails/responsible_unlinked_body.html:12
+#: src/common/templates/emails/responsible_unlinked_body.txt:1
+#: src/common/templates/emails/responsible_updated_body.html:12
+#: src/common/templates/emails/responsible_updated_body.txt:1
 #, python-format
 msgid "Hello %(username)s,"
 msgstr "Здравствуйте, %(username)s!"
@@ -416,6 +434,91 @@ msgstr ""
 msgid "Password reset for"
 msgstr "Сброс пароля для"
 
+#: src/common/templates/emails/responsible_linked_body.html:6
+#: src/common/templates/emails/responsible_linked_subject.txt:1
+#, python-format
+msgid "Sloths Inventory: profile linked — %(name)s"
+msgstr "Sloths Inventory: профиль подключён — %(name)s"
+
+#: src/common/templates/emails/responsible_linked_body.html:10
+#, python-format
+msgid "Profile linked — %(name)s"
+msgstr "Профиль подключён — %(name)s"
+
+#: src/common/templates/emails/responsible_linked_body.html:15
+#: src/common/templates/emails/responsible_unlinked_body.html:15
+#: src/common/templates/emails/responsible_updated_body.html:15
+msgid "Profile:"
+msgstr "Профиль:"
+
+#: src/common/templates/emails/responsible_linked_body.html:16
+#: src/common/templates/emails/responsible_unlinked_body.html:16
+#: src/common/templates/emails/responsible_updated_body.html:16
+msgid "Account:"
+msgstr "Аккаунт:"
+
+#: src/common/templates/emails/responsible_linked_body.html:19
+#: src/common/templates/emails/responsible_linked_body.txt:5
+msgid ""
+"You will now receive notifications about inventory changes for items "
+"assigned to this profile."
+msgstr ""
+"Теперь вы будете получать уведомления об изменениях ТМЦ, закреплённых за "
+"этим профилем."
+
+#: src/common/templates/emails/responsible_linked_body.txt:3
+#, python-format
+msgid ""
+"Your account has been linked to the Sloths Inventory profile \"%(name)s\"."
+msgstr ""
+"Ваш аккаунт подключён к профилю ответственного «%(name)s» в Sloths Inventory."
+
+#: src/common/templates/emails/responsible_unlinked_body.html:6
+#: src/common/templates/emails/responsible_unlinked_subject.txt:1
+#, python-format
+msgid "Sloths Inventory: profile unlinked — %(name)s"
+msgstr "Sloths Inventory: профиль отключён — %(name)s"
+
+#: src/common/templates/emails/responsible_unlinked_body.html:10
+#, python-format
+msgid "Profile unlinked — %(name)s"
+msgstr "Профиль отключён — %(name)s"
+
+#: src/common/templates/emails/responsible_unlinked_body.html:19
+#: src/common/templates/emails/responsible_unlinked_body.txt:5
+msgid "You will no longer receive inventory notifications for this profile."
+msgstr ""
+"Вы больше не будете получать уведомления об изменениях ТМЦ по этому профилю."
+
+#: src/common/templates/emails/responsible_unlinked_body.txt:3
+#, python-format
+msgid ""
+"Your account has been unlinked from the Sloths Inventory profile "
+"\"%(name)s\"."
+msgstr ""
+"Ваш аккаунт отключён от профиля ответственного «%(name)s» в Sloths Inventory."
+
+#: src/common/templates/emails/responsible_updated_body.html:6
+#: src/common/templates/emails/responsible_updated_subject.txt:1
+#, python-format
+msgid "Sloths Inventory: profile updated — %(name)s"
+msgstr "Sloths Inventory: профиль обновлён — %(name)s"
+
+#: src/common/templates/emails/responsible_updated_body.html:10
+#, python-format
+msgid "Profile updated — %(name)s"
+msgstr "Профиль обновлён — %(name)s"
+
+#: src/common/templates/emails/responsible_updated_body.html:19
+#: src/common/templates/emails/responsible_updated_body.txt:3
+#, python-format
+msgid ""
+"The Sloths Inventory profile \"%(name)s\" linked to your account has been "
+"updated."
+msgstr ""
+"Профиль ответственного «%(name)s» в Sloths Inventory, связанный с вашим "
+"аккаунтом, был обновлён."
+
 #: src/common/templates/emails/transfer_accepted_body.html:6
 #: src/common/templates/emails/transfer_accepted_body.html:10
 #: src/common/templates/emails/transfer_accepted_subject.txt:1
@@ -589,19 +692,15 @@ msgstr ""
 msgid "Send reset link"
 msgstr "Отправить ссылку для сброса"
 
-#: src/common/templates/profile.html:12
+#: src/common/templates/profile.html:14
 msgid "Email Address"
 msgstr "Адрес электронной почты"
 
-#: src/common/templates/profile.html:14
+#: src/common/templates/profile.html:15
 msgid "Current email:"
 msgstr "Текущий email:"
 
 #: src/common/templates/profile.html:18
-msgid "Change Email Address"
-msgstr "Изменить адрес электронной почты"
-
-#: src/common/templates/profile.html:20
 msgid "Change Email"
 msgstr "Изменить email"
 
@@ -609,32 +708,32 @@ msgstr "Изменить email"
 msgid "Password"
 msgstr "Пароль"
 
-#: src/common/templates/profile.html:29 src/common/templates/profile.html:31
+#: src/common/templates/profile.html:27 src/common/templates/profile.html:29
 msgid "Change Password"
 msgstr "Изменить пароль"
 
-#: src/common/views.py:80
+#: src/common/views.py:73
 #, python-format
 msgid ""
-"A confirmation email has been sent to %(email)s. Please check your inbox and "
-"click the link to confirm the change."
+"A confirmation email has been sent to %(email)s. Please check your email to "
+"confirm the change."
 msgstr ""
 "Письмо с подтверждением отправлено на %(email)s. Пожалуйста, проверьте почту "
-"и перейдите по ссылке для подтверждения изменения."
+"для подтверждения изменения."
 
-#: src/common/views.py:103
+#: src/common/views.py:96
 msgid "Your password has been changed successfully."
 msgstr "Ваш пароль успешно изменен."
 
-#: src/common/views.py:184
+#: src/common/views.py:136
 msgid "This email address is already in use by another account."
 msgstr "Этот адрес электронной почты уже используется другой учетной записью."
 
-#: src/common/views.py:193
+#: src/common/views.py:145
 msgid "Your email address has been changed successfully."
 msgstr "Ваш адрес электронной почты успешно изменен."
 
-#: src/common/views.py:206
+#: src/common/views.py:155
 msgid ""
 "The email confirmation link is invalid or has expired. Please request a new "
 "email change."
@@ -642,72 +741,5 @@ msgstr ""
 "Ссылка подтверждения email недействительна или истекла. Пожалуйста, "
 "запросите новое изменение email."
 
-#: src/common/templates/emails/responsible_linked_subject.txt
-#: src/common/templates/emails/responsible_linked_body.html
-#, python-format
-msgid "Sloths Inventory: profile linked — %(name)s"
-msgstr "Sloths Inventory: профиль подключён — %(name)s"
-
-#: src/common/templates/emails/responsible_linked_body.html
-#, python-format
-msgid "Profile linked — %(name)s"
-msgstr "Профиль подключён — %(name)s"
-
-#: src/common/templates/emails/responsible_linked_body.txt
-#: src/common/templates/emails/responsible_linked_body.html
-#, python-format
-msgid "Your account has been linked to the Sloths Inventory profile \"%(name)s\"."
-msgstr "Ваш аккаунт подключён к профилю ответственного «%(name)s» в Sloths Inventory."
-
-#: src/common/templates/emails/responsible_linked_body.txt
-#: src/common/templates/emails/responsible_linked_body.html
-msgid "You will now receive notifications about inventory changes for items assigned to this profile."
-msgstr "Теперь вы будете получать уведомления об изменениях ТМЦ, закреплённых за этим профилем."
-
-#: src/common/templates/emails/responsible_linked_body.html
-msgid "Profile:"
-msgstr "Профиль:"
-
-#: src/common/templates/emails/responsible_linked_body.html
-#: src/common/templates/emails/responsible_unlinked_body.html
-msgid "Account:"
-msgstr "Аккаунт:"
-
-#: src/common/templates/emails/responsible_unlinked_subject.txt
-#: src/common/templates/emails/responsible_unlinked_body.html
-#, python-format
-msgid "Sloths Inventory: profile unlinked — %(name)s"
-msgstr "Sloths Inventory: профиль отключён — %(name)s"
-
-#: src/common/templates/emails/responsible_unlinked_body.html
-#, python-format
-msgid "Profile unlinked — %(name)s"
-msgstr "Профиль отключён — %(name)s"
-
-#: src/common/templates/emails/responsible_unlinked_body.txt
-#: src/common/templates/emails/responsible_unlinked_body.html
-#, python-format
-msgid "Your account has been unlinked from the Sloths Inventory profile \"%(name)s\"."
-msgstr "Ваш аккаунт отключён от профиля ответственного «%(name)s» в Sloths Inventory."
-
-#: src/common/templates/emails/responsible_unlinked_body.txt
-#: src/common/templates/emails/responsible_unlinked_body.html
-msgid "You will no longer receive inventory notifications for this profile."
-msgstr "Вы больше не будете получать уведомления об изменениях ТМЦ по этому профилю."
-
-#: src/common/templates/emails/responsible_updated_subject.txt
-#: src/common/templates/emails/responsible_updated_body.html
-#, python-format
-msgid "Sloths Inventory: profile updated — %(name)s"
-msgstr "Sloths Inventory: профиль обновлён — %(name)s"
-
-#: src/common/templates/emails/responsible_updated_body.html
-#, python-format
-msgid "Profile updated — %(name)s"
-msgstr "Профиль обновлён — %(name)s"
-
-#: src/common/templates/emails/responsible_updated_body.txt
-#: src/common/templates/emails/responsible_updated_body.html
-#, python-format
-msgid "The Sloths Inventory profile \"%(name)s\" linked to your account has been updated."
-msgstr "Профиль ответственного «%(name)s» в Sloths Inventory, связанный с вашим аккаунтом, был обновлён."
+#~ msgid "Change Email Address"
+#~ msgstr "Изменить адрес электронной почты"
