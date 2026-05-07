@@ -682,3 +682,20 @@ msgstr "Your account has been unlinked from the Sloths Inventory profile \"%(nam
 #: src/common/templates/emails/responsible_unlinked_body.html
 msgid "You will no longer receive inventory notifications for this profile."
 msgstr "You will no longer receive inventory notifications for this profile."
+
+#: src/common/templates/emails/responsible_updated_subject.txt
+#: src/common/templates/emails/responsible_updated_body.html
+#, python-format
+msgid "Sloths Inventory: profile updated — %(name)s"
+msgstr "Sloths Inventory: profile updated — %(name)s"
+
+#: src/common/templates/emails/responsible_updated_body.html
+#, python-format
+msgid "Profile updated — %(name)s"
+msgstr "Profile updated — %(name)s"
+
+#: src/common/templates/emails/responsible_updated_body.txt
+#: src/common/templates/emails/responsible_updated_body.html
+#, python-format
+msgid "The Sloths Inventory profile \"%(name)s\" linked to your account has been updated."
+msgstr "The Sloths Inventory profile \"%(name)s\" linked to your account has been updated."

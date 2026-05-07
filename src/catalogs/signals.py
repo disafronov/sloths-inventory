@@ -36,6 +36,9 @@ def notify_responsible_user_changed(
     pre_user_id: int | None = getattr(instance, "_pre_save_user_id", None)
 
     if pre_user_id == instance.user_id:
+        if instance.user_id:
+            user = User.objects.get(pk=instance.user_id)
+            _notify_responsible("updated", instance, user)
         return
 
     if instance.user_id:
