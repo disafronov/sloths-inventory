@@ -68,7 +68,9 @@ def test_validation_error_user_message_fallback_uses_str_when_no_messages() -> N
 
 @pytest.mark.django_db
 def test_my_items_empty_when_user_has_no_responsible() -> None:
-    user = User.objects.create_user(username="alice", password="pw")
+    user = User.objects.create_user(
+        username="alice", password="pw", email="alice@example.com"
+    )
 
     client = Client()
     client.force_login(user)
@@ -104,8 +106,12 @@ def test_my_items_shows_only_items_where_latest_operation_has_my_responsible() -
     status = Status.objects.create(name="In stock")
     location = Location.objects.create(name="Moscow")
 
-    user1 = User.objects.create_user(username="u1", password="pw")
-    user2 = User.objects.create_user(username="u2", password="pw")
+    user1 = User.objects.create_user(
+        username="u1", password="pw", email="u1@example.com"
+    )
+    user2 = User.objects.create_user(
+        username="u2", password="pw", email="u2@example.com"
+    )
     resp1 = Responsible.objects.create(
         last_name="Ivanov", first_name="Ivan", user=user1
     )
@@ -170,7 +176,9 @@ def test_build_my_items_owned_list_does_not_query_per_row_for_location_status() 
     status = Status.objects.create(name="In stock")
     location = Location.objects.create(name="Moscow")
 
-    user = User.objects.create_user(username="u_nplus", password="pw")
+    user = User.objects.create_user(
+        username="u_nplus", password="pw", email="u_nplus@example.com"
+    )
     resp = Responsible.objects.create(last_name="Nplus", first_name="One", user=user)
 
     for i in range(25):
@@ -206,7 +214,9 @@ def test_my_items_search_filters_by_inventory_number_and_serial() -> None:
     status = Status.objects.create(name="In stock")
     location = Location.objects.create(name="Moscow")
 
-    user = User.objects.create_user(username="u1", password="pw")
+    user = User.objects.create_user(
+        username="u1", password="pw", email="u1@example.com"
+    )
     resp = Responsible.objects.create(last_name="Ivanov", first_name="Ivan", user=user)
 
     item1 = Item.objects.create(
@@ -240,8 +250,12 @@ def test_my_items_search_filters_by_inventory_number_and_serial() -> None:
 def test_my_items_list_kind_outgoing_shows_only_outgoing_card() -> None:
     """`kind=outgoing` must list only outgoing transfer cards, not owned rows."""
 
-    user_sender = User.objects.create_user(username="sender", password="pw")
-    user_receiver = User.objects.create_user(username="receiver", password="pw")
+    user_sender = User.objects.create_user(
+        username="sender", password="pw", email="sender@example.com"
+    )
+    user_receiver = User.objects.create_user(
+        username="receiver", password="pw", email="receiver@example.com"
+    )
     resp_sender = Responsible.objects.create(
         last_name="Sender", first_name="User", user=user_sender
     )
@@ -285,8 +299,12 @@ def test_my_items_list_kind_owned_hides_transfer_offers() -> None:
     `kind=owned` must not show inventory numbers that appear only on transfer cards.
     """
 
-    user_sender = User.objects.create_user(username="sender", password="pw")
-    user_receiver = User.objects.create_user(username="receiver", password="pw")
+    user_sender = User.objects.create_user(
+        username="sender", password="pw", email="sender@example.com"
+    )
+    user_receiver = User.objects.create_user(
+        username="receiver", password="pw", email="receiver@example.com"
+    )
     resp_sender = Responsible.objects.create(
         last_name="Sender", first_name="User", user=user_sender
     )
@@ -323,8 +341,12 @@ def test_my_items_list_kind_owned_hides_transfer_offers() -> None:
 def test_my_items_list_kind_incoming_for_receiver() -> None:
     """Receiver: `kind=incoming` shows the offer; `kind=outgoing` is empty."""
 
-    user_sender = User.objects.create_user(username="sender", password="pw")
-    user_receiver = User.objects.create_user(username="receiver", password="pw")
+    user_sender = User.objects.create_user(
+        username="sender", password="pw", email="sender@example.com"
+    )
+    user_receiver = User.objects.create_user(
+        username="receiver", password="pw", email="receiver@example.com"
+    )
     resp_sender = Responsible.objects.create(
         last_name="Sender", first_name="User", user=user_sender
     )
@@ -356,8 +378,12 @@ def test_my_items_list_kind_incoming_for_receiver() -> None:
 def test_my_items_list_kind_invalid_falls_back_to_all() -> None:
     """Unknown `kind` values are ignored (treated as all)."""
 
-    user_sender = User.objects.create_user(username="sender", password="pw")
-    user_receiver = User.objects.create_user(username="receiver", password="pw")
+    user_sender = User.objects.create_user(
+        username="sender", password="pw", email="sender@example.com"
+    )
+    user_receiver = User.objects.create_user(
+        username="receiver", password="pw", email="receiver@example.com"
+    )
     resp_sender = Responsible.objects.create(
         last_name="Sender", first_name="User", user=user_sender
     )
@@ -402,8 +428,12 @@ def test_item_history_only_for_my_or_previously_my_item() -> None:
     status = Status.objects.create(name="In stock")
     location = Location.objects.create(name="Moscow")
 
-    user1 = User.objects.create_user(username="u1", password="pw")
-    user2 = User.objects.create_user(username="u2", password="pw")
+    user1 = User.objects.create_user(
+        username="u1", password="pw", email="u1@example.com"
+    )
+    user2 = User.objects.create_user(
+        username="u2", password="pw", email="u2@example.com"
+    )
     resp1 = Responsible.objects.create(
         last_name="Ivanov", first_name="Ivan", user=user1
     )
@@ -475,8 +505,12 @@ def test_previous_items_shows_only_items_where_user_was_responsible_in_the_past(
     status = Status.objects.create(name="In stock")
     location = Location.objects.create(name="Moscow")
 
-    user1 = User.objects.create_user(username="u1", password="pw")
-    user2 = User.objects.create_user(username="u2", password="pw")
+    user1 = User.objects.create_user(
+        username="u1", password="pw", email="u1@example.com"
+    )
+    user2 = User.objects.create_user(
+        username="u2", password="pw", email="u2@example.com"
+    )
     resp1 = Responsible.objects.create(
         last_name="Ivanov", first_name="Ivan", user=user1
     )
@@ -523,8 +557,12 @@ def test_previous_items_search_filters_results() -> None:
     status = Status.objects.create(name="In stock")
     location = Location.objects.create(name="Moscow")
 
-    user1 = User.objects.create_user(username="u1", password="pw")
-    user2 = User.objects.create_user(username="u2", password="pw")
+    user1 = User.objects.create_user(
+        username="u1", password="pw", email="u1@example.com"
+    )
+    user2 = User.objects.create_user(
+        username="u2", password="pw", email="u2@example.com"
+    )
     resp1 = Responsible.objects.create(
         last_name="Ivanov", first_name="Ivan", user=user1
     )
@@ -581,8 +619,12 @@ def test_previous_items_incoming_transfer_uses_transfer_card_once() -> None:
     status = Status.objects.create(name="In stock")
     location = Location.objects.create(name="Moscow")
 
-    user_former = User.objects.create_user(username="u_prev_xfer", password="pw")
-    user_current = User.objects.create_user(username="u_curr_xfer", password="pw")
+    user_former = User.objects.create_user(
+        username="u_prev_xfer", password="pw", email="u_prev_xfer@example.com"
+    )
+    user_current = User.objects.create_user(
+        username="u_curr_xfer", password="pw", email="u_curr_xfer@example.com"
+    )
     resp_former = Responsible.objects.create(
         last_name="Former", first_name="X", user=user_former
     )
@@ -627,9 +669,15 @@ def test_item_history_for_former_owner_includes_only_one_handoff_after_last_mine
     status = Status.objects.create(name="In stock")
     location = Location.objects.create(name="Moscow")
 
-    user1 = User.objects.create_user(username="u1", password="pw")
-    user2 = User.objects.create_user(username="u2", password="pw")
-    user3 = User.objects.create_user(username="u3", password="pw")
+    user1 = User.objects.create_user(
+        username="u1", password="pw", email="u1@example.com"
+    )
+    user2 = User.objects.create_user(
+        username="u2", password="pw", email="u2@example.com"
+    )
+    user3 = User.objects.create_user(
+        username="u3", password="pw", email="u3@example.com"
+    )
     resp1 = Responsible.objects.create(
         last_name="Ivanov", first_name="Ivan", user=user1
     )
@@ -714,7 +762,9 @@ def test_change_location_requires_login() -> None:
 
 @pytest.mark.django_db
 def test_change_location_returns_404_if_no_responsible() -> None:
-    user = User.objects.create_user(username="alice", password="pw")
+    user = User.objects.create_user(
+        username="alice", password="pw", email="alice@example.com"
+    )
     status = Status.objects.create(name="In use")
     location = Location.objects.create(name="Home")
     resp = Responsible.objects.create(last_name="Other", first_name="User")
@@ -728,8 +778,12 @@ def test_change_location_returns_404_if_no_responsible() -> None:
 
 @pytest.mark.django_db
 def test_change_location_returns_404_if_not_current_owner() -> None:
-    user1 = User.objects.create_user(username="u1", password="pw")
-    user2 = User.objects.create_user(username="u2", password="pw")
+    user1 = User.objects.create_user(
+        username="u1", password="pw", email="u1@example.com"
+    )
+    user2 = User.objects.create_user(
+        username="u2", password="pw", email="u2@example.com"
+    )
     resp1 = Responsible.objects.create(last_name="One", first_name="User", user=user1)
     resp2 = Responsible.objects.create(last_name="Two", first_name="User", user=user2)
     status = Status.objects.create(name="In use")
@@ -747,7 +801,9 @@ def test_change_location_returns_404_if_not_current_owner() -> None:
 
 @pytest.mark.django_db
 def test_change_location_get_shows_form_with_locations() -> None:
-    user = User.objects.create_user(username="u1", password="pw")
+    user = User.objects.create_user(
+        username="u1", password="pw", email="u1@example.com"
+    )
     resp = Responsible.objects.create(last_name="One", first_name="User", user=user)
     status = Status.objects.create(name="In use")
     location = Location.objects.create(name="Home")
@@ -764,7 +820,9 @@ def test_change_location_get_shows_form_with_locations() -> None:
 
 @pytest.mark.django_db
 def test_change_location_post_creates_new_operation_and_redirects() -> None:
-    user = User.objects.create_user(username="u1", password="pw")
+    user = User.objects.create_user(
+        username="u1", password="pw", email="u1@example.com"
+    )
     resp = Responsible.objects.create(last_name="One", first_name="User", user=user)
     status = Status.objects.create(name="In use")
     location_old = Location.objects.create(name="Home")
@@ -792,7 +850,9 @@ def test_change_location_post_creates_new_operation_and_redirects() -> None:
 
 @pytest.mark.django_db
 def test_change_location_post_returns_404_when_location_id_is_missing() -> None:
-    user = User.objects.create_user(username="u1", password="pw")
+    user = User.objects.create_user(
+        username="u1", password="pw", email="u1@example.com"
+    )
     resp = Responsible.objects.create(last_name="One", first_name="User", user=user)
     status = Status.objects.create(name="In use")
     location = Location.objects.create(name="Home")
@@ -806,7 +866,9 @@ def test_change_location_post_returns_404_when_location_id_is_missing() -> None:
 
 @pytest.mark.django_db
 def test_change_location_post_returns_404_for_invalid_location() -> None:
-    user = User.objects.create_user(username="u1", password="pw")
+    user = User.objects.create_user(
+        username="u1", password="pw", email="u1@example.com"
+    )
     resp = Responsible.objects.create(last_name="One", first_name="User", user=user)
     status = Status.objects.create(name="In use")
     location = Location.objects.create(name="Home")
@@ -823,7 +885,9 @@ def test_change_location_post_returns_404_for_invalid_location() -> None:
 
 @pytest.mark.django_db
 def test_change_location_post_returns_400_when_location_is_unchanged() -> None:
-    user = User.objects.create_user(username="u1", password="pw")
+    user = User.objects.create_user(
+        username="u1", password="pw", email="u1@example.com"
+    )
     resp = Responsible.objects.create(last_name="One", first_name="User", user=user)
     status = Status.objects.create(name="In use")
     location = Location.objects.create(name="Home")
@@ -849,7 +913,9 @@ def test_create_transfer_requires_login() -> None:
 
 @pytest.mark.django_db
 def test_create_transfer_returns_404_if_user_has_no_responsible() -> None:
-    user = User.objects.create_user(username="u1", password="pw")
+    user = User.objects.create_user(
+        username="u1", password="pw", email="u1@example.com"
+    )
     client = Client()
     client.force_login(user)
     response = client.get("/items/1/transfer/")
@@ -858,8 +924,12 @@ def test_create_transfer_returns_404_if_user_has_no_responsible() -> None:
 
 @pytest.mark.django_db
 def test_create_transfer_returns_404_if_not_current_owner() -> None:
-    user1 = User.objects.create_user(username="u1", password="pw")
-    user2 = User.objects.create_user(username="u2", password="pw")
+    user1 = User.objects.create_user(
+        username="u1", password="pw", email="u1@example.com"
+    )
+    user2 = User.objects.create_user(
+        username="u2", password="pw", email="u2@example.com"
+    )
     resp1 = Responsible.objects.create(last_name="One", first_name="User", user=user1)
     resp2 = Responsible.objects.create(last_name="Two", first_name="User", user=user2)
     status = Status.objects.create(name="In use")
@@ -876,8 +946,12 @@ def test_create_transfer_returns_404_if_not_current_owner() -> None:
 
 @pytest.mark.django_db
 def test_create_transfer_get_shows_receiver_options() -> None:
-    user1 = User.objects.create_user(username="u1", password="pw")
-    user2 = User.objects.create_user(username="u2", password="pw")
+    user1 = User.objects.create_user(
+        username="u1", password="pw", email="u1@example.com"
+    )
+    user2 = User.objects.create_user(
+        username="u2", password="pw", email="u2@example.com"
+    )
     resp1 = Responsible.objects.create(last_name="One", first_name="User", user=user1)
     resp2 = Responsible.objects.create(last_name="Two", first_name="User", user=user2)
     status = Status.objects.create(name="In use")
@@ -898,8 +972,12 @@ def test_create_transfer_get_shows_receiver_options() -> None:
 def test_create_transfer_get_hides_expiry_hint_when_disabled() -> None:
     """No automatic expiry hint when the configured window is zero."""
 
-    user1 = User.objects.create_user(username="u1z", password="pw")
-    user2 = User.objects.create_user(username="u2z", password="pw")
+    user1 = User.objects.create_user(
+        username="u1z", password="pw", email="u1z@example.com"
+    )
+    user2 = User.objects.create_user(
+        username="u2z", password="pw", email="u2z@example.com"
+    )
     resp1 = Responsible.objects.create(last_name="One", first_name="Zed", user=user1)
     Responsible.objects.create(last_name="Two", first_name="Zed", user=user2)
     status = Status.objects.create(name="In use")
@@ -915,8 +993,12 @@ def test_create_transfer_get_hides_expiry_hint_when_disabled() -> None:
 
 @pytest.mark.django_db
 def test_create_transfer_get_shows_existing_pending_transfer() -> None:
-    user1 = User.objects.create_user(username="u1", password="pw")
-    user2 = User.objects.create_user(username="u2", password="pw")
+    user1 = User.objects.create_user(
+        username="u1", password="pw", email="u1@example.com"
+    )
+    user2 = User.objects.create_user(
+        username="u2", password="pw", email="u2@example.com"
+    )
     resp1 = Responsible.objects.create(last_name="One", first_name="User", user=user1)
     resp2 = Responsible.objects.create(last_name="Two", first_name="User", user=user2)
     status = Status.objects.create(name="In use")
@@ -940,8 +1022,12 @@ def test_create_transfer_get_shows_existing_pending_transfer() -> None:
 def test_create_transfer_get_treats_expired_pending_as_absent() -> None:
     """Past-deadline offers must not appear as an editable pending on the form."""
 
-    user1 = User.objects.create_user(username="u1expget", password="pw")
-    user2 = User.objects.create_user(username="u2expget", password="pw")
+    user1 = User.objects.create_user(
+        username="u1expget", password="pw", email="u1expget@example.com"
+    )
+    user2 = User.objects.create_user(
+        username="u2expget", password="pw", email="u2expget@example.com"
+    )
     resp1 = Responsible.objects.create(last_name="One", first_name="ExpGet", user=user1)
     resp2 = Responsible.objects.create(last_name="Two", first_name="ExpGet", user=user2)
     status = Status.objects.create(name="In use")
@@ -968,8 +1054,12 @@ def test_create_transfer_get_treats_expired_pending_as_absent() -> None:
 @pytest.mark.django_db
 @override_settings(INVENTORY_PENDING_TRANSFER_EXPIRATION_HOURS=0)
 def test_create_transfer_post_creates_pending_transfer() -> None:
-    user1 = User.objects.create_user(username="u1", password="pw")
-    user2 = User.objects.create_user(username="u2", password="pw")
+    user1 = User.objects.create_user(
+        username="u1", password="pw", email="u1@example.com"
+    )
+    user2 = User.objects.create_user(
+        username="u2", password="pw", email="u2@example.com"
+    )
     resp1 = Responsible.objects.create(last_name="One", first_name="User", user=user1)
     resp2 = Responsible.objects.create(last_name="Two", first_name="User", user=user2)
     status = Status.objects.create(name="In use")
@@ -1007,8 +1097,12 @@ def test_create_transfer_post_returns_400_when_create_offer_validation_fails(
 
     monkeypatch.setattr(PendingTransfer, "create_offer", classmethod(_boom))
 
-    user1 = User.objects.create_user(username="u1val", password="pw")
-    user2 = User.objects.create_user(username="u2val", password="pw")
+    user1 = User.objects.create_user(
+        username="u1val", password="pw", email="u1val@example.com"
+    )
+    user2 = User.objects.create_user(
+        username="u2val", password="pw", email="u2val@example.com"
+    )
     resp1 = Responsible.objects.create(last_name="One", first_name="Val", user=user1)
     resp2 = Responsible.objects.create(last_name="Two", first_name="Val", user=user2)
     status = Status.objects.create(name="In use")
@@ -1034,9 +1128,15 @@ def test_create_offer_duplicate_active_validation_error_formats_for_display() ->
     readable template string (same helper as the transfer view).
     """
 
-    user1 = User.objects.create_user(username="dup1", password="pw")
-    user2 = User.objects.create_user(username="dup2", password="pw")
-    user3 = User.objects.create_user(username="dup3", password="pw")
+    user1 = User.objects.create_user(
+        username="dup1", password="pw", email="dup1@example.com"
+    )
+    user2 = User.objects.create_user(
+        username="dup2", password="pw", email="dup2@example.com"
+    )
+    user3 = User.objects.create_user(
+        username="dup3", password="pw", email="dup3@example.com"
+    )
     resp1 = Responsible.objects.create(last_name="One", first_name="Dup", user=user1)
     resp2 = Responsible.objects.create(last_name="Two", first_name="Dup", user=user2)
     resp3 = Responsible.objects.create(last_name="Three", first_name="Dup", user=user3)
@@ -1068,8 +1168,12 @@ def test_create_offer_duplicate_active_validation_error_formats_for_display() ->
 def test_create_transfer_post_sets_expires_at_from_settings() -> None:
     """UI-created offers get `expires_at` when expiration hours setting is positive."""
 
-    user1 = User.objects.create_user(username="u1e", password="pw")
-    user2 = User.objects.create_user(username="u2e", password="pw")
+    user1 = User.objects.create_user(
+        username="u1e", password="pw", email="u1e@example.com"
+    )
+    user2 = User.objects.create_user(
+        username="u2e", password="pw", email="u2e@example.com"
+    )
     resp1 = Responsible.objects.create(last_name="One", first_name="Expiry", user=user1)
     resp2 = Responsible.objects.create(last_name="Two", first_name="Expiry", user=user2)
     status = Status.objects.create(name="In use")
@@ -1104,9 +1208,15 @@ def test_create_transfer_post_updates_active_offer_when_receiver_changes() -> No
     changes (same behaviour as the model, exercised through the view).
     """
 
-    user1 = User.objects.create_user(username="u1upd", password="pw")
-    user2 = User.objects.create_user(username="u2upd", password="pw")
-    user3 = User.objects.create_user(username="u3upd", password="pw")
+    user1 = User.objects.create_user(
+        username="u1upd", password="pw", email="u1upd@example.com"
+    )
+    user2 = User.objects.create_user(
+        username="u2upd", password="pw", email="u2upd@example.com"
+    )
+    user3 = User.objects.create_user(
+        username="u3upd", password="pw", email="u3upd@example.com"
+    )
     resp1 = Responsible.objects.create(last_name="One", first_name="Upd", user=user1)
     resp2 = Responsible.objects.create(last_name="Two", first_name="Upd", user=user2)
     resp3 = Responsible.objects.create(last_name="Three", first_name="Upd", user=user3)
@@ -1158,8 +1268,12 @@ def test_create_transfer_post_edit_offer_auto_accepts_no_user_receiver() -> None
     auto-complete the transfer (same rule as `create_offer` / `update_offer`).
     """
 
-    user1 = User.objects.create_user(username="u1nouserupd", password="pw")
-    user2 = User.objects.create_user(username="u2nouserupd", password="pw")
+    user1 = User.objects.create_user(
+        username="u1nouserupd", password="pw", email="u1nouserupd@example.com"
+    )
+    user2 = User.objects.create_user(
+        username="u2nouserupd", password="pw", email="u2nouserupd@example.com"
+    )
     resp1 = Responsible.objects.create(
         last_name="One", first_name="NoUserUpd", user=user1
     )
@@ -1206,7 +1320,9 @@ def test_create_transfer_auto_accepts_when_receiver_has_no_user() -> None:
     accepted automatically (there is nobody who could confirm it in the UI).
     """
 
-    user_sender = User.objects.create_user(username="sender-auto", password="pw")
+    user_sender = User.objects.create_user(
+        username="sender-auto", password="pw", email="sender-auto@example.com"
+    )
     resp_sender = Responsible.objects.create(
         last_name="Sender",
         first_name="Auto",
@@ -1242,8 +1358,12 @@ def test_create_transfer_auto_accepts_when_receiver_has_no_user() -> None:
 
 @pytest.mark.django_db
 def test_accept_transfer_requires_receiver_confirmation_and_changes_owner() -> None:
-    user_sender = User.objects.create_user(username="sender", password="pw")
-    user_receiver = User.objects.create_user(username="receiver", password="pw")
+    user_sender = User.objects.create_user(
+        username="sender", password="pw", email="sender@example.com"
+    )
+    user_receiver = User.objects.create_user(
+        username="receiver", password="pw", email="receiver@example.com"
+    )
     resp_sender = Responsible.objects.create(
         last_name="Sender", first_name="User", user=user_sender
     )
@@ -1296,7 +1416,9 @@ def test_accept_transfer_requires_receiver_confirmation_and_changes_owner() -> N
 
 @pytest.mark.django_db
 def test_accept_transfer_returns_404_if_user_has_no_responsible() -> None:
-    user = User.objects.create_user(username="u1", password="pw")
+    user = User.objects.create_user(
+        username="u1", password="pw", email="u1@example.com"
+    )
     client = Client()
     client.force_login(user)
     response = client.post("/transfers/1/accept/")
@@ -1305,8 +1427,12 @@ def test_accept_transfer_returns_404_if_user_has_no_responsible() -> None:
 
 @pytest.mark.django_db
 def test_cancel_transfer_is_allowed_for_sender_and_receiver() -> None:
-    user_sender = User.objects.create_user(username="sender", password="pw")
-    user_receiver = User.objects.create_user(username="receiver", password="pw")
+    user_sender = User.objects.create_user(
+        username="sender", password="pw", email="sender@example.com"
+    )
+    user_receiver = User.objects.create_user(
+        username="receiver", password="pw", email="receiver@example.com"
+    )
     resp_sender = Responsible.objects.create(
         last_name="Sender", first_name="User", user=user_sender
     )
@@ -1351,7 +1477,9 @@ def test_cancel_transfer_is_allowed_for_sender_and_receiver() -> None:
 
 @pytest.mark.django_db
 def test_cancel_transfer_returns_404_if_user_has_no_responsible() -> None:
-    user = User.objects.create_user(username="u1", password="pw")
+    user = User.objects.create_user(
+        username="u1", password="pw", email="u1@example.com"
+    )
     client = Client()
     client.force_login(user)
     response = client.post("/transfers/1/cancel/")
@@ -1360,7 +1488,9 @@ def test_cancel_transfer_returns_404_if_user_has_no_responsible() -> None:
 
 @pytest.mark.django_db
 def test_accept_transfer_returns_404_for_unknown_transfer_id() -> None:
-    user = User.objects.create_user(username="u1", password="pw")
+    user = User.objects.create_user(
+        username="u1", password="pw", email="u1@example.com"
+    )
     resp = Responsible.objects.create(last_name="Ivanov", first_name="Ivan", user=user)
     client = Client()
     client.force_login(user)
@@ -1371,7 +1501,9 @@ def test_accept_transfer_returns_404_for_unknown_transfer_id() -> None:
 
 @pytest.mark.django_db
 def test_cancel_transfer_returns_404_for_unknown_transfer_id() -> None:
-    user = User.objects.create_user(username="u1", password="pw")
+    user = User.objects.create_user(
+        username="u1", password="pw", email="u1@example.com"
+    )
     resp = Responsible.objects.create(last_name="Ivanov", first_name="Ivan", user=user)
     client = Client()
     client.force_login(user)
@@ -1382,9 +1514,15 @@ def test_cancel_transfer_returns_404_for_unknown_transfer_id() -> None:
 
 @pytest.mark.django_db
 def test_cancel_transfer_returns_404_if_user_is_not_sender_or_receiver() -> None:
-    user_sender = User.objects.create_user(username="sender", password="pw")
-    user_receiver = User.objects.create_user(username="receiver", password="pw")
-    user_other = User.objects.create_user(username="other", password="pw")
+    user_sender = User.objects.create_user(
+        username="sender", password="pw", email="sender@example.com"
+    )
+    user_receiver = User.objects.create_user(
+        username="receiver", password="pw", email="receiver@example.com"
+    )
+    user_other = User.objects.create_user(
+        username="other", password="pw", email="other@example.com"
+    )
     resp_sender = Responsible.objects.create(
         last_name="Sender", first_name="User", user=user_sender
     )
@@ -1414,9 +1552,15 @@ def test_cancel_transfer_returns_404_if_user_is_not_sender_or_receiver() -> None
 
 @pytest.mark.django_db
 def test_accept_transfer_returns_404_if_user_is_not_sender_or_receiver() -> None:
-    user_sender = User.objects.create_user(username="acc-snd", password="pw")
-    user_receiver = User.objects.create_user(username="acc-rcv", password="pw")
-    user_other = User.objects.create_user(username="acc-oth", password="pw")
+    user_sender = User.objects.create_user(
+        username="acc-snd", password="pw", email="acc-snd@example.com"
+    )
+    user_receiver = User.objects.create_user(
+        username="acc-rcv", password="pw", email="acc-rcv@example.com"
+    )
+    user_other = User.objects.create_user(
+        username="acc-oth", password="pw", email="acc-oth@example.com"
+    )
     resp_sender = Responsible.objects.create(
         last_name="Sender", first_name="Acc", user=user_sender
     )
@@ -1452,8 +1596,12 @@ def test_accept_transfer_returns_404_if_user_is_not_sender_or_receiver() -> None
 
 @pytest.mark.django_db
 def test_cancel_transfer_warns_when_inactive() -> None:
-    user_sender = User.objects.create_user(username="sender", password="pw")
-    user_receiver = User.objects.create_user(username="receiver", password="pw")
+    user_sender = User.objects.create_user(
+        username="sender", password="pw", email="sender@example.com"
+    )
+    user_receiver = User.objects.create_user(
+        username="receiver", password="pw", email="receiver@example.com"
+    )
     resp_sender = Responsible.objects.create(
         last_name="Sender", first_name="User", user=user_sender
     )
@@ -1484,8 +1632,12 @@ def test_cancel_transfer_warns_when_inactive() -> None:
 def test_accept_transfer_surfaces_inactive_message_when_offer_flips_inside_transaction(
     monkeypatch,
 ) -> None:
-    user_sender = User.objects.create_user(username="sender", password="pw")
-    user_receiver = User.objects.create_user(username="receiver", password="pw")
+    user_sender = User.objects.create_user(
+        username="sender", password="pw", email="sender@example.com"
+    )
+    user_receiver = User.objects.create_user(
+        username="receiver", password="pw", email="receiver@example.com"
+    )
     resp_sender = Responsible.objects.create(
         last_name="Sender", first_name="User", user=user_sender
     )
@@ -1528,8 +1680,12 @@ def test_accept_transfer_surfaces_inactive_message_when_offer_flips_inside_trans
 
 @pytest.mark.django_db
 def test_incoming_transfers_lists_offers_for_receiver() -> None:
-    user_sender = User.objects.create_user(username="sender", password="pw")
-    user_receiver = User.objects.create_user(username="receiver", password="pw")
+    user_sender = User.objects.create_user(
+        username="sender", password="pw", email="sender@example.com"
+    )
+    user_receiver = User.objects.create_user(
+        username="receiver", password="pw", email="receiver@example.com"
+    )
     resp_sender = Responsible.objects.create(
         last_name="Sender", first_name="User", user=user_sender
     )
@@ -1554,8 +1710,12 @@ def test_incoming_transfers_lists_offers_for_receiver() -> None:
 
 @pytest.mark.django_db
 def test_outgoing_transfers_lists_offers_for_sender() -> None:
-    user_sender = User.objects.create_user(username="sender", password="pw")
-    user_receiver = User.objects.create_user(username="receiver", password="pw")
+    user_sender = User.objects.create_user(
+        username="sender", password="pw", email="sender@example.com"
+    )
+    user_receiver = User.objects.create_user(
+        username="receiver", password="pw", email="receiver@example.com"
+    )
     resp_sender = Responsible.objects.create(
         last_name="Sender", first_name="User", user=user_sender
     )
@@ -1580,8 +1740,12 @@ def test_outgoing_transfers_lists_offers_for_sender() -> None:
 
 @pytest.mark.django_db
 def test_my_items_does_not_duplicate_item_between_owned_and_outgoing_transfer() -> None:
-    user_sender = User.objects.create_user(username="sender", password="pw")
-    user_receiver = User.objects.create_user(username="receiver", password="pw")
+    user_sender = User.objects.create_user(
+        username="sender", password="pw", email="sender@example.com"
+    )
+    user_receiver = User.objects.create_user(
+        username="receiver", password="pw", email="receiver@example.com"
+    )
     resp_sender = Responsible.objects.create(
         last_name="Sender", first_name="User", user=user_sender
     )
@@ -1616,8 +1780,12 @@ def test_my_items_lists_owned_row_when_pending_transfer_is_expired() -> None:
     transfer cards (same non-expired semantics as `PendingTransfer.is_active`).
     """
 
-    user_sender = User.objects.create_user(username="sndexp", password="pw")
-    user_receiver = User.objects.create_user(username="rcvexp", password="pw")
+    user_sender = User.objects.create_user(
+        username="sndexp", password="pw", email="sndexp@example.com"
+    )
+    user_receiver = User.objects.create_user(
+        username="rcvexp", password="pw", email="rcvexp@example.com"
+    )
     resp_sender = Responsible.objects.create(
         last_name="Sender", first_name="Exp", user=user_sender
     )
@@ -1647,7 +1815,9 @@ def test_my_items_lists_owned_row_when_pending_transfer_is_expired() -> None:
 
 @pytest.mark.django_db
 def test_transfers_page_is_removed() -> None:
-    user = User.objects.create_user(username="u1", password="pw")
+    user = User.objects.create_user(
+        username="u1", password="pw", email="u1@example.com"
+    )
     client = Client()
     client.force_login(user)
     assert client.get("/transfers/").status_code == 404
@@ -1655,7 +1825,9 @@ def test_transfers_page_is_removed() -> None:
 
 @pytest.mark.django_db
 def test_transfers_incoming_and_outgoing_urls_are_removed() -> None:
-    user = User.objects.create_user(username="u1", password="pw")
+    user = User.objects.create_user(
+        username="u1", password="pw", email="u1@example.com"
+    )
     Responsible.objects.create(last_name="Ivanov", first_name="Ivan", user=user)
     client = Client()
     client.force_login(user)
@@ -1665,7 +1837,9 @@ def test_transfers_incoming_and_outgoing_urls_are_removed() -> None:
 
 @pytest.mark.django_db
 def test_create_transfer_post_returns_400_for_missing_or_invalid_receiver() -> None:
-    user1 = User.objects.create_user(username="u1", password="pw")
+    user1 = User.objects.create_user(
+        username="u1", password="pw", email="u1@example.com"
+    )
     resp1 = Responsible.objects.create(last_name="One", first_name="User", user=user1)
     status = Status.objects.create(name="In use")
     location = Location.objects.create(name="Home")
@@ -1688,8 +1862,12 @@ def test_create_transfer_post_returns_400_for_missing_or_invalid_receiver() -> N
 
 @pytest.mark.django_db
 def test_accept_and_cancel_transfer_require_post_method() -> None:
-    user_sender = User.objects.create_user(username="sender", password="pw")
-    user_receiver = User.objects.create_user(username="receiver", password="pw")
+    user_sender = User.objects.create_user(
+        username="sender", password="pw", email="sender@example.com"
+    )
+    user_receiver = User.objects.create_user(
+        username="receiver", password="pw", email="receiver@example.com"
+    )
     resp_sender = Responsible.objects.create(
         last_name="Sender", first_name="User", user=user_sender
     )
@@ -1714,8 +1892,12 @@ def test_accept_and_cancel_transfer_require_post_method() -> None:
 
 @pytest.mark.django_db
 def test_accept_transfer_warns_when_expired() -> None:
-    user_sender = User.objects.create_user(username="sender", password="pw")
-    user_receiver = User.objects.create_user(username="receiver", password="pw")
+    user_sender = User.objects.create_user(
+        username="sender", password="pw", email="sender@example.com"
+    )
+    user_receiver = User.objects.create_user(
+        username="receiver", password="pw", email="receiver@example.com"
+    )
     resp_sender = Responsible.objects.create(
         last_name="Sender", first_name="User", user=user_sender
     )
@@ -1747,9 +1929,15 @@ def test_accept_transfer_warns_when_expired() -> None:
 
 @pytest.mark.django_db
 def test_item_history_hides_pending_transfer_from_former_owner() -> None:
-    user_owner = User.objects.create_user(username="owner", password="pw")
-    user_receiver = User.objects.create_user(username="receiver", password="pw")
-    user_former = User.objects.create_user(username="former", password="pw")
+    user_owner = User.objects.create_user(
+        username="owner", password="pw", email="owner@example.com"
+    )
+    user_receiver = User.objects.create_user(
+        username="receiver", password="pw", email="receiver@example.com"
+    )
+    user_former = User.objects.create_user(
+        username="former", password="pw", email="former@example.com"
+    )
     resp_owner = Responsible.objects.create(
         last_name="Owner", first_name="User", user=user_owner
     )
@@ -1802,8 +1990,12 @@ def test_item_history_hides_pending_transfer_from_former_owner() -> None:
 
 @pytest.mark.django_db
 def test_item_history_shows_pending_transfer_to_owner() -> None:
-    user_owner = User.objects.create_user(username="owner", password="pw")
-    user_receiver = User.objects.create_user(username="receiver", password="pw")
+    user_owner = User.objects.create_user(
+        username="owner", password="pw", email="owner@example.com"
+    )
+    user_receiver = User.objects.create_user(
+        username="receiver", password="pw", email="receiver@example.com"
+    )
     resp_owner = Responsible.objects.create(
         last_name="Owner", first_name="User", user=user_owner
     )
@@ -1852,8 +2044,12 @@ def test_item_history_shows_pending_transfer_to_owner() -> None:
 
 @pytest.mark.django_db
 def test_item_history_allows_receiver_to_view_item_with_pending_transfer() -> None:
-    user_owner = User.objects.create_user(username="owner", password="pw")
-    user_receiver = User.objects.create_user(username="receiver", password="pw")
+    user_owner = User.objects.create_user(
+        username="owner", password="pw", email="owner@example.com"
+    )
+    user_receiver = User.objects.create_user(
+        username="receiver", password="pw", email="receiver@example.com"
+    )
     resp_owner = Responsible.objects.create(
         last_name="Owner", first_name="User", user=user_owner
     )
@@ -1909,8 +2105,12 @@ def test_item_history_allows_receiver_to_view_item_with_pending_transfer() -> No
 
 @pytest.mark.django_db
 def test_item_history_shows_pending_transfer_notes_when_present() -> None:
-    user_owner = User.objects.create_user(username="owner-notes", password="pw")
-    user_receiver = User.objects.create_user(username="receiver-notes", password="pw")
+    user_owner = User.objects.create_user(
+        username="owner-notes", password="pw", email="owner-notes@example.com"
+    )
+    user_receiver = User.objects.create_user(
+        username="receiver-notes", password="pw", email="receiver-notes@example.com"
+    )
     resp_owner = Responsible.objects.create(
         last_name="Owner", first_name="Notes", user=user_owner
     )
@@ -1962,9 +2162,15 @@ def test_create_transfer_post_returns_404_when_pending_sender_mismatches_owner()
     owner (append-only journal can move ownership past a stale pending row).
     """
 
-    user_a = User.objects.create_user(username="a-post-404", password="pw")
-    user_b = User.objects.create_user(username="b-post-404", password="pw")
-    user_c = User.objects.create_user(username="c-post-404", password="pw")
+    user_a = User.objects.create_user(
+        username="a-post-404", password="pw", email="a-post-404@example.com"
+    )
+    user_b = User.objects.create_user(
+        username="b-post-404", password="pw", email="b-post-404@example.com"
+    )
+    user_c = User.objects.create_user(
+        username="c-post-404", password="pw", email="c-post-404@example.com"
+    )
     resp_a = Responsible.objects.create(last_name="A", first_name="Post", user=user_a)
     resp_b = Responsible.objects.create(last_name="B", first_name="Post", user=user_b)
     resp_c = Responsible.objects.create(last_name="C", first_name="Post", user=user_c)
@@ -2001,9 +2207,15 @@ def test_create_transfer_get_read_only_card_when_pending_sender_mismatches_owner
     names a different ``from_responsible`` (same invariant as ``POST``).
     """
 
-    user_a = User.objects.create_user(username="a-get-card", password="pw")
-    user_b = User.objects.create_user(username="b-get-card", password="pw")
-    user_c = User.objects.create_user(username="c-get-card", password="pw")
+    user_a = User.objects.create_user(
+        username="a-get-card", password="pw", email="a-get-card@example.com"
+    )
+    user_b = User.objects.create_user(
+        username="b-get-card", password="pw", email="b-get-card@example.com"
+    )
+    user_c = User.objects.create_user(
+        username="c-get-card", password="pw", email="c-get-card@example.com"
+    )
     resp_a = Responsible.objects.create(last_name="A", first_name="Get", user=user_a)
     resp_b = Responsible.objects.create(last_name="B", first_name="Get", user=user_b)
     resp_c = Responsible.objects.create(last_name="C", first_name="Get", user=user_c)
@@ -2036,8 +2248,12 @@ def test_create_transfer_get_read_only_card_when_pending_sender_mismatches_owner
 def test_create_transfer_post_invalid_receiver_pending_edit() -> None:
     """Parse errors short-circuit before ``update_offer`` (pending-offer ``POST``)."""
 
-    user_b = User.objects.create_user(username="b-inv-pend", password="pw")
-    user_c = User.objects.create_user(username="c-inv-pend", password="pw")
+    user_b = User.objects.create_user(
+        username="b-inv-pend", password="pw", email="b-inv-pend@example.com"
+    )
+    user_c = User.objects.create_user(
+        username="c-inv-pend", password="pw", email="c-inv-pend@example.com"
+    )
     resp_b = Responsible.objects.create(last_name="B", first_name="Inv", user=user_b)
     resp_c = Responsible.objects.create(last_name="C", first_name="Inv", user=user_c)
     status = Status.objects.create(name="In stock")
@@ -2060,9 +2276,15 @@ def test_create_transfer_post_invalid_receiver_pending_edit() -> None:
 
 @pytest.mark.django_db
 def test_create_transfer_post_update_offer_validation_error() -> None:
-    user_owner = User.objects.create_user(username="own-upd-val", password="pw")
-    user_recv1 = User.objects.create_user(username="r1-upd-val", password="pw")
-    user_recv2 = User.objects.create_user(username="r2-upd-val", password="pw")
+    user_owner = User.objects.create_user(
+        username="own-upd-val", password="pw", email="own-upd-val@example.com"
+    )
+    user_recv1 = User.objects.create_user(
+        username="r1-upd-val", password="pw", email="r1-upd-val@example.com"
+    )
+    user_recv2 = User.objects.create_user(
+        username="r2-upd-val", password="pw", email="r2-upd-val@example.com"
+    )
     resp_owner = Responsible.objects.create(
         last_name="Own", first_name="Upd", user=user_owner
     )
@@ -2097,8 +2319,12 @@ def test_create_transfer_post_update_offer_validation_error() -> None:
 
 @pytest.mark.django_db
 def test_cancel_transfer_surfaces_validation_error_message() -> None:
-    user_sender = User.objects.create_user(username="snd-can-val", password="pw")
-    user_receiver = User.objects.create_user(username="rcv-can-val", password="pw")
+    user_sender = User.objects.create_user(
+        username="snd-can-val", password="pw", email="snd-can-val@example.com"
+    )
+    user_receiver = User.objects.create_user(
+        username="rcv-can-val", password="pw", email="rcv-can-val@example.com"
+    )
     resp_sender = Responsible.objects.create(
         last_name="S", first_name="Can", user=user_sender
     )
@@ -2131,8 +2357,12 @@ def test_cancel_transfer_surfaces_validation_error_message() -> None:
 
 @pytest.mark.django_db
 def test_accept_transfer_surfaces_validation_error_message() -> None:
-    user_sender = User.objects.create_user(username="snd-acc-val", password="pw")
-    user_receiver = User.objects.create_user(username="rcv-acc-val", password="pw")
+    user_sender = User.objects.create_user(
+        username="snd-acc-val", password="pw", email="snd-acc-val@example.com"
+    )
+    user_receiver = User.objects.create_user(
+        username="rcv-acc-val", password="pw", email="rcv-acc-val@example.com"
+    )
     resp_sender = Responsible.objects.create(
         last_name="S", first_name="Acc", user=user_sender
     )
@@ -2170,9 +2400,15 @@ def test_accept_transfer_shows_error_when_sender_no_longer_holds_item() -> None:
     Stale pending row: journal head moved past sender; receiver sees a flash error.
     """
 
-    user_sender = User.objects.create_user(username="snd-stale", password="pw")
-    user_receiver = User.objects.create_user(username="rcv-stale", password="pw")
-    user_other = User.objects.create_user(username="oth-stale", password="pw")
+    user_sender = User.objects.create_user(
+        username="snd-stale", password="pw", email="snd-stale@example.com"
+    )
+    user_receiver = User.objects.create_user(
+        username="rcv-stale", password="pw", email="rcv-stale@example.com"
+    )
+    user_other = User.objects.create_user(
+        username="oth-stale", password="pw", email="oth-stale@example.com"
+    )
     resp_sender = Responsible.objects.create(
         last_name="S", first_name="Stale", user=user_sender
     )
@@ -2212,8 +2448,12 @@ def test_accept_transfer_shows_error_when_sender_no_longer_holds_item() -> None:
 
 @pytest.mark.django_db
 def test_accept_transfer_rejects_non_numeric_journal_baseline() -> None:
-    user_sender = User.objects.create_user(username="snd-bl-bad", password="pw")
-    user_receiver = User.objects.create_user(username="rcv-bl-bad", password="pw")
+    user_sender = User.objects.create_user(
+        username="snd-bl-bad", password="pw", email="snd-bl-bad@example.com"
+    )
+    user_receiver = User.objects.create_user(
+        username="rcv-bl-bad", password="pw", email="rcv-bl-bad@example.com"
+    )
     resp_sender = Responsible.objects.create(
         last_name="S", first_name="Bad", user=user_sender
     )
@@ -2246,8 +2486,12 @@ def test_accept_transfer_rejects_non_numeric_journal_baseline() -> None:
 
 @pytest.mark.django_db
 def test_accept_transfer_rejects_missing_journal_baseline() -> None:
-    user_sender = User.objects.create_user(username="snd-bl-miss", password="pw")
-    user_receiver = User.objects.create_user(username="rcv-bl-miss", password="pw")
+    user_sender = User.objects.create_user(
+        username="snd-bl-miss", password="pw", email="snd-bl-miss@example.com"
+    )
+    user_receiver = User.objects.create_user(
+        username="rcv-bl-miss", password="pw", email="rcv-bl-miss@example.com"
+    )
     resp_sender = Responsible.objects.create(
         last_name="S", first_name="Bl", user=user_sender
     )
@@ -2277,8 +2521,12 @@ def test_accept_transfer_rejects_missing_journal_baseline() -> None:
 
 @pytest.mark.django_db
 def test_accept_transfer_rejects_stale_journal_baseline() -> None:
-    user_sender = User.objects.create_user(username="snd-bl-old", password="pw")
-    user_receiver = User.objects.create_user(username="rcv-bl-old", password="pw")
+    user_sender = User.objects.create_user(
+        username="snd-bl-old", password="pw", email="snd-bl-old@example.com"
+    )
+    user_receiver = User.objects.create_user(
+        username="rcv-bl-old", password="pw", email="rcv-bl-old@example.com"
+    )
     resp_sender = Responsible.objects.create(
         last_name="S", first_name="Old", user=user_sender
     )
@@ -2315,8 +2563,12 @@ def test_accept_transfer_rejects_stale_journal_baseline() -> None:
 def test_accept_transfer_stale_baseline_goes_my_items_when_no_history_context(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    user_sender = User.objects.create_user(username="snd-bl-nctx", password="pw")
-    user_receiver = User.objects.create_user(username="rcv-bl-nctx", password="pw")
+    user_sender = User.objects.create_user(
+        username="snd-bl-nctx", password="pw", email="snd-bl-nctx@example.com"
+    )
+    user_receiver = User.objects.create_user(
+        username="rcv-bl-nctx", password="pw", email="rcv-bl-nctx@example.com"
+    )
     resp_sender = Responsible.objects.create(
         last_name="S", first_name="Nctx", user=user_sender
     )
@@ -2355,8 +2607,12 @@ def test_accept_transfer_stale_baseline_goes_my_items_when_no_history_context(
 
 @pytest.mark.django_db
 def test_accept_transfer_when_journal_deleted_shows_error() -> None:
-    user_sender = User.objects.create_user(username="snd-bl-emp", password="pw")
-    user_receiver = User.objects.create_user(username="rcv-bl-emp", password="pw")
+    user_sender = User.objects.create_user(
+        username="snd-bl-emp", password="pw", email="snd-bl-emp@example.com"
+    )
+    user_receiver = User.objects.create_user(
+        username="rcv-bl-emp", password="pw", email="rcv-bl-emp@example.com"
+    )
     resp_sender = Responsible.objects.create(
         last_name="S", first_name="Emp", user=user_sender
     )
@@ -2389,8 +2645,12 @@ def test_accept_transfer_when_journal_deleted_shows_error() -> None:
 
 @pytest.mark.django_db
 def test_item_history_includes_accept_journal_baseline_for_receiver() -> None:
-    user_sender = User.objects.create_user(username="snd-hid", password="pw")
-    user_receiver = User.objects.create_user(username="rcv-hid", password="pw")
+    user_sender = User.objects.create_user(
+        username="snd-hid", password="pw", email="snd-hid@example.com"
+    )
+    user_receiver = User.objects.create_user(
+        username="rcv-hid", password="pw", email="rcv-hid@example.com"
+    )
     resp_sender = Responsible.objects.create(
         last_name="S", first_name="Hid", user=user_sender
     )

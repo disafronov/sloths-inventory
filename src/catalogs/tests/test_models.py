@@ -10,8 +10,32 @@ from inventory.models import Item, Operation, PendingTransfer
 
 
 @pytest.mark.django_db
+def test_responsible_clean_rejects_user_without_email() -> None:
+    user = User.objects.create_user(username="noemail", password="pw", email="")
+    resp = Responsible(last_name="A", first_name="B", user=user)
+    with pytest.raises(ValidationError) as exc_info:
+        resp.clean()
+    assert "user" in exc_info.value.message_dict
+
+
+@pytest.mark.django_db
+def test_responsible_clean_accepts_user_with_email() -> None:
+    user = User.objects.create_user(
+        username="hasemail", password="pw", email="u@example.com"
+    )
+    resp = Responsible(last_name="A", first_name="B", user=user)
+    resp.clean()  # should not raise
+
+
+@pytest.mark.django_db
+def test_responsible_clean_accepts_no_user() -> None:
+    resp = Responsible(last_name="A", first_name="B")
+    resp.clean()  # should not raise
+
+
+@pytest.mark.django_db
 def test_responsible_linked_profile_for_user() -> None:
-    user = User.objects.create_user(username="u", password="pw")
+    user = User.objects.create_user(username="u", password="pw", email="u@example.com")
     resp = Responsible.objects.create(last_name="A", first_name="B", user=user)
     assert Responsible.linked_profile_for_user(user) == resp
     rf = RequestFactory()
