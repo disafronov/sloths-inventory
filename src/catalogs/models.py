@@ -1,10 +1,10 @@
-from typing import Optional, Union
+from typing import Any, Optional, Union
 
 from django.conf import settings
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import ValidationError
-from django.db import models
+from django.db import models, transaction
 from django.db.models import QuerySet
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
@@ -76,6 +76,13 @@ class Responsible(CatalogCorrectionWindowMixin, BaseModel):
 
     def get_full_name(self) -> str:
         return str(self)
+
+    def save(self, *args: Any, **kwargs: Any) -> None:
+        with transaction.atomic():
+            if not self._state.adding:
+                prev = Responsible.objects.only("user_id").get(pk=self.pk)
+                self._pre_save_user_id: int | None = prev.user_id
+            return super().save(*args, **kwargs)
 
     @classmethod
     def linked_profile_for_user(
