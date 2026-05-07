@@ -1,0 +1,1 @@
+{% load i18n %}{% blocktrans with item=item %}Item assigned to you: {{ item }}{% endblocktrans %}
