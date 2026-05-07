@@ -1,3 +1,9 @@
+## [1.11.0-rc.1](https://github.com/disafronov/sloths-inventory/compare/v1.10.1-rc.1...v1.11.0-rc.1) (2026-05-07)
+
+### Features
+
+* Update translations and templates ([b76d92d](https://github.com/disafronov/sloths-inventory/commit/b76d92d74ebccf297ceceef8a8b6737e63c28625))
+
 ## [1.10.1-rc.1](https://github.com/disafronov/sloths-inventory/compare/v1.10.0...v1.10.1-rc.1) (2026-05-07)
 
 ## [1.10.0](https://github.com/disafronov/sloths-inventory/compare/v1.9.0...v1.10.0) (2026-05-07)
