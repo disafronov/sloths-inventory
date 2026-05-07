@@ -16,6 +16,24 @@ history.
 - **Item history**: `GET /items/<id>/` shows the item's operations history (only
   for items currently assigned to the logged-in user, items the user had in the past,
   or items that have an active incoming transfer offer for the logged-in user).
+- **Change location**: `POST /items/<id>/change-location/` records a location change
+  for an item the logged-in user currently owns.
+- **Create / update transfer**: `GET /items/<id>/transfer/` shows the transfer form;
+  `POST` creates a new offer or updates an existing one initiated by the current user.
+- **Accept transfer**: `POST /transfers/<id>/accept/` accepts an incoming transfer
+  offer; requires `journal_head_operation_id` in the POST body (set by the UI) to
+  guard against stale state.
+- **Cancel / decline transfer**: `POST /transfers/<id>/cancel/` cancels the offer
+  (sender) or declines it (receiver).
+- **Profile**: `GET /profile/` shows email and password change forms (requires
+  authentication).
+- **Login**: `GET /login/`
+- **Logout**: `POST /logout/`
+- **Password change**: `GET|POST /password/change/` (requires authentication).
+- **Password reset**: `GET /password/reset/` → `/password/reset/done/` →
+  `GET|POST /password/reset/<uidb64>/<token>/` → `/password/reset/complete/`
+- **Email change confirmation**: `GET /email/change/confirm/<uidb64>/<token>/<new_email>/`
+- **Language switch**: `POST /i18n/setlang/`
 - **Admin UI**: `GET /admin/`. Reference data ("catalogs") management is performed in the admin UI and is limited by the authenticated user's permissions.
 - **Health**: `GET /health/liveness/`, `GET /health/readiness/`
 
@@ -113,7 +131,7 @@ Notes:
 - **Append-only operations**: an item's state is tracked via `Operation` records.
   Older operations cannot be edited; only the latest operation for an item may be
   corrected.
-- **Correction window** (`INVENTORY_CORRECTION_WINDOW_MINUTES`, default 10 minutes):
+- **Correction window** (`INVENTORY_CORRECTION_WINDOW_MINUTES`, default 0 — disabled):
   - **Operations**: only the latest `Operation` per item may be corrected, and only
     while its `created_at` is still inside the window (`inventory.Operation`) for
     non-superusers. Django superusers bypass that time cap in the admin on the head
@@ -149,7 +167,7 @@ Notes:
   like an absent offer for cards and actions, even though the row may still exist
   in the database until cleaned up elsewhere.
 - **Automatic transfer acceptance when the receiver has no linked user**: if the
-  receiver `Responsible` has no `User`, they cannot press “Accept” in the web UI.
+  receiver `Responsible` has no `User`, they cannot press "Accept" in the web UI.
   In that case the application accepts the offer immediately (appends the
   ownership `Operation` and sets `accepted_at`) so the item never remains in a
   pending state that cannot be cleared from the user-facing flows. If you need a
@@ -176,13 +194,63 @@ See `env.example` for a complete list of supported variables.
   - `DATABASE_PASSWORD` (default: `password`)
 - **Logging**
   - `LOG_LEVEL` (default: `DEBUG` when `DEBUG=1`, else `INFO`)
+- **Internationalization**
+  - `TIME_ZONE` (default: `UTC`)
 - **Inventory**
-  - `INVENTORY_CORRECTION_WINDOW_MINUTES` (default: `10`)
+  - `INVENTORY_CORRECTION_WINDOW_MINUTES` (default: `0` — disabled; set to a
+    positive integer to enable the correction window)
   - `INVENTORY_PENDING_TRANSFER_EXPIRATION_HOURS` (default: `168` — one week;
     offers created from the user UI get `expires_at` at creation. Set to `0` to
     disable automatic expiry unless set manually in the admin)
+- **Email**
+  - `EMAIL_BACKEND` (default: `django.core.mail.backends.smtp.EmailBackend`; use
+    `django.core.mail.backends.console.EmailBackend` for local development)
+  - `EMAIL_HOST`
+  - `EMAIL_PORT` (default: `587`)
+  - `EMAIL_USE_TLS` (default: `1`)
+  - `EMAIL_USE_SSL` (default: `0`)
+  - `EMAIL_HOST_USER`
+  - `EMAIL_HOST_PASSWORD`
+  - `EMAIL_TIMEOUT` (default: `10` seconds)
+  - `DEFAULT_FROM_EMAIL` (default: `noreply@example.com`)
+  - `SERVER_EMAIL` (default: `noreply@example.com`)
+  - `EMAIL_SEND_ASYNC` (default: `1`; set to `0` to send synchronously)
+  - `EMAIL_RETRY_MAX_RETRIES` (default: `2`)
+  - `EMAIL_RETRY_BASE_DELAY_SECONDS` (default: `60`)
+  - `EMAIL_RETRY_BACKOFF_FACTOR` (default: `2`)
+  - `SITE_URL`: base URL used for links in emails (e.g. `http://localhost:8000`);
+    required for password reset and email change confirmation links
+
+## Email notifications
+
+The application sends transactional emails on the following events:
+
+- **Operation saved** (`inventory.signals`): when a new `Operation` is created or
+  an existing head operation is updated, emails are sent to the newly assigned
+  `Responsible` ("assigned") and, if the responsible changed, to the previously
+  assigned one ("unassigned" / "updated").
+- **Transfer offer created**: the receiver is notified.
+- **Transfer offer updated** (receiver changed): the old receiver gets a
+  cancellation email; the new receiver gets a creation email.
+- **Transfer offer accepted**: both sender and receiver are notified.
+- **Transfer offer cancelled**: both sender and receiver are notified.
+- **Responsible user linked / unlinked / updated** (`catalogs.signals`): when the
+  `User` linked to a `Responsible` record is set, changed, or cleared, the
+  affected user(s) receive a notification email. If the user remains the same but
+  the profile is otherwise updated, an "updated" email is sent.
+- **Email change** (`common.views`): a confirmation link is emailed to the new
+  address; after confirmation, a notification is sent to the old address.
+- **Password reset**: Django's built-in flow sends a reset link to the user's email.
+
+All emails are sent asynchronously by default (`EMAIL_SEND_ASYNC=1`) with
+configurable retries. Set `EMAIL_SEND_ASYNC=0` to send synchronously (useful in
+tests or simple deployments).
 
 ## Localization
+
+Two languages are supported: **English** (`en`) and **Russian** (`ru`). The active
+language is stored in the `django_language` cookie and can be switched via
+`POST /i18n/setlang/`.
 
 Translations are stored in `src/*/locale/*/LC_MESSAGES/django.po` and are
 compiled into `.mo` files.
@@ -205,7 +273,7 @@ depend on developer environment variables.
 
 ### Inventory list query plans (PostgreSQL)
 
-To print `EXPLAIN (ANALYZE, BUFFERS)` for the “My items” / “Previously held”
+To print `EXPLAIN (ANALYZE, BUFFERS)` for the "My items" / "Previously held"
 querysets after changing ORM fragments or indexes, see
 [`docs/inventory-list-query-profiling.md`](docs/inventory-list-query-profiling.md)
 and run `python src/manage.py profile_inventory_list_queries`.
