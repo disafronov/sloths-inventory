@@ -442,8 +442,8 @@ msgstr "Получатель:"
 
 #: src/common/templates/emails/transfer_accepted_body.html:20
 #: src/common/templates/emails/transfer_accepted_body.txt:6
-msgid "The item ownership has been transferred."
-msgstr "Ответственность за позицию передана."
+msgid "The item ownership is being transferred."
+msgstr "Ответственность за позицию передаётся."
 
 #: src/common/templates/emails/transfer_accepted_body.txt:1
 #, python-format
