@@ -11,7 +11,6 @@ from django.utils import timezone
 from django.utils.translation import gettext as _
 
 from catalogs.models import Responsible
-from common.email_utils import send_transfer_email
 from inventory.models import (
     Item,
     PendingTransfer,
@@ -181,17 +180,6 @@ def create_transfer(request: HttpRequest, *, item_id: int) -> HttpResponse:
                 status=400,
             )
         messages.success(request, _("Transfer offer submitted."))
-        send_transfer_email(
-            "emails/transfer_created_subject.txt",
-            "emails/transfer_created_body.txt",
-            {
-                "item": item,
-                "sender": responsible,
-                "receiver": to_responsible,
-            },
-            to_responsible.user.email if to_responsible.user else "",
-            html_template="emails/transfer_created_body.html",
-        )
         return redirect("inventory:item-history", item_id=item.pk)
 
     if pending_transfer is not None:
@@ -286,24 +274,6 @@ def accept_transfer(request: HttpRequest, *, transfer_id: int) -> HttpResponse:
         messages.error(request, validation_error_user_message(exc))
         return redirect("inventory:item-history", item_id=transfer.item_id)
     messages.success(request, _("Transfer accepted."))
-    send_transfer_email(
-        "emails/transfer_accepted_subject.txt",
-        "emails/transfer_accepted_body.txt",
-        {
-            "item": transfer.item,
-            "sender": transfer.from_responsible,
-            "receiver": transfer.to_responsible,
-        },
-        [
-            (
-                transfer.from_responsible.user.email
-                if transfer.from_responsible.user
-                else ""
-            ),
-            transfer.to_responsible.user.email if transfer.to_responsible.user else "",
-        ],
-        html_template="emails/transfer_accepted_body.html",
-    )
     return redirect("inventory:item-history", item_id=transfer.item_id)
 
 
@@ -338,22 +308,4 @@ def cancel_transfer(request: HttpRequest, *, transfer_id: int) -> HttpResponse:
         messages.error(request, validation_error_user_message(exc))
         return redirect("inventory:item-history", item_id=transfer.item_id)
     messages.success(request, _("Transfer offer closed."))
-    send_transfer_email(
-        "emails/transfer_cancelled_subject.txt",
-        "emails/transfer_cancelled_body.txt",
-        {
-            "item": transfer.item,
-            "sender": transfer.from_responsible,
-            "receiver": transfer.to_responsible,
-        },
-        [
-            (
-                transfer.from_responsible.user.email
-                if transfer.from_responsible.user
-                else ""
-            ),
-            transfer.to_responsible.user.email if transfer.to_responsible.user else "",
-        ],
-        html_template="emails/transfer_cancelled_body.html",
-    )
     return redirect("inventory:item-history", item_id=transfer.item_id)

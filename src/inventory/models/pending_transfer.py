@@ -163,6 +163,15 @@ class PendingTransfer(BaseModel):
 
         with transaction.atomic():
             Item.objects.select_for_update().only("id").get(pk=self.item_id)
+
+            if not self._state.adding:
+                prev = PendingTransfer.objects.only(
+                    "to_responsible_id", "accepted_at", "cancelled_at"
+                ).get(pk=self.pk)
+                self._pre_save_to_responsible_id: int | None = prev.to_responsible_id
+                self._pre_save_accepted_at = prev.accepted_at
+                self._pre_save_cancelled_at = prev.cancelled_at
+
             self.full_clean()
             return super().save(*args, **kwargs)
 

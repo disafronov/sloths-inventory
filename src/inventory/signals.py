@@ -7,6 +7,7 @@ from catalogs.models import Responsible
 from common.email_utils import send_transfer_email
 from inventory.models.item import Item
 from inventory.models.operation import Operation
+from inventory.models.pending_transfer import PendingTransfer
 
 
 def _responsible_email(responsible: Responsible) -> str:
@@ -25,6 +26,22 @@ def _notify(
         {"item": item, "operation": operation, "responsible": responsible},
         _responsible_email(responsible),
         html_template=f"emails/operation_{template_name}_body.html",
+    )
+
+
+def _notify_transfer(
+    template_name: str,
+    item: Item,
+    from_responsible: Responsible,
+    to_responsible: Responsible,
+    recipients: list[str],
+) -> None:
+    send_transfer_email(
+        f"emails/transfer_{template_name}_subject.txt",
+        f"emails/transfer_{template_name}_body.txt",
+        {"item": item, "sender": from_responsible, "receiver": to_responsible},
+        recipients,
+        html_template=f"emails/transfer_{template_name}_body.html",
     )
 
 
@@ -62,3 +79,50 @@ def notify_operation_saved(
         _notify("unassigned", prev_responsible, item, instance)
     else:
         _notify("updated", new_responsible, item, instance)
+
+
+@receiver(post_save, sender=PendingTransfer)
+def notify_transfer_saved(
+    sender: type[PendingTransfer],
+    instance: PendingTransfer,
+    created: bool,
+    **kwargs: Any,
+) -> None:
+    pre_to_responsible_id: int | None = getattr(
+        instance, "_pre_save_to_responsible_id", None
+    )
+    pre_accepted_at = getattr(instance, "_pre_save_accepted_at", None)
+    pre_cancelled_at = getattr(instance, "_pre_save_cancelled_at", None)
+
+    receiver_changed = (
+        pre_to_responsible_id is not None
+        and pre_to_responsible_id != instance.to_responsible_id
+    )
+    just_accepted = bool(instance.accepted_at and not pre_accepted_at)
+    just_cancelled = bool(instance.cancelled_at and not pre_cancelled_at)
+
+    if not (created or just_accepted or just_cancelled or receiver_changed):
+        return
+
+    item = Item.objects.select_related("device__manufacturer", "device__model").get(
+        pk=instance.item_id
+    )
+    from_responsible = Responsible.objects.select_related("user").get(
+        pk=instance.from_responsible_id
+    )
+    to_responsible = Responsible.objects.select_related("user").get(
+        pk=instance.to_responsible_id
+    )
+    from_email = _responsible_email(from_responsible)
+    to_email = _responsible_email(to_responsible)
+
+    if created or receiver_changed:
+        _notify_transfer("created", item, from_responsible, to_responsible, [to_email])
+    elif just_accepted:
+        _notify_transfer(
+            "accepted", item, from_responsible, to_responsible, [from_email, to_email]
+        )
+    else:
+        _notify_transfer(
+            "cancelled", item, from_responsible, to_responsible, [from_email, to_email]
+        )
