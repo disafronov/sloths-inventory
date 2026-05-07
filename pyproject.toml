@@ -78,7 +78,8 @@ omit = [
   "src/sloths_inventory/settings_pytest.py",
   "src/manage.py",
   "src/sloths_inventory/asgi.py",
-  "src/sloths_inventory/wsgi.py"
+  "src/sloths_inventory/wsgi.py",
+  "src/*/management/commands/profile_*.py"
 ]
 branch = true
 parallel = true
