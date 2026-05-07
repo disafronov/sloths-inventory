@@ -240,6 +240,8 @@ class PendingTransfer(BaseModel):
                     _("Cannot accept transfer: sender no longer holds the item.")
                 )
 
+            transfer.accepted_at = timezone.now()
+            transfer.save(update_fields=["accepted_at", "updated_at"])
             Operation.objects.create(
                 item=item,
                 status=current_op.status,
@@ -247,8 +249,6 @@ class PendingTransfer(BaseModel):
                 location=current_op.location,
                 notes=transfer.notes,
             )
-            transfer.accepted_at = timezone.now()
-            transfer.save(update_fields=["accepted_at", "updated_at"])
 
     def cancel(self) -> None:
         """
