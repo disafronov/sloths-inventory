@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 from django.test import Client, RequestFactory, override_settings
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.translation import gettext as _
 
 from catalogs.models import Location, Responsible, Status
 from devices.attributes import Category, Manufacturer, Model, Type
@@ -1160,7 +1161,7 @@ def test_create_offer_duplicate_active_validation_error_formats_for_display() ->
             notes="",
         )
     msg = validation_error_user_message(exc_info.value)
-    assert "An active transfer already exists for this item" in msg
+    assert _("An active transfer already exists for this item") in msg
 
 
 @pytest.mark.django_db
@@ -1625,7 +1626,7 @@ def test_cancel_transfer_warns_when_inactive() -> None:
     response = client.post(f"/transfers/{transfer.pk}/cancel/", follow=True)
     assert response.status_code == 200
     assert response.request["PATH_INFO"] == f"/items/{item.pk}/"
-    assert b"This transfer offer is no longer active" in response.content
+    assert _("This transfer offer is no longer active.").encode() in response.content
 
 
 @pytest.mark.django_db
@@ -1924,7 +1925,7 @@ def test_accept_transfer_warns_when_expired() -> None:
     response = client_receiver.post(f"/transfers/{transfer.pk}/accept/", follow=True)
     assert response.status_code == 200
     assert response.request["PATH_INFO"] == "/"
-    assert b"This transfer offer is no longer active" in response.content
+    assert _("This transfer offer is no longer active.").encode() in response.content
 
 
 @pytest.mark.django_db
@@ -2441,7 +2442,10 @@ def test_accept_transfer_shows_error_when_sender_no_longer_holds_item() -> None:
         follow=True,
     )
     assert response.status_code == 200
-    assert b"sender no longer holds the item" in response.content
+    assert (
+        _("Cannot accept transfer: sender no longer holds the item.").encode()
+        in response.content
+    )
     transfer.refresh_from_db()
     assert transfer.accepted_at is None
 
@@ -2479,7 +2483,13 @@ def test_accept_transfer_rejects_non_numeric_journal_baseline() -> None:
         follow=True,
     )
     assert response.status_code == 200
-    assert b"Refresh the page" in response.content
+    assert (
+        _(
+            "The inventory record changed since this page was loaded. "
+            "Refresh the page and try again."
+        ).encode()
+        in response.content
+    )
     transfer.refresh_from_db()
     assert transfer.accepted_at is None
 
@@ -2514,7 +2524,13 @@ def test_accept_transfer_rejects_missing_journal_baseline() -> None:
         follow=True,
     )
     assert response.status_code == 200
-    assert b"Refresh the page" in response.content
+    assert (
+        _(
+            "The inventory record changed since this page was loaded. "
+            "Refresh the page and try again."
+        ).encode()
+        in response.content
+    )
     transfer.refresh_from_db()
     assert transfer.accepted_at is None
 
@@ -2554,7 +2570,13 @@ def test_accept_transfer_rejects_stale_journal_baseline() -> None:
         follow=True,
     )
     assert response.status_code == 200
-    assert b"Refresh the page" in response.content
+    assert (
+        _(
+            "The inventory record changed since this page was loaded. "
+            "Refresh the page and try again."
+        ).encode()
+        in response.content
+    )
     transfer.refresh_from_db()
     assert transfer.accepted_at is None
 
@@ -2602,7 +2624,13 @@ def test_accept_transfer_stale_baseline_goes_my_items_when_no_history_context(
     )
     assert response.status_code == 200
     assert response.request["PATH_INFO"] == "/"
-    assert b"Refresh the page" in response.content
+    assert (
+        _(
+            "The inventory record changed since this page was loaded. "
+            "Refresh the page and try again."
+        ).encode()
+        in response.content
+    )
 
 
 @pytest.mark.django_db
@@ -2638,7 +2666,10 @@ def test_accept_transfer_when_journal_deleted_shows_error() -> None:
     )
     assert response.status_code == 200
     assert response.request["PATH_INFO"] == "/"
-    assert b"without operations" in response.content
+    assert (
+        _("Cannot accept transfer for an item without operations").encode()
+        in response.content
+    )
     transfer.refresh_from_db()
     assert transfer.accepted_at is None
 
