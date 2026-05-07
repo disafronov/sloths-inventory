@@ -1,3 +1,17 @@
+## [1.9.0-rc.1](https://github.com/disafronov/sloths-inventory/compare/v1.8.0...v1.9.0-rc.1) (2026-05-07)
+
+### Features
+
+* Add responsible signals and email notifications ([99c666f](https://github.com/disafronov/sloths-inventory/commit/99c666f4adbc523f098682ae4ceb60769d542ff2))
+* **email:** Add operation assignment/unassignment/updated email templates ([ca57044](https://github.com/disafronov/sloths-inventory/commit/ca57044d1b29ec939b9815e27971f5d466370b57))
+
+### Bug Fixes
+
+* change transfer status to "being transferred" ([7eebd3c](https://github.com/disafronov/sloths-inventory/commit/7eebd3c42d0d371b06220fd9d48e31f35903021b))
+* Improve signal notification handling for inventory operations ([d03d462](https://github.com/disafronov/sloths-inventory/commit/d03d4621bb7302b10abec19274e8089fa3512b98))
+* move accepted_at update to before Operation creation in PendingTransfer BaseModel to maintain data consistency ([02163fa](https://github.com/disafronov/sloths-inventory/commit/02163fab7676fd33b3c47d6af870a42afab7e92b))
+* send email when responsible user's profile is updated even if user remains the same ([f21bf86](https://github.com/disafronov/sloths-inventory/commit/f21bf86db6613b199ce034f3f86dd6e7e96b2a7a))
+
 ## [1.8.0](https://github.com/disafronov/sloths-inventory/compare/v1.7.1...v1.8.0) (2026-05-07)
 
 ### Features
