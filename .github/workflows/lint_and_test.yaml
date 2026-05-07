@@ -37,6 +37,9 @@ jobs:
         id: python_version
         run: echo "version=$(cat .python-version | tr -d '[:space:]')" >> $GITHUB_OUTPUT
 
+      - name: Install gettext
+        run: sudo apt-get update -y && sudo apt-get install -y gettext
+
       - name: Install uv
         uses: astral-sh/setup-uv@v7
         with:
