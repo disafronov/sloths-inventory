@@ -18,6 +18,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: src/common/templates/base.html
+msgid "Your account has no email address. <a href=\"%(url)s\">Add one in your profile</a> to receive notifications."
+msgstr "Your account has no email address. <a href=\"%(url)s\">Add one in your profile</a> to receive notifications."
+
 #: src/common/admin.py:56
 msgid "Additional information"
 msgstr "Additional information"
