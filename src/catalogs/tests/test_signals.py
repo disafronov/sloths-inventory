@@ -1,6 +1,7 @@
 import pytest
 from django.contrib.auth.models import User
 from django.core import mail
+from django.core.exceptions import ValidationError
 
 from catalogs.models import Responsible
 
@@ -96,8 +97,9 @@ def test_update_with_user_unchanged_sends_updated_email() -> None:
 
 
 @pytest.mark.django_db
-def test_user_with_no_email_sends_nothing() -> None:
+def test_linking_user_without_email_raises_validation_error() -> None:
     user = User.objects.create_user(username="noemail", password="pw", email="")
-    Responsible.objects.create(last_name="Test", first_name="G", user=user)
-
+    resp = Responsible(last_name="Test", first_name="G", user=user)
+    with pytest.raises(ValidationError):
+        resp.save()
     assert len(mail.outbox) == 0

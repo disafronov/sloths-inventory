@@ -893,9 +893,15 @@ def test_pending_transfer_update_offer_resets_expires_at_when_receiver_changes()
 
     status = Status.objects.create(name="In use")
     location = Location.objects.create(name="Home")
-    user_from = User.objects.create_user(username="from-exp", password="pw")
-    user_to1 = User.objects.create_user(username="to1-exp", password="pw")
-    user_to2 = User.objects.create_user(username="to2-exp", password="pw")
+    user_from = User.objects.create_user(
+        username="from-exp", password="pw", email="from-exp@example.com"
+    )
+    user_to1 = User.objects.create_user(
+        username="to1-exp", password="pw", email="to1-exp@example.com"
+    )
+    user_to2 = User.objects.create_user(
+        username="to2-exp", password="pw", email="to2-exp@example.com"
+    )
     from_resp = Responsible.objects.create(
         last_name="From", first_name="User", user=user_from
     )
@@ -964,8 +970,12 @@ def test_pending_transfer_update_offer_auto_accepts_no_user_receiver() -> None:
 
     status = Status.objects.create(name="In use")
     location = Location.objects.create(name="Home")
-    user_sender = User.objects.create_user(username="snd", password="pw")
-    user_recv = User.objects.create_user(username="rcv", password="pw")
+    user_sender = User.objects.create_user(
+        username="snd", password="pw", email="snd@example.com"
+    )
+    user_recv = User.objects.create_user(
+        username="rcv", password="pw", email="rcv@example.com"
+    )
     from_resp = Responsible.objects.create(
         last_name="From", first_name="User", user=user_sender
     )
@@ -1031,7 +1041,9 @@ def test_pending_transfer_update_offer_auto_accepts_offline_to_offline_receiver(
 
     status = Status.objects.create(name="In use")
     location = Location.objects.create(name="Home")
-    user_sender = User.objects.create_user(username="snd-off2off", password="pw")
+    user_sender = User.objects.create_user(
+        username="snd-off2off", password="pw", email="snd-off2off@example.com"
+    )
     from_resp = Responsible.objects.create(
         last_name="From", first_name="User", user=user_sender
     )
@@ -1388,8 +1400,12 @@ def test_pending_transfer_update_offer_receiver_change_zero_hours_clears_expiry(
     )
     status = Status.objects.create(name="In stock")
     sender = Responsible.objects.create(last_name="S", first_name="A")
-    user_b = User.objects.create_user(username="ub", password="pw")
-    user_c = User.objects.create_user(username="uc", password="pw")
+    user_b = User.objects.create_user(
+        username="ub", password="pw", email="ub@example.com"
+    )
+    user_c = User.objects.create_user(
+        username="uc", password="pw", email="uc@example.com"
+    )
     recv_b = Responsible.objects.create(last_name="B", first_name="One", user=user_b)
     recv_c = Responsible.objects.create(last_name="C", first_name="Two", user=user_c)
     location = Location.objects.create(name="L")

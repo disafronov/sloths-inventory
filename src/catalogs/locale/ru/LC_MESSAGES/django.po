@@ -56,7 +56,11 @@ msgstr "Ответственный"
 msgid "Responsibles"
 msgstr "Ответственные"
 
-#: src/catalogs/models.py:124
+#: src/catalogs/models.py:84
+msgid "The linked user must have an email address."
+msgstr "У привязанного пользователя должен быть указан email."
+
+#: src/catalogs/models.py:130
 msgid "New responsible is required."
 msgstr ""
 

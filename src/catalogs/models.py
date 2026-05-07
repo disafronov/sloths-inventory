@@ -77,6 +77,15 @@ class Responsible(CatalogCorrectionWindowMixin, BaseModel):
     def get_full_name(self) -> str:
         return str(self)
 
+    def clean(self) -> None:
+        super().clean()
+        if self.user_id is not None:
+            user = self.user
+            if user is not None and not user.email:
+                raise ValidationError(
+                    {"user": _("The linked user must have an email address.")}
+                )
+
     def save(self, *args: Any, **kwargs: Any) -> None:
         with transaction.atomic():
             if not self._state.adding:
