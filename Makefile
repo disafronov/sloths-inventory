@@ -69,7 +69,7 @@ dead-code: ## Check for dead code using vulture
 
 locale: ## Compile locale messages
 	@echo "Compile translation messages..."
-	PYTHONPATH=$(PYTHONPATH) uv run python src/manage.py compilemessages
+	PYTHONPATH=$(PYTHONPATH) SECRET_KEY=$(TOOLING_SECRET_KEY) uv run python src/manage.py compilemessages
 
 test: locale ## Run tests with coverage report
 	@echo "Running tests with coverage..."
