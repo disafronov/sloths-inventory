@@ -637,3 +637,56 @@ msgid ""
 msgstr ""
 "Ссылка подтверждения email недействительна или истекла. Пожалуйста, "
 "запросите новое изменение email."
+
+#: src/common/templates/emails/responsible_linked_subject.txt
+#: src/common/templates/emails/responsible_linked_body.html
+#, python-format
+msgid "Sloths Inventory: profile linked — %(name)s"
+msgstr "Sloths Inventory: профиль подключён — %(name)s"
+
+#: src/common/templates/emails/responsible_linked_body.html
+#, python-format
+msgid "Profile linked — %(name)s"
+msgstr "Профиль подключён — %(name)s"
+
+#: src/common/templates/emails/responsible_linked_body.txt
+#: src/common/templates/emails/responsible_linked_body.html
+#, python-format
+msgid "Your account has been linked to the Sloths Inventory profile \"%(name)s\"."
+msgstr "Ваш аккаунт подключён к профилю ответственного «%(name)s» в Sloths Inventory."
+
+#: src/common/templates/emails/responsible_linked_body.txt
+#: src/common/templates/emails/responsible_linked_body.html
+msgid "You will now receive notifications about inventory changes for items assigned to this profile."
+msgstr "Теперь вы будете получать уведомления об изменениях ТМЦ, закреплённых за этим профилем."
+
+#: src/common/templates/emails/responsible_linked_body.html
+msgid "Profile:"
+msgstr "Профиль:"
+
+#: src/common/templates/emails/responsible_linked_body.html
+#: src/common/templates/emails/responsible_unlinked_body.html
+msgid "Account:"
+msgstr "Аккаунт:"
+
+#: src/common/templates/emails/responsible_unlinked_subject.txt
+#: src/common/templates/emails/responsible_unlinked_body.html
+#, python-format
+msgid "Sloths Inventory: profile unlinked — %(name)s"
+msgstr "Sloths Inventory: профиль отключён — %(name)s"
+
+#: src/common/templates/emails/responsible_unlinked_body.html
+#, python-format
+msgid "Profile unlinked — %(name)s"
+msgstr "Профиль отключён — %(name)s"
+
+#: src/common/templates/emails/responsible_unlinked_body.txt
+#: src/common/templates/emails/responsible_unlinked_body.html
+#, python-format
+msgid "Your account has been unlinked from the Sloths Inventory profile \"%(name)s\"."
+msgstr "Ваш аккаунт отключён от профиля ответственного «%(name)s» в Sloths Inventory."
+
+#: src/common/templates/emails/responsible_unlinked_body.txt
+#: src/common/templates/emails/responsible_unlinked_body.html
+msgid "You will no longer receive inventory notifications for this profile."
+msgstr "Вы больше не будете получать уведомления об изменениях ТМЦ по этому профилю."

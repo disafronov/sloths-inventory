@@ -1,0 +1,8 @@
+{% load i18n %}{% blocktrans with username=user.username %}Hello {{ username }},{% endblocktrans %}
+
+{% blocktrans with name=responsible %}Your account has been linked to the Sloths Inventory profile "{{ name }}".{% endblocktrans %}
+
+{% trans "You will now receive notifications about inventory changes for items assigned to this profile." %}
+
+{% trans "Best regards," %}
+{% trans "Sloths Inventory Team" %}

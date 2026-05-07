@@ -1,0 +1,1 @@
+{% load i18n %}{% blocktrans with name=responsible %}Sloths Inventory: profile unlinked — {{ name }}{% endblocktrans %}
