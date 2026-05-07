@@ -72,7 +72,7 @@ def test_create_without_user_sends_no_email() -> None:
 
 
 @pytest.mark.django_db
-def test_update_without_user_change_sends_no_email() -> None:
+def test_update_without_user_sends_no_email() -> None:
     resp = Responsible.objects.create(last_name="Test", first_name="F")
     mail.outbox.clear()
 
@@ -80,6 +80,19 @@ def test_update_without_user_change_sends_no_email() -> None:
     resp.save()
 
     assert len(mail.outbox) == 0
+
+
+@pytest.mark.django_db
+def test_update_with_user_unchanged_sends_updated_email() -> None:
+    user = _user("upd2_u", "upd2@example.com")
+    resp = Responsible.objects.create(last_name="Test", first_name="H", user=user)
+    mail.outbox.clear()
+
+    resp.last_name = "Updated"
+    resp.save()
+
+    assert len(mail.outbox) == 1
+    assert mail.outbox[0].to == ["upd2@example.com"]
 
 
 @pytest.mark.django_db
