@@ -1,3 +1,14 @@
+## [1.10.0-rc.1](https://github.com/disafronov/sloths-inventory/compare/v1.9.0...v1.10.0-rc.1) (2026-05-07)
+
+### Features
+
+* Add email validation to Responsible model ([cc7dd0f](https://github.com/disafronov/sloths-inventory/commit/cc7dd0fbb2d583799273222893e45fa943983ac5))
+* add missing email warning banner ([a7d53b5](https://github.com/disafronov/sloths-inventory/commit/a7d53b5534e5d5cb43c861fa78f44b961f52b73d))
+
+### Bug Fixes
+
+* add error handling to signals and tests ([2f934df](https://github.com/disafronov/sloths-inventory/commit/2f934df1572f829f636ea7a16daea7477df07d0a))
+
 ## [1.9.0](https://github.com/disafronov/sloths-inventory/compare/v1.8.0...v1.9.0) (2026-05-07)
 
 ### Features
