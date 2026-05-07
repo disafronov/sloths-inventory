@@ -34,8 +34,12 @@ def test_my_items_uses_id_tiebreaker_when_operations_share_created_at() -> None:
     status = Status.objects.create(name="In stock")
     location = Location.objects.create(name="Moscow")
 
-    user1 = User.objects.create_user(username="u1", password="pw")
-    user2 = User.objects.create_user(username="u2", password="pw")
+    user1 = User.objects.create_user(
+        username="u1", password="pw", email="u1@example.com"
+    )
+    user2 = User.objects.create_user(
+        username="u2", password="pw", email="u2@example.com"
+    )
     resp1 = Responsible.objects.create(
         last_name="Ivanov", first_name="Ivan", user=user1
     )
@@ -81,8 +85,12 @@ def test_previous_items_ordering_by_last_on_me_created_at_is_stable() -> None:
     status = Status.objects.create(name="In stock")
     location = Location.objects.create(name="Moscow")
 
-    user1 = User.objects.create_user(username="u1", password="pw")
-    user2 = User.objects.create_user(username="u2", password="pw")
+    user1 = User.objects.create_user(
+        username="u1", password="pw", email="u1@example.com"
+    )
+    user2 = User.objects.create_user(
+        username="u2", password="pw", email="u2@example.com"
+    )
     resp1 = Responsible.objects.create(
         last_name="Ivanov", first_name="Ivan", user=user1
     )
