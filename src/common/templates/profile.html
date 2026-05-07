@@ -10,12 +10,10 @@
     <!-- Email Change Section -->
     <section class="profile-section">
         <h2 class="profile-section__title">{% trans "Email Address" %}</h2>
-        <p class="profile-section__info">
-            {% trans "Current email:" %} <strong>{{ user.email }}</strong>
-        </p>
         <form method="post" class="form-container">
             {% csrf_token %}
-            <h3 class="form-subtitle">{% trans "Change Email Address" %}</h3>
+<p><label>{% trans "Current email:" %}</label></p>
+<p><input type="email" value="{{ user.email }}" readonly disabled></p>
             {{ email_form.as_p }}
             <button type="submit" name="email_submit" class="button">{% trans "Change Email" %}</button>
         </form>
@@ -56,12 +54,6 @@
     color: var(--color-text-primary, #333);
 }
 
-.profile-section__info {
-    margin: 0 0 1.5rem 0;
-    padding: 0.75rem;
-    background: var(--color-background, #f5f5f5);
-    border-radius: 4px;
-}
 
 .form-subtitle {
     margin: 0 0 1rem 0;
