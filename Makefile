@@ -69,7 +69,9 @@ dead-code: ## Check for dead code using vulture
 	@echo "Checking for dead code..."
 	uv run vulture
 
-locale: ## Compile locale messages
+locale: ## Make & compile locale messages
+	@echo "Make translation messages..."
+	SECRET_KEY=$(TOOLING_SECRET_KEY) $(UV) python src/manage.py makemessages --all
 	@echo "Compile translation messages..."
 	SECRET_KEY=$(TOOLING_SECRET_KEY) $(UV) python src/manage.py compilemessages
 
