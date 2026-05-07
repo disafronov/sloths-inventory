@@ -12,6 +12,7 @@ from django.test import Client, RequestFactory, override_settings
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext as _
+from django.utils.translation import ngettext
 
 from catalogs.models import Location, Responsible, Status
 from devices.attributes import Category, Manufacturer, Model, Type
@@ -493,7 +494,8 @@ def test_operation_lock_fieldset_description_for_non_latest_operation() -> None:
     lock_title = str(_("Editing restrictions"))
     fs1 = admin_obj.get_fieldsets(request, op1)
     lock1 = next(fs for fs in fs1 if fs[0] is not None and str(fs[0]) == lock_title)
-    assert "Only the latest" in str(lock1[1]["description"])
+    expected_msg = _("Only the latest operation for this item can be edited")
+    assert expected_msg in str(lock1[1]["description"])
 
     fs2 = admin_obj.get_fieldsets(request, op2)
     assert not any(fs[0] is not None and str(fs[0]) == lock_title for fs in fs2)
@@ -539,7 +541,14 @@ def test_operation_lock_fieldset_description_when_correction_window_expired() ->
     lock_title = str(_("Editing restrictions"))
     fieldsets = admin_obj.get_fieldsets(request, op)
     lock = next(fs for fs in fieldsets if str(fs[0]) == lock_title)
-    assert "contact an administrator" in str(lock[1]["description"]).lower()
+    expected_msg = ngettext(
+        "The correction window (%(minutes)d minute) has expired. "
+        "To make changes, contact an administrator.",
+        "The correction window (%(minutes)d minutes) has expired. "
+        "To make changes, contact an administrator.",
+        10,
+    ) % {"minutes": 10}
+    assert expected_msg in str(lock[1]["description"])
 
 
 @pytest.mark.django_db
@@ -582,7 +591,17 @@ def test_operation_admin_change_page_renders_edit_lock_description_after_window(
     url = reverse("admin:inventory_operation_change", args=[op.pk])
     response = client.get(url)
     assert response.status_code == 200
-    assert b"contact an administrator" in response.content.lower()
+    assert (
+        ngettext(
+            "The correction window (%(minutes)d minute) has expired. "
+            "To make changes, contact an administrator.",
+            "The correction window (%(minutes)d minutes) has expired. "
+            "To make changes, contact an administrator.",
+            10,
+        )
+        % {"minutes": 10}
+        in response.content.decode()
+    )
 
 
 @pytest.mark.django_db
@@ -626,7 +645,7 @@ def test_operation_change_page_superuser_hides_lock_after_correction_window() ->
     url = reverse("admin:inventory_operation_change", args=[op.pk])
     response = client.get(url)
     assert response.status_code == 200
-    assert b"Editing restrictions" not in response.content
+    assert _("Editing restrictions").encode() not in response.content
 
 
 @pytest.mark.django_db
@@ -667,7 +686,7 @@ def test_operation_admin_change_page_hides_lock_section_when_editable() -> None:
     url = reverse("admin:inventory_operation_change", args=[op.pk])
     response = client.get(url)
     assert response.status_code == 200
-    assert b"Editing restrictions" not in response.content
+    assert _("Editing restrictions").encode() not in response.content
 
 
 @pytest.mark.django_db
@@ -818,7 +837,16 @@ def test_item_lock_fieldset_description_when_correction_window_expired() -> None
     lock_title = str(_("Editing restrictions"))
     fieldsets = admin_obj.get_fieldsets(request, item)
     lock = next(fs for fs in fieldsets if str(fs[0]) == lock_title)
-    assert "contact an administrator" in str(lock[1]["description"]).lower()
+    expected_msg = ngettext(
+        "This catalog entry is in use. "
+        "The correction window (%(minutes)d minute) has expired. "
+        "To make changes, contact an administrator.",
+        "This catalog entry is in use. "
+        "The correction window (%(minutes)d minutes) has expired. "
+        "To make changes, contact an administrator.",
+        10,
+    ) % {"minutes": 10}
+    assert expected_msg in str(lock[1]["description"])
 
 
 @pytest.mark.django_db
@@ -941,7 +969,19 @@ def test_item_change_page_renders_correction_window_lock_after_window() -> None:
     url = reverse("admin:inventory_item_change", args=[item.pk])
     response = client.get(url)
     assert response.status_code == 200
-    assert b"contact an administrator" in response.content.lower()
+    assert (
+        ngettext(
+            "This catalog entry is in use. "
+            "The correction window (%(minutes)d minute) has expired. "
+            "To make changes, contact an administrator.",
+            "This catalog entry is in use. "
+            "The correction window (%(minutes)d minutes) has expired. "
+            "To make changes, contact an administrator.",
+            10,
+        )
+        % {"minutes": 10}
+        in response.content.decode()
+    )
 
 
 @pytest.mark.django_db
@@ -1005,8 +1045,7 @@ def test_item_change_page_superuser_hides_lock_after_correction_window() -> None
     url = reverse("admin:inventory_item_change", args=[item.pk])
     response = client.get(url)
     assert response.status_code == 200
-    assert b"Editing restrictions" not in response.content
-    assert b"contact an administrator" not in response.content.lower()
+    assert _("Editing restrictions").encode() not in response.content
 
 
 @pytest.mark.django_db
@@ -1034,7 +1073,7 @@ def test_item_change_page_hides_lock_section_when_editable() -> None:
     url = reverse("admin:inventory_item_change", args=[item.pk])
     response = client.get(url)
     assert response.status_code == 200
-    assert b"Editing restrictions" not in response.content
+    assert _("Editing restrictions").encode() not in response.content
 
 
 @pytest.mark.django_db
@@ -1279,7 +1318,7 @@ def test_operation_admin_lock_message_for_non_latest_operation_row() -> None:
         latest_operation_pk=op2.pk,
     )
     assert msg is not None
-    assert "Only the latest operation" in msg
+    assert _("Only the latest operation for this item can be edited") in msg
 
 
 @pytest.mark.django_db
