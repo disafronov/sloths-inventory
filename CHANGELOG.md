@@ -1,3 +1,9 @@
+## [1.8.0](https://github.com/disafronov/sloths-inventory/compare/v1.7.1...v1.8.0) (2026-05-07)
+
+### Features
+
+* add email functionality for transfer acceptance, including retry mechanism and templating ([d53d606](https://github.com/disafronov/sloths-inventory/commit/d53d60601fef7dbe672d8fdb764d9e236743e96f))
+
 ## [1.8.0-rc.1](https://github.com/disafronov/sloths-inventory/compare/v1.7.1...v1.8.0-rc.1) (2026-05-06)
 
 ### Features
