@@ -1,3 +1,4 @@
+import logging
 from typing import Any
 
 from django.contrib.auth import get_user_model
@@ -7,6 +8,7 @@ from django.dispatch import receiver
 from catalogs.models import Responsible
 from common.email_utils import send_transfer_email
 
+logger = logging.getLogger(__name__)
 User = get_user_model()
 
 
@@ -35,16 +37,21 @@ def notify_responsible_user_changed(
 ) -> None:
     pre_user_id: int | None = getattr(instance, "_pre_save_user_id", None)
 
-    if pre_user_id == instance.user_id:
+    try:
+        if pre_user_id == instance.user_id:
+            if instance.user_id:
+                user = User.objects.get(pk=instance.user_id)
+                _notify_responsible("updated", instance, user)
+            return
+
         if instance.user_id:
-            user = User.objects.get(pk=instance.user_id)
-            _notify_responsible("updated", instance, user)
-        return
+            new_user = User.objects.get(pk=instance.user_id)
+            _notify_responsible("linked", instance, new_user)
 
-    if instance.user_id:
-        new_user = User.objects.get(pk=instance.user_id)
-        _notify_responsible("linked", instance, new_user)
-
-    if pre_user_id:
-        old_user = User.objects.get(pk=pre_user_id)
-        _notify_responsible("unlinked", instance, old_user)
+        if pre_user_id:
+            old_user = User.objects.get(pk=pre_user_id)
+            _notify_responsible("unlinked", instance, old_user)
+    except Exception:
+        logger.exception(
+            "Failed to send responsible notification for responsible %s", instance.pk
+        )
