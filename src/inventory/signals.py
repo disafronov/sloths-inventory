@@ -64,13 +64,16 @@ def notify_operation_saved(
         pk=instance.responsible_id
     )
 
-    if created:
+    if created and responsible_changed and pre_responsible_id is not None:
         _notify("assigned", new_responsible, item, instance)
-        if responsible_changed and pre_responsible_id is not None:
-            prev_responsible = Responsible.objects.select_related("user").get(
-                pk=pre_responsible_id
-            )
-            _notify("unassigned", prev_responsible, item, instance)
+        prev_responsible = Responsible.objects.select_related("user").get(
+            pk=pre_responsible_id
+        )
+        _notify("unassigned", prev_responsible, item, instance)
+    elif created and pre_responsible_id is None:
+        _notify("assigned", new_responsible, item, instance)
+    elif created:
+        _notify("updated", new_responsible, item, instance)
     elif responsible_changed and pre_responsible_id is not None:
         _notify("assigned", new_responsible, item, instance)
         prev_responsible = Responsible.objects.select_related("user").get(
