@@ -25,6 +25,7 @@ def test_create_first_operation_sends_assigned(
     """First operation for an item notifies the new responsible (assigned)."""
     item = Item.objects.create(inventory_number="SIG-001", device=inventory_test_device)
     resp = _responsible("sig_a", "a@example.com")
+    mail.outbox.clear()
 
     Operation.objects.create(
         item=item,

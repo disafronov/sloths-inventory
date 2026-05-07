@@ -629,3 +629,56 @@ msgid ""
 msgstr ""
 "The email confirmation link is invalid or has expired. Please request a new "
 "email change."
+
+#: src/common/templates/emails/responsible_linked_subject.txt
+#: src/common/templates/emails/responsible_linked_body.html
+#, python-format
+msgid "Sloths Inventory: profile linked — %(name)s"
+msgstr "Sloths Inventory: profile linked — %(name)s"
+
+#: src/common/templates/emails/responsible_linked_body.html
+#, python-format
+msgid "Profile linked — %(name)s"
+msgstr "Profile linked — %(name)s"
+
+#: src/common/templates/emails/responsible_linked_body.txt
+#: src/common/templates/emails/responsible_linked_body.html
+#, python-format
+msgid "Your account has been linked to the Sloths Inventory profile \"%(name)s\"."
+msgstr "Your account has been linked to the Sloths Inventory profile \"%(name)s\"."
+
+#: src/common/templates/emails/responsible_linked_body.txt
+#: src/common/templates/emails/responsible_linked_body.html
+msgid "You will now receive notifications about inventory changes for items assigned to this profile."
+msgstr "You will now receive notifications about inventory changes for items assigned to this profile."
+
+#: src/common/templates/emails/responsible_linked_body.html
+msgid "Profile:"
+msgstr "Profile:"
+
+#: src/common/templates/emails/responsible_linked_body.html
+#: src/common/templates/emails/responsible_unlinked_body.html
+msgid "Account:"
+msgstr "Account:"
+
+#: src/common/templates/emails/responsible_unlinked_subject.txt
+#: src/common/templates/emails/responsible_unlinked_body.html
+#, python-format
+msgid "Sloths Inventory: profile unlinked — %(name)s"
+msgstr "Sloths Inventory: profile unlinked — %(name)s"
+
+#: src/common/templates/emails/responsible_unlinked_body.html
+#, python-format
+msgid "Profile unlinked — %(name)s"
+msgstr "Profile unlinked — %(name)s"
+
+#: src/common/templates/emails/responsible_unlinked_body.txt
+#: src/common/templates/emails/responsible_unlinked_body.html
+#, python-format
+msgid "Your account has been unlinked from the Sloths Inventory profile \"%(name)s\"."
+msgstr "Your account has been unlinked from the Sloths Inventory profile \"%(name)s\"."
+
+#: src/common/templates/emails/responsible_unlinked_body.txt
+#: src/common/templates/emails/responsible_unlinked_body.html
+msgid "You will no longer receive inventory notifications for this profile."
+msgstr "You will no longer receive inventory notifications for this profile."

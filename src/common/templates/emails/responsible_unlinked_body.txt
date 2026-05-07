@@ -1,0 +1,8 @@
+{% load i18n %}{% blocktrans with username=user.username %}Hello {{ username }},{% endblocktrans %}
+
+{% blocktrans with name=responsible %}Your account has been unlinked from the Sloths Inventory profile "{{ name }}".{% endblocktrans %}
+
+{% trans "You will no longer receive inventory notifications for this profile." %}
+
+{% trans "Best regards," %}
+{% trans "Sloths Inventory Team" %}
