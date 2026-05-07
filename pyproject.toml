@@ -21,6 +21,7 @@ dev = [
   "pytest>=8.0.0",
   "pytest-django>=4.8.0",
   "pytest-cov>=4.1.0",
+  "pytest-xdist>=3.6.0",
   "mypy>=1.19,<1.20",
   "django-stubs>=5.2,<5.3",
   "django-stubs-ext>=5.2,<5.3",
@@ -108,7 +109,7 @@ ignore_names = [ "cls", "owner", "UserType", "db", "obj", "args", "kwargs" ]
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "sloths_inventory.settings_pytest"
 python_files = [ "test_*.py" ]
-addopts = "--strict-markers"
+addopts = "--strict-markers -n auto"
 markers = [
   "django_db: mark test to use django database",
   "postgres: mark test that requires PostgreSQL",
