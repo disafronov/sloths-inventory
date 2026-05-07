@@ -7,6 +7,7 @@ from django.test import Client
 from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
+from django.utils.translation import gettext as _
 
 from common.email_tokens import email_change_token_generator
 
@@ -26,7 +27,15 @@ class TestNoEmailBanner:
         client.login(username="noemail", password="pw")
         response = client.get(reverse("common:profile"))
         assert response.status_code == 200
-        assert "Add one in your profile" in response.content.decode()
+        assert (
+            _(
+                "Your account has no email address. "
+                '<a href="%(url)s">Add one in your profile</a>'
+                " to receive notifications."
+            )
+            % {"url": reverse("common:profile")}
+            in response.content.decode()
+        )
 
     def test_banner_hidden_when_user_has_email(self, client: Client, django_user_model):
         django_user_model.objects.create_user(
@@ -35,7 +44,15 @@ class TestNoEmailBanner:
         client.login(username="hasemail", password="pw")
         response = client.get(reverse("common:profile"))
         assert response.status_code == 200
-        assert "Add one in your profile" not in response.content.decode()
+        assert (
+            _(
+                "Your account has no email address. "
+                '<a href="%(url)s">Add one in your profile</a>'
+                " to receive notifications."
+            )
+            % {"url": reverse("common:profile")}
+            not in response.content.decode()
+        )
 
 
 @pytest.mark.django_db
@@ -102,7 +119,10 @@ class TestProfileView:
         )
 
         assert response.status_code == 200
-        assert "must be different from the current one" in response.content.decode()
+        assert (
+            _("The new email address must be different from the current one.")
+            in response.content.decode()
+        )
 
     def test_email_change_validation_mismatch(self, client: Client, django_user_model):
         """Email addresses must match."""
@@ -121,7 +141,7 @@ class TestProfileView:
         )
 
         assert response.status_code == 200
-        assert "do not match" in response.content.decode()
+        assert _("The two email addresses do not match.") in response.content.decode()
 
     def test_email_change_validation_already_taken(
         self, client: Client, django_user_model
@@ -145,7 +165,7 @@ class TestProfileView:
         )
 
         assert response.status_code == 200
-        assert "already in use" in response.content.decode()
+        assert _("This email address is already in use.") in response.content.decode()
 
     def test_profile_view_post_no_submit_button(
         self, client: Client, django_user_model
