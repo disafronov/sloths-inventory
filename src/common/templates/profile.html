@@ -6,12 +6,12 @@
 {% block heading %}{% trans "Profile" %}{% endblock %}
 
 {% block content %}
-<div class="profile-container">
+<div>
     <!-- Email Change Section -->
-    <section class="profile-section">
-        <h2 class="profile-section__title">{% trans "Email Address" %}</h2>
+    <section>
         <form method="post" class="form-container">
             {% csrf_token %}
+<h2>{% trans "Email Address" %}</h2>
 <p><label>{% trans "Current email:" %}</label></p>
 <p><input type="email" value="{{ user.email }}" readonly disabled></p>
             {{ email_form.as_p }}
@@ -20,10 +20,10 @@
     </section>
 
     <!-- Password Change Section -->
-    <section class="profile-section">
-        <h2 class="profile-section__title">{% trans "Password" %}</h2>
+    <section>
         <form method="post" class="form-container">
             {% csrf_token %}
+<h2>{% trans "Password" %}</h2>
             <h3 class="form-subtitle">{% trans "Change Password" %}</h3>
             {{ password_form.as_p }}
             <button type="submit" name="password_submit" class="button">{% trans "Change Password" %}</button>
@@ -31,49 +31,4 @@
     </section>
 </div>
 
-<style>
-.profile-container {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-.profile-section {
-    background: var(--color-surface, #fff);
-    border: 1px solid var(--color-border, #e0e0e0);
-    border-radius: 8px;
-    padding: 1.5rem;
-}
-
-.profile-section__title {
-    margin: 0 0 1rem 0;
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--color-text-primary, #333);
-}
-
-
-.form-subtitle {
-    margin: 0 0 1rem 0;
-    font-size: 1rem;
-    font-weight: 500;
-    color: var(--color-text-secondary, #666);
-}
-
-.form-container {
-    margin: 0;
-}
-
-@media (max-width: 768px) {
-    .profile-container {
-        max-width: 100%;
-    }
-
-    .profile-section {
-        padding: 1rem;
-    }
-}
-</style>
 {% endblock %}
