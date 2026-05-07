@@ -65,10 +65,10 @@ def test_create_operation_with_prev_responsible_sends_assigned_and_unassigned(
 
 
 @pytest.mark.django_db
-def test_create_operation_same_responsible_as_prev_sends_only_assigned(
+def test_create_operation_same_responsible_as_prev_sends_updated(
     inventory_test_device, inventory_test_status_location
 ) -> None:
-    """Second operation with the same responsible does not send unassigned."""
+    """New operation with unchanged responsible (e.g. location move) sends updated."""
     item = Item.objects.create(inventory_number="SIG-003", device=inventory_test_device)
     resp = _responsible("sig_d", "d@example.com")
     status = inventory_test_status_location["status"]
@@ -85,6 +85,7 @@ def test_create_operation_same_responsible_as_prev_sends_only_assigned(
 
     assert len(mail.outbox) == 1
     assert mail.outbox[0].to == ["d@example.com"]
+    assert "SIG-003" in mail.outbox[0].subject
 
 
 @pytest.mark.django_db
