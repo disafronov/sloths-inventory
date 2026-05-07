@@ -33,12 +33,13 @@ endif
 # deterministic fake key for local tooling via Makefile targets.
 TOOLING_SECRET_KEY = unsafe-secret-key-for-tooling
 
-PYTEST_CMD = PYTHONPATH=$(PYTHONPATH) SECRET_KEY=$(TOOLING_SECRET_KEY) uv run python -m pytest -v
-COVERAGE_OPTS = --cov --cov-report=term-missing --cov-report=html
+UV = PYTHONPATH=$(PYTHONPATH) uv run
+PYTEST_CMD = SECRET_KEY=$(TOOLING_SECRET_KEY) $(UV) python -m pytest -v
+COVERAGE_OPTS = --cov-report=html
 
 DOCKER_IMAGE = sloths-inventory
 
-.PHONY: all clean dead-code docker docker-build docker-run format help install lint run test test-postgres
+.PHONY: all clean dead-code docker docker-build docker-run format help install lint locale run test test-postgres
 
 help: ## Show this help message
 	@echo "Available commands:"
@@ -53,15 +54,16 @@ install: ## Install dependencies
 
 format: ## Format code
 	@echo "Formatting code..."
-	PYTHONPATH=$(PYTHONPATH) uv run black . && PYTHONPATH=$(PYTHONPATH) uv run isort .
+	$(UV) black . && \
+	$(UV) isort .
 
 lint: ## Run linting tools
 	@echo "Running linting tools..."
-	PYTHONPATH=$(PYTHONPATH) uv run black --check . && \
-	PYTHONPATH=$(PYTHONPATH) uv run isort --check-only . && \
-		PYTHONPATH=$(PYTHONPATH) uv run flake8 . && \
-		PYTHONPATH=$(PYTHONPATH) SECRET_KEY=$(TOOLING_SECRET_KEY) uv run mypy . && \
-		PYTHONPATH=$(PYTHONPATH) uv run bandit -r -c pyproject.toml .
+	$(UV) black --check . && \
+	$(UV) isort --check-only . && \
+	$(UV) flake8 . && \
+	SECRET_KEY=$(TOOLING_SECRET_KEY) $(UV) mypy . && \
+	$(UV) bandit -r -c pyproject.toml .
 
 dead-code: ## Check for dead code using vulture
 	@echo "Checking for dead code..."
@@ -69,7 +71,7 @@ dead-code: ## Check for dead code using vulture
 
 locale: ## Compile locale messages
 	@echo "Compile translation messages..."
-	PYTHONPATH=$(PYTHONPATH) SECRET_KEY=$(TOOLING_SECRET_KEY) uv run python src/manage.py compilemessages
+	SECRET_KEY=$(TOOLING_SECRET_KEY) $(UV) python src/manage.py compilemessages
 
 test: locale ## Run tests with coverage report
 	@echo "Running tests with coverage..."
@@ -84,14 +86,14 @@ all: lint test dead-code ## Run all checks (no mutations)
 
 run: locale ## Run Django development server locally
 	@echo "Running Django development server locally..."
-	PYTHONPATH=$(PYTHONPATH) uv run python src/manage.py migrate
+	$(UV) python src/manage.py migrate
 	@if [ -n "$$DJANGO_SUPERUSER_USERNAME" ] && [ -n "$$DJANGO_SUPERUSER_PASSWORD" ] && [ -n "$$DJANGO_SUPERUSER_EMAIL" ]; then \
 		echo "Ensuring Django superuser exists..."; \
-		PYTHONPATH=$(PYTHONPATH) uv run python src/manage.py createsuperuser --noinput || true; \
+		$(UV) python src/manage.py createsuperuser --noinput || true; \
 	else \
 		echo "Skipping createsuperuser (set DJANGO_SUPERUSER_USERNAME/PASSWORD/EMAIL to enable)."; \
 	fi
-	PYTHONPATH=$(PYTHONPATH) uv run python src/manage.py runserver 0.0.0.0:8000
+	$(UV) python src/manage.py runserver 0.0.0.0:8000
 
 clean: ## Clean caches and coverage outputs
 	@echo "Cleaning cache and temporary files..."
