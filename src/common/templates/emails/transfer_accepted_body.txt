@@ -3,4 +3,4 @@
 {% trans "Sender:" %} {{ sender }}
 {% trans "Receiver:" %} {{ receiver }}
 
-{% trans "The item ownership has been transferred." %}
+{% trans "The item ownership is being transferred." %}

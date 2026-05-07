@@ -434,8 +434,8 @@ msgstr "Receiver:"
 
 #: src/common/templates/emails/transfer_accepted_body.html:20
 #: src/common/templates/emails/transfer_accepted_body.txt:6
-msgid "The item ownership has been transferred."
-msgstr "The item ownership has been transferred."
+msgid "The item ownership is being transferred."
+msgstr "The item ownership is being transferred."
 
 #: src/common/templates/emails/transfer_accepted_body.txt:1
 #, python-format
