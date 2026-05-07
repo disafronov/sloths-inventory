@@ -1,5 +1,6 @@
 """Token generation and validation for email change confirmation."""
 
+import contextvars
 from typing import TYPE_CHECKING
 
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
@@ -7,24 +8,36 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 if TYPE_CHECKING:
     from django.contrib.auth.models import User
 
+_pending_new_email: contextvars.ContextVar[str] = contextvars.ContextVar(
+    "pending_new_email", default=""
+)
+
 
 class EmailChangeTokenGenerator(PasswordResetTokenGenerator):
     """
     Token generator for email change confirmation.
 
-    Similar to password reset tokens but includes the new email in the hash
-    to ensure the token is only valid for the specific email change request.
+    Includes the target email in the hash so the token is only valid for the
+    specific email change request. The target email is passed via a
+    ``ContextVar`` — safe for threaded and async workers alike.
     """
 
-    def _make_hash_value(self, user: "User", timestamp: int) -> str:
-        """
-        Hash the user's primary key, email, timestamp, and new email.
+    def make_token_for_email(self, user: "User", new_email: str) -> str:
+        ctx = _pending_new_email.set(new_email)
+        try:
+            return self.make_token(user)
+        finally:
+            _pending_new_email.reset(ctx)
 
-        The new email is stored in a temporary attribute on the user object
-        when generating the token.
-        """
-        email_field = getattr(user, "_new_email_for_token", "")
-        return f"{user.pk}{user.email}{timestamp}{email_field}"
+    def check_token_for_email(self, user: "User", token: str, new_email: str) -> bool:
+        ctx = _pending_new_email.set(new_email)
+        try:
+            return self.check_token(user, token)
+        finally:
+            _pending_new_email.reset(ctx)
+
+    def _make_hash_value(self, user: "User", timestamp: int) -> str:
+        return f"{user.pk}{user.email}{timestamp}{_pending_new_email.get()}"
 
 
 email_change_token_generator = EmailChangeTokenGenerator()

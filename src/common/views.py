@@ -10,20 +10,22 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
-from django.template.loader import render_to_string
-from django.urls import reverse, reverse_lazy
-from django.utils.encoding import force_bytes, force_str
-from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.urls import reverse_lazy
+from django.utils.encoding import force_str
+from django.utils.http import urlsafe_base64_decode
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic import TemplateView
 
-from common.email_utils import send_email_async
+from common.email_tokens import email_change_token_generator
+from common.email_utils import (
+    send_email_change_confirmation,
+    send_email_changed_notification,
+)
 
 if TYPE_CHECKING:
     from django.contrib.auth.models import User as UserType
 
-from .email_tokens import email_change_token_generator
 from .forms import EmailChangeForm
 
 User = get_user_model()
@@ -73,7 +75,7 @@ class ProfileView(LoginRequiredMixin, TemplateView):
 
         if email_form.is_valid():
             new_email = email_form.cleaned_data["new_email"]
-            self._send_email_confirmation(user, new_email)
+            send_email_change_confirmation(user, new_email)
             messages.success(
                 request,
                 _(
@@ -109,47 +111,6 @@ class ProfileView(LoginRequiredMixin, TemplateView):
             {"email_form": email_form, "password_form": password_form},
         )
 
-    def _send_email_confirmation(self, user: "UserType", new_email: str) -> None:
-        """Send confirmation email to the new email address."""
-        # Store new email temporarily for token generation
-        user._new_email_for_token = new_email  # type: ignore[attr-defined]
-        token = email_change_token_generator.make_token(user)
-        uid = urlsafe_base64_encode(force_bytes(user.pk))
-
-        # Build confirmation URL
-        from django.conf import settings
-
-        kwargs = {
-            "uidb64": uid,
-            "token": token,
-            "new_email": urlsafe_base64_encode(force_bytes(new_email)),
-        }
-        path = reverse("common:email_change_confirm", kwargs=kwargs)
-        confirmation_url = f"{settings.SITE_URL}{path}"
-
-        # Send email
-        subject = render_to_string(
-            "emails/email_change_subject.txt", {"user": user}
-        ).strip()
-        text_body = render_to_string(
-            "emails/email_change_body.txt",
-            {
-                "user": user,
-                "new_email": new_email,
-                "confirmation_url": confirmation_url,
-            },
-        )
-        html_body = render_to_string(
-            "emails/email_change_body.html",
-            {
-                "user": user,
-                "new_email": new_email,
-                "confirmation_url": confirmation_url,
-            },
-        )
-
-        send_email_async(subject, text_body, new_email, html_body)
-
 
 class EmailChangeConfirmView(View):
     """Confirm email change via token link."""
@@ -170,9 +131,9 @@ class EmailChangeConfirmView(View):
             new_email_decoded = None
 
         if user is not None and new_email_decoded is not None:
-            # Validate token
-            user._new_email_for_token = new_email_decoded  # type: ignore[attr-defined]
-            if email_change_token_generator.check_token(user, token):
+            if email_change_token_generator.check_token_for_email(
+                user, token, new_email_decoded
+            ):
                 # Check if email is still available
                 if (
                     User.objects.filter(email__iexact=new_email_decoded)
@@ -193,10 +154,7 @@ class EmailChangeConfirmView(View):
                         _("Your email address has been changed successfully."),
                     )
 
-                    # Send notification to old email
-                    self._send_notification_to_old_email(
-                        user, old_email, new_email_decoded
-                    )
+                    send_email_changed_notification(user, old_email, new_email_decoded)
 
                 return redirect("common:profile")
 
@@ -208,21 +166,3 @@ class EmailChangeConfirmView(View):
             ),
         )
         return redirect("common:profile")
-
-    def _send_notification_to_old_email(
-        self, user: "UserType", old_email: str, new_email: str
-    ) -> None:
-        """Notify the old email address about the change."""
-        subject = render_to_string(
-            "emails/email_changed_notification_subject.txt", {"user": user}
-        ).strip()
-        text_body = render_to_string(
-            "emails/email_changed_notification_body.txt",
-            {"user": user, "old_email": old_email, "new_email": new_email},
-        )
-        html_body = render_to_string(
-            "emails/email_changed_notification_body.html",
-            {"user": user, "old_email": old_email, "new_email": new_email},
-        )
-
-        send_email_async(subject, text_body, old_email, html_body)
