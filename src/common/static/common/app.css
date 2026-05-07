@@ -349,6 +349,25 @@ body.nav-open {
   border: 1px solid #90caf9;
 }
 
+/* Persistent in-page alert banner (e.g. missing email warning). */
+.banner {
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin-bottom: var(--space-3);
+  line-height: 1.4;
+}
+
+.banner--warning {
+  color: #5c4a00;
+  background-color: #fff8e1;
+  border: 1px solid #e6d48a;
+}
+
+.banner--warning a {
+  color: inherit;
+  font-weight: 600;
+}
+
 /* Short explanatory copy above forms (e.g. transfer expiry policy). */
 .form-hint {
   max-width: 520px;

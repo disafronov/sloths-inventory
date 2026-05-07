@@ -14,6 +14,31 @@ User = get_user_model()
 
 
 @pytest.mark.django_db
+class TestNoEmailBanner:
+    """Tests for the missing-email warning banner in base.html."""
+
+    def test_banner_shown_when_user_has_no_email(
+        self, client: Client, django_user_model
+    ):
+        django_user_model.objects.create_user(
+            username="noemail", password="pw", email=""
+        )
+        client.login(username="noemail", password="pw")
+        response = client.get(reverse("common:profile"))
+        assert response.status_code == 200
+        assert "Add one in your profile" in response.content.decode()
+
+    def test_banner_hidden_when_user_has_email(self, client: Client, django_user_model):
+        django_user_model.objects.create_user(
+            username="hasemail", password="pw", email="u@example.com"
+        )
+        client.login(username="hasemail", password="pw")
+        response = client.get(reverse("common:profile"))
+        assert response.status_code == 200
+        assert "Add one in your profile" not in response.content.decode()
+
+
+@pytest.mark.django_db
 class TestProfileView:
     """Tests for the profile view."""
 
