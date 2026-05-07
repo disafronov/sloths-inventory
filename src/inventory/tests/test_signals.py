@@ -275,7 +275,8 @@ def test_transfer_receiver_change_notifies_new_receiver(
     )
 
     recipients = {addr for m in mail.outbox for addr in m.to}
-    assert "r5b@example.com" in recipients
+    assert "r5b@example.com" in recipients  # new receiver notified (created)
+    assert "r5a@example.com" in recipients  # old receiver notified (cancelled)
 
 
 @pytest.mark.django_db
