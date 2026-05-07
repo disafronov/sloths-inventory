@@ -1,0 +1,5 @@
+{% load i18n %}{% blocktrans with item=item %}Item {{ item }} has been assigned to you.{% endblocktrans %}
+
+{% trans "Status:" %} {{ operation.status }}
+{% trans "Location:" %} {{ operation.location }}
+{% trans "Responsible:" %} {{ operation.responsible }}

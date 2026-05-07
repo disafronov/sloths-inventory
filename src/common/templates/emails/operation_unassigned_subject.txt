@@ -1,0 +1,1 @@
+{% load i18n %}{% blocktrans with item=item %}Item removed from your responsibility: {{ item }}{% endblocktrans %}

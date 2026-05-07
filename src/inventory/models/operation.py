@@ -186,11 +186,28 @@ class Operation(BaseModel):
         the related Item inside a transaction. This makes the "only the latest
         operation may be edited" rule deterministic even under concurrent inserts
         and edits.
+
+        Before persisting, we capture the previous responsible so the post_save
+        signal can determine who to notify without an extra round-trip after commit.
         """
 
         with transaction.atomic():
             # Lock the item row to serialize concurrent updates for the same item.
             Item.objects.select_for_update().only("id").get(pk=self.item_id)
+
+            if self._state.adding:
+                prev = (
+                    Operation.objects.filter(item_id=self.item_id)
+                    .order_by("-created_at", "-id")
+                    .only("responsible_id")
+                    .first()
+                )
+                self._pre_save_responsible_id: int | None = (
+                    prev.responsible_id if prev else None
+                )
+            else:
+                prev_op = Operation.objects.only("responsible_id").get(pk=self.pk)
+                self._pre_save_responsible_id = prev_op.responsible_id
 
             # Ensure `clean()` runs on updates as well (admin and any other code path).
             self.full_clean()

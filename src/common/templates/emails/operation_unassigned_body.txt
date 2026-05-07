@@ -1,0 +1,5 @@
+{% load i18n %}{% blocktrans with item=item %}Item {{ item }} has been removed from your responsibility.{% endblocktrans %}
+
+{% trans "New responsible:" %} {{ operation.responsible }}
+{% trans "Status:" %} {{ operation.status }}
+{% trans "Location:" %} {{ operation.location }}

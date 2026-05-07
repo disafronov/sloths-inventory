@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-06 13:38+0400\n"
+"POT-Creation-Date: 2026-05-07 13:54+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -182,6 +182,9 @@ msgstr ""
 #: src/common/templates/emails/email_change_body.txt:15
 #: src/common/templates/emails/email_changed_notification_body.html:30
 #: src/common/templates/emails/email_changed_notification_body.txt:10
+#: src/common/templates/emails/operation_assigned_body.html:23
+#: src/common/templates/emails/operation_unassigned_body.html:23
+#: src/common/templates/emails/operation_updated_body.html:23
 #: src/common/templates/emails/transfer_accepted_body.html:24
 #: src/common/templates/emails/transfer_cancelled_body.html:24
 #: src/common/templates/emails/transfer_created_body.html:24
@@ -192,6 +195,9 @@ msgstr "Best regards,"
 #: src/common/templates/emails/email_change_body.txt:16
 #: src/common/templates/emails/email_changed_notification_body.html:30
 #: src/common/templates/emails/email_changed_notification_body.txt:11
+#: src/common/templates/emails/operation_assigned_body.html:23
+#: src/common/templates/emails/operation_unassigned_body.html:23
+#: src/common/templates/emails/operation_updated_body.html:23
 #: src/common/templates/emails/transfer_accepted_body.html:24
 #: src/common/templates/emails/transfer_cancelled_body.html:24
 #: src/common/templates/emails/transfer_created_body.html:24
@@ -252,6 +258,93 @@ msgstr ""
 #, python-format
 msgid "Previous email address: %(email)s"
 msgstr "Previous email address: %(email)s"
+
+#: src/common/templates/emails/operation_assigned_body.html:6
+#: src/common/templates/emails/operation_assigned_body.html:10
+msgid "Item assigned to you"
+msgstr ""
+
+#: src/common/templates/emails/operation_assigned_body.html:12
+#: src/common/templates/emails/operation_assigned_body.txt:1
+#, python-format
+msgid "Item %(item)s has been assigned to you."
+msgstr ""
+
+#: src/common/templates/emails/operation_assigned_body.html:15
+#: src/common/templates/emails/operation_unassigned_body.html:15
+#: src/common/templates/emails/operation_updated_body.html:15
+#: src/common/templates/emails/transfer_accepted_body.html:15
+#: src/common/templates/emails/transfer_cancelled_body.html:15
+#: src/common/templates/emails/transfer_created_body.html:15
+msgid "Item:"
+msgstr "Item:"
+
+#: src/common/templates/emails/operation_assigned_body.html:16
+#: src/common/templates/emails/operation_assigned_body.txt:3
+#: src/common/templates/emails/operation_unassigned_body.html:17
+#: src/common/templates/emails/operation_unassigned_body.txt:4
+#: src/common/templates/emails/operation_updated_body.html:16
+#: src/common/templates/emails/operation_updated_body.txt:3
+msgid "Status:"
+msgstr ""
+
+#: src/common/templates/emails/operation_assigned_body.html:17
+#: src/common/templates/emails/operation_assigned_body.txt:4
+#: src/common/templates/emails/operation_unassigned_body.html:18
+#: src/common/templates/emails/operation_unassigned_body.txt:5
+#: src/common/templates/emails/operation_updated_body.html:17
+#: src/common/templates/emails/operation_updated_body.txt:4
+msgid "Location:"
+msgstr ""
+
+#: src/common/templates/emails/operation_assigned_body.html:18
+#: src/common/templates/emails/operation_assigned_body.txt:5
+#: src/common/templates/emails/operation_updated_body.html:18
+#: src/common/templates/emails/operation_updated_body.txt:5
+msgid "Responsible:"
+msgstr ""
+
+#: src/common/templates/emails/operation_assigned_subject.txt:1
+#, python-format
+msgid "Item assigned to you: %(item)s"
+msgstr ""
+
+#: src/common/templates/emails/operation_unassigned_body.html:6
+#: src/common/templates/emails/operation_unassigned_body.html:10
+msgid "Item removed from your responsibility"
+msgstr ""
+
+#: src/common/templates/emails/operation_unassigned_body.html:12
+#: src/common/templates/emails/operation_unassigned_body.txt:1
+#, python-format
+msgid "Item %(item)s has been removed from your responsibility."
+msgstr ""
+
+#: src/common/templates/emails/operation_unassigned_body.html:16
+#: src/common/templates/emails/operation_unassigned_body.txt:3
+msgid "New responsible:"
+msgstr ""
+
+#: src/common/templates/emails/operation_unassigned_subject.txt:1
+#, python-format
+msgid "Item removed from your responsibility: %(item)s"
+msgstr ""
+
+#: src/common/templates/emails/operation_updated_body.html:6
+#: src/common/templates/emails/operation_updated_body.html:10
+msgid "Item record updated"
+msgstr ""
+
+#: src/common/templates/emails/operation_updated_body.html:12
+#: src/common/templates/emails/operation_updated_body.txt:1
+#, python-format
+msgid "The record for item %(item)s has been updated."
+msgstr "The record for item %(item)s has been updated."
+
+#: src/common/templates/emails/operation_updated_subject.txt:1
+#, python-format
+msgid "Item record updated: %(item)s"
+msgstr ""
 
 #: src/common/templates/emails/password_reset_body.html:36
 msgid "Password Reset Request"
@@ -320,12 +413,6 @@ msgstr "Transfer offer accepted"
 #: src/common/templates/emails/transfer_accepted_body.html:12
 msgid "The following transfer offer has been accepted:"
 msgstr "The following transfer offer has been accepted:"
-
-#: src/common/templates/emails/transfer_accepted_body.html:15
-#: src/common/templates/emails/transfer_cancelled_body.html:15
-#: src/common/templates/emails/transfer_created_body.html:15
-msgid "Item:"
-msgstr "Item:"
 
 #: src/common/templates/emails/transfer_accepted_body.html:16
 #: src/common/templates/emails/transfer_accepted_body.txt:3
@@ -514,7 +601,7 @@ msgstr "Password"
 msgid "Change Password"
 msgstr "Change Password"
 
-#: src/common/views.py:79
+#: src/common/views.py:80
 #, python-format
 msgid ""
 "A confirmation email has been sent to %(email)s. Please check your inbox and "
@@ -523,19 +610,19 @@ msgstr ""
 "A confirmation email has been sent to %(email)s. Please check your inbox and "
 "click the link to confirm the change."
 
-#: src/common/views.py:102
+#: src/common/views.py:103
 msgid "Your password has been changed successfully."
 msgstr "Your password has been changed successfully."
 
-#: src/common/views.py:189
+#: src/common/views.py:184
 msgid "This email address is already in use by another account."
 msgstr "This email address is already in use by another account."
 
-#: src/common/views.py:198
+#: src/common/views.py:193
 msgid "Your email address has been changed successfully."
 msgstr "Your email address has been changed successfully."
 
-#: src/common/views.py:211
+#: src/common/views.py:206
 msgid ""
 "The email confirmation link is invalid or has expired. Please request a new "
 "email change."
