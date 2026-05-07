@@ -96,6 +96,12 @@
             </nav>
         </div>
         <div class="content">
+            {% if user.is_authenticated and not user.email %}
+                {% url 'common:profile' as profile_url %}
+                <div class="banner banner--warning" role="alert">
+                    {% blocktrans trimmed with url=profile_url %}Your account has no email address. <a href="{{ url }}">Add one in your profile</a> to receive notifications.{% endblocktrans %}
+                </div>
+            {% endif %}
             {% if messages %}
                 <ul class="flash-messages" role="alert">
                     {% for message in messages %}

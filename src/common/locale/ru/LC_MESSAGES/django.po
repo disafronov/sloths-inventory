@@ -135,6 +135,10 @@ msgstr "Выйти"
 msgid "Login"
 msgstr "Войти"
 
+#: src/common/templates/base.html
+msgid "Your account has no email address. <a href=\"%(url)s\">Add one in your profile</a> to receive notifications."
+msgstr "У вашего аккаунта не указан email. <a href=\"%(url)s\">Добавьте его в профиле</a>, чтобы получать уведомления."
+
 #: src/common/templates/emails/email_change_body.html:6
 #: src/common/templates/emails/email_change_body.html:10
 #: src/common/templates/emails/email_change_subject.txt:1
