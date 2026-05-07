@@ -67,20 +67,23 @@ dead-code: ## Check for dead code using vulture
 	@echo "Checking for dead code..."
 	uv run vulture
 
-test: ## Run tests with coverage report
+locale: ## Compile locale messages
+	@echo "Compile translation messages..."
+	PYTHONPATH=$(PYTHONPATH) uv run python src/manage.py compilemessages
+
+test: locale ## Run tests with coverage report
 	@echo "Running tests with coverage..."
 	$(PYTEST_CMD) $(COVERAGE_OPTS)
 
-test-postgres: ## Run tests against PostgreSQL (set DATABASE_*; see README)
+test-postgres: locale ## Run tests against PostgreSQL (set DATABASE_*; see README)
 	@echo "Running tests with PYTEST_POSTGRES_USE=1..."
 	PYTEST_POSTGRES_USE=1 $(PYTEST_CMD) $(COVERAGE_OPTS)
 
 all: lint test dead-code ## Run all checks (no mutations)
 	@echo "All checks completed successfully!"
 
-run: ## Run Django development server locally
+run: locale ## Run Django development server locally
 	@echo "Running Django development server locally..."
-	PYTHONPATH=$(PYTHONPATH) uv run python src/manage.py compilemessages
 	PYTHONPATH=$(PYTHONPATH) uv run python src/manage.py migrate
 	@if [ -n "$$DJANGO_SUPERUSER_USERNAME" ] && [ -n "$$DJANGO_SUPERUSER_PASSWORD" ] && [ -n "$$DJANGO_SUPERUSER_EMAIL" ]; then \
 		echo "Ensuring Django superuser exists..."; \
