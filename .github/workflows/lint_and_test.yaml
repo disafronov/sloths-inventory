@@ -55,7 +55,7 @@ jobs:
         run: make all
         env:
           UV_PYTHON: ${{ steps.python_version.outputs.version }}
-          PYTEST_POSTGRES_USE: "1"
+          DEBUG: "1"
           DATABASE_HOST: 127.0.0.1
           DATABASE_PORT: "5432"
           DATABASE_NAME: database
