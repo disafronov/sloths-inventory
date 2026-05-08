@@ -80,4 +80,10 @@ class TestTimezoneBanner:
         client.cookies["timezone"] = "Europe/Moscow"
         response = client.get(reverse("common:profile"))
         assert response.status_code == 200
-        assert "Times are displayed in" not in response.content.decode()
+        content = response.content.decode()
+        for lang_tz in ["UTC", "Europe/Moscow"]:
+            assert (
+                _("Your timezone could not be detected. Times are displayed in %(tz)s.")
+                % {"tz": lang_tz}
+                not in content
+            )
