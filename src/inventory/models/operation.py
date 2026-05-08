@@ -26,7 +26,7 @@ class Operation(BaseModel):
     window; the head-row rule is never bypassed.
     """
 
-    item = models.ForeignKey("Item", on_delete=models.CASCADE, verbose_name=_("Item"))
+    item = models.ForeignKey("Item", on_delete=models.PROTECT, verbose_name=_("Item"))
     status = models.ForeignKey(
         Status, on_delete=models.PROTECT, verbose_name=_("Status")
     )
