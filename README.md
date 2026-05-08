@@ -229,22 +229,24 @@ The application sends transactional emails on the following events:
   an existing head operation is updated, emails are sent to the newly assigned
   `Responsible` ("assigned") and, if the responsible changed, to the previously
   assigned one ("unassigned" / "updated").
-- **Transfer offer created**: the receiver is notified.
-- **Transfer offer updated** (receiver changed): the old receiver gets a
-  cancellation email; the new receiver gets a creation email.
-- **Transfer offer accepted**: both sender and receiver are notified.
-- **Transfer offer cancelled**: both sender and receiver are notified.
-- **Responsible user linked / unlinked / updated** (`catalogs.signals`): when the
-  `User` linked to a `Responsible` record is set, changed, or cleared, the
-  affected user(s) receive a notification email. If the user remains the same but
-  the profile is otherwise updated, an "updated" email is sent.
-- **Email change** (`common.views`): a confirmation link is emailed to the new
-  address; after confirmation, a notification is sent to the old address.
-- **Password reset**: Django's built-in flow sends a reset link to the user's email.
+- **Transfer offer created** (`inventory.signals`): the receiver is notified.
+- **Transfer offer updated** (`inventory.signals`): when the receiver changes,
+  the old receiver receives a cancellation email and the new receiver a creation email.
+- **Transfer offer accepted** (`inventory.signals`): both sender and receiver receive a notification.
+- **Transfer offer cancelled** (`inventory.signals`): both sender and receiver receive a notification.
+- **Responsible linked** (`catalogs.signals`): when a `User` is linked to a `Responsible`,
+  the user receives a “linked” email.
+- **Responsible unlinked** (`catalogs.signals`): when a `User` is removed from a `Responsible`,
+  the former user receives an “unlinked” email.
+- **Responsible updated** (`catalogs.signals`): when a `Responsible` record changes
+  without altering the linked `User`, the user receives an “updated” email.
+- **Email change** (`common.views`): confirmation link emailed to the new address,
+  then a notification sent to the old address.
+- **Password reset** (`django.contrib.auth`): reset link emailed to the user.
 
-All emails are sent asynchronously by default (`EMAIL_SEND_ASYNC=1`) with
-configurable retries. Set `EMAIL_SEND_ASYNC=0` to send synchronously (useful in
-tests or simple deployments).
+All emails are sent asynchronously by default (`EMAIL_SEND_ASYNC=1`). To send
+synchronously (useful in tests or simple deployments), set
+`EMAIL_SEND_ASYNC=0`.
 
 ## Localization
 
@@ -278,21 +280,15 @@ querysets after changing ORM fragments or indexes, see
 [`docs/inventory-list-query-profiling.md`](docs/inventory-list-query-profiling.md)
 and run `python src/manage.py profile_inventory_list_queries`.
 
-### PostgreSQL-only tests
+### Testing on PostgreSQL
 
-The default test configuration runs Django with in-memory SQLite (`sloths_inventory.settings_pytest`) for speed and to avoid requiring a running Postgres instance.
+The default test configuration runs Django with SQLite (`sloths_inventory.settings_pytest`) for speed and to avoid requiring a running Postgres instance. The correction window is enabled during tests (`INVENTORY_CORRECTION_WINDOW_MINUTES=10`) to exercise that code path.
 
-Some tests validate PostgreSQL-specific behavior (e.g. row-level locking). Such tests are marked with `@pytest.mark.postgres` and are automatically skipped unless the active database backend is PostgreSQL.
+Some tests validate PostgreSQL-specific behavior (e.g. row-level locking, transaction isolation). See `inventory/tests/test_concurrency.py` for examples.
 
 Note: `src/conftest.py` is test infrastructure (not application code) and is excluded from coverage.
 
-Rule of thumb: add `@pytest.mark.postgres` when a test relies on PostgreSQL semantics or query planning, for example:
-
-- row-level locks / blocking behavior (`select_for_update()`)
-- transaction isolation / concurrency edge cases
-- PostgreSQL-specific SQL or index/ordering behavior
-
-To run tests on PostgreSQL locally, enable PostgreSQL for pytest (with a running Postgres instance and `DATABASE_*` matching it):
+To run the full test suite on PostgreSQL locally, enable PostgreSQL for pytest (with a running Postgres instance and `DATABASE_*` matching it):
 
 ```bash
 make test-postgres
@@ -312,7 +308,7 @@ SECRET_KEY=unsafe-secret-key-for-tooling \
 uv run python -m pytest -v
 ```
 
-The **Tests Postgres** CI job sets `PYTEST_POSTGRES_ONLY=1`, so only `@pytest.mark.postgres` tests run there. Locally, `make test-postgres` sets `PYTEST_POSTGRES_USE=1` and runs the **full** pytest suite on PostgreSQL. If that CI job fails, run this full local pass: the Postgres-only subset can be a narrow symptom, and problems may only show up when the whole suite runs against PostgreSQL.
+The **Tests Postgres** CI job runs the full pytest suite on PostgreSQL to catch any database-specific issues. Locally, `make test-postgres` also runs the **full** pytest suite on PostgreSQL. If that CI job fails, run this full local pass: problems may only show up when the whole suite runs against PostgreSQL, not just individual marked tests.
 
 Formatting is intentionally not part of `make all` (so checks do not mutate the
 working tree). To auto-format code, use:
