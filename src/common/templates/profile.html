@@ -7,6 +7,17 @@
 
 {% block content %}
 <div>
+    <!-- Password Change Section -->
+    <section>
+        <form method="post" class="form-container">
+            {% csrf_token %}
+<h2>{% trans "Password" %}</h2>
+<h3 class="form-subtitle">{% trans "Change Password" %}</h3>
+            {{ password_form.as_p }}
+            <button type="submit" name="password_submit" class="button">{% trans "Change Password" %}</button>
+        </form>
+    </section>
+
     <!-- Email Change Section -->
     <section>
         <form method="post" class="form-container">
@@ -16,17 +27,6 @@
 <p><input type="email" value="{{ user.email }}" readonly disabled></p>
             {{ email_form.as_p }}
             <button type="submit" name="email_submit" class="button">{% trans "Change Email" %}</button>
-        </form>
-    </section>
-
-    <!-- Password Change Section -->
-    <section>
-        <form method="post" class="form-container">
-            {% csrf_token %}
-<h2>{% trans "Password" %}</h2>
-            <h3 class="form-subtitle">{% trans "Change Password" %}</h3>
-            {{ password_form.as_p }}
-            <button type="submit" name="password_submit" class="button">{% trans "Change Password" %}</button>
         </form>
     </section>
 </div>
