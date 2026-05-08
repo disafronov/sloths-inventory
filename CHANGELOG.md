@@ -1,3 +1,9 @@
+## [2.0.0-rc.3](https://github.com/disafronov/sloths-inventory/compare/v2.0.0-rc.2...v2.0.0-rc.3) (2026-05-08)
+
+### Bug Fixes
+
+* **health:** remove trailing slashes from health check endpoints ([13ed610](https://github.com/disafronov/sloths-inventory/commit/13ed610d48551406d613c3e59457a6b6e24eebfe))
+
 ## [2.0.0-rc.2](https://github.com/disafronov/sloths-inventory/compare/v2.0.0-rc.1...v2.0.0-rc.2) (2026-05-08)
 
 ### Bug Fixes
