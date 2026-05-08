@@ -1,3 +1,9 @@
+## [2.0.0-rc.2](https://github.com/disafronov/sloths-inventory/compare/v2.0.0-rc.1...v2.0.0-rc.2) (2026-05-08)
+
+### Bug Fixes
+
+* **docker:** add worker-tmp-dir to gunicorn entrypoint ([c700e8a](https://github.com/disafronov/sloths-inventory/commit/c700e8a11e1eef61219b4064a34474b16f839ab2))
+
 ## [2.0.0-rc.1](https://github.com/disafronov/sloths-inventory/compare/v1.11.0-rc.4...v2.0.0-rc.1) (2026-05-08)
 
 ### ⚠ BREAKING CHANGES
