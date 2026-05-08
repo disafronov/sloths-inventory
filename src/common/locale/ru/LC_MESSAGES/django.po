@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-08 10:15+0000\n"
+"POT-Creation-Date: 2026-05-08 10:41+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -92,9 +92,7 @@ msgid "Name"
 msgstr "Название"
 
 #: src/common/templates/base.html:7 src/common/templates/base.html:16
-#: src/common/templates/login.html:4
-#: src/common/templates/password_change.html:4
-#: src/common/templates/profile.html:4
+#: src/common/templates/login.html:4 src/common/templates/profile.html:4
 msgid "Sloths Inventory"
 msgstr "Инвентаризация ленивцев"
 
@@ -139,10 +137,10 @@ msgstr "Войти"
 #: src/common/templates/base.html:108
 #, python-format
 msgid ""
-"Your account has no email address. <a href=\"%(url)s\">Add one in your "
+"Your account has no email address. <a href=\"%(url)s#email\">Add one in your "
 "profile</a> to receive notifications."
 msgstr ""
-"У вашего аккаунта не указан email. <a href=\"%(url)s\">Добавьте его в "
+"У вашего аккаунта не указан email. <a href=\"%(url)s#email\">Добавьте его в "
 "профиле</a>, чтобы получать уведомления."
 
 #: src/common/templates/emails/email_change_body.html:6
@@ -607,13 +605,6 @@ msgstr "Предложение о передаче позиции %(item)s со�
 msgid "Forgot your password?"
 msgstr "Забыли пароль?"
 
-#: src/common/templates/password_change.html:4
-#: src/common/templates/password_change.html:6
-#: src/common/templates/password_change.html:12
-#: src/common/templates/password_reset_confirm.html:15
-msgid "Change password"
-msgstr "Сменить пароль"
-
 #: src/common/templates/password_reset_complete.html:4
 #: src/common/templates/password_reset_complete.html:8
 msgid "Password Reset Complete"
@@ -639,6 +630,10 @@ msgid ""
 msgstr ""
 "Пожалуйста, введите новый пароль дважды, чтобы мы могли убедиться, что вы "
 "ввели его правильно."
+
+#: src/common/templates/password_reset_confirm.html:15
+msgid "Change password"
+msgstr "Сменить пароль"
 
 #: src/common/templates/password_reset_confirm.html:18
 msgid "Password Reset Failed"

@@ -30,7 +30,7 @@ class TestNoEmailBanner:
         assert (
             _(
                 "Your account has no email address. "
-                '<a href="%(url)s">Add one in your profile</a>'
+                '<a href="%(url)s#email">Add one in your profile</a>'
                 " to receive notifications."
             )
             % {"url": reverse("common:profile")}
@@ -47,7 +47,7 @@ class TestNoEmailBanner:
         assert (
             _(
                 "Your account has no email address. "
-                '<a href="%(url)s">Add one in your profile</a>'
+                '<a href="%(url)s#email">Add one in your profile</a>'
                 " to receive notifications."
             )
             % {"url": reverse("common:profile")}
