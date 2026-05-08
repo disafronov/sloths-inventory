@@ -14,6 +14,12 @@ from common.models import BaseModel, NamedModel
 
 
 class Location(CatalogCorrectionWindowMixin, NamedModel):
+    """Physical location where inventory items can be stored.
+
+    Inherits catalog correction window behavior to prevent modifications
+    after the window expires if referenced by operations.
+    """
+
     class Meta:
         verbose_name = _("Location")
         verbose_name_plural = _("Locations")
@@ -30,6 +36,16 @@ class Location(CatalogCorrectionWindowMixin, NamedModel):
 
 
 class Responsible(CatalogCorrectionWindowMixin, BaseModel):
+    """Person responsible for inventory items.
+
+    Can be optionally linked to a Django user account for self-service
+    inventory management. When linked, the user must have an email address
+    to receive notifications about inventory changes.
+
+    Inherits catalog correction window behavior to prevent modifications
+    after the window expires if referenced by operations or pending transfers.
+    """
+
     last_name = models.CharField(max_length=150, verbose_name=_("Last name"))
     first_name = models.CharField(max_length=150, verbose_name=_("First name"))
     middle_name = models.CharField(
@@ -87,9 +103,18 @@ class Responsible(CatalogCorrectionWindowMixin, BaseModel):
                 )
 
     def save(self, *args: Any, **kwargs: Any) -> None:
+        """Save the Responsible instance, tracking user_id changes for notifications.
+
+        Sets _pre_save_user_id attribute before saving to enable the post_save
+        signal handler to detect user assignment changes and send appropriate
+        email notifications.
+        """
         with transaction.atomic():
             if not self._state.adding:
                 prev = Responsible.objects.only("user_id").get(pk=self.pk)
+                # Store previous user_id for comparison in post_save signal.
+                # This enables detection of user assignment changes to trigger
+                # appropriate email notifications (linked/unlinked/updated).
                 self._pre_save_user_id: int | None = prev.user_id
             return super().save(*args, **kwargs)
 
@@ -149,6 +174,12 @@ class Responsible(CatalogCorrectionWindowMixin, BaseModel):
 
 
 class Status(CatalogCorrectionWindowMixin, NamedModel):
+    """Status classification for inventory items (e.g., 'In Use', 'In Storage').
+
+    Inherits catalog correction window behavior to prevent modifications
+    after the window expires if referenced by operations.
+    """
+
     class Meta:
         verbose_name = _("Status")
         verbose_name_plural = _("Statuses")

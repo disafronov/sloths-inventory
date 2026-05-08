@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: catalogs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-07 22:38+0000\n"
+"POT-Creation-Date: 2026-05-08 13:47+0000\n"
 "PO-Revision-Date: 2024-03-19 00:28+0300\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
@@ -20,62 +20,62 @@ msgstr ""
 msgid "Catalogs"
 msgstr "Каталоги"
 
-#: src/catalogs/models.py:18
+#: src/catalogs/models.py:24
 msgid "Location"
 msgstr "Расположение"
 
-#: src/catalogs/models.py:19
+#: src/catalogs/models.py:25
 msgid "Locations"
 msgstr "Расположения"
 
-#: src/catalogs/models.py:33
+#: src/catalogs/models.py:49
 msgid "Last name"
 msgstr "Фамилия"
 
-#: src/catalogs/models.py:34
+#: src/catalogs/models.py:50
 msgid "First name"
 msgstr "Имя"
 
-#: src/catalogs/models.py:36
+#: src/catalogs/models.py:52
 msgid "Middle name"
 msgstr "Отчество"
 
-#: src/catalogs/models.py:39
+#: src/catalogs/models.py:55
 msgid "Employee ID"
 msgstr "Табельный номер"
 
-#: src/catalogs/models.py:46
+#: src/catalogs/models.py:62
 msgid "User"
 msgstr "Пользователь"
 
-#: src/catalogs/models.py:50
+#: src/catalogs/models.py:66
 msgid "Responsible"
 msgstr "Ответственный"
 
-#: src/catalogs/models.py:51
+#: src/catalogs/models.py:67
 msgid "Responsibles"
 msgstr "Ответственные"
 
-#: src/catalogs/models.py:86
+#: src/catalogs/models.py:102
 msgid "The linked user must have an email address."
 msgstr "У привязанного пользователя должен быть указан email."
 
-#: src/catalogs/models.py:140
+#: src/catalogs/models.py:165
 msgid "New responsible is required."
 msgstr ""
 
-#: src/catalogs/models.py:145
+#: src/catalogs/models.py:170
 msgid "New responsible is invalid."
 msgstr ""
 
-#: src/catalogs/models.py:147
+#: src/catalogs/models.py:172
 msgid "New responsible must be different."
 msgstr ""
 
-#: src/catalogs/models.py:153
+#: src/catalogs/models.py:184
 msgid "Status"
 msgstr "Статус"
 
-#: src/catalogs/models.py:154
+#: src/catalogs/models.py:185
 msgid "Statuses"
 msgstr "Статусы"
