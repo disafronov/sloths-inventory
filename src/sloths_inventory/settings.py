@@ -48,9 +48,9 @@ DEBUG = _env_bool("DEBUG", default=False)
 #
 # In non-debug environments the key must be explicitly provided via env vars.
 if DEBUG:
-    SECRET_KEY = env("SECRET_KEY", default="unsafe-secret-key")
+    SECRET_KEY = env.str("SECRET_KEY", default="unsafe-secret-key")
 else:
-    SECRET_KEY = env("SECRET_KEY", default=None)
+    SECRET_KEY = env.str("SECRET_KEY")
     if not SECRET_KEY:
         raise ImproperlyConfigured("SECRET_KEY must be set when DEBUG is False")
 
@@ -62,9 +62,9 @@ def _split_env_list(raw: str) -> list[str]:
     return [part.strip() for part in raw.split(",") if part.strip()]
 
 
-ALLOWED_HOSTS = _split_env_list(env("ALLOWED_HOSTS", default=""))
+ALLOWED_HOSTS = _split_env_list(env.str("ALLOWED_HOSTS", default=""))
 
-CSRF_TRUSTED_ORIGINS = _split_env_list(env("CSRF_TRUSTED_ORIGINS", default=""))
+CSRF_TRUSTED_ORIGINS = _split_env_list(env.str("CSRF_TRUSTED_ORIGINS", default=""))
 
 # Inventory domain settings
 #
@@ -148,11 +148,11 @@ WSGI_APPLICATION = "sloths_inventory.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": env("DATABASE_NAME", default=""),
-        "USER": env("DATABASE_USER", default=""),
-        "PASSWORD": env("DATABASE_PASSWORD", default=""),
-        "HOST": env("DATABASE_HOST", default=""),
-        "PORT": env("DATABASE_PORT", default="5432"),
+        "NAME": env.str("DATABASE_NAME", default=""),
+        "USER": env.str("DATABASE_USER", default=""),
+        "PASSWORD": env.str("DATABASE_PASSWORD", default=""),
+        "HOST": env.str("DATABASE_HOST", default=""),
+        "PORT": _env_int("DATABASE_PORT", default=5432),
     }
 }
 
@@ -268,7 +268,7 @@ SITE_URL = env.str("SITE_URL", default="")
 PASSWORD_RESET_TIMEOUT = 60 * 60 * 24 * 3  # 3 days in seconds
 
 # Logging
-LOG_LEVEL = env("LOG_LEVEL", default="DEBUG" if DEBUG else "INFO")
+LOG_LEVEL = env.str("LOG_LEVEL", default="DEBUG" if DEBUG else "INFO")
 
 LOGGING = {
     "version": 1,
