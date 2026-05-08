@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventory\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-08 12:56+0000\n"
+"POT-Creation-Date: 2026-05-08 14:09+0000\n"
 "PO-Revision-Date: 2024-03-19 00:40+0300\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
@@ -16,30 +16,30 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
 
-#: src/inventory/admin/__init__.py:34 src/inventory/models/operation.py:31
+#: src/inventory/admin/__init__.py:47 src/inventory/models/operation.py:31
 #: src/inventory/templates/inventory/_transfer_card.html:23
 #: src/inventory/templates/inventory/item_history.html:104
 #: src/inventory/templates/inventory/my_items.html:79
 msgid "Status"
 msgstr "Статус"
 
-#: src/inventory/admin/__init__.py:38 src/inventory/models/operation.py:37
+#: src/inventory/admin/__init__.py:52 src/inventory/models/operation.py:37
 #: src/inventory/templates/inventory/_transfer_card.html:19
 #: src/inventory/templates/inventory/item_history.html:100
 #: src/inventory/templates/inventory/my_items.html:75
 msgid "Location"
 msgstr "Местоположение"
 
-#: src/inventory/admin/__init__.py:42 src/inventory/admin/__init__.py:459
+#: src/inventory/admin/__init__.py:57 src/inventory/admin/__init__.py:475
 #: src/inventory/templates/inventory/item_history.html:96
 msgid "Responsible Person"
 msgstr "Ответственный"
 
-#: src/inventory/admin/__init__.py:212 src/inventory/models/operation.py:41
+#: src/inventory/admin/__init__.py:228 src/inventory/models/operation.py:41
 msgid "Operation"
 msgstr "Назначение"
 
-#: src/inventory/admin/__init__.py:233 src/inventory/admin/__init__.py:312
+#: src/inventory/admin/__init__.py:249 src/inventory/admin/__init__.py:328
 msgid "Editing restrictions"
 msgstr "Ограничения на правку"
 

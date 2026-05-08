@@ -18,6 +18,10 @@ from inventory.presentation import validation_error_user_message
 
 @pytest.mark.django_db
 def test_my_items_requires_login() -> None:
+    """
+    Ensure My items and Previous items pages redirect unauthenticated
+    users to login.
+    """
     client = Client()
     response = client.get("/")
     assert response.status_code == 302
@@ -29,6 +33,7 @@ def test_my_items_requires_login() -> None:
 
 
 def test_linked_profile_for_user_returns_none_for_anonymous() -> None:
+    """Anonymous users must not have a linked Responsible profile."""
     rf = RequestFactory()
     request = rf.get("/")
     request.user = AnonymousUser()
@@ -36,15 +41,18 @@ def test_linked_profile_for_user_returns_none_for_anonymous() -> None:
 
 
 def test_validation_error_user_message_single_string() -> None:
+    """Helper must return a single validation error message as-is."""
     assert validation_error_user_message(ValidationError("one thing")) == "one thing"
 
 
 def test_validation_error_user_message_list_joins_messages() -> None:
+    """Helper must join multiple validation error messages with a semicolon."""
     exc = ValidationError(["first problem", "second problem"])
     assert validation_error_user_message(exc) == "first problem; second problem"
 
 
 def test_validation_error_user_message_message_dict_flattens_fields() -> None:
+    """Helper must flatten validation error dictionaries into a single string."""
     exc = ValidationError({"field_a": ["x"], "field_b": ["y", "z"]})
     out = validation_error_user_message(exc)
     assert "field_a: x" in out
@@ -69,6 +77,7 @@ def test_validation_error_user_message_fallback_uses_str_when_no_messages() -> N
 
 @pytest.mark.django_db
 def test_my_items_empty_when_user_has_no_responsible() -> None:
+    """Users without a linked Responsible profile see a 'not linked' warning."""
     user = User.objects.create_user(
         username="alice", password="pw", email="alice@example.com"
     )
@@ -94,6 +103,7 @@ def test_my_items_empty_when_user_has_no_responsible() -> None:
 
 @pytest.mark.django_db
 def test_my_items_shows_only_items_where_latest_operation_has_my_responsible() -> None:
+    """The 'My items' list must only include items currently assigned to the user."""
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
     manufacturer = Manufacturer.objects.create(name="ACME")
@@ -202,6 +212,7 @@ def test_build_my_items_owned_list_does_not_query_per_row_for_location_status() 
 
 @pytest.mark.django_db
 def test_my_items_search_filters_by_inventory_number_and_serial() -> None:
+    """Search query must filter the 'My items' list by inventory or serial number."""
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
     manufacturer = Manufacturer.objects.create(name="ACME")
@@ -416,6 +427,7 @@ def test_my_items_list_kind_invalid_falls_back_to_all() -> None:
 
 @pytest.mark.django_db
 def test_item_history_only_for_my_or_previously_my_item() -> None:
+    """Item history is restricted to current or former owners of the item."""
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
     manufacturer = Manufacturer.objects.create(name="ACME")
@@ -493,6 +505,10 @@ def test_item_history_only_for_my_or_previously_my_item() -> None:
 def test_previous_items_shows_only_items_where_user_was_responsible_in_the_past() -> (
     None
 ):
+    """
+    The 'Previous items' list must only include items formerly assigned
+    to the user.
+    """
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
     manufacturer = Manufacturer.objects.create(name="ACME")
@@ -545,6 +561,10 @@ def test_previous_items_shows_only_items_where_user_was_responsible_in_the_past(
 
 @pytest.mark.django_db
 def test_previous_items_search_filters_results() -> None:
+    """
+    Search query must filter the 'Previous items' list by inventory
+    or serial number.
+    """
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
     manufacturer = Manufacturer.objects.create(name="ACME")
