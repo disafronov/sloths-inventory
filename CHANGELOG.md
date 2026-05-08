@@ -1,3 +1,13 @@
+## [1.11.0-rc.3](https://github.com/disafronov/sloths-inventory/compare/v1.11.0-rc.2...v1.11.0-rc.3) (2026-05-08)
+
+### Features
+
+* add timezone detection message, update translation catalogs ([3a2f549](https://github.com/disafronov/sloths-inventory/commit/3a2f5496185748ffddda4d9ae8bcf483f241a3e8))
+
+### Bug Fixes
+
+* timezone banner test to check multiple timezones and translated strings ([b7b9712](https://github.com/disafronov/sloths-inventory/commit/b7b97125f1c077282a15462ede879c6fe2303725))
+
 ## [1.11.0-rc.2](https://github.com/disafronov/sloths-inventory/compare/v1.11.0-rc.1...v1.11.0-rc.2) (2026-05-07)
 
 ## [1.11.0-rc.1](https://github.com/disafronov/sloths-inventory/compare/v1.10.1-rc.1...v1.11.0-rc.1) (2026-05-07)
