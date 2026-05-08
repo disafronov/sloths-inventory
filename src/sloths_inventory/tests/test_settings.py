@@ -20,7 +20,9 @@ def test_settings_requires_secret_key_when_debug_false(monkeypatch) -> None:
     monkeypatch.setenv("DEBUG", "0")
     monkeypatch.delenv("SECRET_KEY", raising=False)
 
-    with pytest.raises(ImproperlyConfigured, match="SECRET_KEY must be set"):
+    with pytest.raises(
+        ImproperlyConfigured, match="Set the SECRET_KEY environment variable"
+    ):
         _load_module_from_path(
             "sloths_inventory._settings_no_secret_key_test",
             sloths_inventory.settings.__file__,
