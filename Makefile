@@ -39,7 +39,7 @@ COVERAGE_OPTS = --cov-report=html
 
 DOCKER_IMAGE = sloths-inventory
 
-.PHONY: all clean dead-code docker docker-build docker-run format help install lint locale run test
+.PHONY: all clean dead-code docker docker-build docker-run format help install lint locale makemigrations run test
 
 help: ## Show this help message
 	@echo "Available commands:"
@@ -74,6 +74,10 @@ locale: ## Make & compile locale messages
 	SECRET_KEY=$(TOOLING_SECRET_KEY) $(UV) python src/manage.py makemessages --all --ignore="*/tests/*" --ignore="conftest.py"
 	@echo "Compile translation messages..."
 	SECRET_KEY=$(TOOLING_SECRET_KEY) $(UV) python src/manage.py compilemessages
+
+makemigrations: ## Create new migrations
+	@echo "Creating migrations..."
+	SECRET_KEY=$(TOOLING_SECRET_KEY) $(UV) python src/manage.py makemigrations
 
 test: locale ## Run tests with coverage report
 	@echo "Running tests with coverage..."
