@@ -1,3 +1,27 @@
+## [2.0.0-rc.1](https://github.com/disafronov/sloths-inventory/compare/v1.11.0-rc.4...v2.0.0-rc.1) (2026-05-08)
+
+### ⚠ BREAKING CHANGES
+
+* **inventory:** Item deletion now blocked when operations exist (CASCADE → PROTECT)
+
+Changes:
+- Operation.item: CASCADE → PROTECT on delete (prevents accidental item deletion)
+- Added 3 indexes on PendingTransfer:
+  - from_responsible + accepted_at + cancelled_at
+  - to_responsible + accepted_at + cancelled_at
+  - expires_at
+- Improves query performance for transfer lookups and expiration checks
+
+Signed-off-by: Dmitrii Safronov <zimniy@cyberbrain.cc>
+
+### Performance Improvements
+
+* **inventory:** add indexes and row locking to PendingTransfer ([e284db1](https://github.com/disafronov/sloths-inventory/commit/e284db1a91d70e5f192bdb16eeb6721c16d6bcbd))
+
+### Code Refactoring
+
+* **inventory:** protect item deletion and add pending transfer indexes ([7b7eb9a](https://github.com/disafronov/sloths-inventory/commit/7b7eb9a64ddbd427101224792da03b2a8ac85b1a))
+
 ## [1.11.0-rc.4](https://github.com/disafronov/sloths-inventory/compare/v1.11.0-rc.3...v1.11.0-rc.4) (2026-05-08)
 
 ### Features
