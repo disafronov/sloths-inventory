@@ -1,3 +1,17 @@
+## [1.11.0-rc.4](https://github.com/disafronov/sloths-inventory/compare/v1.11.0-rc.3...v1.11.0-rc.4) (2026-05-08)
+
+### Features
+
+* Add profile section styling ([6ebdfce](https://github.com/disafronov/sloths-inventory/commit/6ebdfce7f46cd9ecc47e19fb1023f4802fefa8cf))
+* email link in banner ([c7300c3](https://github.com/disafronov/sloths-inventory/commit/c7300c3bc9b5e5e94650dd563c70ce10641dd72a))
+
+### Bug Fixes
+
+* add empty email styling and handling ([5b927f6](https://github.com/disafronov/sloths-inventory/commit/5b927f66da6e9d61353803345a855bdd43d97a38))
+* add secure settings for production environment ([c33cda5](https://github.com/disafronov/sloths-inventory/commit/c33cda59e8ae5dc8905fcccf7b6d52144c4ca392))
+* Potential fix for pull request finding 'CodeQL / Information exposure through an exception' ([7799ffa](https://github.com/disafronov/sloths-inventory/commit/7799ffa3ad8bda9a96747c0bdcbba996e54d0b02))
+* Update transfer views and locale files ([be8646b](https://github.com/disafronov/sloths-inventory/commit/be8646b919f239414c26b5a8dd2ab164aa73bc27))
+
 ## [1.11.0-rc.3](https://github.com/disafronov/sloths-inventory/compare/v1.11.0-rc.2...v1.11.0-rc.3) (2026-05-08)
 
 ### Features
