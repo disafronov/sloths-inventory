@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventory\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-08 14:12+0000\n"
+"POT-Creation-Date: 2026-05-08 14:30+0000\n"
 "PO-Revision-Date: 2024-03-19 00:40+0300\n"
 "Last-Translator: \n"
 "Language-Team: English\n"
@@ -159,42 +159,42 @@ msgstr "Pending transfer"
 msgid "Pending transfers"
 msgstr "Pending transfers"
 
-#: src/inventory/models/pending_transfer.py:136
+#: src/inventory/models/pending_transfer.py:148
 msgid "Transfer receiver must be different"
 msgstr "Transfer receiver must be different"
 
-#: src/inventory/models/pending_transfer.py:140
+#: src/inventory/models/pending_transfer.py:152
 msgid "Transfer cannot be accepted and cancelled"
 msgstr "Transfer cannot be accepted and cancelled"
 
-#: src/inventory/models/pending_transfer.py:143
+#: src/inventory/models/pending_transfer.py:155
 msgid "Expiration must be in the future"
 msgstr "Expiration must be in the future"
 
-#: src/inventory/models/pending_transfer.py:153
+#: src/inventory/models/pending_transfer.py:165
 msgid "An active transfer already exists for this item"
 msgstr "An active transfer already exists for this item"
 
-#: src/inventory/models/pending_transfer.py:226
-#: src/inventory/models/pending_transfer.py:264
-#: src/inventory/models/pending_transfer.py:299
+#: src/inventory/models/pending_transfer.py:242
+#: src/inventory/models/pending_transfer.py:280
+#: src/inventory/models/pending_transfer.py:315
 msgid "Transfer is not active"
 msgstr "Transfer is not active"
 
-#: src/inventory/models/pending_transfer.py:232
+#: src/inventory/models/pending_transfer.py:248
 #: src/inventory/views/transfer_views.py:82
 msgid "Cannot accept transfer for an item without operations"
 msgstr "Cannot accept transfer for an item without operations"
 
-#: src/inventory/models/pending_transfer.py:240
+#: src/inventory/models/pending_transfer.py:256
 msgid "Cannot accept transfer: sender no longer holds the item."
 msgstr "Cannot accept transfer: sender no longer holds the item."
 
-#: src/inventory/models/pending_transfer.py:292
+#: src/inventory/models/pending_transfer.py:308
 msgid "Expiration window must be non-negative"
 msgstr "Expiration window must be non-negative"
 
-#: src/inventory/models/pending_transfer.py:301
+#: src/inventory/models/pending_transfer.py:317
 msgid "Only the sender may update the transfer"
 msgstr "Only the sender may update the transfer"
 

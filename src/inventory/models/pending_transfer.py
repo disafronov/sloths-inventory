@@ -105,6 +105,18 @@ class PendingTransfer(BaseModel):
                 fields=["item", "accepted_at", "cancelled_at", "-created_at", "-id"],
                 name="inv_pend_xfer_item_idx",
             ),
+            models.Index(
+                fields=["from_responsible", "accepted_at", "cancelled_at"],
+                name="inv_pend_xfer_from_idx",
+            ),
+            models.Index(
+                fields=["to_responsible", "accepted_at", "cancelled_at"],
+                name="inv_pend_xfer_to_idx",
+            ),
+            models.Index(
+                fields=["expires_at"],
+                name="inv_pend_xfer_expires_idx",
+            ),
         ]
 
     @classmethod
@@ -193,16 +205,20 @@ class PendingTransfer(BaseModel):
         avoid leaving an un-accept-able pending offer.
         """
 
-        transfer = cls.objects.create(
-            item=item,
-            from_responsible=from_responsible,
-            to_responsible=to_responsible,
-            expires_at=expires_at,
-            notes=notes,
-        )
-        if to_responsible.user_id is None:
-            transfer.accept()
-        return transfer
+        with transaction.atomic():
+            # Lock the item row to serialize concurrent updates for the same item.
+            Item.objects.select_for_update().only("id").get(pk=item.pk)
+
+            transfer = cls.objects.create(
+                item=item,
+                from_responsible=from_responsible,
+                to_responsible=to_responsible,
+                expires_at=expires_at,
+                notes=notes,
+            )
+            if to_responsible.user_id is None:
+                transfer.accept()
+            return transfer
 
     def accept(self) -> None:
         """
