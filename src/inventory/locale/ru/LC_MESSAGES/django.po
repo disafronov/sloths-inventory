@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventory\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-08 14:09+0000\n"
+"POT-Creation-Date: 2026-05-08 14:12+0000\n"
 "PO-Revision-Date: 2024-03-19 00:40+0300\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
@@ -439,11 +439,11 @@ msgstr ""
 "Запись инвентаря изменилась с момента загрузки страницы. Обновите страницу и "
 "попробуйте снова."
 
-#: src/inventory/views/transfer_views.py:159
+#: src/inventory/views/transfer_views.py:160
 msgid "Transfer offer updated."
 msgstr "Предложение передачи обновлено."
 
-#: src/inventory/views/transfer_views.py:186
+#: src/inventory/views/transfer_views.py:187
 msgid "Transfer offer submitted."
 msgstr "Предложение передачи отправлено."
 
@@ -451,7 +451,7 @@ msgstr "Предложение передачи отправлено."
 msgid "Transfer accepted."
 msgstr "Передача принята."
 
-#: src/inventory/views/transfer_views.py:322
+#: src/inventory/views/transfer_views.py:327
 msgid "Transfer offer closed."
 msgstr "Предложение передачи закрыто."
 
