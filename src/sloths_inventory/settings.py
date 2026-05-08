@@ -14,7 +14,6 @@ import os
 from pathlib import Path
 
 import environ
-from django.core.exceptions import ImproperlyConfigured
 
 env = environ.Env()
 # reading .env file
@@ -51,8 +50,6 @@ if DEBUG:
     SECRET_KEY = env.str("SECRET_KEY", default="unsafe-secret-key")
 else:
     SECRET_KEY = env.str("SECRET_KEY")
-    if not SECRET_KEY:
-        raise ImproperlyConfigured("SECRET_KEY must be set when DEBUG is False")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
