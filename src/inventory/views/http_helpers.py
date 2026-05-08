@@ -13,6 +13,12 @@ from inventory.models import Item, PendingTransfer
 
 
 class CreateTransferForm(forms.Form):
+    """
+    Form for creating or updating a pending transfer offer.
+
+    Validates that the receiver is a valid candidate for the given sender.
+    """
+
     to_responsible_id = forms.CharField(required=False)
     notes = forms.CharField(required=False, strip=True)
 

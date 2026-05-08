@@ -28,6 +28,7 @@ def _render_change_location(
     notes: str = "",
     status: int = 200,
 ) -> HttpResponse:
+    """Render the location change form for an item."""
     return render(
         request,
         "inventory/change_location.html",
@@ -44,6 +45,12 @@ def _render_change_location(
 
 @login_required
 def item_history(request: HttpRequest, *, item_id: int) -> HttpResponse:
+    """
+    Display the operation history for a specific item.
+
+    Access is restricted to the current owner, the receiver of an active
+    transfer offer, or former owners.
+    """
     responsible = Responsible.linked_profile_for_user(request.user)
     if responsible is None:
         raise Http404  # pragma: no cover
@@ -68,6 +75,12 @@ def item_history(request: HttpRequest, *, item_id: int) -> HttpResponse:
 
 @login_required
 def change_location(request: HttpRequest, *, item_id: int) -> HttpResponse:
+    """
+    Handle the location change for an item owned by the current user.
+
+    GET: Display the location change form.
+    POST: Create a new operation with the updated location.
+    """
     responsible = Responsible.linked_profile_for_user(request.user)
     if responsible is None:
         raise Http404

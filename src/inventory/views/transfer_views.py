@@ -89,10 +89,11 @@ def _redirect_accept_without_journal_head(
 @login_required
 def create_transfer(request: HttpRequest, *, item_id: int) -> HttpResponse:
     """
-    Create a pending transfer offer for an item.
+    Handle the creation or update of a pending transfer offer for an item.
 
-    Only the current owner may initiate a transfer. Ownership is changed only
-    when the receiver confirms the handoff (see ``accept_transfer``).
+    GET: Display the transfer creation form.
+    POST: Create a new transfer offer or update an existing one.
+    Only the current owner may initiate or update a transfer.
     """
 
     responsible = Responsible.linked_profile_for_user(request.user)
@@ -226,12 +227,11 @@ def create_transfer(request: HttpRequest, *, item_id: int) -> HttpResponse:
 @login_required
 def accept_transfer(request: HttpRequest, *, transfer_id: int) -> HttpResponse:
     """
-    Accept a pending transfer and append an ownership-changing operation.
+    Accept a pending transfer and record the ownership change.
 
-    Only the transfer receiver may accept. POST must include
-    ``journal_head_operation_id`` matching the latest ``Operation`` for the item
-    (the item history template sets this when rendering Accept) so the server
-    rejects submissions built from stale UI state.
+    Only the receiver of the transfer may accept it.
+    Requires a POST request and verification of the latest operation ID
+    to prevent race conditions with stale UI state.
     """
 
     if request.method != "POST":
@@ -291,7 +291,12 @@ def accept_transfer(request: HttpRequest, *, transfer_id: int) -> HttpResponse:
 
 @login_required
 def cancel_transfer(request: HttpRequest, *, transfer_id: int) -> HttpResponse:
-    """Cancel a pending transfer (sender) or decline it (receiver)."""
+    """
+    Cancel or decline a pending transfer offer.
+
+    Both the sender (Cancel) and the receiver (Decline) may perform this action.
+    Requires a POST request.
+    """
 
     if request.method != "POST":
         raise Http404

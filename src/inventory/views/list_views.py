@@ -14,6 +14,11 @@ from inventory.models import (
 
 @login_required
 def my_items(request: HttpRequest) -> HttpResponse:
+    """
+    Display items currently owned by the user and active transfer offers.
+
+    Supports searching and filtering by transfer kind (incoming, outgoing, owned).
+    """
     responsible = Responsible.linked_profile_for_user(request.user)
     if responsible is None:
         return render(
@@ -50,6 +55,12 @@ def my_items(request: HttpRequest) -> HttpResponse:
 
 @login_required
 def previous_items(request: HttpRequest) -> HttpResponse:
+    """
+    Display items previously held by the user but no longer owned.
+
+    Includes items that were once in the user's possession and any active
+    transfer offers for those items.
+    """
     responsible = Responsible.linked_profile_for_user(request.user)
     if responsible is None:
         return render(
