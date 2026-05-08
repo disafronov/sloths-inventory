@@ -39,7 +39,7 @@ COVERAGE_OPTS = --cov-report=html
 
 DOCKER_IMAGE = sloths-inventory
 
-.PHONY: all clean dead-code docker docker-build docker-run format help install lint locale run test test-postgres
+.PHONY: all clean dead-code docker docker-build docker-run format help install lint locale run test
 
 help: ## Show this help message
 	@echo "Available commands:"
@@ -78,10 +78,6 @@ locale: ## Make & compile locale messages
 test: locale ## Run tests with coverage report
 	@echo "Running tests with coverage..."
 	$(PYTEST_CMD) $(COVERAGE_OPTS)
-
-test-postgres: locale ## Run tests against PostgreSQL (set DATABASE_*; see README)
-	@echo "Running tests with PYTEST_POSTGRES_USE=1..."
-	PYTEST_POSTGRES_USE=1 $(PYTEST_CMD) $(COVERAGE_OPTS)
 
 all: lint test dead-code ## Run all checks (no mutations)
 	@echo "All checks completed successfully!"
