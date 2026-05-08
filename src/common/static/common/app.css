@@ -400,6 +400,11 @@ body.nav-open {
   border-radius: 4px;
 }
 
+.empty-email {
+  border-color: red !important;
+  background-color: #fff0f0;
+}
+
 .form-container select,
 .form-container textarea {
   width: 100%;
