@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventory\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-08 11:18+0000\n"
+"POT-Creation-Date: 2026-05-08 12:56+0000\n"
 "PO-Revision-Date: 2024-03-19 00:40+0300\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
@@ -189,7 +189,7 @@ msgid "Transfer is not active"
 msgstr "Передача неактивна."
 
 #: src/inventory/models/pending_transfer.py:232
-#: src/inventory/views/transfer_views.py:79
+#: src/inventory/views/transfer_views.py:82
 msgid "Cannot accept transfer for an item without operations"
 msgstr "Нельзя принять передачу для вещи без записей в журнале."
 
@@ -427,11 +427,11 @@ msgstr "Начните вводить, чтобы отфильтровать л�
 msgid "New location is required."
 msgstr "Нужно выбрать новое местоположение."
 
-#: src/inventory/views/transfer_views.py:36
+#: src/inventory/views/transfer_views.py:39
 msgid "This transfer offer is no longer active."
 msgstr "Это предложение передачи больше не действует."
 
-#: src/inventory/views/transfer_views.py:54
+#: src/inventory/views/transfer_views.py:57
 msgid ""
 "The inventory record changed since this page was loaded. Refresh the page "
 "and try again."
@@ -439,19 +439,19 @@ msgstr ""
 "Запись инвентаря изменилась с момента загрузки страницы. Обновите страницу и "
 "попробуйте снова."
 
-#: src/inventory/views/transfer_views.py:156
+#: src/inventory/views/transfer_views.py:159
 msgid "Transfer offer updated."
 msgstr "Предложение передачи обновлено."
 
-#: src/inventory/views/transfer_views.py:183
+#: src/inventory/views/transfer_views.py:186
 msgid "Transfer offer submitted."
 msgstr "Предложение передачи отправлено."
 
-#: src/inventory/views/transfer_views.py:284
+#: src/inventory/views/transfer_views.py:288
 msgid "Transfer accepted."
 msgstr "Передача принята."
 
-#: src/inventory/views/transfer_views.py:318
+#: src/inventory/views/transfer_views.py:322
 msgid "Transfer offer closed."
 msgstr "Предложение передачи закрыто."
 
