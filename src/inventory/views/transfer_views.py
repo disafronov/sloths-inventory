@@ -1,5 +1,6 @@
 """Pending transfer create / accept / cancel views."""
 
+import logging
 from datetime import timedelta
 
 from django.contrib import messages
@@ -21,6 +22,8 @@ from inventory.models.operation import Operation
 from inventory.presentation import validation_error_user_message
 
 from .http_helpers import CreateTransferForm, render_transfer_form
+
+logger = logging.getLogger(__name__)
 
 
 def _redirect_after_inactive_transfer(
@@ -278,9 +281,10 @@ def accept_transfer(request: HttpRequest, *, transfer_id: int) -> HttpResponse:
             messages.error(request, error_msg)
             return redirect("inventory:item-history", item_id=transfer.item_id)
         # Other validation errors should return plain text with status 200
-        error_msg = validation_error_user_message(exc)
-        messages.error(request, error_msg)
-        return HttpResponse(error_msg, status=200, content_type="text/plain")
+        logger.exception("ValidationError while accepting transfer id=%s", transfer_id)
+        generic_error_msg = _("Unable to accept transfer due to invalid state.")
+        messages.error(request, generic_error_msg)
+        return HttpResponse(generic_error_msg, status=200, content_type="text/plain")
     messages.success(request, _("Transfer accepted."))
     return redirect("inventory:item-history", item_id=transfer.item_id)
 
