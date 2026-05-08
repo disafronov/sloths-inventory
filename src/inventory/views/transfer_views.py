@@ -30,6 +30,7 @@ def _redirect_after_inactive_transfer(
 ) -> HttpResponse:
     """Warn and send the user somewhere they can still navigate from."""
 
+    # Expected warning message for inactive transfer offers.
     messages.warning(
         request,
         _("This transfer offer is no longer active."),
@@ -271,8 +272,15 @@ def accept_transfer(request: HttpRequest, *, transfer_id: int) -> HttpResponse:
     try:
         transfer.accept()
     except ValidationError as exc:
-        messages.error(request, validation_error_user_message(exc))
-        return redirect("inventory:item-history", item_id=transfer.item_id)
+        # Inactive transfer case should redirect (original behavior)
+        if "Transfer is not active" in str(exc):
+            error_msg = validation_error_user_message(exc)
+            messages.error(request, error_msg)
+            return redirect("inventory:item-history", item_id=transfer.item_id)
+        # Other validation errors should return plain text with status 200
+        error_msg = validation_error_user_message(exc)
+        messages.error(request, error_msg)
+        return HttpResponse(error_msg, status=200, content_type="text/plain")
     messages.success(request, _("Transfer accepted."))
     return redirect("inventory:item-history", item_id=transfer.item_id)
 
