@@ -12,8 +12,6 @@ from devices.attributes import Category, Manufacturer, Model, Type
 from devices.models import Device
 from inventory.models import Item, Operation
 
-pytestmark = [pytest.mark.postgres]
-
 
 def _make_device() -> Device:
     category = Category.objects.create(name="Laptops")
