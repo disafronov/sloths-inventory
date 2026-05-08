@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-07 22:45+0000\n"
+"POT-Creation-Date: 2026-05-08 08:39+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,6 +19,12 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
 "(n%100>=11 && n%100<=14)? 2 : 3);\n"
+
+#: src/templates/admin/base_site.html:14 src/common/templates/base.html:102
+#, python-format
+msgid "Your timezone could not be detected. Times are displayed in %(tz)s."
+msgstr ""
+"Не удалось определить вашу временную зону. Время отображается в %(tz)s."
 
 #: src/common/admin.py:56
 msgid "Additional information"
@@ -85,52 +91,52 @@ msgstr "Примечания"
 msgid "Name"
 msgstr "Название"
 
-#: src/common/templates/base.html:7 src/common/templates/base.html:15
+#: src/common/templates/base.html:7 src/common/templates/base.html:16
 #: src/common/templates/login.html:4
 #: src/common/templates/password_change.html:4
 #: src/common/templates/profile.html:4
 msgid "Sloths Inventory"
 msgstr "Инвентаризация ленивцев"
 
-#: src/common/templates/base.html:22
+#: src/common/templates/base.html:23
 msgid "Menu"
 msgstr "Меню"
 
-#: src/common/templates/base.html:36
+#: src/common/templates/base.html:37
 msgid "Main navigation"
 msgstr "Главная навигация"
 
-#: src/common/templates/base.html:57
+#: src/common/templates/base.html:58
 msgid "Language"
 msgstr "Язык"
 
-#: src/common/templates/base.html:72
+#: src/common/templates/base.html:73
 msgid "My items"
 msgstr "Мои вещи"
 
-#: src/common/templates/base.html:77
+#: src/common/templates/base.html:78
 msgid "Previously my items"
 msgstr "Были у меня"
 
-#: src/common/templates/base.html:82 src/common/templates/profile.html:4
+#: src/common/templates/base.html:83 src/common/templates/profile.html:4
 #: src/common/templates/profile.html:6
 msgid "Profile"
 msgstr "Профиль"
 
-#: src/common/templates/base.html:87
+#: src/common/templates/base.html:88
 msgid "Admin"
 msgstr "Админка"
 
-#: src/common/templates/base.html:90
+#: src/common/templates/base.html:91
 msgid "Logout"
 msgstr "Выйти"
 
-#: src/common/templates/base.html:93 src/common/templates/login.html:4
+#: src/common/templates/base.html:94 src/common/templates/login.html:4
 #: src/common/templates/login.html:6 src/common/templates/login.html:12
 msgid "Login"
 msgstr "Войти"
 
-#: src/common/templates/base.html:102
+#: src/common/templates/base.html:108
 #, python-format
 msgid ""
 "Your account has no email address. <a href=\"%(url)s\">Add one in your "
