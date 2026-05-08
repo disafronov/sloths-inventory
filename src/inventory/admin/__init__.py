@@ -13,7 +13,10 @@ from inventory.models import Item, Operation, PendingTransfer
 
 
 class _EmptyValueFormatter(Protocol):
-    """Admins that supply empty-value formatting for ``CurrentFieldMixin``."""
+    """
+    Admins that supply empty-value formatting for ``CurrentFieldMixin``.
+    Defines a protocol for formatting empty values in admin displays.
+    """
 
     def _format_empty_value(self, value: Any) -> str: ...
 
@@ -22,25 +25,38 @@ class CurrentFieldMixin:
     """
     Read-only ``current_*`` display methods for ``Item`` in the admin.
 
-    Values are read from ``Item`` ``current_*`` descriptors; missing journal
-    state is formatted with the same hyphen placeholder as ``BaseAdmin`` readouts
-    (see ``BaseAdmin._format_empty_value``).
+    Provides display methods that show current status, location, and responsible person
+    for an item by reading from the item's current_* descriptors. Missing journal state
+    is formatted with the same hyphen placeholder as ``BaseAdmin`` readouts.
     """
 
     def get_current_field(self, obj: Item, field_name: str) -> str:
+        """
+        Get the formatted value for a current field.
+
+        Args:
+            obj: The Item instance to get the field value from
+            field_name: Name of the current field (e.g., 'status', 'location')
+
+        Returns:
+            Formatted string value of the current field
+        """
         formatter = cast(_EmptyValueFormatter, self)
         return formatter._format_empty_value(getattr(obj, f"current_{field_name}"))
 
     @admin.display(description=_("Status"))
     def current_status(self, obj: Item) -> str:
+        """Display the current status of the item."""
         return self.get_current_field(obj, "status")
 
     @admin.display(description=_("Location"))
     def current_location(self, obj: Item) -> str:
+        """Display the current location of the item."""
         return self.get_current_field(obj, "location")
 
     @admin.display(description=_("Responsible Person"))
     def current_responsible(self, obj: Item) -> str:
+        """Display the current responsible person for the item."""
         return self.get_current_field(obj, "responsible")
 
 

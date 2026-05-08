@@ -117,6 +117,10 @@ def test_item_admin_current_fields_are_dash_without_operations() -> None:
 
 @pytest.mark.django_db
 def test_item_admin_current_fields_and_fieldsets() -> None:
+    """
+    ItemAdmin must display current status, location, and responsible
+    from the latest operation.
+    """
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
     manufacturer = Manufacturer.objects.create(name="ACME")
@@ -162,6 +166,7 @@ def test_item_admin_current_fields_and_fieldsets() -> None:
 
 @pytest.mark.django_db
 def test_operation_admin_responsible_display() -> None:
+    """OperationAdmin must display the full name of the responsible person."""
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
     manufacturer = Manufacturer.objects.create(name="ACME")
@@ -193,6 +198,10 @@ def test_operation_admin_responsible_display() -> None:
 
 @pytest.mark.django_db
 def test_operation_admin_allows_edit_only_for_latest_operation() -> None:
+    """
+    Only the most recent operation for an item should be editable
+    in the admin.
+    """
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
     manufacturer = Manufacturer.objects.create(name="ACME")
@@ -328,6 +337,10 @@ def test_operation_admin_superuser_keeps_change_after_correction_window() -> Non
 
 @pytest.mark.django_db
 def test_operation_admin_permission_short_circuits() -> None:
+    """
+    Ensure permission checks correctly handle cases with and without
+    a specific object.
+    """
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
     manufacturer = Manufacturer.objects.create(name="ACME")
@@ -376,6 +389,7 @@ def test_operation_admin_permission_short_circuits() -> None:
 
 @pytest.mark.django_db
 def test_item_admin_queryset_is_select_related() -> None:
+    """ItemAdmin queryset must use select_related for performance."""
     site = AdminSite()
     admin_obj = ItemAdmin(Item, site)
     rf = RequestFactory()
@@ -388,6 +402,7 @@ def test_item_admin_queryset_is_select_related() -> None:
 
 @pytest.mark.django_db
 def test_operation_admin_queryset_is_select_related() -> None:
+    """OperationAdmin queryset must use select_related for performance."""
     site = AdminSite()
     admin_obj = OperationAdmin(Operation, site)
     rf = RequestFactory()
@@ -405,6 +420,10 @@ def test_operation_admin_queryset_is_select_related() -> None:
 def test_operation_admin_latest_operation_id_is_cached_per_request(
     django_assert_num_queries,
 ) -> None:
+    """
+    The latest operation ID lookup must be cached within a single request
+    to avoid N+1 queries.
+    """
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
     manufacturer = Manufacturer.objects.create(name="ACME")
@@ -938,6 +957,10 @@ def test_operation_fieldset_omits_lock_panel_without_model_change_permission() -
 @pytest.mark.django_db
 @override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
 def test_item_change_page_renders_correction_window_lock_after_window() -> None:
+    """
+    Admin change page for items must show a lock message after
+    the correction window expires.
+    """
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
     manufacturer = Manufacturer.objects.create(name="ACME")
@@ -1050,6 +1073,10 @@ def test_item_change_page_superuser_hides_lock_after_correction_window() -> None
 
 @pytest.mark.django_db
 def test_item_change_page_hides_lock_section_when_editable() -> None:
+    """
+    Admin change page for items must not show a lock message while still
+    within the correction window.
+    """
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
     manufacturer = Manufacturer.objects.create(name="ACME")
