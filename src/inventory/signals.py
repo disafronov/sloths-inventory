@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 def _responsible_email(responsible: Responsible) -> str:
+    """Return the email address of the user associated with the responsible person."""
     return responsible.user.email if responsible.user_id and responsible.user else ""
 
 
@@ -23,6 +24,7 @@ def _notify(
     item: Item,
     operation: Operation,
 ) -> None:
+    """Send an email notification related to an inventory operation."""
     send_transfer_email(
         f"emails/operation_{template_name}_subject.txt",
         f"emails/operation_{template_name}_body.txt",
@@ -39,6 +41,7 @@ def _notify_transfer(
     to_responsible: Responsible,
     recipients: list[str],
 ) -> None:
+    """Send an email notification related to a pending item transfer."""
     send_transfer_email(
         f"emails/transfer_{template_name}_subject.txt",
         f"emails/transfer_{template_name}_body.txt",
@@ -55,6 +58,11 @@ def notify_operation_saved(
     created: bool,
     **kwargs: Any,
 ) -> None:
+    """
+    Handle post-save signal for Operation to send notifications.
+    Notifies responsible persons when they are assigned or unassigned from an item,
+    or when operation details are updated.
+    """
     pre_responsible_id: int | None = getattr(instance, "_pre_save_responsible_id", None)
     responsible_changed = (
         pre_responsible_id is not None and pre_responsible_id != instance.responsible_id
@@ -99,6 +107,10 @@ def notify_transfer_saved(
     created: bool,
     **kwargs: Any,
 ) -> None:
+    """
+    Handle post-save signal for PendingTransfer to send notifications.
+    Notifies both parties when a transfer is created, accepted, or cancelled.
+    """
     pre_to_responsible_id: int | None = getattr(
         instance, "_pre_save_to_responsible_id", None
     )

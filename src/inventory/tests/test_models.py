@@ -14,6 +14,7 @@ from inventory.models import Item, Operation, PendingTransfer, parse_my_items_li
 
 
 def test_parse_my_items_list_kind_defaults_and_unknown() -> None:
+    """Ensure list kind parsing handles empty, unknown, and mixed-case inputs."""
     assert parse_my_items_list_kind("") == "all"
     assert parse_my_items_list_kind("  OWNED  ") == "owned"
     assert parse_my_items_list_kind("bogus") == "all"
@@ -21,6 +22,7 @@ def test_parse_my_items_list_kind_defaults_and_unknown() -> None:
 
 @pytest.mark.django_db
 def test_item_display_name_and_str(inventory_test_device) -> None:
+    """Verify Item string representation and display name formatting."""
     item = Item.objects.create(
         inventory_number="INV-001",
         device=inventory_test_device,
@@ -33,6 +35,7 @@ def test_item_display_name_and_str(inventory_test_device) -> None:
 
 @pytest.mark.django_db
 def test_item_clean_requires_inventory_number() -> None:
+    """Validation must fail if inventory number is empty."""
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
     manufacturer = Manufacturer.objects.create(name="ACME")
@@ -52,6 +55,7 @@ def test_item_clean_requires_inventory_number() -> None:
 
 @pytest.mark.django_db
 def test_item_clean_valid_inventory_number() -> None:
+    """Validation must pass with a non-empty inventory number."""
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
     manufacturer = Manufacturer.objects.create(name="ACME")
@@ -136,6 +140,7 @@ def test_item_clean_allows_update_after_window_without_responsible() -> None:
 
 @pytest.mark.django_db
 def test_item_has_assigned_responsible_tracks_operations() -> None:
+    """Item responsibility is determined by the presence of at least one operation."""
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
     manufacturer = Manufacturer.objects.create(name="ACME")
@@ -167,6 +172,7 @@ def test_item_has_assigned_responsible_tracks_operations() -> None:
 @pytest.mark.django_db
 @override_settings(INVENTORY_CORRECTION_WINDOW_MINUTES=10)
 def test_item_save_allows_update_inside_correction_window() -> None:
+    """Updates to Item are allowed if performed within the correction window."""
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
     manufacturer = Manufacturer.objects.create(name="ACME")
@@ -225,6 +231,7 @@ def test_item_save_after_correction_window_with_admin_bypass_flag() -> None:
 
 @pytest.mark.django_db
 def test_item_current_operation_and_current_fields() -> None:
+    """Item properties must correctly reflect the latest operation's state."""
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
     manufacturer = Manufacturer.objects.create(name="ACME")
@@ -263,6 +270,7 @@ def test_item_current_operation_and_current_fields() -> None:
 
 @pytest.mark.django_db
 def test_operation_str_and_responsible_display() -> None:
+    """Verify Operation string representation and responsible party display name."""
     category = Category.objects.create(name="Laptops")
     device_type = Type.objects.create(name="Laptop")
     manufacturer = Manufacturer.objects.create(name="ACME")
