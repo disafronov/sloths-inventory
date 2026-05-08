@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-08 08:39+0000\n"
+"POT-Creation-Date: 2026-05-08 10:15+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -690,24 +690,24 @@ msgid "Send reset link"
 msgstr "Send reset link"
 
 #: src/common/templates/profile.html:14
-msgid "Email Address"
-msgstr "Email Address"
-
-#: src/common/templates/profile.html:15
-msgid "Current email:"
-msgstr "Current email:"
-
-#: src/common/templates/profile.html:18
-msgid "Change Email"
-msgstr "Change Email"
-
-#: src/common/templates/profile.html:26
 msgid "Password"
 msgstr "Password"
 
-#: src/common/templates/profile.html:27 src/common/templates/profile.html:29
+#: src/common/templates/profile.html:15 src/common/templates/profile.html:17
 msgid "Change Password"
 msgstr "Change Password"
+
+#: src/common/templates/profile.html:25
+msgid "Email Address"
+msgstr "Email Address"
+
+#: src/common/templates/profile.html:26
+msgid "Current email:"
+msgstr "Current email:"
+
+#: src/common/templates/profile.html:29
+msgid "Change Email"
+msgstr "Change Email"
 
 #: src/common/views.py:73
 #, python-format
