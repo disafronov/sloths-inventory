@@ -1,0 +1,18 @@
+{% extends "admin/base.html" %}
+{% load i18n static %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'common/timezone.js' %}"></script>
+{% endblock %}
+
+{% block messages %}
+{{ block.super }}
+{% if not timezone_detected %}
+<ul class="messagelist">
+  <li class="warning">
+    {% blocktrans trimmed with tz=server_timezone %}Your timezone could not be detected. Times are displayed in {{ tz }}.{% endblocktrans %}
+  </li>
+</ul>
+{% endif %}
+{% endblock %}

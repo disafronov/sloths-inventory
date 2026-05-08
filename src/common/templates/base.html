@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>{% block title %}{% trans "Sloths Inventory" %}{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'common/app.css' %}">
+    <script src="{% static 'common/timezone.js' %}"></script>
     {% block extrahead %}{% endblock %}
 </head>
 <body>
@@ -96,6 +97,11 @@
             </nav>
         </div>
         <div class="content">
+            {% if not timezone_detected %}
+                <div class="banner banner--warning" role="alert">
+                    {% blocktrans trimmed with tz=server_timezone %}Your timezone could not be detected. Times are displayed in {{ tz }}.{% endblocktrans %}
+                </div>
+            {% endif %}
             {% if user.is_authenticated and not user.email %}
                 {% url 'common:profile' as profile_url %}
                 <div class="banner banner--warning" role="alert">
