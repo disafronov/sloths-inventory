@@ -20,6 +20,14 @@ STORAGES["staticfiles"] = {  # noqa: F405
     "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
 }
 
+# Tests do not serve static files through WhiteNoise, and the production
+# STATIC_ROOT may not exist before collectstatic runs.
+MIDDLEWARE = [  # noqa: F405
+    middleware
+    for middleware in MIDDLEWARE  # noqa: F405
+    if middleware != "whitenoise.middleware.WhiteNoiseMiddleware"
+]
+
 # Keep settings compatible with Django system checks when env vars are not set.
 ALLOWED_HOSTS = [h for h in ALLOWED_HOSTS if h]  # noqa: F405
 CSRF_TRUSTED_ORIGINS = [o for o in CSRF_TRUSTED_ORIGINS if o]  # noqa: F405
