@@ -1,3 +1,45 @@
+## [2.0.0](https://github.com/disafronov/sloths-inventory/compare/v1.10.0...v2.0.0) (2026-05-09)
+
+### ⚠ BREAKING CHANGES
+
+* **inventory:** Item deletion now blocked when operations exist (CASCADE → PROTECT)
+
+Changes:
+- Operation.item: CASCADE → PROTECT on delete (prevents accidental item deletion)
+- Added 3 indexes on PendingTransfer:
+  - from_responsible + accepted_at + cancelled_at
+  - to_responsible + accepted_at + cancelled_at
+  - expires_at
+- Improves query performance for transfer lookups and expiration checks
+
+Signed-off-by: Dmitrii Safronov <zimniy@cyberbrain.cc>
+
+### Features
+
+* Add profile section styling ([a121474](https://github.com/disafronov/sloths-inventory/commit/a12147424de3a1d4a119766c3cbd25a746755078))
+* add timezone detection message, update translation catalogs ([dd33095](https://github.com/disafronov/sloths-inventory/commit/dd33095c557cc1f7388935c03400083b396310a0))
+* email link in banner ([94558f4](https://github.com/disafronov/sloths-inventory/commit/94558f458c8365444b13e272dc010aa44cc64648))
+* Update translations and templates ([7c4511d](https://github.com/disafronov/sloths-inventory/commit/7c4511d127b4dd1b89830ff35df4134ce18cce7c))
+
+### Bug Fixes
+
+* add empty email styling and handling ([6cf1f85](https://github.com/disafronov/sloths-inventory/commit/6cf1f859166d7582e83045d7e78b247091092c57))
+* add secure settings for production environment ([275bb49](https://github.com/disafronov/sloths-inventory/commit/275bb49c09fd539783ab65be930c407139aa09d9))
+* bump Django to >=5.2.14 in pyproject.toml ([6f24f02](https://github.com/disafronov/sloths-inventory/commit/6f24f0279ea8300b4a149aaa3ca5027fb36cb747))
+* **docker:** add worker-tmp-dir to gunicorn entrypoint ([f2fd1bc](https://github.com/disafronov/sloths-inventory/commit/f2fd1bce246458d769628f8c3d0e7c538bc4871d))
+* **health:** remove trailing slashes from health check endpoints ([42af639](https://github.com/disafronov/sloths-inventory/commit/42af639d9012f03869f7274d4d87fdfbc6a1341b))
+* Potential fix for pull request finding 'CodeQL / Information exposure through an exception' ([6964c6c](https://github.com/disafronov/sloths-inventory/commit/6964c6cfe16ce8695232bfc5496ca32330f8a14a))
+* timezone banner test to check multiple timezones and translated strings ([9043737](https://github.com/disafronov/sloths-inventory/commit/9043737e9d6335d0dff863c046eebef869d143b3))
+* Update transfer views and locale files ([207edc6](https://github.com/disafronov/sloths-inventory/commit/207edc607ae9a0575075f6d4cad426d22ed0bc19))
+
+### Performance Improvements
+
+* **inventory:** add indexes and row locking to PendingTransfer ([8ba551f](https://github.com/disafronov/sloths-inventory/commit/8ba551ff9720eaa954589e948fc862f0ff1400f3))
+
+### Code Refactoring
+
+* **inventory:** protect item deletion and add pending transfer indexes ([14e0354](https://github.com/disafronov/sloths-inventory/commit/14e0354ea5a85ea6f6383d298db0bbd29e4c28d6))
+
 ## [2.0.0-rc.7](https://github.com/disafronov/sloths-inventory/compare/v2.0.0-rc.6...v2.0.0-rc.7) (2026-05-09)
 
 ## [2.0.0-rc.6](https://github.com/disafronov/sloths-inventory/compare/v2.0.0-rc.5...v2.0.0-rc.6) (2026-05-09)
