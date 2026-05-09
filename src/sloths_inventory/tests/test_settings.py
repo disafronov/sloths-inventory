@@ -135,3 +135,25 @@ def test_settings_bool_env_var_empty_string_uses_default(tmp_path, monkeypatch) 
         sloths_inventory.settings.__file__,
     )
     assert module.DEBUG is False
+
+
+def test_settings_secure_ssl_redirect_exempt(tmp_path, monkeypatch) -> None:
+    """
+    When DEBUG=True and SECURE_SSL_REDIRECT is truthy, settings should set
+    SECURE_SSL_REDIRECT=True and define SECURE_REDIRECT_EXEMPT with the health path.
+    """
+    # Isolate from any .env file
+    monkeypatch.chdir(tmp_path)
+    # Enable debug mode and required env vars
+    monkeypatch.setenv("DEBUG", "1")
+    monkeypatch.setenv("SECRET_KEY", "dummy-secret")
+    monkeypatch.setenv("SECURE_SSL_REDIRECT", "true")
+    # Load settings module afresh
+    module = _load_module_from_path(
+        "sloths_inventory._settings_secure_ssl_redirect_test",
+        sloths_inventory.settings.__file__,
+    )
+    assert module.SECURE_SSL_REDIRECT is True
+    # The exempt list should be added only when the flag is true
+    assert hasattr(module, "SECURE_REDIRECT_EXEMPT")
+    assert module.SECURE_REDIRECT_EXEMPT == [r"^health/"]
