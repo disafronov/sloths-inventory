@@ -1,3 +1,9 @@
+## [2.0.0-rc.6](https://github.com/disafronov/sloths-inventory/compare/v2.0.0-rc.5...v2.0.0-rc.6) (2026-05-09)
+
+### Bug Fixes
+
+* bump Django to >=5.2.14 in pyproject.toml ([a7b4bba](https://github.com/disafronov/sloths-inventory/commit/a7b4bba83ab7a02145666bfca71be606be495711))
+
 ## [2.0.0-rc.5](https://github.com/disafronov/sloths-inventory/compare/v2.0.0-rc.4...v2.0.0-rc.5) (2026-05-09)
 
 ## [2.0.0-rc.4](https://github.com/disafronov/sloths-inventory/compare/v2.0.0-rc.3...v2.0.0-rc.4) (2026-05-09)
