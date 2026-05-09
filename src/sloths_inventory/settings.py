@@ -175,16 +175,15 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/5.2/topics/i18n/
-
-LANGUAGE_CODE = "en"
+# Time
+USE_TZ = True
 
 TIME_ZONE = env.str("TIME_ZONE", default="UTC")
 
+# Internationalization
+# https://docs.djangoprojectP.com/en/5.2/topics/i18n/
+
 USE_I18N = True
-USE_TZ = True
 
 LANGUAGES = [
     ("en", "English"),
@@ -205,6 +204,7 @@ LANGUAGE_COOKIE_AGE = None
 LANGUAGE_COOKIE_DOMAIN = None
 LANGUAGE_COOKIE_PATH = "/"
 
+LANGUAGE_CODE = "en"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
