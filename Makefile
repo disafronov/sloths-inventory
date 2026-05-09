@@ -110,6 +110,8 @@ docker-build: ## Build Docker image
 docker-run: ## Run Docker container
 	@echo "Running Docker container..."
 	docker run --rm \
+		--read-only \
+		--tmpfs /tmp \
 		-p 8000:8000 \
 		--add-host=host.docker.internal:host-gateway \
 		$(if $(wildcard env.example),--env-file env.example,) \
