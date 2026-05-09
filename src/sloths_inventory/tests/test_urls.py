@@ -36,5 +36,5 @@ def test_home_and_health_routes_are_wired(monkeypatch) -> None:
     assert b"liveness" in health_index.content
     assert b"readiness" in health_index.content
 
-    assert client.get("/health/liveness").status_code == 200
-    assert client.get("/health/readiness").status_code == 200
+    assert client.get("/health/liveness/").status_code == 200
+    assert client.get("/health/readiness/").status_code == 200
