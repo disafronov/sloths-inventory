@@ -17,6 +17,6 @@ def health_index(request: HttpRequest) -> HttpResponse:
 
 urlpatterns = [
     path("", health_index, name="health-index"),
-    path("liveness", liveness, name="liveness"),
-    path("readiness", readiness, name="readiness"),
+    path("liveness/", liveness, name="liveness"),
+    path("readiness/", readiness, name="readiness"),
 ]
