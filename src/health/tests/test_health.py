@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 
 import pytest
 from django.db import DatabaseError
-from django.test import RequestFactory
+from django.test import Client, RequestFactory
 
 from health import health
 
@@ -71,3 +71,17 @@ def test_health_views_return_ok_json(monkeypatch, view, expected_json) -> None:
     response = view(request)
     assert response.status_code == 200
     assert json.loads(response.content) == expected_json
+
+
+def test_health_probe_urls_keep_trailing_slash_contract(monkeypatch) -> None:
+    monkeypatch.setattr(
+        health, "check_database", lambda: (True, "Database connection OK")
+    )
+
+    client = Client()
+
+    for path in (
+        "/health/liveness/",
+        "/health/readiness/",
+    ):
+        assert client.get(path).status_code == 200
