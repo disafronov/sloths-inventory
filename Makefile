@@ -117,7 +117,6 @@ docker-run: ## Run Docker container
 		$(if $(wildcard .env),--env-file .env,) \
 		--entrypoint sh \
 		$(DOCKER_IMAGE) -c '\
-			python3 manage.py compilemessages && \
 			python3 manage.py migrate && \
 			if [ -n "$$DJANGO_SUPERUSER_USERNAME" ] && [ -n "$$DJANGO_SUPERUSER_PASSWORD" ] && [ -n "$$DJANGO_SUPERUSER_EMAIL" ]; then \
 				echo "Ensuring Django superuser exists..."; \
