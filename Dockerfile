@@ -74,6 +74,8 @@ COPY --from=builder /home/ubuntu/app/src/ /home/ubuntu/app/src/
 
 WORKDIR /home/ubuntu/app/src
 
-ENTRYPOINT [ "gunicorn", "sloths_inventory.wsgi", "--bind", "0.0.0.0:8000", "--worker-tmp-dir", "/tmp", "--access-logfile", "-", "--error-logfile", "-" ]
+ENV GUNICORN_CMD_ARGS="--control-socket /tmp/gunicorn.ctl --bind 0.0.0.0:8000 --worker-tmp-dir /tmp --access-logfile - --error-logfile -"
+
+ENTRYPOINT [ "gunicorn", "sloths_inventory.wsgi" ]
 
 EXPOSE 8000

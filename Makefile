@@ -124,7 +124,7 @@ docker-run: ## Run Docker container
 			else \
 				echo "Skipping createsuperuser (set DJANGO_SUPERUSER_USERNAME/PASSWORD/EMAIL to enable)."; \
 			fi && \
-			exec gunicorn sloths_inventory.wsgi --bind 0.0.0.0:8000 --access-logfile - --error-logfile -'
+			exec gunicorn sloths_inventory.wsgi'
 
 docker: docker-build docker-run ## Build and run Docker container
 	@echo "Docker container built and running!"
