@@ -338,5 +338,3 @@ make test-coverage
   (**Tests Postgres**).
 - **Testing entrypoint**: `manage.py test` is intentionally disabled; use `make test`
   or `make all` instead.
-
-<!--bump -->
