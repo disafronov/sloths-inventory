@@ -1,3 +1,5 @@
+## [2.0.1-rc.1](https://github.com/disafronov/sloths-inventory/compare/v2.0.0...v2.0.1-rc.1) (2026-05-19)
+
 ## [2.0.0](https://github.com/disafronov/sloths-inventory/compare/v1.10.0...v2.0.0) (2026-05-09)
 
 ### ⚠ BREAKING CHANGES
