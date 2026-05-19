@@ -61,3 +61,8 @@ jobs:
           DATABASE_NAME: database
           DATABASE_USER: user
           DATABASE_PASSWORD: password
+
+      - name: Audit dependencies
+        run: make audit
+        env:
+          UV_PYTHON: ${{ steps.python_version.outputs.version }}

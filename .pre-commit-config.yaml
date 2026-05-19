@@ -79,3 +79,10 @@ repos:
         language: system
         entry: make dead-code
         pass_filenames: false
+
+      - id: make-audit
+        name: make audit (pre-push)
+        stages: [pre-push]
+        language: system
+        entry: make audit
+        pass_filenames: false

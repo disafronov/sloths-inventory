@@ -39,7 +39,7 @@ COVERAGE_OPTS = --cov-report=html
 
 DOCKER_IMAGE = sloths-inventory
 
-.PHONY: all clean dead-code docker docker-build docker-run format help install lint locale makemigrations run test
+.PHONY: all audit clean dead-code docker docker-build docker-run format help install lint locale makemigrations run test
 
 help: ## Show this help message
 	@echo "Available commands:"
@@ -64,6 +64,10 @@ lint: ## Run linting tools
 	$(UV) flake8 . && \
 	SECRET_KEY=$(TOOLING_SECRET_KEY) $(UV) mypy . && \
 	$(UV) bandit -r -c pyproject.toml .
+
+audit: ## Check dependencies for known vulnerabilities
+	@echo "Auditing dependencies..."
+	uv run pip-audit
 
 dead-code: ## Check for dead code using vulture
 	@echo "Checking for dead code..."
