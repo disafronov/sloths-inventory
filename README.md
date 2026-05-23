@@ -113,8 +113,9 @@ docker compose up -d
 
 Notes:
 
-- `docker compose` in this repository is intended to run **PostgreSQL only** for
-  local development.
+- `docker compose` in this repository is intended to run **PostgreSQL** and a
+  local **MailHog** SMTP catcher (UI at `http://localhost:8025`, SMTP on `:1025`)
+  for local development.
 - Run Django locally with `make run` and point it to the Postgres instance via
   env vars (see `env.example`).
 - The Docker image itself starts the application with **Gunicorn** (see
@@ -282,33 +283,20 @@ and run `python src/manage.py profile_inventory_list_queries`.
 
 ### Testing on PostgreSQL
 
-The default test configuration runs Django with SQLite (`sloths_inventory.settings_pytest`) for speed and to avoid requiring a running Postgres instance. The correction window is enabled during tests (`INVENTORY_CORRECTION_WINDOW_MINUTES=10`) to exercise that code path.
+All tests run against PostgreSQL via `pytest-django`. A running Postgres instance
+is required — use `docker compose up -d` to start one locally.
 
-Some tests validate PostgreSQL-specific behavior (e.g. row-level locking, transaction isolation). See `inventory/tests/test_concurrency.py` for examples.
+The correction window is enabled during tests (`INVENTORY_CORRECTION_WINDOW_MINUTES=10`)
+to exercise that code path.
 
-Note: `src/conftest.py` is test infrastructure (not application code) and is excluded from coverage.
+The `Makefile` includes `env.example` (or `.env` if present) to provide default
+`DATABASE_*` credentials. No SQLite variant is used.
 
-To run the full test suite on PostgreSQL locally, enable PostgreSQL for pytest (with a running Postgres instance and `DATABASE_*` matching it):
+Some tests validate PostgreSQL-specific behavior (e.g. row-level locking,
+transaction isolation). See `inventory/tests/test_concurrency.py` for examples.
 
-```bash
-make test-postgres
-```
-
-Equivalent manual invocation:
-
-```bash
-PYTEST_POSTGRES_USE=1 \
-DATABASE_HOST=127.0.0.1 \
-DATABASE_PORT=5432 \
-DATABASE_NAME=database \
-DATABASE_USER=user \
-DATABASE_PASSWORD=password \
-PYTHONPATH=src \
-SECRET_KEY=unsafe-secret-key-for-tooling \
-uv run python -m pytest -v
-```
-
-The **Tests Postgres** CI job runs the full pytest suite on PostgreSQL to catch any database-specific issues. Locally, `make test-postgres` also runs the **full** pytest suite on PostgreSQL. If that CI job fails, run this full local pass: problems may only show up when the whole suite runs against PostgreSQL, not just individual marked tests.
+Note: `src/conftest.py` is test infrastructure (not application code) and is
+excluded from coverage.
 
 Formatting is intentionally not part of `make all` (so checks do not mutate the
 working tree). To auto-format code, use:
@@ -317,16 +305,10 @@ working tree). To auto-format code, use:
 make format
 ```
 
-Run tests:
+Run tests (an HTML coverage report is produced in `htmlcov/`):
 
 ```bash
 make test
-```
-
-Run tests with coverage:
-
-```bash
-make test-coverage
 ```
 
 ## Notes
