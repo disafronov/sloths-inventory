@@ -57,16 +57,16 @@ SECURE_SSL_REDIRECT = _env_bool("SECURE_SSL_REDIRECT", default=False)
 SESSION_COOKIE_SECURE = _env_bool("SESSION_COOKIE_SECURE", default=False)
 CSRF_COOKIE_SECURE = _env_bool("CSRF_COOKIE_SECURE", default=False)
 
-SECURE_PROXY_SSL_HEADER_NAME = os.environ.get(
+_secure_proxy_ssl_header_name = os.environ.get(
     "SECURE_PROXY_SSL_HEADER_NAME", ""
 ).strip()
-SECURE_PROXY_SSL_HEADER_VALUE = os.environ.get(
+_secure_proxy_ssl_header_value = os.environ.get(
     "SECURE_PROXY_SSL_HEADER_VALUE", ""
 ).strip()
-if SECURE_PROXY_SSL_HEADER_NAME and SECURE_PROXY_SSL_HEADER_VALUE:
+if _secure_proxy_ssl_header_name and _secure_proxy_ssl_header_value:
     SECURE_PROXY_SSL_HEADER = (
-        SECURE_PROXY_SSL_HEADER_NAME,
-        SECURE_PROXY_SSL_HEADER_VALUE,
+        _secure_proxy_ssl_header_name,
+        _secure_proxy_ssl_header_value,
     )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
