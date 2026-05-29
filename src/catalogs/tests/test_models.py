@@ -1,7 +1,7 @@
 import pytest
 from django.contrib.auth.models import AnonymousUser, User
 from django.core.exceptions import ValidationError
-from django.test import RequestFactory
+from django.test import RequestFactory, override_settings
 
 from catalogs.models import Location, Responsible, Status
 from devices.attributes import Category, Manufacturer, Model, Type
@@ -77,6 +77,59 @@ def test_responsible_full_name_without_middle_name() -> None:
     )
 
     assert str(responsible) == "Ivanov Ivan"
+
+
+@pytest.mark.django_db
+def test_responsible_reference_in_use_includes_personal_locations() -> None:
+    responsible = Responsible.objects.create(last_name="Owner", first_name="User")
+    assert responsible.is_catalog_reference_in_use() is False
+
+    Location.objects.create(name="Desk", responsible=responsible)
+
+    assert responsible.is_catalog_reference_in_use() is True
+
+
+@pytest.mark.django_db
+@override_settings(LANGUAGE_CODE="en")
+def test_location_global_on_hand_display_name() -> None:
+    location = Location.on_hand()
+
+    assert location.name == Location.ON_HAND
+    assert location.responsible_id is None
+    assert location.display_name == "On hand"
+    assert str(location) == "On hand"
+
+
+@pytest.mark.django_db
+def test_location_allows_same_personal_name_for_different_responsibles() -> None:
+    responsible_one = Responsible.objects.create(last_name="One", first_name="User")
+    responsible_two = Responsible.objects.create(last_name="Two", first_name="User")
+
+    Location.objects.create(name="Desk", responsible=responsible_one)
+    Location.objects.create(name="Desk", responsible=responsible_two)
+
+    duplicate = Location(name="Desk", responsible=responsible_one)
+    with pytest.raises(ValidationError):
+        duplicate.full_clean()
+
+
+@pytest.mark.django_db
+def test_location_available_for_responsible_returns_global_and_own_only() -> None:
+    owner = Responsible.objects.create(last_name="Owner", first_name="User")
+    other = Responsible.objects.create(last_name="Other", first_name="User")
+    global_location = Location.objects.create(name="Office")
+    own_location = Location.objects.create(name="Home", responsible=owner)
+    other_location = Location.objects.create(name="Other home", responsible=other)
+
+    owner_locations = list(Location.available_for_responsible(owner).order_by("pk"))
+    global_locations = list(Location.available_for_responsible(None).order_by("pk"))
+
+    assert global_location in owner_locations
+    assert own_location in owner_locations
+    assert Location.on_hand() in owner_locations
+    assert other_location not in owner_locations
+    assert global_location in global_locations
+    assert own_location not in global_locations
 
 
 @pytest.mark.django_db

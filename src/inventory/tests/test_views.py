@@ -102,6 +102,7 @@ def test_my_items_empty_when_user_has_no_responsible() -> None:
 
 
 @pytest.mark.django_db
+@override_settings(LANGUAGE_CODE="en")
 def test_my_items_shows_only_items_where_latest_operation_has_my_responsible() -> None:
     """The 'My items' list must only include items currently assigned to the user."""
     category = Category.objects.create(name="Laptops")
@@ -138,7 +139,7 @@ def test_my_items_shows_only_items_where_latest_operation_has_my_responsible() -
     Item.objects.create(inventory_number="INV-NO-OPS", device=device)
 
     Operation.objects.create(
-        item=item_mine, status=status, responsible=resp1, location=location
+        item=item_mine, status=status, responsible=resp1, location=Location.on_hand()
     )
     Operation.objects.create(
         item=item_not_mine, status=status, responsible=resp2, location=location
@@ -157,12 +158,15 @@ def test_my_items_shows_only_items_where_latest_operation_has_my_responsible() -
     assert response.status_code == 200
 
     assert b"INV-MINE" in response.content
+    assert b"On hand" in response.content
+    assert b"on_hand" not in response.content
     assert b"INV-NOT-MINE" not in response.content
     assert b"INV-AWAY" not in response.content
     assert b"INV-NO-OPS" not in response.content
 
 
 @pytest.mark.django_db
+@override_settings(LANGUAGE_CODE="en")
 def test_build_my_items_owned_list_does_not_query_per_row_for_location_status() -> None:
     """
     Owned rows on the My items page must not N+1 when templates read
@@ -195,14 +199,22 @@ def test_build_my_items_owned_list_does_not_query_per_row_for_location_status() 
     for i in range(25):
         item = Item.objects.create(inventory_number=f"INV-NP-{i:03d}", device=device)
         Operation.objects.create(
-            item=item, status=status, responsible=resp, location=location
+            item=item,
+            status=status,
+            responsible=resp,
+            location=Location.on_hand() if i == 0 else location,
         )
 
     with CaptureQueriesContext(connection) as ctx:
         page = build_my_items_page_data(resp, query="", list_kind="owned")
+        locations_by_inventory_number = {
+            row.inventory_number: row.current_location for row in page.items
+        }
         for row in page.items:
-            assert row.current_location == location.name
             assert row.current_status == status.name
+
+    assert locations_by_inventory_number["INV-NP-000"] == "On hand"
+    assert locations_by_inventory_number["INV-NP-001"] == location.name
 
     assert len(ctx.captured_queries) <= 12, (
         "Expected a bounded number of SQL statements when resolving many owned "
@@ -826,9 +838,12 @@ def test_change_location_get_shows_form_with_locations() -> None:
         username="u1", password="pw", email="u1@example.com"
     )
     resp = Responsible.objects.create(last_name="One", first_name="User", user=user)
+    other = Responsible.objects.create(last_name="Other", first_name="User")
     status = Status.objects.create(name="In use")
     location = Location.objects.create(name="Home")
     Location.objects.create(name="Dacha")
+    own_location = Location.objects.create(name="My shelf", responsible=resp)
+    other_location = Location.objects.create(name="Other shelf", responsible=other)
     item = _make_item_with_operation(status, location, resp, "INV-FORM")
 
     client = Client()
@@ -837,6 +852,31 @@ def test_change_location_get_shows_form_with_locations() -> None:
     assert response.status_code == 200
     assert b"Home" in response.content
     assert b"Dacha" in response.content
+    assert own_location.name.encode("utf-8") in response.content
+    assert other_location.name.encode("utf-8") not in response.content
+
+
+@pytest.mark.django_db
+def test_change_location_post_rejects_another_responsibles_personal_location() -> None:
+    user = User.objects.create_user(
+        username="u1-scope", password="pw", email="u1-scope@example.com"
+    )
+    resp = Responsible.objects.create(last_name="One", first_name="Scope", user=user)
+    other = Responsible.objects.create(last_name="Other", first_name="Scope")
+    status = Status.objects.create(name="In use")
+    location = Location.objects.create(name="Home")
+    other_location = Location.objects.create(name="Other home", responsible=other)
+    item = _make_item_with_operation(status, location, resp, "INV-BAD-PERSONAL-LOC")
+
+    client = Client()
+    client.force_login(user)
+    response = client.post(
+        f"/items/{item.pk}/change-location/",
+        {"location_id": other_location.pk},
+    )
+
+    assert response.status_code == 404
+    assert item.operation_set.count() == 1
 
 
 @pytest.mark.django_db
@@ -1427,7 +1467,8 @@ def test_accept_transfer_requires_receiver_confirmation_and_changes_owner() -> N
     assert latest is not None
     assert latest.responsible == resp_receiver
     assert latest.status == status
-    assert latest.location == location
+    assert latest.location.name == Location.ON_HAND
+    assert latest.location.responsible_id is None
 
     # Receiver should now see the item on "My items".
     response = client_receiver.get("/")
