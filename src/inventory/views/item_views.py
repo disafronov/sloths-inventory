@@ -24,6 +24,7 @@ def _render_change_location(
     item: Item,
     current_location: Location,
     *,
+    responsible: Responsible,
     error: str = "",
     notes: str = "",
     status: int = 200,
@@ -34,7 +35,7 @@ def _render_change_location(
         "inventory/change_location.html",
         {
             "item": item,
-            "locations": Location.objects.order_by("name"),
+            "locations": Location.objects.available_for_responsible(responsible),
             "current_location": current_location,
             "error": error,
             "notes": notes,
@@ -101,6 +102,7 @@ def change_location(request: HttpRequest, *, item_id: int) -> HttpResponse:
                 request,
                 item,
                 current_op.location,
+                responsible=responsible,
                 error=error,
                 notes=(request.POST.get("notes") or "").strip(),
                 status=400,
@@ -109,9 +111,12 @@ def change_location(request: HttpRequest, *, item_id: int) -> HttpResponse:
         location_id: int = form.cleaned_data["location_id"]
         notes: str = form.cleaned_data["notes"]
 
-        try:
-            location = Location.objects.get(pk=location_id)
-        except Location.DoesNotExist:
+        location = (
+            Location.objects.available_for_responsible(responsible)
+            .filter(pk=location_id)
+            .first()
+        )
+        if location is None:
             raise Http404
 
         try:
@@ -123,6 +128,7 @@ def change_location(request: HttpRequest, *, item_id: int) -> HttpResponse:
                 request,
                 item,
                 current_op.location,
+                responsible=responsible,
                 error=validation_error_user_message(exc),
                 notes=notes,
                 status=400,
@@ -130,4 +136,6 @@ def change_location(request: HttpRequest, *, item_id: int) -> HttpResponse:
 
         return redirect("inventory:item-history", item_id=item.pk)
 
-    return _render_change_location(request, item, current_op.location, notes="")
+    return _render_change_location(
+        request, item, current_op.location, responsible=responsible, notes=""
+    )

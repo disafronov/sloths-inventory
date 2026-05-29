@@ -9,7 +9,7 @@ from django.db.models import Q
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from catalogs.models import Responsible
+from catalogs.models import Location, Responsible
 from common.models import BaseModel
 from inventory.models.item import Item
 
@@ -262,7 +262,7 @@ class PendingTransfer(BaseModel):
                 item=item,
                 status=current_op.status,
                 responsible=transfer.to_responsible,
-                location=current_op.location,
+                location=Location.on_hand(),
                 notes=transfer.notes,
             )
 

@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventory\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-08 14:30+0000\n"
+"POT-Creation-Date: 2026-05-29 16:31+0000\n"
 "PO-Revision-Date: 2024-03-19 00:40+0300\n"
 "Last-Translator: \n"
 "Language-Team: English\n"
@@ -46,6 +46,10 @@ msgstr "Editing restrictions"
 msgid "Inventory"
 msgstr "Inventory"
 
+#: src/inventory/list_query_helpers.py:49
+msgid "On hand"
+msgstr ""
+
 #: src/inventory/models/item.py:99
 #: src/inventory/templates/inventory/_item_card_title_inventory_number.html:3
 #: src/inventory/templates/inventory/_item_header_card.html:4
@@ -83,15 +87,15 @@ msgstr "Items"
 msgid "Inventory number cannot be empty"
 msgstr "Inventory number cannot be empty"
 
-#: src/inventory/models/item.py:246
+#: src/inventory/models/item.py:244
 msgid "Cannot change location for an item without operations"
 msgstr "Cannot change location for an item without operations"
 
-#: src/inventory/models/item.py:251
+#: src/inventory/models/item.py:249
 msgid "New location must be different from current location."
 msgstr "New location must be different from current location."
 
-#: src/inventory/models/item.py:259
+#: src/inventory/models/item.py:257
 msgid "Location changes must be recorded by the current accountable person."
 msgstr "Location changes must be recorded by the current accountable person."
 
@@ -122,9 +126,13 @@ msgstr[1] ""
 "The correction window (%(minutes)d minutes) has expired. To make changes, "
 "contact an administrator."
 
-#: src/inventory/models/operation.py:152
+#: src/inventory/models/operation.py:153
 msgid "Operation item cannot be changed"
 msgstr "Operation item cannot be changed"
+
+#: src/inventory/models/operation.py:196
+msgid "Personal location belongs to another responsible person."
+msgstr ""
 
 #: src/inventory/models/pending_transfer.py:72
 msgid "From"
