@@ -217,8 +217,6 @@ class Item(BaseModel):
                 return None
 
             value = getattr(operation, self.attr_name, None)
-            if value is not None and hasattr(value, "name"):
-                return value.name
             if value is None:
                 return None
             return str(value)

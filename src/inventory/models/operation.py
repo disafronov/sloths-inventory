@@ -133,6 +133,7 @@ class Operation(BaseModel):
         """
 
         super().clean()
+        self._validate_location_scope()
 
         if self._state.adding:
             return
@@ -177,6 +178,23 @@ class Operation(BaseModel):
                 # Keep a stable error code for tests and possible UI handling.
                 code="correction_window_expired",
             )
+
+    def _validate_location_scope(self) -> None:
+        """Ensure a personal location is only used by its responsible owner."""
+
+        if not self.location_id:
+            return
+
+        location_responsible_id = getattr(self.location, "responsible_id", None)
+        if location_responsible_id is None:
+            return
+
+        if self.responsible_id and location_responsible_id == self.responsible_id:
+            return
+
+        raise ValidationError(
+            {"location": _("Personal location belongs to another responsible person.")}
+        )
 
     def save(self, *args: Any, **kwargs: Any) -> None:
         """

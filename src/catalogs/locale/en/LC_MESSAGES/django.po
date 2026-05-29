@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: catalogs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-08 13:47+0000\n"
+"POT-Creation-Date: 2026-05-29 16:15+0000\n"
 "PO-Revision-Date: 2024-03-19 00:28+0300\n"
 "Last-Translator: \n"
 "Language-Team: English\n"
@@ -15,66 +15,80 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: src/catalogs/admin.py:33 src/catalogs/models.py:49
+msgid "Location"
+msgstr "Location"
+
+#: src/catalogs/admin.py:37 src/catalogs/models.py:43
+#: src/catalogs/models.py:128
+msgid "Responsible"
+msgstr "Responsible"
+
+#: src/catalogs/admin.py:40
+#, python-format
+msgid "Global: %(key)s"
+msgstr "Global: %(key)s"
+
 #: src/catalogs/apps.py:8
 msgid "Catalogs"
 msgstr "Catalogs"
 
-#: src/catalogs/models.py:24
-msgid "Location"
-msgstr "Location"
+#: src/catalogs/models.py:36
+msgid "Name"
+msgstr ""
 
-#: src/catalogs/models.py:25
+#: src/catalogs/models.py:50
 msgid "Locations"
 msgstr "Locations"
 
-#: src/catalogs/models.py:49
+#: src/catalogs/models.py:84
+msgid "On hand"
+msgstr "On hand"
+
+#: src/catalogs/models.py:111
 msgid "Last name"
 msgstr "Last name"
 
-#: src/catalogs/models.py:50
+#: src/catalogs/models.py:112
 msgid "First name"
 msgstr "First name"
 
-#: src/catalogs/models.py:52
+#: src/catalogs/models.py:114
 msgid "Middle name"
 msgstr "Middle name"
 
-#: src/catalogs/models.py:55
+#: src/catalogs/models.py:117
 msgid "Employee ID"
 msgstr "Employee ID"
 
-#: src/catalogs/models.py:62
+#: src/catalogs/models.py:124
 msgid "User"
 msgstr "User"
 
-#: src/catalogs/models.py:66
-msgid "Responsible"
-msgstr "Responsible"
-
-#: src/catalogs/models.py:67
+#: src/catalogs/models.py:129
 msgid "Responsibles"
 msgstr "Responsibles"
 
-#: src/catalogs/models.py:102
+#: src/catalogs/models.py:164
 msgid "The linked user must have an email address."
 msgstr "The linked user must have an email address."
 
-#: src/catalogs/models.py:165
+#: src/catalogs/models.py:227
 msgid "New responsible is required."
 msgstr ""
 
-#: src/catalogs/models.py:170
+#: src/catalogs/models.py:232
 msgid "New responsible is invalid."
 msgstr ""
 
-#: src/catalogs/models.py:172
+#: src/catalogs/models.py:234
 msgid "New responsible must be different."
 msgstr ""
 
-#: src/catalogs/models.py:184
+#: src/catalogs/models.py:246
 msgid "Status"
 msgstr "Status"
 
-#: src/catalogs/models.py:185
+#: src/catalogs/models.py:247
 msgid "Statuses"
 msgstr "Statuses"

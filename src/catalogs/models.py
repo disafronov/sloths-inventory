@@ -5,12 +5,23 @@ from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import ValidationError
 from django.db import models, transaction
-from django.db.models import QuerySet
+from django.db.models import Q, QuerySet
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
 from common.catalog_correction_window import CatalogCorrectionWindowMixin
 from common.models import BaseModel, NamedModel
+
+
+class LocationQuerySet(QuerySet["Location"]):
+    def available_for_responsible(
+        self, responsible: "Responsible | None"
+    ) -> "LocationQuerySet":
+        """Return global locations and locations owned by ``responsible``."""
+
+        if responsible is None:
+            return self.filter(responsible__isnull=True)
+        return self.filter(Q(responsible__isnull=True) | Q(responsible=responsible))
 
 
 class Location(CatalogCorrectionWindowMixin, NamedModel):
@@ -20,10 +31,61 @@ class Location(CatalogCorrectionWindowMixin, NamedModel):
     after the window expires if referenced by operations.
     """
 
+    ON_HAND = "on_hand"
+
+    name = models.CharField(max_length=255, verbose_name=_("Name"))
+    responsible = models.ForeignKey(
+        "catalogs.Responsible",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="locations",
+        verbose_name=_("Responsible"),
+    )
+
+    objects = LocationQuerySet.as_manager()
+
     class Meta:
         verbose_name = _("Location")
         verbose_name_plural = _("Locations")
         ordering = ["name"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name"],
+                condition=Q(responsible__isnull=True),
+                name="catalogs_location_unique_global_name",
+            ),
+            models.UniqueConstraint(
+                fields=["responsible", "name"],
+                condition=Q(responsible__isnull=False),
+                name="catalogs_location_unique_responsible_name",
+            ),
+        ]
+
+    @classmethod
+    def available_for_responsible(
+        cls, responsible: "Responsible | None"
+    ) -> LocationQuerySet:
+        return cls.objects.available_for_responsible(responsible)
+
+    @classmethod
+    def on_hand(cls) -> "Location":
+        """Return the shared global location used after accepting transfers."""
+
+        location, _ = cls.objects.get_or_create(
+            responsible=None,
+            name=cls.ON_HAND,
+        )
+        return location
+
+    @property
+    def display_name(self) -> str:
+        if self.responsible_id is None and self.name == self.ON_HAND:
+            return gettext("On hand")
+        return self.name
+
+    def __str__(self) -> str:
+        return self.display_name
 
     def is_catalog_reference_in_use(self) -> bool:
         """True when any ``Operation`` references this location."""
@@ -72,10 +134,10 @@ class Responsible(CatalogCorrectionWindowMixin, BaseModel):
 
         if self._state.adding:
             return False
-        from django.db.models import Q
-
         from inventory.models import Operation, PendingTransfer
 
+        if self.locations.exists():
+            return True
         if Operation.objects.filter(responsible_id=self.pk).exists():
             return True
         return bool(

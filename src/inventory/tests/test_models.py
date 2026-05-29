@@ -230,6 +230,7 @@ def test_item_save_after_correction_window_with_admin_bypass_flag() -> None:
 
 
 @pytest.mark.django_db
+@override_settings(LANGUAGE_CODE="en")
 def test_item_current_operation_and_current_fields() -> None:
     """Item properties must correctly reflect the latest operation's state."""
     category = Category.objects.create(name="Laptops")
@@ -266,6 +267,15 @@ def test_item_current_operation_and_current_fields() -> None:
     assert item.current_status == "In stock"
     assert item.current_location == "Moscow"
     assert item.current_responsible == "Ivanov Ivan"
+
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=responsible,
+        location=Location.on_hand(),
+    )
+
+    assert item.current_location == "On hand"
 
 
 @pytest.mark.django_db
@@ -558,6 +568,89 @@ def test_current_operation_value_missing_attr_returns_none() -> None:
 
     descriptor = Item.CurrentOperationValue("missing_field")
     assert descriptor.__get__(item, Item) is None
+
+
+@pytest.mark.django_db
+def test_operation_location_scope_allows_unsaved_operation_without_location() -> None:
+    operation = Operation()
+
+    operation._validate_location_scope()
+
+
+@pytest.mark.django_db
+def test_operation_rejects_another_responsibles_personal_location() -> None:
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    item = Item.objects.create(inventory_number="INV-LOC-SCOPE", device=device)
+    status = Status.objects.create(name="In use")
+    owner = Responsible.objects.create(last_name="Owner", first_name="User")
+    other = Responsible.objects.create(last_name="Other", first_name="User")
+    other_location = Location.objects.create(name="Home", responsible=other)
+
+    own_location = Location.objects.create(name="Office", responsible=owner)
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=owner,
+        location=own_location,
+    )
+
+    operation = Operation(
+        item=item,
+        status=status,
+        responsible=owner,
+        location=other_location,
+    )
+
+    with pytest.raises(ValidationError) as exc_info:
+        operation.full_clean()
+    assert "location" in exc_info.value.message_dict
+
+
+@pytest.mark.django_db
+def test_pending_transfer_accept_sets_on_hand_from_sender_location() -> None:
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    item = Item.objects.create(inventory_number="INV-XFER-ON-HAND", device=device)
+    status = Status.objects.create(name="In use")
+    sender = Responsible.objects.create(last_name="Sender", first_name="User")
+    receiver = Responsible.objects.create(last_name="Receiver", first_name="User")
+    personal_location = Location.objects.create(name="Home", responsible=sender)
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=sender,
+        location=personal_location,
+    )
+    transfer = PendingTransfer.objects.create(
+        item=item,
+        from_responsible=sender,
+        to_responsible=receiver,
+    )
+
+    transfer.accept()
+
+    latest = item.operation_set.order_by("-created_at", "-id").first()
+    assert latest is not None
+    assert latest.responsible == receiver
+    assert latest.location.name == Location.ON_HAND
+    assert latest.location.responsible_id is None
 
 
 @pytest.mark.django_db

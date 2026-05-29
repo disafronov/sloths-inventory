@@ -183,7 +183,7 @@ class CatalogReferenceAdminMixin(admin.ModelAdmin):
 class NamedModelAdmin(CatalogReferenceAdminMixin, BaseAdmin):
     list_display = ["name", "updated_at", "created_at"]
     search_fields = ["name", "created_at", "updated_at", "notes"]
-    main_fields = ("name",)
+    main_fields: tuple[str, ...] = ("name",)
 
 
 class ApplicationGroupProtectedGroupAdmin(GroupAdmin):
