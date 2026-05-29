@@ -50,14 +50,24 @@ DEBUG = _env_bool("DEBUG", default=False)
 # DEBUG flag
 if DEBUG:
     SECRET_KEY = env.str("SECRET_KEY", default="unsafe-secret-key")
-    SECURE_SSL_REDIRECT = _env_bool("SECURE_SSL_REDIRECT", default=False)
-    SESSION_COOKIE_SECURE = _env_bool("SESSION_COOKIE_SECURE", default=False)
-    CSRF_COOKIE_SECURE = _env_bool("CSRF_COOKIE_SECURE", default=False)
 else:
     SECRET_KEY = env.str("SECRET_KEY")
-    SECURE_SSL_REDIRECT = False
-    SESSION_COOKIE_SECURE = False
-    CSRF_COOKIE_SECURE = False
+
+SECURE_SSL_REDIRECT = _env_bool("SECURE_SSL_REDIRECT", default=False)
+SESSION_COOKIE_SECURE = _env_bool("SESSION_COOKIE_SECURE", default=False)
+CSRF_COOKIE_SECURE = _env_bool("CSRF_COOKIE_SECURE", default=False)
+
+SECURE_PROXY_SSL_HEADER_NAME = os.environ.get(
+    "SECURE_PROXY_SSL_HEADER_NAME", ""
+).strip()
+SECURE_PROXY_SSL_HEADER_VALUE = os.environ.get(
+    "SECURE_PROXY_SSL_HEADER_VALUE", ""
+).strip()
+if SECURE_PROXY_SSL_HEADER_NAME and SECURE_PROXY_SSL_HEADER_VALUE:
+    SECURE_PROXY_SSL_HEADER = (
+        SECURE_PROXY_SSL_HEADER_NAME,
+        SECURE_PROXY_SSL_HEADER_VALUE,
+    )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
