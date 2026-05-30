@@ -1,3 +1,10 @@
+## [2.1.0-rc.5](https://github.com/disafronov/sloths-inventory/compare/v2.1.0-rc.4...v2.1.0-rc.5) (2026-05-30)
+
+### Bug Fixes
+
+* show location type (System/Common/Personal) everywhere in admin ([3e2e186](https://github.com/disafronov/sloths-inventory/commit/3e2e186d82522a56d37960ba11de89b06328c4ca))
+* suppress duplicate restriction panel for system locations in admin ([a2e4367](https://github.com/disafronov/sloths-inventory/commit/a2e43678dfa818d9444f83416ac208c6dd7c6867))
+
 ## [2.1.0-rc.4](https://github.com/disafronov/sloths-inventory/compare/v2.1.0-rc.3...v2.1.0-rc.4) (2026-05-30)
 
 ## [2.1.0-rc.3](https://github.com/disafronov/sloths-inventory/compare/v2.1.0-rc.2...v2.1.0-rc.3) (2026-05-30)
