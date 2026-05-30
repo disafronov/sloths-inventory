@@ -79,13 +79,71 @@ class Location(CatalogCorrectionWindowMixin, NamedModel):
         return location
 
     @property
+    def is_system_location(self) -> bool:
+        return self.responsible_id is None and self.name == self.ON_HAND
+
+    @property
+    def is_global_location(self) -> bool:
+        return self.responsible_id is None
+
+    @property
     def display_name(self) -> str:
-        if self.responsible_id is None and self.name == self.ON_HAND:
+        if self.is_system_location:
             return gettext("On hand")
         return self.name
 
+    @property
+    def scope_label(self) -> str:
+        if self.is_system_location:
+            return gettext("System")
+        if self.is_global_location:
+            return gettext("Common")
+        return gettext("Personal")
+
+    @property
+    def scope_css_class(self) -> str:
+        if self.is_system_location:
+            return "system"
+        if self.is_global_location:
+            return "common"
+        return "personal"
+
+    @property
+    def display_name_with_scope(self) -> str:
+        return gettext("%(name)s (%(scope)s)") % {
+            "name": self.display_name,
+            "scope": self.scope_label,
+        }
+
     def __str__(self) -> str:
         return self.display_name
+
+    def clean(self) -> None:
+        super().clean()
+        if self._state.adding:
+            return
+        original = Location.objects.only("name", "responsible_id").get(pk=self.pk)
+        if original.is_system_location and (
+            original.name != self.name or original.responsible_id != self.responsible_id
+        ):
+            raise ValidationError(
+                _(
+                    "This system location is required for transfers and cannot be "
+                    "changed or deleted."
+                )
+            )
+
+    def delete(
+        self, using: Any = None, keep_parents: bool = False
+    ) -> tuple[int, dict[str, int]]:
+        if self.pk is not None and self.is_system_location:
+            raise ValidationError(
+                _(
+                    "This system location is required for transfers and cannot be "
+                    "changed or deleted."
+                )
+            )
+        return super().delete(using=using, keep_parents=keep_parents)
 
     def is_catalog_reference_in_use(self) -> bool:
         """True when any ``Operation`` references this location."""

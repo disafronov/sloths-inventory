@@ -97,7 +97,78 @@ def test_location_global_on_hand_display_name() -> None:
     assert location.name == Location.ON_HAND
     assert location.responsible_id is None
     assert location.display_name == "On hand"
+    assert location.scope_label == "System"
+    assert location.scope_css_class == "system"
+    assert location.display_name_with_scope == "On hand (System)"
     assert str(location) == "On hand"
+
+
+@pytest.mark.django_db
+def test_location_system_location_protects_on_save_against_name_change() -> None:
+    location = Location.on_hand()
+    location.name = "hacked"
+    with pytest.raises(ValidationError):
+        location.save()
+
+
+@pytest.mark.django_db
+def test_location_system_location_protects_on_save_against_responsible_change() -> None:
+    location = Location.on_hand()
+    responsible = Responsible.objects.create(last_name="A", first_name="B")
+    location.responsible = responsible
+    with pytest.raises(ValidationError):
+        location.save()
+
+
+@pytest.mark.django_db
+def test_location_system_location_protects_clean_against_name_change() -> None:
+    location = Location.on_hand()
+    location.name = "hacked"
+    with pytest.raises(ValidationError):
+        location.clean()
+
+
+@pytest.mark.django_db
+def test_location_system_location_protects_on_delete() -> None:
+    location = Location.on_hand()
+    with pytest.raises(ValidationError):
+        location.delete()
+
+
+@pytest.mark.django_db
+def test_location_system_location_allows_creation() -> None:
+    """Creation via get_or_create should still work."""
+    location = Location.on_hand()
+    assert location.pk is not None
+    assert location.name == Location.ON_HAND
+
+
+@pytest.mark.django_db
+def test_location_regular_location_allows_save_and_delete() -> None:
+    location = Location.objects.create(name="Office")
+    pk = location.pk
+    location.name = "Renamed"
+    location.save()
+    assert Location.objects.get(pk=pk).name == "Renamed"
+
+    deleted_count, _ = location.delete()
+    assert deleted_count == 1
+    assert Location.objects.filter(pk=pk).count() == 0
+
+
+@pytest.mark.django_db
+@override_settings(LANGUAGE_CODE="en")
+def test_location_scope_labels_distinguish_global_and_personal() -> None:
+    responsible = Responsible.objects.create(last_name="Owner", first_name="User")
+    global_location = Location.objects.create(name="Office")
+    personal_location = Location.objects.create(name="Desk", responsible=responsible)
+
+    assert global_location.scope_label == "Common"
+    assert global_location.scope_css_class == "common"
+    assert global_location.display_name_with_scope == "Office (Common)"
+    assert personal_location.scope_label == "Personal"
+    assert personal_location.scope_css_class == "personal"
+    assert personal_location.display_name_with_scope == "Desk (Personal)"
 
 
 @pytest.mark.django_db

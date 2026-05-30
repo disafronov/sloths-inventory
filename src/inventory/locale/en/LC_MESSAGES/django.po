@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventory\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-29 16:31+0000\n"
+"POT-Creation-Date: 2026-05-29 17:12+0000\n"
 "PO-Revision-Date: 2024-03-19 00:40+0300\n"
 "Last-Translator: \n"
 "Language-Team: English\n"
@@ -132,6 +132,18 @@ msgstr "Operation item cannot be changed"
 
 #: src/inventory/models/operation.py:196
 msgid "Personal location belongs to another responsible person."
+msgstr ""
+
+#: src/inventory/models/pages.py:49
+msgid "System"
+msgstr ""
+
+#: src/inventory/models/pages.py:51
+msgid "Common"
+msgstr ""
+
+#: src/inventory/models/pages.py:52
+msgid "Personal"
 msgstr ""
 
 #: src/inventory/models/pending_transfer.py:72

@@ -73,7 +73,7 @@
                 </div>
                 <div class="item-card__row">
                     <span class="item-card__label">{% trans "Location" %}:</span>
-                    <span class="item-card__value">{{ item.current_location|default:"-" }}</span>
+                    {% include "inventory/_location_readout.html" with location_name=item.current_location location_scope=item.current_location_scope %}
                 </div>
                 <div class="item-card__row">
                     <span class="item-card__label">{% trans "Status" %}:</span>

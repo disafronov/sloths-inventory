@@ -695,6 +695,50 @@ a.item-card:hover {
   word-break: break-word;
 }
 
+.location-readout {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+}
+
+.location-scope-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--space-1);
+  border: 1px solid #d8d8d8;
+  border-radius: 4px;
+  background: #fafafa;
+  color: #555;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.location-scope-badge--system {
+  border-color: #b8c7d9;
+  background: #f3f7fb;
+  color: #254761;
+}
+
+.location-scope-badge--common {
+  border-color: #c9d8c4;
+  background: #f6faf4;
+  color: #36572f;
+}
+
+.location-scope-badge--personal {
+  border-color: #d9cdb8;
+  background: #fbf7f0;
+  color: #664b24;
+}
+
+.location-scope-badge--plain {
+  border-color: #d8d8d8;
+  background: #fafafa;
+  color: #555;
+}
+
 /*
  * Transfer list card: main content full width; party plaque pinned to the card’s
  * top-right with equal inset from the top and right inner edges (same gap to both
