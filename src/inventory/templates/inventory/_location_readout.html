@@ -1,0 +1,15 @@
+{% if location %}
+    <span class="item-card__value location-readout">
+        <span>{{ location.display_name }}</span>
+        <span class="location-scope-badge location-scope-badge--{{ location.scope_css_class }}">{{ location.scope_label }}</span>
+    </span>
+{% elif location_name %}
+    <span class="item-card__value location-readout">
+        <span>{{ location_name }}</span>
+        {% if location_scope %}
+            <span class="location-scope-badge location-scope-badge--plain">{{ location_scope }}</span>
+        {% endif %}
+    </span>
+{% else %}
+    <span class="item-card__value">-</span>
+{% endif %}

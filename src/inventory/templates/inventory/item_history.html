@@ -98,7 +98,7 @@
                     </div>
                     <div class="item-card__row">
                         <span class="item-card__label">{% trans "Location" %}:</span>
-                        <span class="item-card__value">{{ op.location }}</span>
+                        {% include "inventory/_location_readout.html" with location=op.location %}
                     </div>
                     <div class="item-card__row">
                         <span class="item-card__label">{% trans "Status" %}:</span>
