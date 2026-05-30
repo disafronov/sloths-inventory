@@ -100,7 +100,7 @@ def test_location_global_on_hand_display_name() -> None:
     assert location.scope_label == "System"
     assert location.scope_css_class == "system"
     assert location.display_name_with_scope == "On hand (System)"
-    assert str(location) == "On hand"
+    assert str(location) == "On hand (System)"
 
 
 @pytest.mark.django_db
