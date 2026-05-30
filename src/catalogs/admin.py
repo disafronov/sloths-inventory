@@ -9,6 +9,7 @@ from django.utils.translation import gettext_lazy as _
 from common.admin import (
     BaseAdmin,
     CatalogReferenceAdminMixin,
+    CatalogReferenceRow,
     NamedModelAdmin,
     auth_has_change_permission,
 )
@@ -56,6 +57,13 @@ class LocationAdmin(NamedModelAdmin):
             fields.append("location_display_name")
             fields.append("responsible_display")
         return fields
+
+    def _catalog_correction_window_lock_user_message(
+        self, request: HttpRequest, obj: CatalogReferenceRow
+    ) -> str | None:
+        if isinstance(obj, Location) and obj.is_system_location:
+            return None
+        return super()._catalog_correction_window_lock_user_message(request, obj)
 
     def system_location_lock_message(self, obj: Model | None) -> str | None:
         if isinstance(obj, Location) and obj.is_system_location:

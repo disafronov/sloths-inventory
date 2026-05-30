@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: catalogs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-30 07:57+0000\n"
+"POT-Creation-Date: 2026-05-30 10:26+0000\n"
 "PO-Revision-Date: 2024-03-19 00:28+0300\n"
 "Last-Translator: \n"
 "Language-Team: English\n"
@@ -15,21 +15,21 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/catalogs/admin.py:41 src/catalogs/models.py:49
+#: src/catalogs/admin.py:42 src/catalogs/models.py:49
 msgid "Location"
 msgstr "Location"
 
-#: src/catalogs/admin.py:45 src/catalogs/models.py:43
+#: src/catalogs/admin.py:46 src/catalogs/models.py:43
 #: src/catalogs/models.py:186
 msgid "Responsible"
 msgstr "Responsible"
 
-#: src/catalogs/admin.py:48
+#: src/catalogs/admin.py:49
 #, python-format
 msgid "Global: %(key)s"
 msgstr "Global: %(key)s"
 
-#: src/catalogs/admin.py:64 src/catalogs/models.py:131
+#: src/catalogs/admin.py:72 src/catalogs/models.py:131
 #: src/catalogs/models.py:142
 msgid ""
 "This system location is required for transfers and cannot be changed or "
@@ -38,7 +38,7 @@ msgstr ""
 "This system location is required for transfers and cannot be changed or "
 "deleted."
 
-#: src/catalogs/admin.py:103
+#: src/catalogs/admin.py:111
 msgid "Editing restrictions"
 msgstr "Editing restrictions"
 
