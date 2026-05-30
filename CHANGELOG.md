@@ -1,3 +1,9 @@
+## [2.1.0-rc.3](https://github.com/disafronov/sloths-inventory/compare/v2.1.0-rc.2...v2.1.0-rc.3) (2026-05-30)
+
+### Features
+
+* add location management with admin display, model-level protection, and scoped labels ([0bf3934](https://github.com/disafronov/sloths-inventory/commit/0bf393466bdafd4070b014a19baa0c05ff0ca1ec))
+
 ## [2.1.0-rc.2](https://github.com/disafronov/sloths-inventory/compare/v2.1.0-rc.1...v2.1.0-rc.2) (2026-05-29)
 
 ## [2.1.0-rc.1](https://github.com/disafronov/sloths-inventory/compare/v2.0.1-rc.1...v2.1.0-rc.1) (2026-05-29)
