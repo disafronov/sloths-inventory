@@ -22,7 +22,7 @@ def test_location_admin_displays_global_and_personal_location_values() -> None:
     request = rf.get("/")
 
     with translation.override("en"):
-        assert admin_obj.location_display_name(global_location) == "On hand"
+        assert admin_obj.location_display_name(global_location) == "On hand (System)"
         assert admin_obj.responsible_display(global_location) == "Global: on_hand"
         assert admin_obj.responsible_display(personal_location) == str(responsible)
         assert admin_obj.get_queryset(request).query.select_related == {

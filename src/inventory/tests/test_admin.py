@@ -148,7 +148,7 @@ def test_item_admin_current_fields_and_fieldsets() -> None:
     admin_obj = ItemAdmin(Item, site)
 
     assert admin_obj.current_status(item) == "In stock"
-    assert admin_obj.current_location(item) == "Moscow"
+    assert admin_obj.current_location(item) == location.display_name_with_scope
     assert admin_obj.current_responsible(item) == str(responsible)
 
     rf = RequestFactory()
