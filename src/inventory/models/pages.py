@@ -10,12 +10,19 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, cast
 
-from django.db.models import OuterRef, Q, QuerySet, Subquery
+from django.db.models import (
+    Case,
+    CharField,
+    OuterRef,
+    Q,
+    QuerySet,
+    Subquery,
+    Value,
+    When,
+)
+from django.utils.translation import gettext
 
 from catalogs.models import Responsible
-
-if TYPE_CHECKING:
-    from inventory.models.pending_transfer import PendingTransferQuerySet
 from inventory.list_query_helpers import (
     latest_operation_location_name_subquery,
     latest_operation_status_name_subquery,
@@ -23,6 +30,32 @@ from inventory.list_query_helpers import (
 from inventory.models.item import Item
 from inventory.models.operation import Operation
 from inventory.models.pending_transfer import PendingTransfer
+
+if TYPE_CHECKING:
+    from inventory.models.pending_transfer import PendingTransferQuerySet
+
+
+def _latest_operation_location_scope_subquery(*, item_ref: str) -> Subquery:
+    from catalogs.models import Location
+
+    return Subquery(
+        Operation.objects.filter(item_id=OuterRef(item_ref))
+        .order_by("-created_at", "-id")
+        .annotate(
+            location_scope=Case(
+                When(
+                    location__responsible__isnull=True,
+                    location__name=Location.ON_HAND,
+                    then=Value(gettext("System")),
+                ),
+                When(location__responsible__isnull=True, then=Value(gettext("Common"))),
+                default=Value(gettext("Personal")),
+                output_field=CharField(),
+            )
+        )
+        .values("location_scope")[:1]
+    )
+
 
 MY_ITEMS_LIST_KINDS = frozenset({"all", "incoming", "owned", "outgoing"})
 
@@ -36,6 +69,9 @@ def _build_annotated_transfers_queryset() -> PendingTransferQuerySet:
     """
 
     latest_location_name = latest_operation_location_name_subquery(item_ref="item_id")
+    latest_location_scope = _latest_operation_location_scope_subquery(
+        item_ref="item_id"
+    )
     latest_status_name = latest_operation_status_name_subquery(item_ref="item_id")
 
     return cast(
@@ -53,8 +89,10 @@ def _build_annotated_transfers_queryset() -> PendingTransferQuerySet:
         )
         .annotate(
             current_location=latest_location_name,
+            current_location_scope=latest_location_scope,
             current_status=latest_status_name,
-        ),
+        )
+        .prefetch_related("item__operation_set__location"),
     )
 
 
@@ -170,10 +208,14 @@ def build_my_items_page_data(
         items = items.none()
         incoming_transfers = incoming_transfers.none()
 
-    # Annotate like transfer cards so ``my_items.html`` does not N+1 on descriptors.
     item_loc = latest_operation_location_name_subquery(item_ref="pk")
+    item_scope = _latest_operation_location_scope_subquery(item_ref="pk")
     item_stat = latest_operation_status_name_subquery(item_ref="pk")
-    items = items.annotate(current_location=item_loc, current_status=item_stat)
+    items = items.annotate(
+        current_location=item_loc,
+        current_location_scope=item_scope,
+        current_status=item_stat,
+    )
 
     return MyItemsPageData(
         items=items,

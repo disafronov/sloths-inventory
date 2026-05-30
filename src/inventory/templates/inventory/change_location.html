@@ -19,7 +19,7 @@
         {% endif %}
         <p class="form-readout">
             <span class="item-card__label">{% trans "Current location" %}:</span>
-            <span class="item-card__value">{{ current_location }}</span>
+            {% include "inventory/_location_readout.html" with location=current_location %}
         </p>
         <p>
             <label for="location_id">{% trans "New location" %}:</label>
@@ -32,7 +32,7 @@
             >
                 {% for loc in locations %}
                     {% if loc.pk != current_location.pk %}
-                        <option value="{{ loc.pk }}">{{ loc.name }}</option>
+                        <option value="{{ loc.pk }}">{{ loc.display_name_with_scope }}</option>
                     {% endif %}
                 {% endfor %}
             </select>

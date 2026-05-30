@@ -137,6 +137,7 @@ def test_my_items_shows_only_items_where_latest_operation_has_my_responsible() -
         inventory_number="INV-AWAY", device=device
     )
     Item.objects.create(inventory_number="INV-NO-OPS", device=device)
+    own_location = Location.objects.create(name="Backpack", responsible=resp1)
 
     Operation.objects.create(
         item=item_mine, status=status, responsible=resp1, location=Location.on_hand()
@@ -159,6 +160,9 @@ def test_my_items_shows_only_items_where_latest_operation_has_my_responsible() -
 
     assert b"INV-MINE" in response.content
     assert b"On hand" in response.content
+    assert b"System" in response.content
+    assert b"Personal" not in response.content
+    assert own_location.name.encode("utf-8") not in response.content
     assert b"on_hand" not in response.content
     assert b"INV-NOT-MINE" not in response.content
     assert b"INV-AWAY" not in response.content
@@ -207,14 +211,14 @@ def test_build_my_items_owned_list_does_not_query_per_row_for_location_status() 
 
     with CaptureQueriesContext(connection) as ctx:
         page = build_my_items_page_data(resp, query="", list_kind="owned")
-        locations_by_inventory_number = {
-            row.inventory_number: row.current_location for row in page.items
-        }
+        rows_by_inventory_number = {row.inventory_number: row for row in page.items}
         for row in page.items:
             assert row.current_status == status.name
 
-    assert locations_by_inventory_number["INV-NP-000"] == "On hand"
-    assert locations_by_inventory_number["INV-NP-001"] == location.name
+    assert rows_by_inventory_number["INV-NP-000"].current_location == "On hand"
+    assert rows_by_inventory_number["INV-NP-000"].current_location_scope == "System"
+    assert rows_by_inventory_number["INV-NP-001"].current_location == location.name
+    assert rows_by_inventory_number["INV-NP-001"].current_location_scope == "Common"
 
     assert len(ctx.captured_queries) <= 12, (
         "Expected a bounded number of SQL statements when resolving many owned "
@@ -502,6 +506,8 @@ def test_item_history_only_for_my_or_previously_my_item() -> None:
     ok = client.get(f"/items/{item_mine.pk}/")
     assert ok.status_code == 200
     assert b"INV-MINE" in ok.content
+    assert b"Moscow" in ok.content
+    assert b"Common" in ok.content
 
     forbidden = client.get(f"/items/{item_other.pk}/")
     assert forbidden.status_code == 404
@@ -681,6 +687,8 @@ def test_previous_items_incoming_transfer_uses_transfer_card_once() -> None:
     response = client.get("/previous/")
     assert response.status_code == 200
     assert b"item-card--incoming-transfer" in response.content
+    assert b"Moscow" in response.content
+    assert b"Common" in response.content
     inv = item.inventory_number.encode("utf-8")
     assert response.content.count(inv) == 1
 
@@ -841,6 +849,7 @@ def test_change_location_get_shows_form_with_locations() -> None:
     other = Responsible.objects.create(last_name="Other", first_name="User")
     status = Status.objects.create(name="In use")
     location = Location.objects.create(name="Home")
+    Location.on_hand()
     Location.objects.create(name="Dacha")
     own_location = Location.objects.create(name="My shelf", responsible=resp)
     other_location = Location.objects.create(name="Other shelf", responsible=other)
@@ -851,8 +860,10 @@ def test_change_location_get_shows_form_with_locations() -> None:
     response = client.get(f"/items/{item.pk}/change-location/")
     assert response.status_code == 200
     assert b"Home" in response.content
-    assert b"Dacha" in response.content
-    assert own_location.name.encode("utf-8") in response.content
+    assert b"Dacha (Common)" in response.content
+    assert b"On hand (System)" in response.content
+    assert f"{own_location.name} (Personal)".encode("utf-8") in response.content
+    assert b"on_hand" not in response.content
     assert other_location.name.encode("utf-8") not in response.content
 
 
