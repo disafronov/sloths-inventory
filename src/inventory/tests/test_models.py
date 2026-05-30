@@ -265,7 +265,7 @@ def test_item_current_operation_and_current_fields() -> None:
 
     assert item.current_operation is not None
     assert item.current_status == "In stock"
-    assert item.current_location == "Moscow"
+    assert item.current_location == "Moscow (Common)"
     assert item.current_responsible == "Ivanov Ivan"
 
     Operation.objects.create(
@@ -275,7 +275,7 @@ def test_item_current_operation_and_current_fields() -> None:
         location=Location.on_hand(),
     )
 
-    assert item.current_location == "On hand"
+    assert item.current_location == "On hand (System)"
 
 
 @pytest.mark.django_db

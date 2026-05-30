@@ -41,7 +41,7 @@ class LocationAdmin(NamedModelAdmin):
 
     @admin.display(description=_("Location"), ordering="name")
     def location_display_name(self, obj: Location) -> str:
-        return obj.display_name
+        return obj.display_name_with_scope
 
     @admin.display(description=_("Responsible"), ordering="responsible")
     def responsible_display(self, obj: Location) -> str:

@@ -116,7 +116,7 @@ class Location(CatalogCorrectionWindowMixin, NamedModel):
         }
 
     def __str__(self) -> str:
-        return self.display_name
+        return self.display_name_with_scope
 
     def clean(self) -> None:
         super().clean()
