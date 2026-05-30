@@ -96,10 +96,12 @@
                         <span class="item-card__label">{% trans "Responsible Person" %}:</span>
                         <span class="item-card__value">{{ op.responsible }}</span>
                     </div>
+                    {% if op.location %}
                     <div class="item-card__row">
                         <span class="item-card__label">{% trans "Location" %}:</span>
                         {% include "inventory/_location_readout.html" with location=op.location %}
                     </div>
+                    {% endif %}
                     <div class="item-card__row">
                         <span class="item-card__label">{% trans "Status" %}:</span>
                         <span class="item-card__value">{{ op.status }}</span>
