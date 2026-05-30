@@ -2172,8 +2172,8 @@ def test_item_history_allows_receiver_to_view_item_with_pending_transfer() -> No
         b"Incoming transfer from" in response.content
         or "Входящая передача".encode("utf-8") in response.content
     )
-    assert b"newest" in response.content
     assert b"owner" in response.content
+    assert b">newest<" not in response.content
 
 
 @pytest.mark.django_db

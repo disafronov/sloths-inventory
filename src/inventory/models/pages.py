@@ -7,6 +7,7 @@ rules stay on models.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, cast
 
@@ -146,7 +147,7 @@ class ItemHistoryContext:
     """Authorized item history payload for a ``Responsible`` viewer."""
 
     item: Item
-    operations: QuerySet[Operation]
+    operations: Sequence[Operation]
     is_owner: bool
     pending_transfer: PendingTransfer | None
     #: Latest ``Operation`` pk when the viewer may accept (UI posts this with Accept).
@@ -275,6 +276,37 @@ def build_previous_items_page_data(
     )
 
 
+def _filter_operations_for_viewer(
+    operations_qs: QuerySet[Operation],
+    viewer_responsible_id: int,
+) -> list[Operation]:
+    """
+    A viewer always sees operations where they are the responsible person.
+    Additionally, handoff operations (responsible changed) and status
+    changes are visible.  Only pure location changes by someone else
+    (same responsible, same status) are excluded.
+    Foreign handoff operations carry no location field.
+    """
+
+    ops = list(operations_qs.order_by("created_at", "id"))
+    result: list[Operation] = []
+    prev_resp_id: int | None = None
+    prev_status_id: int | None = None
+    for op in ops:
+        is_own = op.responsible_id == viewer_responsible_id
+        is_handoff = op.responsible_id != prev_resp_id
+        is_status_change = op.status_id != prev_status_id
+        if is_own or is_handoff or is_status_change:
+            result.append(op)
+        prev_resp_id = op.responsible_id
+        prev_status_id = op.status_id
+    for op in result:
+        if op.responsible_id != viewer_responsible_id:
+            op.location = None  # type: ignore[assignment]
+    result.reverse()
+    return result
+
+
 def resolve_item_history_context(
     responsible: Responsible, item_id: int
 ) -> ItemHistoryContext | None:
@@ -306,12 +338,13 @@ def resolve_item_history_context(
             except Item.DoesNotExist:  # pragma: no cover
                 # Defensive: ``item_id`` may race with concurrent deletions.
                 return None
-            operations = (
-                Operation.objects.filter(item=item)
-                .select_related("status", "responsible", "location")
-                .order_by("-created_at", "-id")
+            operations = _filter_operations_for_viewer(
+                Operation.objects.filter(item=item).select_related(
+                    "status", "responsible", "location"
+                ),
+                viewer_responsible_id=responsible.pk,
             )
-            if not operations.exists():
+            if not operations:
                 return None
         else:
             last_mine = (
@@ -347,17 +380,18 @@ def resolve_item_history_context(
             )
             ops_filter |= Q(pk=handoff.pk)
 
-            operations = (
+            operations = _filter_operations_for_viewer(
                 Operation.objects.filter(item=item)
                 .filter(ops_filter)
-                .select_related("status", "responsible", "location")
-                .order_by("-created_at", "-id")
+                .select_related("status", "responsible", "location"),
+                viewer_responsible_id=responsible.pk,
             )
     else:
-        operations = (
-            Operation.objects.filter(item=item)
-            .select_related("status", "responsible", "location")
-            .order_by("-created_at", "-id")
+        operations = _filter_operations_for_viewer(
+            Operation.objects.filter(item=item).select_related(
+                "status", "responsible", "location"
+            ),
+            viewer_responsible_id=responsible.pk,
         )
 
     pending_transfer = PendingTransfer.objects.active_offer_for_item(item)
