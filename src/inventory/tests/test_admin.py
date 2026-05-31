@@ -17,7 +17,7 @@ from django.utils.translation import ngettext
 from catalogs.models import Location, Responsible, Status
 from devices.attributes import Category, Manufacturer, Model, Type
 from devices.models import Device
-from inventory.admin import ItemAdmin, OperationAdmin
+from inventory.admin import ItemAdmin, LocationAutocomplete, OperationAdmin
 from inventory.models import Item, Operation
 
 
@@ -1506,3 +1506,156 @@ def test_operation_admin_lock_message_none_for_superuser_on_latest_row() -> None
 
 # PendingTransfer admin is read-only (no create/edit/delete). Any tests for add-form
 # initial values or auxiliary JSON endpoints are intentionally omitted.
+
+
+@pytest.mark.django_db
+def test_location_autocomplete_null_responsible_when_no_forward() -> None:
+    """Without a forwarded responsible, only locations with null responsible."""
+    responsible = Responsible.objects.create(last_name="Petrov", first_name="Petr")
+    loc_null = Location.objects.create(name="Warehouse")
+    loc_assigned = Location.objects.create(name="Office", responsible=responsible)
+
+    autocomplete_view = LocationAutocomplete()
+    autocomplete_view.forwarded = {}
+    autocomplete_view.q = ""
+
+    qs = autocomplete_view.get_queryset()
+    # There is a pre-existing seed Location "on_hand" with null responsible
+    qs_list = list(qs)
+    assert loc_null in qs_list
+    assert loc_assigned not in qs_list
+
+
+@pytest.mark.django_db
+def test_location_autocomplete_includes_matching_responsible_locations() -> None:
+    """With a forwarded responsible_id, include matching assigned locations."""
+    responsible = Responsible.objects.create(last_name="Petrov", first_name="Petr")
+    other = Responsible.objects.create(last_name="Sidorov", first_name="Sidr")
+    loc_null = Location.objects.create(name="Warehouse")
+    loc_matching = Location.objects.create(name="Office", responsible=responsible)
+    loc_other = Location.objects.create(name="Lab", responsible=other)
+
+    autocomplete_view = LocationAutocomplete()
+    autocomplete_view.forwarded = {"responsible": str(responsible.pk)}
+    autocomplete_view.q = ""
+
+    qs = autocomplete_view.get_queryset()
+    qs_list = list(qs)
+    assert loc_null in qs_list
+    assert loc_matching in qs_list
+    assert loc_other not in qs_list
+
+
+@pytest.mark.django_db
+def test_location_autocomplete_search_filters_by_name() -> None:
+    """The ``q`` parameter filters locations by name."""
+    Location.objects.create(name="Warehouse A")
+    Location.objects.create(name="Office B")
+    Location.objects.create(name="Lab C")
+
+    autocomplete_view = LocationAutocomplete()
+    autocomplete_view.forwarded = {}
+    autocomplete_view.q = "ware"
+
+    qs = autocomplete_view.get_queryset()
+    names = [loc.name for loc in qs]
+    assert names == ["Warehouse A"]
+
+
+@pytest.mark.django_db
+def test_location_autocomplete_results_ordered_by_name() -> None:
+    """Results are sorted alphabetically by name."""
+    Location.objects.create(name="Zoo")
+    Location.objects.create(name="Alpha")
+    Location.objects.create(name="Beta")
+
+    autocomplete_view = LocationAutocomplete()
+    autocomplete_view.forwarded = {}
+    autocomplete_view.q = ""
+
+    qs = autocomplete_view.get_queryset()
+    names = [loc.name for loc in qs]
+    # Pre-existing seed Location "on_hand" sorts between Beta and Zoo
+    assert names[0] == "Alpha"
+    assert names[1] == "Beta"
+    assert "Zoo" in names
+
+
+@pytest.mark.django_db
+class TestOperationAdminFormLocationFilter:
+    """Exercises the uncovered branches of _filter_location_by_responsible."""
+
+    def test_handles_non_numeric_responsible_in_post_data(self) -> None:
+        """When responsible POST value is non-numeric, fall through to null."""
+        responsible = Responsible.objects.create(last_name="Test", first_name="T")
+        Location.objects.create(name="Default", responsible=responsible)
+        Location.objects.create(name="Unassigned")
+
+        category = Category.objects.create(name="Laptops")
+        device_type = Type.objects.create(name="Laptop")
+        manufacturer = Manufacturer.objects.create(name="ACME")
+        device_model = Model.objects.create(name="Model X")
+        device = Device.objects.create(
+            category=category,
+            type=device_type,
+            manufacturer=manufacturer,
+            model=device_model,
+        )
+        status = Status.objects.create(name="In stock")
+        item = Item.objects.create(inventory_number="INV-FILTER-01", device=device)
+
+        site = AdminSite()
+        admin_obj = OperationAdmin(Operation, site)
+        rf = RequestFactory()
+        request = rf.get("/")
+        request.user = get_user_model().objects.create_superuser(
+            username="admin-filter",
+            email="admin-filter@example.com",
+            password="password",
+        )
+        form_class = admin_obj.get_form(request, obj=None, change=False)
+
+        form = form_class(
+            data={
+                "item": item.pk,
+                "status": status.pk,
+                "responsible": "not-a-number",
+                "location": "",
+            }
+        )
+        qs = form.fields["location"].queryset
+        assert list(qs) == list(Location.objects.filter(responsible__isnull=True))
+
+    def test_filters_to_null_responsible_when_no_instance_and_no_data(self) -> None:
+        """With no instance pk and no data['responsible'], show only null."""
+        responsible = Responsible.objects.create(last_name="Test", first_name="T")
+        Location.objects.create(name="Assigned", responsible=responsible)
+        Location.objects.create(name="Free")
+
+        category = Category.objects.create(name="Laptops")
+        device_type = Type.objects.create(name="Laptop")
+        manufacturer = Manufacturer.objects.create(name="ACME")
+        device_model = Model.objects.create(name="Model X")
+        device = Device.objects.create(
+            category=category,
+            type=device_type,
+            manufacturer=manufacturer,
+            model=device_model,
+        )
+        status = Status.objects.create(name="In stock")
+        item = Item.objects.create(inventory_number="INV-FILTER-02", device=device)
+
+        site = AdminSite()
+        admin_obj = OperationAdmin(Operation, site)
+        rf = RequestFactory()
+        request = rf.get("/")
+        request.user = get_user_model().objects.create_superuser(
+            username="admin-filter2",
+            email="admin-filter2@example.com",
+            password="password",
+        )
+        form_class = admin_obj.get_form(request, obj=None, change=False)
+
+        form = form_class(data={"item": item.pk, "status": status.pk, "location": ""})
+        qs = form.fields["location"].queryset
+        assert list(qs) == list(Location.objects.filter(responsible__isnull=True))

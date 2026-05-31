@@ -1,12 +1,18 @@
+from __future__ import annotations
+
 from typing import Any, Protocol, cast
 
+from dal import autocomplete
+from dal_select2.widgets import ModelSelect2
 from django import forms
 from django.contrib import admin
-from django.db.models import Model, QuerySet
+from django.db.models import Model, Q, QuerySet
 from django.http import HttpRequest
+from django.urls import path
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
+from catalogs.models import Location
 from common.admin import BaseAdmin, auth_has_change_permission
 from common.edit_window import is_within_inventory_correction_window
 from inventory.models import Item, Operation, PendingTransfer
@@ -252,6 +258,32 @@ class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
         return [*fieldsets, lock_panel]
 
 
+class LocationAutocomplete(autocomplete.Select2QuerySetView):
+    """Autocomplete for Location filtered by the responsible forwarded from the form."""
+
+    def get_queryset(self) -> QuerySet[Location]:
+        """Return locations visible for the currently selected responsible.
+
+        When a responsible is forwarded from the form, include both common
+        (null-responsible) and that person's personal locations.  Without a
+        responsible only common locations are shown.
+        """
+        qs = Location.objects.all()
+
+        responsible_id = self.forwarded.get("responsible", None)
+        if responsible_id:
+            qs = qs.filter(
+                Q(responsible__isnull=True) | Q(responsible_id=responsible_id)
+            )
+        else:
+            qs = qs.filter(responsible__isnull=True)
+
+        if self.q:
+            qs = qs.filter(name__icontains=self.q)
+
+        return qs.order_by("name")
+
+
 @admin.register(Operation)
 class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
     """
@@ -290,7 +322,11 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
         "updated_at",
         "created_at",
     ]
-    autocomplete_fields = ["item", "responsible", "status", "location"]
+    autocomplete_fields = ["item", "responsible", "status"]
+
+    class Media:
+        js = ["inventory/admin/operation_form.js"]
+
     main_fields = (
         "item",
         "responsible",
@@ -330,6 +366,23 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
         )
         return [*fieldsets, lock_panel]
 
+    def formfield_for_foreignkey(
+        self, db_field: Any, request: HttpRequest, **kwargs: Any
+    ) -> Any:
+        """Replace the location widget with a DAL Select2 autocomplete.
+
+        The widget forwards the current ``responsible`` value so
+        ``LocationAutocomplete`` can filter locations to only those
+        accessible by that responsible person.
+        """
+        field = super().formfield_for_foreignkey(db_field, request, **kwargs)
+        if field is not None and db_field.name == "location":
+            field.widget = ModelSelect2(
+                url="admin:inventory_operation_location_autocomplete",
+                forward=["responsible"],
+            )
+        return field
+
     def get_form(
         self,
         request: HttpRequest,
@@ -349,6 +402,7 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
         class OperationAdminForm(form_class):  # type: ignore[misc, valid-type]
             def __init__(self, *args: Any, **kwargs: Any) -> None:
                 super().__init__(*args, **kwargs)
+                self._filter_location_by_responsible()
                 if not getattr(user, "is_superuser", False) or not self.instance.pk:
                     return
                 latest = admin_self._get_latest_operation_id_for_item(
@@ -359,6 +413,31 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
                         self.instance,
                         "_bypass_operation_correction_window",
                         True,
+                    )
+
+            def _filter_location_by_responsible(self) -> None:
+                """Narrow the location queryset to the responsible's locations.
+
+                Used for server-side validation: prevents submitting a personal
+                location that does not belong to the selected responsible.
+                """
+                if "location" not in self.fields:
+                    return
+                responsible_id: int | None = None
+                if self.instance.pk and self.instance.responsible_id:
+                    responsible_id = self.instance.responsible_id
+                elif self.data.get("responsible"):
+                    try:
+                        responsible_id = int(self.data["responsible"])
+                    except (ValueError, TypeError):
+                        pass
+                if responsible_id is not None:
+                    self.fields["location"].queryset = Location.objects.filter(
+                        Q(responsible__isnull=True) | Q(responsible_id=responsible_id)
+                    )
+                else:
+                    self.fields["location"].queryset = Location.objects.filter(
+                        responsible__isnull=True
                     )
 
         return OperationAdminForm
@@ -475,6 +554,18 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
     @admin.display(description=_("Responsible Person"))
     def get_responsible_display(self, obj: Operation) -> str:
         return obj.responsible.get_full_name()
+
+    def get_urls(self) -> list:
+        """Append the location autocomplete endpoint to admin URLs."""
+        urls = super().get_urls()
+        custom_urls = [
+            path(
+                "location-autocomplete/",
+                self.admin_site.admin_view(LocationAutocomplete.as_view()),
+                name="inventory_operation_location_autocomplete",
+            ),
+        ]
+        return custom_urls + urls
 
 
 @admin.register(PendingTransfer)
