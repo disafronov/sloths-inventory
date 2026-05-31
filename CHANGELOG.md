@@ -1,3 +1,9 @@
+## [2.1.0-rc.6](https://github.com/disafronov/sloths-inventory/compare/v2.1.0-rc.5...v2.1.0-rc.6) (2026-05-31)
+
+### Features
+
+* filter operation location by responsible in admin ([bd2f5ac](https://github.com/disafronov/sloths-inventory/commit/bd2f5ac43e7a7f58e884903e45d5a449f1d1268d))
+
 ## [2.1.0-rc.5](https://github.com/disafronov/sloths-inventory/compare/v2.1.0-rc.4...v2.1.0-rc.5) (2026-05-30)
 
 ### Bug Fixes
