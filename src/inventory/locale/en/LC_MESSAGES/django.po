@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventory\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-30 09:22+0000\n"
+"POT-Creation-Date: 2026-05-31 08:15+0000\n"
 "PO-Revision-Date: 2024-03-19 00:40+0300\n"
 "Last-Translator: \n"
 "Language-Team: English\n"
@@ -15,30 +15,30 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/inventory/admin/__init__.py:47 src/inventory/models/operation.py:31
+#: src/inventory/admin/__init__.py:53 src/inventory/models/operation.py:31
 #: src/inventory/templates/inventory/_transfer_card.html:23
 #: src/inventory/templates/inventory/item_history.html:106
 #: src/inventory/templates/inventory/my_items.html:79
 msgid "Status"
 msgstr "Status"
 
-#: src/inventory/admin/__init__.py:52 src/inventory/models/operation.py:37
+#: src/inventory/admin/__init__.py:58 src/inventory/models/operation.py:37
 #: src/inventory/templates/inventory/_transfer_card.html:19
 #: src/inventory/templates/inventory/item_history.html:101
 #: src/inventory/templates/inventory/my_items.html:75
 msgid "Location"
 msgstr "Location"
 
-#: src/inventory/admin/__init__.py:57 src/inventory/admin/__init__.py:475
+#: src/inventory/admin/__init__.py:63 src/inventory/admin/__init__.py:554
 #: src/inventory/templates/inventory/item_history.html:96
 msgid "Responsible Person"
 msgstr "Responsible Person"
 
-#: src/inventory/admin/__init__.py:228 src/inventory/models/operation.py:41
+#: src/inventory/admin/__init__.py:234 src/inventory/models/operation.py:41
 msgid "Operation"
 msgstr "Operation"
 
-#: src/inventory/admin/__init__.py:249 src/inventory/admin/__init__.py:328
+#: src/inventory/admin/__init__.py:255 src/inventory/admin/__init__.py:364
 msgid "Editing restrictions"
 msgstr "Editing restrictions"
 
