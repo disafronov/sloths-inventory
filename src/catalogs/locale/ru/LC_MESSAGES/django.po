@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: catalogs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-30 10:26+0000\n"
+"POT-Creation-Date: 2026-06-01 13:33+0000\n"
 "PO-Revision-Date: 2024-03-19 00:28+0300\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
@@ -49,7 +49,7 @@ msgstr "Каталоги"
 
 #: src/catalogs/models.py:36
 msgid "Name"
-msgstr ""
+msgstr "Название"
 
 #: src/catalogs/models.py:50
 msgid "Locations"
@@ -106,15 +106,15 @@ msgstr "У привязанного пользователя должен быт
 
 #: src/catalogs/models.py:285
 msgid "New responsible is required."
-msgstr ""
+msgstr "Новый ответственный обязателен."
 
 #: src/catalogs/models.py:290
 msgid "New responsible is invalid."
-msgstr ""
+msgstr "Новый ответственный некорректен."
 
 #: src/catalogs/models.py:292
 msgid "New responsible must be different."
-msgstr ""
+msgstr "Новый ответственный должен отличаться."
 
 #: src/catalogs/models.py:304
 msgid "Status"
@@ -123,3 +123,121 @@ msgstr "Статус"
 #: src/catalogs/models.py:305
 msgid "Statuses"
 msgstr "Статусы"
+
+#: src/catalogs/templates/catalogs/location_confirm_delete.html:4
+#: src/catalogs/templates/catalogs/location_confirm_delete.html:6
+msgid "Delete location"
+msgstr "Удалить расположение"
+
+#: src/catalogs/templates/catalogs/location_confirm_delete.html:4
+#: src/catalogs/templates/catalogs/location_form.html:10
+#: src/catalogs/templates/catalogs/location_list.html:4
+msgid "Sloths Inventory"
+msgstr "Sloths Inventory"
+
+#: src/catalogs/templates/catalogs/location_confirm_delete.html:14
+#, python-format
+msgid "Are you sure you want to delete “%(name)s”?"
+msgstr "Вы уверены, что хотите удалить «%(name)s»?"
+
+#: src/catalogs/templates/catalogs/location_confirm_delete.html:19
+#: src/catalogs/templates/catalogs/location_list.html:29
+msgid "Delete"
+msgstr "Удалить"
+
+#: src/catalogs/templates/catalogs/location_confirm_delete.html:20
+#: src/catalogs/templates/catalogs/location_form.html:46
+msgid "Cancel"
+msgstr "Отмена"
+
+#: src/catalogs/templates/catalogs/location_form.html:6
+#, python-format
+msgid "Edit “%(name)s” - %(block.super)s"
+msgstr "Редактировать «%(name)s» — %(block.super)s"
+
+#: src/catalogs/templates/catalogs/location_form.html:10
+#: src/catalogs/templates/catalogs/location_form.html:18
+msgid "New location"
+msgstr "Новое расположение"
+
+#: src/catalogs/templates/catalogs/location_form.html:16
+#, python-format
+msgid "Edit “%(name)s”"
+msgstr "Редактировать «%(name)s»"
+
+#: src/catalogs/templates/catalogs/location_form.html:31
+msgid "Location name"
+msgstr "Название расположения"
+
+#: src/catalogs/templates/catalogs/location_form.html:44
+msgid "Save"
+msgstr "Сохранить"
+
+#: src/catalogs/templates/catalogs/location_form.html:44
+msgid "Create"
+msgstr "Создать"
+
+#: src/catalogs/templates/catalogs/location_list.html:4
+#: src/catalogs/templates/catalogs/location_list.html:6
+msgid "My locations"
+msgstr "Мои расположения"
+
+#: src/catalogs/templates/catalogs/location_list.html:10
+#: src/catalogs/views.py:67 src/catalogs/views.py:104 src/catalogs/views.py:155
+msgid "Your account is not linked to a responsible person profile yet."
+msgstr "Ваша учётная запись ещё не привязана к профилю ответственного лица."
+
+#: src/catalogs/templates/catalogs/location_list.html:14
+msgid "Search locations"
+msgstr "Поиск расположений"
+
+#: src/catalogs/templates/catalogs/location_list.html:15
+msgid "Search by location name…"
+msgstr "Поиск по названию…"
+
+#: src/catalogs/templates/catalogs/location_list.html:21
+msgid "Personal locations list"
+msgstr "Список личных расположений"
+
+#: src/catalogs/templates/catalogs/location_list.html:28
+msgid "Edit"
+msgstr "Редактировать"
+
+#: src/catalogs/templates/catalogs/location_list.html:39
+msgid "No locations found."
+msgstr "Расположения не найдены."
+
+#: src/catalogs/templates/catalogs/location_list.html:41
+msgid "You have no personal locations yet."
+msgstr "У вас ещё нет личных расположений."
+
+#: src/catalogs/templates/catalogs/location_list.html:47
+msgid "Add location"
+msgstr "Добавить расположение"
+
+#: src/catalogs/views.py:21
+msgid "Location name is required."
+msgstr "Название расположения обязательно."
+
+#: src/catalogs/views.py:89
+#, python-format
+msgid "Location “%(name)s” has been created."
+msgstr "Расположение «%(name)s» создано."
+
+#: src/catalogs/views.py:135
+#, python-format
+msgid "Location “%(old_name)s” has been renamed to “%(name)s”."
+msgstr "Расположение «%(old_name)s» переименовано в «%(name)s»."
+
+#: src/catalogs/views.py:165
+#, python-format
+msgid ""
+"Location “%(name)s” is in use by one or more items and cannot be deleted."
+msgstr ""
+"Расположение «%(name)s» используется одним или несколькими предметами и не "
+"может быть удалено."
+
+#: src/catalogs/views.py:178
+#, python-format
+msgid "Location “%(name)s” has been deleted."
+msgstr "Расположение «%(name)s» удалено."

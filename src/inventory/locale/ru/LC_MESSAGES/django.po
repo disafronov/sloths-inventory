@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventory\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-31 08:15+0000\n"
+"POT-Creation-Date: 2026-06-01 13:22+0000\n"
 "PO-Revision-Date: 2024-03-19 00:40+0300\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
@@ -19,14 +19,14 @@ msgstr ""
 #: src/inventory/admin/__init__.py:53 src/inventory/models/operation.py:31
 #: src/inventory/templates/inventory/_transfer_card.html:23
 #: src/inventory/templates/inventory/item_history.html:106
-#: src/inventory/templates/inventory/my_items.html:79
+#: src/inventory/templates/inventory/my_items.html:66
 msgid "Status"
 msgstr "Статус"
 
 #: src/inventory/admin/__init__.py:58 src/inventory/models/operation.py:37
 #: src/inventory/templates/inventory/_transfer_card.html:19
 #: src/inventory/templates/inventory/item_history.html:101
-#: src/inventory/templates/inventory/my_items.html:75
+#: src/inventory/templates/inventory/my_items.html:62
 msgid "Location"
 msgstr "Местоположение"
 
@@ -62,7 +62,7 @@ msgstr "Инвентарный номер"
 #: src/inventory/models/item.py:102
 #: src/inventory/templates/inventory/_item_header_card.html:8
 #: src/inventory/templates/inventory/_transfer_card.html:11
-#: src/inventory/templates/inventory/my_items.html:67
+#: src/inventory/templates/inventory/my_items.html:54
 #: src/inventory/templates/inventory/previous_items.html:41
 msgid "Device"
 msgstr "Устройство"
@@ -70,7 +70,7 @@ msgstr "Устройство"
 #: src/inventory/models/item.py:105
 #: src/inventory/templates/inventory/_item_header_card.html:12
 #: src/inventory/templates/inventory/_transfer_card.html:15
-#: src/inventory/templates/inventory/my_items.html:71
+#: src/inventory/templates/inventory/my_items.html:58
 #: src/inventory/templates/inventory/previous_items.html:45
 msgid "Serial number"
 msgstr "Серийный номер"
@@ -342,51 +342,39 @@ msgid "Search items"
 msgstr "Поиск по вещам"
 
 #: src/inventory/templates/inventory/my_items.html:15
-#: src/inventory/templates/inventory/my_items.html:26
-#: src/inventory/templates/inventory/previous_items.html:15
-#: src/inventory/templates/inventory/previous_items.html:23
-msgid "Search"
-msgstr "Найти"
-
-#: src/inventory/templates/inventory/my_items.html:21
 #: src/inventory/templates/inventory/previous_items.html:21
 msgid "Search by inventory number, serial, model…"
 msgstr "Поиск по инвентарному номеру, серийному, модели…"
 
-#: src/inventory/templates/inventory/my_items.html:28
-#: src/inventory/templates/inventory/previous_items.html:25
-msgid "Clear"
-msgstr "Сбросить"
-
-#: src/inventory/templates/inventory/my_items.html:32
+#: src/inventory/templates/inventory/my_items.html:19
 msgid "My items list kind"
 msgstr "Разделы списка «Мои вещи»"
 
-#: src/inventory/templates/inventory/my_items.html:37
+#: src/inventory/templates/inventory/my_items.html:24
 msgid "All"
 msgstr "Все"
 
-#: src/inventory/templates/inventory/my_items.html:42
+#: src/inventory/templates/inventory/my_items.html:29
 msgid "Incoming"
 msgstr "Входящие"
 
-#: src/inventory/templates/inventory/my_items.html:47
+#: src/inventory/templates/inventory/my_items.html:34
 msgid "Owned"
 msgstr "Мои"
 
-#: src/inventory/templates/inventory/my_items.html:52
+#: src/inventory/templates/inventory/my_items.html:39
 msgid "Outgoing"
 msgstr "Исходящие"
 
-#: src/inventory/templates/inventory/my_items.html:57
+#: src/inventory/templates/inventory/my_items.html:44
 msgid "My items list"
 msgstr "Список моих вещей"
 
-#: src/inventory/templates/inventory/my_items.html:94
+#: src/inventory/templates/inventory/my_items.html:81
 msgid "No items found."
 msgstr "Таких вещей у вас нет."
 
-#: src/inventory/templates/inventory/my_items.html:96
+#: src/inventory/templates/inventory/my_items.html:83
 msgid "You have no items."
 msgstr "У вас нет вещей."
 
@@ -394,6 +382,15 @@ msgstr "У вас нет вещей."
 #: src/inventory/templates/inventory/previous_items.html:6
 msgid "Previously my items"
 msgstr "Были у меня"
+
+#: src/inventory/templates/inventory/previous_items.html:15
+#: src/inventory/templates/inventory/previous_items.html:23
+msgid "Search"
+msgstr "Найти"
+
+#: src/inventory/templates/inventory/previous_items.html:25
+msgid "Clear"
+msgstr "Сбросить"
 
 #: src/inventory/templates/inventory/previous_items.html:31
 msgid "Previously my items list"

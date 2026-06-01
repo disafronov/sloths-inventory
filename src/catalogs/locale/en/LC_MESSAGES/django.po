@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: catalogs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-30 10:26+0000\n"
+"POT-Creation-Date: 2026-06-01 13:33+0000\n"
 "PO-Revision-Date: 2024-03-19 00:28+0300\n"
 "Last-Translator: \n"
 "Language-Team: English\n"
@@ -48,7 +48,7 @@ msgstr "Catalogs"
 
 #: src/catalogs/models.py:36
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
 #: src/catalogs/models.py:50
 msgid "Locations"
@@ -60,20 +60,20 @@ msgstr "On hand"
 
 #: src/catalogs/models.py:98
 msgid "System"
-msgstr ""
+msgstr "System"
 
 #: src/catalogs/models.py:100
 msgid "Common"
-msgstr ""
+msgstr "Common"
 
 #: src/catalogs/models.py:101
 msgid "Personal"
-msgstr ""
+msgstr "Personal"
 
 #: src/catalogs/models.py:113
 #, python-format
 msgid "%(name)s (%(scope)s)"
-msgstr ""
+msgstr "%(name)s (%(scope)s)"
 
 #: src/catalogs/models.py:169
 msgid "Last name"
@@ -105,15 +105,15 @@ msgstr "The linked user must have an email address."
 
 #: src/catalogs/models.py:285
 msgid "New responsible is required."
-msgstr ""
+msgstr "New responsible is required."
 
 #: src/catalogs/models.py:290
 msgid "New responsible is invalid."
-msgstr ""
+msgstr "New responsible is invalid."
 
 #: src/catalogs/models.py:292
 msgid "New responsible must be different."
-msgstr ""
+msgstr "New responsible must be different."
 
 #: src/catalogs/models.py:304
 msgid "Status"
@@ -122,3 +122,120 @@ msgstr "Status"
 #: src/catalogs/models.py:305
 msgid "Statuses"
 msgstr "Statuses"
+
+#: src/catalogs/templates/catalogs/location_confirm_delete.html:4
+#: src/catalogs/templates/catalogs/location_confirm_delete.html:6
+msgid "Delete location"
+msgstr "Delete location"
+
+#: src/catalogs/templates/catalogs/location_confirm_delete.html:4
+#: src/catalogs/templates/catalogs/location_form.html:10
+#: src/catalogs/templates/catalogs/location_list.html:4
+msgid "Sloths Inventory"
+msgstr "Sloths Inventory"
+
+#: src/catalogs/templates/catalogs/location_confirm_delete.html:14
+#, python-format
+msgid "Are you sure you want to delete “%(name)s”?"
+msgstr "Are you sure you want to delete “%(name)s”?"
+
+#: src/catalogs/templates/catalogs/location_confirm_delete.html:19
+#: src/catalogs/templates/catalogs/location_list.html:29
+msgid "Delete"
+msgstr "Delete"
+
+#: src/catalogs/templates/catalogs/location_confirm_delete.html:20
+#: src/catalogs/templates/catalogs/location_form.html:46
+msgid "Cancel"
+msgstr "Cancel"
+
+#: src/catalogs/templates/catalogs/location_form.html:6
+#, python-format
+msgid "Edit “%(name)s” - %(block.super)s"
+msgstr "Edit “%(name)s” - %(block.super)s"
+
+#: src/catalogs/templates/catalogs/location_form.html:10
+#: src/catalogs/templates/catalogs/location_form.html:18
+msgid "New location"
+msgstr "New location"
+
+#: src/catalogs/templates/catalogs/location_form.html:16
+#, python-format
+msgid "Edit “%(name)s”"
+msgstr "Edit “%(name)s”"
+
+#: src/catalogs/templates/catalogs/location_form.html:31
+msgid "Location name"
+msgstr "Location name"
+
+#: src/catalogs/templates/catalogs/location_form.html:44
+msgid "Save"
+msgstr "Save"
+
+#: src/catalogs/templates/catalogs/location_form.html:44
+msgid "Create"
+msgstr "Create"
+
+#: src/catalogs/templates/catalogs/location_list.html:4
+#: src/catalogs/templates/catalogs/location_list.html:6
+msgid "My locations"
+msgstr "My locations"
+
+#: src/catalogs/templates/catalogs/location_list.html:10
+#: src/catalogs/views.py:67 src/catalogs/views.py:104 src/catalogs/views.py:155
+msgid "Your account is not linked to a responsible person profile yet."
+msgstr "Your account is not linked to a responsible person profile yet."
+
+#: src/catalogs/templates/catalogs/location_list.html:14
+msgid "Search locations"
+msgstr "Search locations"
+
+#: src/catalogs/templates/catalogs/location_list.html:15
+msgid "Search by location name…"
+msgstr "Search by location name…"
+
+#: src/catalogs/templates/catalogs/location_list.html:21
+msgid "Personal locations list"
+msgstr "Personal locations list"
+
+#: src/catalogs/templates/catalogs/location_list.html:28
+msgid "Edit"
+msgstr "Edit"
+
+#: src/catalogs/templates/catalogs/location_list.html:39
+msgid "No locations found."
+msgstr "No locations found."
+
+#: src/catalogs/templates/catalogs/location_list.html:41
+msgid "You have no personal locations yet."
+msgstr "You have no personal locations yet."
+
+#: src/catalogs/templates/catalogs/location_list.html:47
+msgid "Add location"
+msgstr "Add location"
+
+#: src/catalogs/views.py:21
+msgid "Location name is required."
+msgstr "Location name is required."
+
+#: src/catalogs/views.py:89
+#, python-format
+msgid "Location “%(name)s” has been created."
+msgstr "Location “%(name)s” has been created."
+
+#: src/catalogs/views.py:135
+#, python-format
+msgid "Location “%(old_name)s” has been renamed to “%(name)s”."
+msgstr "Location “%(old_name)s” has been renamed to “%(name)s”."
+
+#: src/catalogs/views.py:165
+#, python-format
+msgid ""
+"Location “%(name)s” is in use by one or more items and cannot be deleted."
+msgstr ""
+"Location “%(name)s” is in use by one or more items and cannot be deleted."
+
+#: src/catalogs/views.py:178
+#, python-format
+msgid "Location “%(name)s” has been deleted."
+msgstr "Location “%(name)s” has been deleted."
