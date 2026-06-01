@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+    {% if location %}
+        {% blocktrans trimmed with name=location.display_name %}
+            Edit “{{ name }}” - {{ block.super }}
+        {% endblocktrans %}
+    {% else %}
+        {% trans "New location" %} - {% trans "Sloths Inventory" %}
+    {% endif %}
+{% endblock %}
+
+{% block heading %}
+    {% if location %}
+        {% blocktrans trimmed with name=location.display_name %}Edit “{{ name }}”{% endblocktrans %}
+    {% else %}
+        {% trans "New location" %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="page-stack">
+    <div class="form-container">
+        <form method="post">
+            {% csrf_token %}
+            {% if error %}
+                <p class="form-error" role="alert">{{ error }}</p>
+            {% endif %}
+            <p>
+                <label for="name">{% trans "Location name" %}:</label>
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value="{{ name }}"
+                    maxlength="255"
+                    required
+                    autocomplete="off"
+                >
+            </p>
+            <div class="form-actions form-actions--inline">
+                <button type="submit" class="button">
+                    {% if location %}{% trans "Save" %}{% else %}{% trans "Create" %}{% endif %}
+                </button>
+                <a href="{% url 'catalogs:location-list' %}" class="button button--secondary">{% trans "Cancel" %}</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

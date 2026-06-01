@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Delete location" %} - {% trans "Sloths Inventory" %}{% endblock %}
+
+{% block heading %}{% trans "Delete location" %}{% endblock %}
+
+{% block content %}
+<div class="page-stack">
+    <div class="form-container">
+        <form method="post">
+            {% csrf_token %}
+            <p>
+                {% blocktrans trimmed with name=location.display_name %}
+                    Are you sure you want to delete “{{ name }}”?
+                {% endblocktrans %}
+            </p>
+            <div class="form-actions form-actions--inline">
+                <button type="submit" class="button">{% trans "Delete" %}</button>
+                <a href="{% url 'catalogs:location-list' %}" class="button button--secondary">{% trans "Cancel" %}</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

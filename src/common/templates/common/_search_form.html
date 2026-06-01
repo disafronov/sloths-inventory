@@ -1,0 +1,18 @@
+{% load i18n %}
+<form method="get" class="search-form" role="search" aria-label="{{ search_aria }}">
+    <label class="sr-only" for="q">{{ search_aria }}</label>
+    <input
+        type="search"
+        id="q"
+        name="q"
+        value="{{ search_query|default:'' }}"
+        placeholder="{{ search_placeholder }}"
+    >
+    {% if search_kind_value != 'all' %}
+        <input type="hidden" name="kind" value="{{ search_kind_value }}">
+    {% endif %}
+    <button type="submit" class="button">{% trans "Search" %}</button>
+    {% if search_query %}
+        <a class="button button--secondary" href="{{ search_clear_url }}">{% trans "Clear" %}</a>
+    {% endif %}
+</form>

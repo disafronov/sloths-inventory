@@ -23,6 +23,7 @@ urlpatterns = [
     # ``inventory`` must precede ``common`` for duplicate ``path("", ...)`` roots:
     # the site home (``/``) is inventory "My items", not a common landing page.
     path("", include("inventory.urls")),
+    path("", include("catalogs.urls")),
     path("", include("common.urls")),
     path("health/", include("health.urls")),
 ]

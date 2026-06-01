@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "My locations" %} - {% trans "Sloths Inventory" %}{% endblock %}
+
+{% block heading %}{% trans "My locations" %}{% endblock %}
+
+{% block content %}
+{% if responsible is None %}
+    <p>{% trans "Your account is not linked to a responsible person profile yet." %}</p>
+{% endif %}
+
+{% if show_search %}
+{% trans "Search locations" as search_aria %}
+{% trans "Search by location name…" as search_placeholder %}
+{% url 'catalogs:location-list' as search_clear_url %}
+{% include "common/_search_form.html" with search_query=query search_aria=search_aria search_placeholder=search_placeholder search_clear_url=search_clear_url %}
+{% endif %}
+
+{% if locations %}
+    <div class="item-card-list" aria-label="{% trans 'Personal locations list' %}">
+        {% for location in locations %}
+            <div class="item-card">
+                <div class="item-card__row">
+                    <span class="item-card__value">{{ location.display_name }}</span>
+                </div>
+                <div class="item-card__row form-actions form-actions--inline">
+                    <a href="{% url 'catalogs:location-edit' location_id=location.pk %}" class="button button--secondary button--sm">{% trans "Edit" %}</a>
+                    <a href="{% url 'catalogs:location-delete' location_id=location.pk %}" class="button button--secondary button--sm">{% trans "Delete" %}</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% if responsible is not None %}
+    {% if not locations %}
+        {% if show_search %}
+            <p>{% trans "No locations found." %}</p>
+        {% else %}
+            <p>{% trans "You have no personal locations yet." %}</p>
+        {% endif %}
+    {% endif %}
+{% endif %}
+
+<div class="form-actions form-actions--inline">
+    <a href="{% url 'catalogs:location-create' %}" class="button">{% trans "Add location" %}</a>
+</div>
+{% endblock %}
