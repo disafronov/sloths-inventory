@@ -1,3 +1,17 @@
+## [2.1.0](https://github.com/disafronov/sloths-inventory/compare/v2.0.0...v2.1.0) (2026-06-01)
+
+### Features
+
+* add location management with admin display, model-level protection, and scoped labels ([07b5990](https://github.com/disafronov/sloths-inventory/commit/07b5990a0ef0f531a76881d7941d78e2bc4b7b69))
+* filter operation location by responsible in admin ([7cc1f09](https://github.com/disafronov/sloths-inventory/commit/7cc1f0986dfcffa0cc38f2d8b852f2860947e775))
+* locations ([a601cec](https://github.com/disafronov/sloths-inventory/commit/a601cecba53804dbc10221106614bc305d767731))
+* locations editor ([80331b8](https://github.com/disafronov/sloths-inventory/commit/80331b8ea9a212ffea107416bb2175ac3421de1f))
+
+### Bug Fixes
+
+* show location type (System/Common/Personal) everywhere in admin ([c955474](https://github.com/disafronov/sloths-inventory/commit/c955474585c029d8bdf93f1d1304b627cd2723d3))
+* suppress duplicate restriction panel for system locations in admin ([143ea4e](https://github.com/disafronov/sloths-inventory/commit/143ea4eac1322e7a1c6199a8c0b179990a30a393))
+
 ## [2.1.0-rc.7](https://github.com/disafronov/sloths-inventory/compare/v2.1.0-rc.6...v2.1.0-rc.7) (2026-06-01)
 
 ### Features
