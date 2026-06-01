@@ -1,3 +1,9 @@
+## [2.1.0-rc.7](https://github.com/disafronov/sloths-inventory/compare/v2.1.0-rc.6...v2.1.0-rc.7) (2026-06-01)
+
+### Features
+
+* locations editor ([a8f59f5](https://github.com/disafronov/sloths-inventory/commit/a8f59f53242e37513bad5aa0075938738086f0c9))
+
 ## [2.1.0-rc.6](https://github.com/disafronov/sloths-inventory/compare/v2.1.0-rc.5...v2.1.0-rc.6) (2026-05-31)
 
 ### Features
