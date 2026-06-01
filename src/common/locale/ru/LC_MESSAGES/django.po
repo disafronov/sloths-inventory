@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-08 10:47+0000\n"
+"POT-Creation-Date: 2026-06-01 12:59+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,7 +20,7 @@ msgstr ""
 "n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
 "(n%100>=11 && n%100<=14)? 2 : 3);\n"
 
-#: src/templates/admin/base_site.html:14 src/common/templates/base.html:102
+#: src/templates/admin/base_site.html:14 src/common/templates/base.html:107
 #, python-format
 msgid "Your timezone could not be detected. Times are displayed in %(tz)s."
 msgstr ""
@@ -116,25 +116,29 @@ msgstr "Мои вещи"
 msgid "Previously my items"
 msgstr "Были у меня"
 
-#: src/common/templates/base.html:83 src/common/templates/profile.html:4
+#: src/common/templates/base.html:83
+msgid "Locations"
+msgstr "Расположения"
+
+#: src/common/templates/base.html:88 src/common/templates/profile.html:4
 #: src/common/templates/profile.html:6
 msgid "Profile"
 msgstr "Профиль"
 
-#: src/common/templates/base.html:88
+#: src/common/templates/base.html:93
 msgid "Admin"
 msgstr "Админка"
 
-#: src/common/templates/base.html:91
+#: src/common/templates/base.html:96
 msgid "Logout"
 msgstr "Выйти"
 
-#: src/common/templates/base.html:94 src/common/templates/login.html:4
+#: src/common/templates/base.html:99 src/common/templates/login.html:4
 #: src/common/templates/login.html:6 src/common/templates/login.html:12
 msgid "Login"
 msgstr "Войти"
 
-#: src/common/templates/base.html:108
+#: src/common/templates/base.html:113
 #, python-format
 msgid ""
 "Your account has no email address. <a href=\"%(url)s#email\">Add one in your "
@@ -142,6 +146,14 @@ msgid ""
 msgstr ""
 "У вашего аккаунта не указан email. <a href=\"%(url)s#email\">Добавьте его в "
 "профиле</a>, чтобы получать уведомления."
+
+#: src/common/templates/common/_search_form.html:14
+msgid "Search"
+msgstr "Поиск"
+
+#: src/common/templates/common/_search_form.html:16
+msgid "Clear"
+msgstr "Очистить"
 
 #: src/common/templates/emails/email_change_body.html:6
 #: src/common/templates/emails/email_change_body.html:10

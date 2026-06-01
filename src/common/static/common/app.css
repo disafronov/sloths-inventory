@@ -437,6 +437,7 @@ body.nav-open {
   display: flex;
   flex-direction: column;
   gap: var(--space-row);
+  margin-top: var(--space-row);
 }
 
 .item-card .form-actions {

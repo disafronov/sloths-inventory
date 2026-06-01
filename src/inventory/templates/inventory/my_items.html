@@ -11,23 +11,10 @@
 {% endif %}
 
 {% if show_search %}
-<form method="get" class="search-form" role="search" aria-label="{% trans 'Search items' %}">
-    <label class="sr-only" for="q">{% trans "Search" %}</label>
-    <input
-        type="search"
-        id="q"
-        name="q"
-        value="{{ query|default:'' }}"
-        placeholder="{% trans 'Search by inventory number, serial, model…' %}"
-    >
-    {% if list_kind != 'all' %}
-        <input type="hidden" name="kind" value="{{ list_kind }}">
-    {% endif %}
-    <button type="submit" class="button">{% trans "Search" %}</button>
-    {% if query %}
-        <a class="button button--secondary" href="{% url 'inventory:my-items' %}">{% trans "Clear" %}</a>
-    {% endif %}
-</form>
+{% trans "Search items" as search_aria %}
+{% trans "Search by inventory number, serial, model…" as search_placeholder %}
+{% url 'inventory:my-items' as search_clear_url %}
+{% include "common/_search_form.html" with search_query=query search_aria=search_aria search_placeholder=search_placeholder search_clear_url=search_clear_url search_kind_value=list_kind %}
 
 <nav class="my-items-kind-tabs" aria-label="{% trans 'My items list kind' %}">
     <a
