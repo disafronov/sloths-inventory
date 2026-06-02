@@ -76,6 +76,7 @@ WORKDIR /home/ubuntu/app/src
 
 ENV GUNICORN_CMD_ARGS="--control-socket /tmp/gunicorn.ctl --bind 0.0.0.0:8000 --worker-tmp-dir /tmp --access-logfile - --error-logfile -"
 
-ENTRYPOINT [ "gunicorn", "sloths_inventory.wsgi" ]
+ENTRYPOINT ["python3", "manage.py"]
+CMD ["start"]
 
 EXPOSE 8000
