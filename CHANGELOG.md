@@ -1,3 +1,14 @@
+## [3.2.0](https://github.com/disafronov/sloths-inventory/compare/v3.1.0...v3.2.0) (2026-06-02)
+
+### Features
+
+* **common:** add supervised process launcher commands ([ef25272](https://github.com/disafronov/sloths-inventory/commit/ef252729355fee1764aa7449f5b3f1018a9d3ec5))
+* switch async email from daemon threads to django-q2 ([836bdf5](https://github.com/disafronov/sloths-inventory/commit/836bdf5e5b052c5104fe65bc466e48c8d0ffcd38))
+
+### Bug Fixes
+
+* paths handling ([b758a29](https://github.com/disafronov/sloths-inventory/commit/b758a29693bf68beaedb75fd15d77cefb9e1c880))
+
 ## [3.2.0-rc.2](https://github.com/disafronov/sloths-inventory/compare/v3.2.0-rc.1...v3.2.0-rc.2) (2026-06-02)
 
 ## [3.2.0-rc.1](https://github.com/disafronov/sloths-inventory/compare/v3.1.0...v3.2.0-rc.1) (2026-06-02)
