@@ -14,6 +14,11 @@ urlpatterns = [
         name="change-location",
     ),
     path(
+        "items/<int:item_id>/change-status/",
+        views.change_status,
+        name="change-status",
+    ),
+    path(
         "items/<int:item_id>/transfer/",
         views.create_transfer,
         name="create-transfer",

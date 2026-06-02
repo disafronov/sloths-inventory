@@ -7,7 +7,7 @@ from django.db import models, transaction
 from django.db.models import OuterRef, Q, Subquery
 from django.utils.translation import gettext_lazy as _
 
-from catalogs.models import Location, Responsible
+from catalogs.models import Location, Responsible, Status
 from common.edit_window import (
     catalog_entry_correction_window_expired_user_message,
     is_within_inventory_correction_window,
@@ -264,6 +264,43 @@ class Item(BaseModel):
             status=current_op.status,
             responsible=responsible,
             location=location,
+            notes=notes,
+        )
+        return op
+
+    def change_status(
+        self, *, responsible: Responsible, status: Status, notes: str = ""
+    ) -> "Operation":
+        """
+        Append a status-changing operation for this item.
+        """
+
+        from inventory.models.operation import Operation
+
+        current_op = self.current_operation
+        if current_op is None:
+            raise ValidationError(
+                _("Cannot change status for an item without operations")
+            )
+
+        if status.pk == current_op.status_id:
+            raise ValidationError(
+                _("New status must be different from current status.")
+            )
+
+        if responsible.pk != current_op.responsible_id:
+            raise ValidationError(
+                _(
+                    "Status changes must be recorded by the current "
+                    "accountable person."
+                )
+            )
+
+        op = Operation.objects.create(
+            item=self,
+            status=status,
+            responsible=responsible,
+            location=current_op.location,
             notes=notes,
         )
         return op

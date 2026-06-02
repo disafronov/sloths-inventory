@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventory\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-02 10:38+0000\n"
+"POT-Creation-Date: 2026-06-02 11:37+0000\n"
 "PO-Revision-Date: 2024-03-19 00:40+0300\n"
 "Last-Translator: \n"
 "Language-Team: English\n"
@@ -17,20 +17,20 @@ msgstr ""
 
 #: src/inventory/admin/__init__.py:53 src/inventory/models/operation.py:31
 #: src/inventory/templates/inventory/_transfer_card.html:23
-#: src/inventory/templates/inventory/item_history.html:106
+#: src/inventory/templates/inventory/item_history.html:110
 #: src/inventory/templates/inventory/my_items.html:62
 msgid "Status"
 msgstr ""
 
 #: src/inventory/admin/__init__.py:58 src/inventory/models/operation.py:37
 #: src/inventory/templates/inventory/_transfer_card.html:19
-#: src/inventory/templates/inventory/item_history.html:101
+#: src/inventory/templates/inventory/item_history.html:105
 #: src/inventory/templates/inventory/my_items.html:58
 msgid "Location"
 msgstr ""
 
 #: src/inventory/admin/__init__.py:63 src/inventory/admin/__init__.py:554
-#: src/inventory/templates/inventory/item_history.html:96
+#: src/inventory/templates/inventory/item_history.html:100
 msgid "Responsible Person"
 msgstr ""
 
@@ -54,6 +54,7 @@ msgstr ""
 #: src/inventory/templates/inventory/_item_card_title_inventory_number.html:3
 #: src/inventory/templates/inventory/_item_header_card.html:4
 #: src/inventory/templates/inventory/change_location.html:5
+#: src/inventory/templates/inventory/change_status.html:5
 #: src/inventory/templates/inventory/transfer_create.html:5
 msgid "Inventory number"
 msgstr ""
@@ -97,6 +98,18 @@ msgstr ""
 
 #: src/inventory/models/item.py:257
 msgid "Location changes must be recorded by the current accountable person."
+msgstr ""
+
+#: src/inventory/models/item.py:283
+msgid "Cannot change status for an item without operations"
+msgstr ""
+
+#: src/inventory/models/item.py:288
+msgid "New status must be different from current status."
+msgstr ""
+
+#: src/inventory/models/item.py:294
+msgid "Status changes must be recorded by the current accountable person."
 msgstr ""
 
 #: src/inventory/models/operation.py:34
@@ -250,6 +263,7 @@ msgid "Change location"
 msgstr ""
 
 #: src/inventory/templates/inventory/change_location.html:5
+#: src/inventory/templates/inventory/change_status.html:5
 #: src/inventory/templates/inventory/item_history.html:4
 #: src/inventory/templates/inventory/my_items.html:4
 #: src/inventory/templates/inventory/previous_items.html:4
@@ -270,21 +284,44 @@ msgid "Type to filter locations…"
 msgstr ""
 
 #: src/inventory/templates/inventory/change_location.html:41
+#: src/inventory/templates/inventory/change_status.html:41
 #: src/inventory/templates/inventory/item_history.html:36
-#: src/inventory/templates/inventory/item_history.html:111
+#: src/inventory/templates/inventory/item_history.html:115
 #: src/inventory/templates/inventory/transfer_create.html:66
 msgid "Notes"
 msgstr ""
 
 #: src/inventory/templates/inventory/change_location.html:48
+#: src/inventory/templates/inventory/change_status.html:48
 #: src/inventory/templates/inventory/transfer_create.html:73
 msgid "Optional: details (e.g. missing parts, charger, etc.)"
 msgstr ""
 
 #: src/inventory/templates/inventory/change_location.html:56
+#: src/inventory/templates/inventory/change_status.html:56
 #: src/inventory/templates/inventory/item_history.html:68
 #: src/inventory/templates/inventory/transfer_create.html:78
 msgid "Cancel"
+msgstr ""
+
+#: src/inventory/templates/inventory/change_status.html:5
+#: src/inventory/templates/inventory/change_status.html:8
+#: src/inventory/templates/inventory/change_status.html:12
+#: src/inventory/templates/inventory/change_status.html:52
+#: src/inventory/templates/inventory/item_history.html:84
+msgid "Change status"
+msgstr ""
+
+#: src/inventory/templates/inventory/change_status.html:21
+msgid "Current status"
+msgstr ""
+
+#: src/inventory/templates/inventory/change_status.html:25
+msgid "New status"
+msgstr ""
+
+#: src/inventory/templates/inventory/change_status.html:31
+msgid "Type to filter statuses…"
 msgstr ""
 
 #: src/inventory/templates/inventory/item_history.html:4
@@ -309,11 +346,11 @@ msgstr ""
 msgid "Item actions"
 msgstr ""
 
-#: src/inventory/templates/inventory/item_history.html:85
+#: src/inventory/templates/inventory/item_history.html:89
 msgid "Hand over"
 msgstr ""
 
-#: src/inventory/templates/inventory/item_history.html:119
+#: src/inventory/templates/inventory/item_history.html:123
 msgid "No operations found."
 msgstr ""
 
@@ -429,6 +466,10 @@ msgstr ""
 msgid "New location is required."
 msgstr ""
 
+#: src/inventory/views/item_views.py:146
+msgid "New status is required."
+msgstr ""
+
 #: src/inventory/views/transfer_views.py:118
 msgid "Transfer offer updated."
 msgstr ""
@@ -462,11 +503,5 @@ msgstr ""
 #~ msgid "Select a new location…"
 #~ msgstr "Select a new location…"
 
-#~ msgid "New responsible is required."
-#~ msgstr "New responsible is required."
-
 #~ msgid "New responsible is invalid."
 #~ msgstr "New responsible is invalid."
-
-#~ msgid "New responsible must be different."
-#~ msgstr "New responsible must be different."
