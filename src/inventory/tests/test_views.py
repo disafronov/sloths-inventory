@@ -76,8 +76,8 @@ def test_validation_error_user_message_fallback_uses_str_when_no_messages() -> N
 
 
 @pytest.mark.django_db
-def test_my_items_empty_when_user_has_no_responsible() -> None:
-    """Users without a linked Responsible profile see a 'not linked' warning."""
+def test_my_items_redirects_when_user_has_no_responsible() -> None:
+    """Users without a linked Responsible profile are redirected to profile."""
     user = User.objects.create_user(
         username="alice", password="pw", email="alice@example.com"
     )
@@ -86,19 +86,12 @@ def test_my_items_empty_when_user_has_no_responsible() -> None:
     client.force_login(user)
 
     response = client.get("/")
-    assert response.status_code == 200
-    assert (
-        b"not linked" in response.content
-        or "не привязан к профилю ответственного".encode("utf-8") in response.content
-    )
+    assert response.status_code == 302
+    assert response["Location"] == "/profile/"
 
     response_prev = client.get("/previous/")
-    assert response_prev.status_code == 200
-    assert (
-        b"not linked" in response_prev.content
-        or "не привязан к профилю ответственного".encode("utf-8")
-        in response_prev.content
-    )
+    assert response_prev.status_code == 302
+    assert response_prev["Location"] == "/profile/"
 
 
 @pytest.mark.django_db

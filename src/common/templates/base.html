@@ -38,9 +38,7 @@
             >
                 <div class="user-menu">
                     {% if user.is_authenticated %}
-                        {% load responsible_tags %}
-                        {% current_responsible user as current_resp %}
-                        {% if current_resp %}
+                        {% if user.responsible %}
                         <div class="user-menu__responsible">
                             <span class="user-menu__user-icon" aria-hidden="true">
                                 <img
@@ -52,7 +50,7 @@
                                     decoding="async"
                                 >
                             </span>
-                            <span>{{ current_resp }}</span>
+                            <span>{{ user.responsible }}</span>
                         </div>
                         {% endif %}
                         <div class="user-menu__user">
@@ -83,6 +81,7 @@
                         </select>
                     </form>
                     {% if user.is_authenticated %}
+                        {% if user.responsible %}
                         <a
                             href="{% url 'inventory:my-items' %}"
                             class="button{% if request.resolver_match.url_name == 'my-items' %} button--active{% endif %}"
@@ -98,6 +97,7 @@
                             class="button{% if request.resolver_match.url_name == 'location-list' or request.resolver_match.url_name == 'location-create' or request.resolver_match.url_name == 'location-edit' or request.resolver_match.url_name == 'location-delete' %} button--active{% endif %}"
                             {% if request.resolver_match.url_name == 'location-list' or request.resolver_match.url_name == 'location-create' or request.resolver_match.url_name == 'location-edit' or request.resolver_match.url_name == 'location-delete' %}aria-current="page"{% endif %}
                         >{% trans "My locations" %}</a>
+                        {% endif %}
                         <a
                             href="{% url 'common:profile' %}"
                             class="button{% if request.resolver_match.url_name == 'profile' %} button--active{% endif %}"

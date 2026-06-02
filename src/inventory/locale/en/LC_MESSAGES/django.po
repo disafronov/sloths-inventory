@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventory\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-02 11:37+0000\n"
+"POT-Creation-Date: 2026-06-02 13:31+0000\n"
 "PO-Revision-Date: 2024-03-19 00:40+0300\n"
 "Last-Translator: \n"
 "Language-Team: English\n"
@@ -496,12 +496,3 @@ msgstr ""
 #: src/inventory/views/transfer_views.py:313
 msgid "Transfer offer closed."
 msgstr ""
-
-#~ msgid "Your account is not linked to a responsible person profile yet."
-#~ msgstr "Your account is not linked to a responsible person profile yet."
-
-#~ msgid "Select a new location…"
-#~ msgstr "Select a new location…"
-
-#~ msgid "New responsible is invalid."
-#~ msgstr "New responsible is invalid."

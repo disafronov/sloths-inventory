@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-02 09:55+0000\n"
+"POT-Creation-Date: 2026-06-02 13:42+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -128,19 +128,19 @@ msgstr "Меню"
 msgid "Main navigation"
 msgstr "Главная навигация"
 
-#: src/common/templates/base.html:75
+#: src/common/templates/base.html:73
 msgid "Language"
 msgstr "Язык"
 
-#: src/common/templates/base.html:90
+#: src/common/templates/base.html:89
 msgid "My items"
 msgstr "Мои вещи"
 
-#: src/common/templates/base.html:95
+#: src/common/templates/base.html:94
 msgid "Previously with me"
 msgstr "Были у меня"
 
-#: src/common/templates/base.html:100
+#: src/common/templates/base.html:99
 msgid "My locations"
 msgstr "Мои расположения"
 
@@ -763,14 +763,3 @@ msgid ""
 msgstr ""
 "Ссылка подтверждения email недействительна или истекла. Пожалуйста, "
 "запросите новое изменение email."
-
-#, python-format
-#~ msgid ""
-#~ "Your account has no email address. <a href=\"%(url)s#email\">Add one in "
-#~ "your profile</a> to receive notifications."
-#~ msgstr ""
-#~ "У вашего аккаунта не указан email. <a href=\"%(url)s#email\">Добавьте его "
-#~ "в профиле</a>, чтобы получать уведомления."
-
-#~ msgid "Change Email Address"
-#~ msgstr "Изменить адрес электронной почты"

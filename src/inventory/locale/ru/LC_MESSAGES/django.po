@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventory\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-02 11:37+0000\n"
+"POT-Creation-Date: 2026-06-02 13:31+0000\n"
 "PO-Revision-Date: 2024-03-19 00:40+0300\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
@@ -508,21 +508,3 @@ msgstr "Передача принята."
 #: src/inventory/views/transfer_views.py:313
 msgid "Transfer offer closed."
 msgstr "Предложение передачи закрыто."
-
-#~ msgid "Optional: details"
-#~ msgstr "Опционально: подробности"
-
-#~ msgid "Your account is not linked to a responsible person profile yet."
-#~ msgstr "Этот аккаунт пока не привязан к профилю ответственного."
-
-#~ msgid "Select a new location…"
-#~ msgstr "Выберите новое местоположение…"
-
-#~ msgid "New responsible is required."
-#~ msgstr "Нужно выбрать нового ответственного."
-
-#~ msgid "New responsible is invalid."
-#~ msgstr "Новый ответственный указан неверно."
-
-#~ msgid "New responsible must be different."
-#~ msgstr "Новый ответственный должен отличаться от текущего."
