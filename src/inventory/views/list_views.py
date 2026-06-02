@@ -2,7 +2,7 @@
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 
 from catalogs.models import Responsible
 from inventory.models import (
@@ -21,19 +21,7 @@ def my_items(request: HttpRequest) -> HttpResponse:
     """
     responsible = Responsible.linked_profile_for_user(request.user)
     if responsible is None:
-        return render(
-            request,
-            "inventory/my_items.html",
-            {
-                "responsible": None,
-                "items": [],
-                "incoming_transfers": [],
-                "outgoing_transfers": [],
-                "query": "",
-                "list_kind": "all",
-                "show_search": False,
-            },
-        )
+        return redirect("common:profile")
 
     query = request.GET.get("q", "")
     list_kind = parse_my_items_list_kind(request.GET.get("kind", ""))
@@ -63,18 +51,7 @@ def previous_items(request: HttpRequest) -> HttpResponse:
     """
     responsible = Responsible.linked_profile_for_user(request.user)
     if responsible is None:
-        return render(
-            request,
-            "inventory/previous_items.html",
-            {
-                "responsible": None,
-                "items": [],
-                "incoming_transfers": [],
-                "outgoing_transfers": [],
-                "query": "",
-                "show_search": False,
-            },
-        )
+        return redirect("common:profile")
 
     query = request.GET.get("q", "")
     page = build_previous_items_page_data(responsible, query=query)

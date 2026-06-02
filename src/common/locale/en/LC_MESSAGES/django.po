@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-02 09:55+0000\n"
+"POT-Creation-Date: 2026-06-02 13:42+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -117,19 +117,19 @@ msgstr ""
 msgid "Main navigation"
 msgstr ""
 
-#: src/common/templates/base.html:75
+#: src/common/templates/base.html:73
 msgid "Language"
 msgstr ""
 
-#: src/common/templates/base.html:90
+#: src/common/templates/base.html:89
 msgid "My items"
 msgstr ""
 
-#: src/common/templates/base.html:95
+#: src/common/templates/base.html:94
 msgid "Previously with me"
 msgstr ""
 
-#: src/common/templates/base.html:100
+#: src/common/templates/base.html:99
 msgid "My locations"
 msgstr ""
 
@@ -720,6 +720,3 @@ msgid ""
 "The email confirmation link is invalid or has expired. Please request a new "
 "email change."
 msgstr ""
-
-#~ msgid "Change Email Address"
-#~ msgstr "Change Email Address"

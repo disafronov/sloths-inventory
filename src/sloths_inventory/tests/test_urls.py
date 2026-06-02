@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.test import Client
 from django.urls import resolve
 
+from catalogs.models import Responsible
+
 
 def test_site_root_urlconf_resolves_inventory_before_common_includes() -> None:
     """``/`` is the inventory app (see ``sloths_inventory.urls`` ordering comment)."""
@@ -26,8 +28,11 @@ def test_home_and_health_routes_are_wired(monkeypatch) -> None:
     assert response.status_code == 302
     assert "/login/" in response["Location"]
 
-    # Authenticated user is redirected to "My items".
-    user = User.objects.create_user(username="smoke", password="pw")
+    # Authenticated user (with a linked Responsible) sees "My items".
+    user = User.objects.create_user(
+        username="smoke", password="pw", email="smoke@example.com"
+    )
+    Responsible.objects.create(last_name="Smoke", first_name="User", user=user)
     client.force_login(user)
     assert client.get("/").status_code == 200
 

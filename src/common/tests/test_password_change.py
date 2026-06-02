@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.test import Client
 from django.urls import reverse
 
+from catalogs.models import Responsible
+
 
 @pytest.mark.django_db
 def test_password_change_requires_login() -> None:
@@ -30,7 +32,10 @@ def test_password_change_get_renders_form_for_authenticated_user() -> None:
 
 @pytest.mark.django_db
 def test_password_change_link_is_visible_for_authenticated_user_before_logout() -> None:
-    user = User.objects.create_user(username="alice", password="pw", is_staff=True)
+    user = User.objects.create_user(
+        username="alice", password="pw", is_staff=True, email="alice@example.com"
+    )
+    Responsible.objects.create(last_name="Alice", first_name="User", user=user)
 
     client = Client()
     client.force_login(user)
