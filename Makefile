@@ -48,7 +48,7 @@ DOCKER_RUN_OPTS = --rm \
 	$(if $(wildcard env.docker),--env-file env.docker,) \
 	$(if $(wildcard .env),--env-file .env,)
 
-.PHONY: all audit clean dead-code dev docker docker-build docker-run format help install lint locale makemigrations q2 run test
+.PHONY: all audit clean dead-code dev docker docker-build docker-run format help install lint locale makemigrations migrate q2 run test
 
 help: ## Show this help message
 	@echo "Available commands:"
@@ -92,6 +92,10 @@ makemigrations: ## Create new migrations
 	@echo "Creating migrations..."
 	SECRET_KEY=$(TOOLING_SECRET_KEY) $(UV) python src/manage.py makemigrations
 
+migrate: ## Apply database migrations
+	@echo "Applying migrations..."
+	$(UV) python src/manage.py migrate
+
 test: locale ## Run tests with coverage report
 	@echo "Running tests with coverage..."
 	$(PYTEST_CMD) $(COVERAGE_OPTS)
@@ -99,7 +103,7 @@ test: locale ## Run tests with coverage report
 all: lint test dead-code ## Run all checks (no mutations)
 	@echo "All checks completed successfully!"
 
-dev: ## Run qcluster + runserver together (manage.py dev)
+dev: locale migrate ## Run qcluster + runserver together (manage.py dev)
 	@echo "Running qcluster + dev server..."
 	$(UV) python src/manage.py dev
 
@@ -107,9 +111,8 @@ q2: ## Run django-q2 worker (qcluster) without the web server
 	@echo "Running django-q2 worker..."
 	$(UV) python src/manage.py qcluster
 
-run: locale ## Run dev server + qcluster locally (mirrors Docker entrypoint)
+run: locale migrate ## Run dev server + qcluster locally (mirrors Docker entrypoint)
 	@echo "Running Django dev server + qcluster locally..."
-	$(UV) python src/manage.py migrate
 	@if [ -n "$$DJANGO_SUPERUSER_USERNAME" ] && [ -n "$$DJANGO_SUPERUSER_PASSWORD" ] && [ -n "$$DJANGO_SUPERUSER_EMAIL" ]; then \
 		echo "Ensuring Django superuser exists..."; \
 		$(UV) python src/manage.py createsuperuser --noinput || true; \
