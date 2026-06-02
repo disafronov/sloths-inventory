@@ -2,13 +2,12 @@
 
 This module provides email sending functionality with:
 - Exponential backoff retry for transient network errors
-- Optional async sending via daemon threads
+- Optional async sending via django-q2 task queue (PostgreSQL broker)
 - Template rendering for common email types
 """
 
 import logging
 import smtplib
-import threading
 import time
 from typing import Any
 
@@ -18,6 +17,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
+from django_q.tasks import async_task
 
 logger = logging.getLogger(__name__)
 
@@ -110,9 +110,10 @@ def send_email_async(
         html_message: Optional HTML version of the email body
 
     Note:
-        When EMAIL_SEND_ASYNC is True, spawns a daemon thread for sending.
-        Daemon threads do not block application shutdown, so emails may be
-        lost if the process terminates before sending completes.
+        When EMAIL_SEND_ASYNC is True, enqueues the task via django-q2.
+        Jobs are persisted in PostgreSQL and survive process restarts,
+        unlike daemon threads. When False, sends synchronously (useful
+        for tests or simple deployments).
     """
     recipients = [recipient] if isinstance(recipient, str) else list(recipient)
     recipients = [r for r in recipients if r]
@@ -120,11 +121,13 @@ def send_email_async(
         return
 
     if settings.EMAIL_SEND_ASYNC:
-        threading.Thread(
-            target=_send_with_retry,
-            args=(subject, message, recipients, html_message),
-            daemon=True,
-        ).start()
+        async_task(
+            "common.email_utils._send_with_retry",
+            subject,
+            message,
+            recipients,
+            html_message,
+        )
     else:
         _send_with_retry(subject, message, recipients, html_message)
 
