@@ -6,10 +6,6 @@
 {% block heading %}{% trans "My items" %}{% endblock %}
 
 {% block content %}
-{% if responsible is None %}
-    <p>{% trans "Your account is not linked to a responsible person profile yet." %}</p>
-{% endif %}
-
 {% if show_search %}
 {% trans "Search items" as search_aria %}
 {% trans "Search by inventory number, serial, model…" as search_placeholder %}

@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventory\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-01 13:22+0000\n"
+"POT-Creation-Date: 2026-06-02 08:50+0000\n"
 "PO-Revision-Date: 2024-03-19 00:40+0300\n"
 "Last-Translator: \n"
 "Language-Team: English\n"
@@ -18,14 +18,14 @@ msgstr ""
 #: src/inventory/admin/__init__.py:53 src/inventory/models/operation.py:31
 #: src/inventory/templates/inventory/_transfer_card.html:23
 #: src/inventory/templates/inventory/item_history.html:106
-#: src/inventory/templates/inventory/my_items.html:66
+#: src/inventory/templates/inventory/my_items.html:62
 msgid "Status"
 msgstr "Status"
 
 #: src/inventory/admin/__init__.py:58 src/inventory/models/operation.py:37
 #: src/inventory/templates/inventory/_transfer_card.html:19
 #: src/inventory/templates/inventory/item_history.html:101
-#: src/inventory/templates/inventory/my_items.html:62
+#: src/inventory/templates/inventory/my_items.html:58
 msgid "Location"
 msgstr "Location"
 
@@ -61,16 +61,16 @@ msgstr "Inventory number"
 #: src/inventory/models/item.py:102
 #: src/inventory/templates/inventory/_item_header_card.html:8
 #: src/inventory/templates/inventory/_transfer_card.html:11
-#: src/inventory/templates/inventory/my_items.html:54
-#: src/inventory/templates/inventory/previous_items.html:41
+#: src/inventory/templates/inventory/my_items.html:50
+#: src/inventory/templates/inventory/previous_items.html:37
 msgid "Device"
 msgstr "Device"
 
 #: src/inventory/models/item.py:105
 #: src/inventory/templates/inventory/_item_header_card.html:12
 #: src/inventory/templates/inventory/_transfer_card.html:15
-#: src/inventory/templates/inventory/my_items.html:58
-#: src/inventory/templates/inventory/previous_items.html:45
+#: src/inventory/templates/inventory/my_items.html:54
+#: src/inventory/templates/inventory/previous_items.html:41
 msgid "Serial number"
 msgstr "Serial number"
 
@@ -324,48 +324,43 @@ msgstr "My items"
 
 #: src/inventory/templates/inventory/my_items.html:10
 #: src/inventory/templates/inventory/previous_items.html:10
-msgid "Your account is not linked to a responsible person profile yet."
-msgstr "Your account is not linked to a responsible person profile yet."
-
-#: src/inventory/templates/inventory/my_items.html:14
-#: src/inventory/templates/inventory/previous_items.html:14
 msgid "Search items"
 msgstr "Search items"
 
-#: src/inventory/templates/inventory/my_items.html:15
-#: src/inventory/templates/inventory/previous_items.html:21
+#: src/inventory/templates/inventory/my_items.html:11
+#: src/inventory/templates/inventory/previous_items.html:17
 msgid "Search by inventory number, serial, model…"
 msgstr "Search by inventory number, serial, model…"
 
-#: src/inventory/templates/inventory/my_items.html:19
+#: src/inventory/templates/inventory/my_items.html:15
 msgid "My items list kind"
 msgstr "My items list sections"
 
-#: src/inventory/templates/inventory/my_items.html:24
+#: src/inventory/templates/inventory/my_items.html:20
 msgid "All"
 msgstr "All"
 
-#: src/inventory/templates/inventory/my_items.html:29
+#: src/inventory/templates/inventory/my_items.html:25
 msgid "Incoming"
 msgstr "Incoming"
 
-#: src/inventory/templates/inventory/my_items.html:34
+#: src/inventory/templates/inventory/my_items.html:30
 msgid "Owned"
 msgstr "Owned"
 
-#: src/inventory/templates/inventory/my_items.html:39
+#: src/inventory/templates/inventory/my_items.html:35
 msgid "Outgoing"
 msgstr "Outgoing"
 
-#: src/inventory/templates/inventory/my_items.html:44
+#: src/inventory/templates/inventory/my_items.html:40
 msgid "My items list"
 msgstr "My items list"
 
-#: src/inventory/templates/inventory/my_items.html:81
+#: src/inventory/templates/inventory/my_items.html:77
 msgid "No items found."
 msgstr "You have no such items."
 
-#: src/inventory/templates/inventory/my_items.html:83
+#: src/inventory/templates/inventory/my_items.html:79
 msgid "You have no items."
 msgstr "You have no items."
 
@@ -374,28 +369,28 @@ msgstr "You have no items."
 msgid "Previously my items"
 msgstr "Previously with me"
 
-#: src/inventory/templates/inventory/previous_items.html:15
-#: src/inventory/templates/inventory/previous_items.html:23
+#: src/inventory/templates/inventory/previous_items.html:11
+#: src/inventory/templates/inventory/previous_items.html:19
 msgid "Search"
 msgstr "Search"
 
-#: src/inventory/templates/inventory/previous_items.html:25
+#: src/inventory/templates/inventory/previous_items.html:21
 msgid "Clear"
 msgstr "Clear"
 
-#: src/inventory/templates/inventory/previous_items.html:31
+#: src/inventory/templates/inventory/previous_items.html:27
 msgid "Previously my items list"
 msgstr "Previously my items list"
 
-#: src/inventory/templates/inventory/previous_items.html:49
+#: src/inventory/templates/inventory/previous_items.html:45
 msgid "Last on you"
 msgstr "Last on you"
 
-#: src/inventory/templates/inventory/previous_items.html:64
+#: src/inventory/templates/inventory/previous_items.html:60
 msgid "No previously held items found."
 msgstr "You had no such items."
 
-#: src/inventory/templates/inventory/previous_items.html:66
+#: src/inventory/templates/inventory/previous_items.html:62
 msgid "You have no previously held items."
 msgstr "You have no previously held items."
 
@@ -461,6 +456,9 @@ msgstr "Transfer accepted."
 #: src/inventory/views/transfer_views.py:327
 msgid "Transfer offer closed."
 msgstr "Transfer offer closed."
+
+#~ msgid "Your account is not linked to a responsible person profile yet."
+#~ msgstr "Your account is not linked to a responsible person profile yet."
 
 #, fuzzy, python-format
 #~| msgid ""

@@ -27,15 +27,9 @@ class TestNoEmailBanner:
         client.login(username="noemail", password="pw")
         response = client.get(reverse("common:profile"))
         assert response.status_code == 200
-        assert (
-            _(
-                "Your account has no email address. "
-                '<a href="%(url)s#email">Add one in your profile</a>'
-                " to receive notifications."
-            )
-            % {"url": reverse("common:profile")}
-            in response.content.decode()
-        )
+        profile_url = reverse("common:profile")
+        assert _("Your account has no email address yet.") in response.content.decode()
+        assert f'href="{profile_url}#email"' in response.content.decode()
 
     def test_banner_hidden_when_user_has_email(self, client: Client, django_user_model):
         django_user_model.objects.create_user(
@@ -45,13 +39,7 @@ class TestNoEmailBanner:
         response = client.get(reverse("common:profile"))
         assert response.status_code == 200
         assert (
-            _(
-                "Your account has no email address. "
-                '<a href="%(url)s#email">Add one in your profile</a>'
-                " to receive notifications."
-            )
-            % {"url": reverse("common:profile")}
-            not in response.content.decode()
+            _("Your account has no email address yet.") not in response.content.decode()
         )
 
 
@@ -342,3 +330,10 @@ class TestEmailChangeConfirmation:
         assert response.status_code == 302
         user1.refresh_from_db()
         assert user1.email == "user1@example.com"  # Email unchanged
+
+
+def test_notifications_no_messages_for_anonymous(client: Client) -> None:
+    """Persistent-notifications context processor should noop for anonymous users."""
+    response = client.get(reverse("common:login"))
+    assert response.status_code == 200
+    assert b"flash-messages" not in response.content
