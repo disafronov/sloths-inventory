@@ -43,7 +43,9 @@
     {% endif %}
 {% endif %}
 
+{% if responsible is not None %}
 <div class="form-actions form-actions--inline">
     <a href="{% url 'catalogs:location-create' %}" class="button">{% trans "Add location" %}</a>
 </div>
+{% endif %}
 {% endblock %}
