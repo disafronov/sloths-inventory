@@ -64,7 +64,7 @@ class PendingTransfer(BaseModel):
     receiver confirms the handoff.
     """
 
-    item = models.ForeignKey(Item, on_delete=models.CASCADE, verbose_name=_("Item"))
+    item = models.ForeignKey(Item, on_delete=models.PROTECT, verbose_name=_("Item"))
     from_responsible = models.ForeignKey(
         Responsible,
         on_delete=models.PROTECT,
