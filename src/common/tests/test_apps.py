@@ -28,7 +28,7 @@ def test_start_command_spawns_correct_processes():
 
     popen_calls: list[list[str]] = []
 
-    def capture_popen(args: list[str]) -> MagicMock:
+    def capture_popen(args: list[str], **_kwargs: object) -> MagicMock:
         popen_calls.append(args)
         return [mock_qcluster, mock_gunicorn][len(popen_calls) - 1]
 
