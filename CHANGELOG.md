@@ -1,3 +1,14 @@
+## [3.0.1-rc.1](https://github.com/disafronov/sloths-inventory/compare/v3.0.0...v3.0.1-rc.1) (2026-06-02)
+
+### Bug Fixes
+
+* i18n ([751c37c](https://github.com/disafronov/sloths-inventory/commit/751c37cb64c8f40d568a48275fa7ce550b2dd940))
+* i18n tests ([3dbb6f2](https://github.com/disafronov/sloths-inventory/commit/3dbb6f21aac34ec91b60e5f692e31e085d97a012))
+* **i18n:** rename menu to "My locations", fix fuzzy PO marker blocking Russian translations, add missing "please" ([fa65490](https://github.com/disafronov/sloths-inventory/commit/fa65490325923001053f652b76d6f713644bddd7))
+* **i18n:** tighten PO validation, purge redundant EN msgstr and copy overrides ([9a0a687](https://github.com/disafronov/sloths-inventory/commit/9a0a6871bcfbb8998131c5919b11fdf4ac55117b))
+* location button ([12d68e3](https://github.com/disafronov/sloths-inventory/commit/12d68e37e549021658bcf43ca70e4ebb668e9925))
+* **ui:** clean up user-menu layout, full-width language selector, remove 420px nav cap ([c3f35f9](https://github.com/disafronov/sloths-inventory/commit/c3f35f92eba821f52b71abf3cd3f1ec0a5ecc16f))
+
 ## [3.0.0](https://github.com/disafronov/sloths-inventory/compare/v2.1.0...v3.0.0) (2026-06-02)
 
 ### ⚠ BREAKING CHANGES
