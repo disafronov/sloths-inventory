@@ -6,10 +6,6 @@
 {% block heading %}{% trans "Previously my items" %}{% endblock %}
 
 {% block content %}
-{% if responsible is None %}
-    <p>{% trans "Your account is not linked to a responsible person profile yet." %}</p>
-{% endif %}
-
 {% if show_search %}
 <form method="get" class="search-form" role="search" aria-label="{% trans 'Search items' %}">
     <label class="sr-only" for="q">{% trans "Search" %}</label>

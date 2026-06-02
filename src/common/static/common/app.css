@@ -368,6 +368,11 @@ body.nav-open {
   font-weight: 600;
 }
 
+.flash-messages__item a {
+  color: inherit;
+  font-weight: 600;
+}
+
 /* Short explanatory copy above forms (e.g. transfer expiry policy). */
 .form-hint {
   max-width: 520px;

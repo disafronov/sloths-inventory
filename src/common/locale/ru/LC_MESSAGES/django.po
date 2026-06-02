@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-02 08:27+0000\n"
+"POT-Creation-Date: 2026-06-02 09:01+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -91,6 +91,34 @@ msgstr "Примечания"
 msgid "Name"
 msgstr "Название"
 
+#: src/common/notifications.py:30
+msgid "Your account has no email address yet."
+msgstr "У вашего аккаунта ещё не указан email."
+
+#: src/common/notifications.py:32
+msgid "Add one in your profile"
+msgstr "Добавьте его в профиле"
+
+#: src/common/notifications.py:34
+msgid "it is required to link a responsible person and receive notifications"
+msgstr "это необходимо, чтобы привязать ответственного и получать уведомления"
+
+#: src/common/notifications.py:43
+msgid "Your account is not linked to a responsible person profile."
+msgstr "Ваш аккаунт не привязан к профилю ответственного."
+
+#: src/common/notifications.py:47
+#, fuzzy
+#| msgid ""
+#| "Your account is not linked to a responsible person profile yet. Please "
+#| "contact an administrator."
+msgid ""
+"Your account is not linked to a responsible person profile yet. Please "
+"contact the administration."
+msgstr ""
+"Ваш аккаунт ещё не привязан к профилю ответственного. Обратитесь к "
+"администрации."
+
 #: src/common/templates/base.html:7 src/common/templates/base.html:16
 #: src/common/templates/login.html:4 src/common/templates/profile.html:4
 msgid "Sloths Inventory"
@@ -137,15 +165,6 @@ msgstr "Выйти"
 #: src/common/templates/login.html:6 src/common/templates/login.html:12
 msgid "Login"
 msgstr "Войти"
-
-#: src/common/templates/base.html:115
-#, python-format
-msgid ""
-"Your account has no email address. <a href=\"%(url)s#email\">Add one in your "
-"profile</a> to receive notifications."
-msgstr ""
-"У вашего аккаунта не указан email. <a href=\"%(url)s#email\">Добавьте его в "
-"профиле</a>, чтобы получать уведомления."
 
 #: src/common/templates/common/_search_form.html:14
 msgid "Search"
@@ -753,6 +772,14 @@ msgid ""
 msgstr ""
 "Ссылка подтверждения email недействительна или истекла. Пожалуйста, "
 "запросите новое изменение email."
+
+#, python-format
+#~ msgid ""
+#~ "Your account has no email address. <a href=\"%(url)s#email\">Add one in "
+#~ "your profile</a> to receive notifications."
+#~ msgstr ""
+#~ "У вашего аккаунта не указан email. <a href=\"%(url)s#email\">Добавьте его "
+#~ "в профиле</a>, чтобы получать уведомления."
 
 #~ msgid "Change Email Address"
 #~ msgstr "Изменить адрес электронной почты"
