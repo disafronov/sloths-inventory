@@ -26,63 +26,21 @@ from .http_helpers import CreateTransferForm, render_transfer_form
 logger = logging.getLogger(__name__)
 
 
-def _redirect_after_inactive_transfer(
+def _redirect_with_message(
     request: HttpRequest,
     responsible: Responsible,
-    transfer: PendingTransfer,
-) -> HttpResponse:
-    """Warn and send the user somewhere they can still navigate from."""
-
-    # Expected warning message for inactive transfer offers.
-    messages.warning(
-        request,
-        _("This transfer offer is no longer active."),
-    )
-    if resolve_item_history_context(responsible, transfer.item_id) is not None:
-        return redirect("inventory:item-history", item_id=transfer.item_id)
-    return redirect("inventory:my-items")
-
-
-def _redirect_journal_head_stale(
-    request: HttpRequest,
-    responsible: Responsible,
+    message: str,
     *,
-    item_id: int,
+    level: str = "error",
+    item_id: int | None = None,
 ) -> HttpResponse:
-    """The Accept form was built for an older journal head than the server sees now."""
-
-    messages.error(
-        request,
-        _(
-            "The inventory record changed since this page was loaded. "
-            "Refresh the page and try again."
-        ),
-    )
-    if resolve_item_history_context(responsible, item_id) is not None:
+    """Set a flash message and redirect to a page the user can navigate from."""
+    getattr(messages, level)(request, message)
+    if (
+        item_id is not None
+        and resolve_item_history_context(responsible, item_id) is not None
+    ):
         return redirect("inventory:item-history", item_id=item_id)
-    return redirect("inventory:my-items")
-
-
-def _redirect_accept_without_journal_head(
-    request: HttpRequest,
-    _responsible: Responsible,
-) -> HttpResponse:
-    """
-    Accept requires a journal head; without operations the item has none.
-
-    The receiver branch in ``resolve_item_history_context`` returns ``None``
-    when there are no operations while an offer is pending, so there is no
-    item-history page to send them to—only the list view remains useful.
-    """
-
-    messages.error(
-        request,
-        validation_error_user_message(
-            ValidationError(
-                _("Cannot accept transfer for an item without operations"),
-            ),
-        ),
-    )
     return redirect("inventory:my-items")
 
 
@@ -253,7 +211,13 @@ def accept_transfer(request: HttpRequest, *, transfer_id: int) -> HttpResponse:
     }:
         raise Http404
     if not transfer.is_active:
-        return _redirect_after_inactive_transfer(request, responsible, transfer)
+        return _redirect_with_message(
+            request,
+            responsible,
+            _("This transfer offer is no longer active."),
+            level="warning",
+            item_id=transfer.item_id,
+        )
     if transfer.to_responsible_id != responsible.pk:
         raise Http404
 
@@ -265,11 +229,25 @@ def accept_transfer(request: HttpRequest, *, transfer_id: int) -> HttpResponse:
         posted_baseline = None
 
     if latest_head is None:
-        return _redirect_accept_without_journal_head(request, responsible)
+        messages.error(
+            request,
+            validation_error_user_message(
+                ValidationError(
+                    _("Cannot accept transfer for an item without operations"),
+                ),
+            ),
+        )
+        return redirect("inventory:my-items")
 
     if posted_baseline is None or posted_baseline != latest_head:
-        return _redirect_journal_head_stale(
-            request, responsible, item_id=transfer.item_id
+        return _redirect_with_message(
+            request,
+            responsible,
+            _(
+                "The inventory record changed since this page was loaded. "
+                "Refresh the page and try again."
+            ),
+            item_id=transfer.item_id,
         )
 
     try:
@@ -319,7 +297,13 @@ def cancel_transfer(request: HttpRequest, *, transfer_id: int) -> HttpResponse:
     }:
         raise Http404
     if not transfer.is_active:
-        return _redirect_after_inactive_transfer(request, responsible, transfer)
+        return _redirect_with_message(
+            request,
+            responsible,
+            _("This transfer offer is no longer active."),
+            level="warning",
+            item_id=transfer.item_id,
+        )
 
     try:
         transfer.cancel()
