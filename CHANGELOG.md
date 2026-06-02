@@ -1,3 +1,17 @@
+## [3.0.0-rc.1](https://github.com/disafronov/sloths-inventory/compare/v2.1.0...v3.0.0-rc.1) (2026-06-02)
+
+### ⚠ BREAKING CHANGES
+
+* **inventory:** Deleting an Item that has PendingTransfer rows now raises
+ProtectedError instead of cascade-deleting silently. Consistent with the
+existing Operation.item PROTECT constraint.
+
+Signed-off-by: Dmitrii Safronov <zimniy@cyberbrain.cc>
+
+### Bug Fixes
+
+* **inventory:** protect PendingTransfer from silent item deletion on CASCADE→PROTECT ([d0299c2](https://github.com/disafronov/sloths-inventory/commit/d0299c2bf615093f1fb130ed751b372dd3cf2a1e))
+
 ## [2.1.0](https://github.com/disafronov/sloths-inventory/compare/v2.0.0...v2.1.0) (2026-06-01)
 
 ### Features
