@@ -11,6 +11,7 @@ from inventory.models import Item, Operation
 
 
 @pytest.mark.django_db(transaction=True)
+@pytest.mark.xdist_group("concurrency")
 def test_operation_update_is_serialized_per_item_under_concurrency() -> None:
     """
     This is an integration-level concurrency test.
@@ -97,6 +98,7 @@ def test_operation_update_is_serialized_per_item_under_concurrency() -> None:
 
 
 @pytest.mark.django_db(transaction=True)
+@pytest.mark.xdist_group("concurrency")
 def test_operation_insert_waits_for_item_lock_under_concurrency() -> None:
     """
     Validate that inserts are serialized per item as well.

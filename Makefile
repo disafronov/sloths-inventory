@@ -39,7 +39,16 @@ COVERAGE_OPTS = --cov-report=html
 
 DOCKER_IMAGE = sloths-inventory
 
-.PHONY: all audit clean dead-code docker docker-build docker-run format help install lint locale makemigrations run test
+# Common flags for all docker run invocations (no port — added only for the server step).
+DOCKER_RUN_OPTS = --rm \
+	--read-only \
+	--tmpfs /tmp \
+	--add-host=host.docker.internal:host-gateway \
+	$(if $(wildcard env.example),--env-file env.example,) \
+	$(if $(wildcard env.docker),--env-file env.docker,) \
+	$(if $(wildcard .env),--env-file .env,)
+
+.PHONY: all audit clean dead-code docker docker-build docker-run format help install lint locale makemigrations q2 run test
 
 help: ## Show this help message
 	@echo "Available commands:"
@@ -90,8 +99,12 @@ test: locale ## Run tests with coverage report
 all: lint test dead-code ## Run all checks (no mutations)
 	@echo "All checks completed successfully!"
 
-run: locale ## Run Django development server locally
-	@echo "Running Django development server locally..."
+q2: ## Run django-q2 worker (qcluster) without the web server
+	@echo "Running django-q2 worker..."
+	$(UV) python src/manage.py qcluster
+
+run: locale ## Run dev server + qcluster locally (mirrors Docker entrypoint)
+	@echo "Running Django dev server + qcluster locally..."
 	$(UV) python src/manage.py migrate
 	@if [ -n "$$DJANGO_SUPERUSER_USERNAME" ] && [ -n "$$DJANGO_SUPERUSER_PASSWORD" ] && [ -n "$$DJANGO_SUPERUSER_EMAIL" ]; then \
 		echo "Ensuring Django superuser exists..."; \
@@ -99,7 +112,7 @@ run: locale ## Run Django development server locally
 	else \
 		echo "Skipping createsuperuser (set DJANGO_SUPERUSER_USERNAME/PASSWORD/EMAIL to enable)."; \
 	fi
-	$(UV) python src/manage.py runserver 0.0.0.0:8000
+	$(UV) python src/manage.py dev
 
 clean: ## Clean caches and coverage outputs
 	@echo "Cleaning cache and temporary files..."
@@ -111,26 +124,17 @@ docker-build: ## Build Docker image
 	@echo "Building Docker image..."
 	docker build -t $(DOCKER_IMAGE) .
 
-docker-run: ## Run Docker container
-	@echo "Running Docker container..."
-	docker run --rm \
-		--read-only \
-		--tmpfs /tmp \
-		-p 8000:8000 \
-		--add-host=host.docker.internal:host-gateway \
-		$(if $(wildcard env.example),--env-file env.example,) \
-		$(if $(wildcard env.docker),--env-file env.docker,) \
-		$(if $(wildcard .env),--env-file .env,) \
-		--entrypoint sh \
-		$(DOCKER_IMAGE) -c '\
-			python3 manage.py migrate && \
-			if [ -n "$$DJANGO_SUPERUSER_USERNAME" ] && [ -n "$$DJANGO_SUPERUSER_PASSWORD" ] && [ -n "$$DJANGO_SUPERUSER_EMAIL" ]; then \
-				echo "Ensuring Django superuser exists..."; \
-				python3 manage.py createsuperuser --noinput || true; \
-			else \
-				echo "Skipping createsuperuser (set DJANGO_SUPERUSER_USERNAME/PASSWORD/EMAIL to enable)."; \
-			fi && \
-			exec gunicorn sloths_inventory.wsgi'
+docker-run: ## Run Docker container (migrate → createsuperuser → start)
+	@echo "Running migrations..."
+	docker run $(DOCKER_RUN_OPTS) $(DOCKER_IMAGE) migrate
+	@if [ -n "$$DJANGO_SUPERUSER_USERNAME" ] && [ -n "$$DJANGO_SUPERUSER_PASSWORD" ] && [ -n "$$DJANGO_SUPERUSER_EMAIL" ]; then \
+		echo "Ensuring Django superuser exists..."; \
+		docker run $(DOCKER_RUN_OPTS) $(DOCKER_IMAGE) createsuperuser --noinput || true; \
+	else \
+		echo "Skipping createsuperuser (set DJANGO_SUPERUSER_USERNAME/PASSWORD/EMAIL to enable)."; \
+	fi
+	@echo "Starting server..."
+	docker run $(DOCKER_RUN_OPTS) -p 8000:8000 $(DOCKER_IMAGE)
 
 docker: docker-build docker-run ## Build and run Docker container
 	@echo "Docker container built and running!"
