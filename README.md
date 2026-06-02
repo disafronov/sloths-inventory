@@ -245,9 +245,17 @@ The application sends transactional emails on the following events:
   then a notification sent to the old address.
 - **Password reset** (`django.contrib.auth`): reset link emailed to the user.
 
-All emails are sent asynchronously by default (`EMAIL_SEND_ASYNC=1`). To send
-synchronously (useful in tests or simple deployments), set
-`EMAIL_SEND_ASYNC=0`.
+All emails are queued asynchronously by default (`EMAIL_SEND_ASYNC=1`) using
+[django-q2](https://django-q2.readthedocs.io/) with a PostgreSQL ORM broker.
+Jobs are persisted in the database and survive process restarts, unlike daemon
+threads.
+
+The default `CMD ["start"]` runs both the web server and the worker in the same
+process under a common supervisor, so each replica handles HTTP requests and
+task processing without a separate container.
+
+To send synchronously — useful in tests or simple single-process deployments —
+set `EMAIL_SEND_ASYNC=0`.
 
 ## Localization
 
