@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "Previously my items" %} - {% trans "Sloths Inventory" %}{% endblock %}
+{% block title %}{% trans "Previously with me" %} - {% trans "Sloths Inventory" %}{% endblock %}
 
-{% block heading %}{% trans "Previously my items" %}{% endblock %}
+{% block heading %}{% trans "Previously with me" %}{% endblock %}
 
 {% block content %}
 {% if show_search %}
@@ -24,7 +24,7 @@
 {% endif %}
 
 {% if incoming_transfers or items or outgoing_transfers %}
-    <div class="item-card-list" aria-label="{% trans 'Previously my items list' %}">
+    <div class="item-card-list" aria-label="{% trans 'Previously with me list' %}">
         {% for t in incoming_transfers %}
             {% include "inventory/_transfer_card.html" with transfer=t direction="incoming" %}
         {% endfor %}
@@ -57,7 +57,7 @@
 {% if responsible is not None %}
     {% if not incoming_transfers and not items and not outgoing_transfers %}
         {% if show_search %}
-            <p>{% trans "No previously held items found." %}</p>
+            <p>{% trans "You had no such items." %}</p>
         {% else %}
             <p>{% trans "You have no previously held items." %}</p>
         {% endif %}

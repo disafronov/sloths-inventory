@@ -640,7 +640,7 @@ def test_previous_items_search_filters_results() -> None:
 @pytest.mark.django_db
 def test_previous_items_incoming_transfer_uses_transfer_card_once() -> None:
     """
-    Active pending offers for items on the "Previously my items" list reuse the same
+    Active pending offers for items on the "Previously with me" list reuse the same
     transfer card as "My items" (tint + party plaque); the item is not duplicated as
     a plain row.
     """

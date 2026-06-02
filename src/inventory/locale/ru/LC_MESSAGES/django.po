@@ -342,7 +342,7 @@ msgid "Search by inventory number, serial, model…"
 msgstr "Поиск по инвентарному номеру, серийному, модели…"
 
 #: src/inventory/templates/inventory/my_items.html:15
-msgid "My items list kind"
+msgid "My items list sections"
 msgstr "Разделы списка «Мои вещи»"
 
 #: src/inventory/templates/inventory/my_items.html:20
@@ -366,7 +366,7 @@ msgid "My items list"
 msgstr "Список моих вещей"
 
 #: src/inventory/templates/inventory/my_items.html:77
-msgid "No items found."
+msgid "You have no such items."
 msgstr "Таких вещей у вас нет."
 
 #: src/inventory/templates/inventory/my_items.html:79
@@ -375,7 +375,7 @@ msgstr "У вас нет вещей."
 
 #: src/inventory/templates/inventory/previous_items.html:4
 #: src/inventory/templates/inventory/previous_items.html:6
-msgid "Previously my items"
+msgid "Previously with me"
 msgstr "Были у меня"
 
 #: src/inventory/templates/inventory/previous_items.html:11
@@ -388,7 +388,7 @@ msgid "Clear"
 msgstr "Сбросить"
 
 #: src/inventory/templates/inventory/previous_items.html:27
-msgid "Previously my items list"
+msgid "Previously with me list"
 msgstr "Список «Были у меня»"
 
 #: src/inventory/templates/inventory/previous_items.html:45
@@ -396,7 +396,7 @@ msgid "Last on you"
 msgstr "Дата последнего закрепления"
 
 #: src/inventory/templates/inventory/previous_items.html:60
-msgid "No previously held items found."
+msgid "You had no such items."
 msgstr "Таких вещей у вас не было."
 
 #: src/inventory/templates/inventory/previous_items.html:62

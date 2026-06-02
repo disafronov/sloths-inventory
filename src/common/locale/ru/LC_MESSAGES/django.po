@@ -137,7 +137,7 @@ msgid "My items"
 msgstr "Мои вещи"
 
 #: src/common/templates/base.html:78
-msgid "Previously my items"
+msgid "Previously with me"
 msgstr "Были у меня"
 
 #: src/common/templates/base.html:83
