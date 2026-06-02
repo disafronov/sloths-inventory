@@ -64,7 +64,7 @@ body {
 }
 
 /**
- * Title row: on mobile the hamburger sits on the right; on desktop the toggle is hidden.
+ * Title row: hamburger sits on the right.
  */
 .header__primary {
   display: flex;
@@ -84,11 +84,12 @@ body {
 }
 
 /**
- * Hamburger control (visible only under 768px via media query below).
+ * Hamburger control: always visible, toggles the site-nav panel.
  */
 .nav-toggle {
-  display: none;
+  display: inline-flex;
   flex-shrink: 0;
+  margin-left: auto;
   align-items: center;
   justify-content: center;
   width: 44px;
@@ -160,7 +161,7 @@ body {
   }
 }
 
-/** Dim page behind the open mobile drawer */
+/** Dim page behind the open navigation drawer */
 .nav-backdrop {
   display: none;
   position: fixed;
@@ -177,18 +178,35 @@ body {
   display: block;
 }
 
-/** Panel wrapping language + auth links (full horizontal bar on desktop). */
-.site-nav {
-  width: 100%;
+/** Panel wrapping language + auth links; closed by default, opened via .is-open from nav.js. */
+.site-nav:not(.is-open) {
+  display: none;
+}
+
+.site-nav.is-open {
+  display: block;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  z-index: 100;
+  width: auto;
+  min-width: 260px;
+  max-width: calc(100vw - 32px);
+  overflow-y: auto;
+  margin-top: 8px;
+  padding: 12px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
 }
 
 .user-menu {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
   gap: 8px;
   width: 100%;
-  justify-content: flex-end;
 }
 
 body.nav-open {
@@ -196,41 +214,32 @@ body.nav-open {
 }
 
 .user-menu__user {
-  width: 100%;
-  text-align: center;
-  padding: 4px 0;
-  word-break: break-all;
-  font-size: 0.95rem;
-  color: #555;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px 10px 10px;
+  font-size: 1rem;
+  color: #888;
 }
 
-.user-menu__user--identity {
-  display: inline-flex;
+.user-menu__responsible {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 0;
-  border: none;
-  border-radius: 0;
-  background: transparent;
+  gap: 6px;
+  padding: 10px 16px 10px 10px;
+  font-size: 1rem;
   color: #222;
   font-weight: 700;
 }
 
 .user-menu__user-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   flex: 0 0 auto;
+  display: flex;
+  align-items: center;
 }
 
 .user-menu__user-icon img {
   display: block;
-  color: inherit;
-}
-
-.user-menu__user-name {
-  min-width: 0;
 }
 
 .content {
@@ -484,20 +493,24 @@ body.nav-open {
   width: 100%;
 }
 
+.logout-form .button {
+  width: 100%;
+}
+
 .language-form {
-  display: inline-block;
+  display: block;
   margin: 0;
 }
 
 .language-form select {
-  padding: 10px 8px;
+  width: 100%;
+  padding: 10px 16px;
   min-height: 44px;
-  font-size: 16px;
+  font-size: 1rem;
   border: 1px solid #ddd;
   border-radius: 4px;
   background-color: #fff;
   cursor: pointer;
-  max-width: 100%;
 }
 
 /* --- Item / operation cards ---------------------------------------------- */
@@ -965,7 +978,7 @@ a.item-card:has(> .transfer-card__layout) {
   }
 
   .header {
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
   }
@@ -978,85 +991,19 @@ a.item-card:has(> .transfer-card__layout) {
   .header__title {
     font-size: 1.5rem;
   }
-
-  .nav-toggle {
-    display: none !important;
-  }
-
-  .site-nav {
-    display: block !important;
-    width: auto;
-    flex: 1 1 auto;
-    min-width: 0;
-  }
-
-  .user-menu {
-    width: auto;
-    justify-content: flex-end;
-  }
-
-  .user-menu__user {
-    width: auto;
-    text-align: right;
-    flex: 0 1 auto;
-  }
-
-  .user-menu .logout-form {
-    width: auto;
-  }
-
-  .nav-backdrop {
-    display: none !important;
-  }
 }
 
 /* --- Narrow screens: stack header controls ------------------------------- */
 
 @media (max-width: 767px) {
   .header {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
   }
 
-  .nav-toggle {
-    display: inline-flex;
-  }
-
-  /** Closed by default; opened via .is-open from nav.js */
-  .site-nav:not(.is-open) {
-    display: none;
-  }
-
-  .site-nav.is-open {
-    display: block;
-    position: relative;
-    z-index: 100;
-    max-height: min(70vh, 28rem);
-    overflow-y: auto;
-    margin-top: 4px;
-    padding: 12px;
-    background: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-  }
-
-  .user-menu {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .user-menu .button,
-  .user-menu button.button {
-    width: 100%;
-  }
-
-  .language-form {
-    display: block;
-    width: 100%;
-  }
-
-  .language-form select {
-    width: 100%;
+  .header__primary {
+    width: auto;
+    flex: 1 1 auto;
   }
 }
