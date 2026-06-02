@@ -7,7 +7,7 @@ from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.utils.translation import gettext_lazy as _
 
-from catalogs.models import Location, Responsible
+from catalogs.models import Location, Responsible, Status
 from inventory.models import Item, resolve_item_history_context
 from inventory.presentation import validation_error_user_message
 
@@ -138,4 +138,98 @@ def change_location(request: HttpRequest, *, item_id: int) -> HttpResponse:
 
     return _render_change_location(
         request, item, current_op.location, responsible=responsible, notes=""
+    )
+
+
+class ChangeStatusForm(forms.Form):
+    status_id = forms.IntegerField(
+        error_messages={"required": _("New status is required.")}
+    )
+    notes = forms.CharField(required=False, strip=True)
+
+
+def _render_change_status(
+    request: HttpRequest,
+    item: Item,
+    current_status: Status,
+    *,
+    responsible: Responsible,
+    error: str = "",
+    notes: str = "",
+    status: int = 200,
+) -> HttpResponse:
+    """Render the status change form for an item."""
+    return render(
+        request,
+        "inventory/change_status.html",
+        {
+            "item": item,
+            "statuses": Status.objects.all(),
+            "current_status": current_status,
+            "error": error,
+            "notes": notes,
+        },
+        status=status,
+    )
+
+
+@login_required
+def change_status(request: HttpRequest, *, item_id: int) -> HttpResponse:
+    """
+    Handle the status change for an item owned by the current user.
+
+    GET: Display the status change form.
+    POST: Create a new operation with the updated status.
+    """
+    responsible = Responsible.linked_profile_for_user(request.user)
+    if responsible is None:
+        raise Http404
+
+    item = Item.objects.owned_by(responsible).filter(pk=item_id).first()
+    if item is None:
+        raise Http404
+
+    current_op = item.current_operation
+    if current_op is None:
+        raise Http404  # pragma: no cover
+
+    if request.method == "POST":
+        form = ChangeStatusForm(request.POST)
+        if not form.is_valid():
+            error = str(form.errors.get("status_id", [""])[0])
+            return _render_change_status(
+                request,
+                item,
+                current_op.status,
+                responsible=responsible,
+                error=error,
+                notes=(request.POST.get("notes") or "").strip(),
+                status=400,
+            )
+
+        status_id: int = form.cleaned_data["status_id"]
+        notes: str = form.cleaned_data["notes"]
+
+        try:
+            status_obj = Status.objects.get(pk=status_id)
+        except Status.DoesNotExist:
+            raise Http404
+
+        try:
+            item.change_status(responsible=responsible, status=status_obj, notes=notes)
+        except ValidationError as exc:
+            return _render_change_status(
+                request,
+                item,
+                current_op.status,
+                responsible=responsible,
+                error=validation_error_user_message(exc),
+                notes=notes,
+                status=400,
+            )
+
+        return redirect("inventory:item-history", item_id=item.pk)
+
+    return _render_change_status(
+        request, item, current_op.status, responsible=responsible, notes=""
     )

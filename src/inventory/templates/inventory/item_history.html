@@ -78,6 +78,10 @@
                 href="{% url 'inventory:change-location' item_id=item.id %}"
                 class="button button--secondary button--sm"
             >{% trans "Change location" %}</a>
+            <a
+                href="{% url 'inventory:change-status' item_id=item.id %}"
+                class="button button--secondary button--sm"
+            >{% trans "Change status" %}</a>
             {% if not pending_transfer %}
                 <a
                     href="{% url 'inventory:create-transfer' item_id=item.id %}"

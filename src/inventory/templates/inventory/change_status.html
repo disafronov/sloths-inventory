@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Change status" %} - {% trans "Inventory number" %} {{ item.inventory_number }} - {% trans "Sloths Inventory" %}
+{% endblock %}
+
+{% block heading %}{% trans "Change status" %}{% endblock %}
+
+{% block content %}
+<div class="page-stack">
+    <p class="sr-only">{% trans "Change status" %}</p>
+    {% include "inventory/_item_header_card.html" %}
+
+    <form method="post" class="form-container">
+        {% csrf_token %}
+        {% if error %}
+            <p class="form-error" role="alert">{{ error }}</p>
+        {% endif %}
+        <p class="form-readout">
+            <span class="item-card__label">{% trans "Current status" %}:</span>
+            <span class="item-card__value">{{ current_status }}</span>
+        </p>
+        <p>
+            <label for="status_id">{% trans "New status" %}:</label>
+            <select
+                name="status_id"
+                id="status_id"
+                required
+                data-searchable-select
+                data-search-placeholder="{% trans 'Type to filter statuses…' %}"
+            >
+                {% for st in statuses %}
+                    {% if st.pk != current_status.pk %}
+                        <option value="{{ st.pk }}">{{ st.name }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </p>
+        <p>
+            <label for="notes">{% trans "Notes" %}:</label>
+            <textarea
+                name="notes"
+                id="notes"
+                rows="3"
+                maxlength="2000"
+                autocomplete="off"
+                placeholder="{% trans 'Optional: details (e.g. missing parts, charger, etc.)' %}"
+            >{{ notes }}</textarea>
+        </p>
+        <div class="form-actions form-actions--inline">
+            <button type="submit" class="button">{% trans "Change status" %}</button>
+            <a
+                href="{% url 'inventory:item-history' item_id=item.id %}"
+                class="button button--secondary"
+            >{% trans "Cancel" %}</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extrabody %}
+{% load static %}
+<script src="{% static 'common/searchable_select.js' %}" defer></script>
+{% endblock %}
