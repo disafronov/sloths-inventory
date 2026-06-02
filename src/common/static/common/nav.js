@@ -1,15 +1,9 @@
 /**
- * Mobile navigation: hamburger toggles the user menu panel and backdrop.
- * Closes on backdrop click, Escape, or when the viewport becomes desktop-wide.
+ * Navigation: hamburger toggles the user menu panel and backdrop.
+ * Closes on backdrop click or Escape.
  */
 (function () {
   "use strict";
-
-  const MOBILE_MQ = "(max-width: 767px)";
-
-  function isMobileViewport() {
-    return window.matchMedia(MOBILE_MQ).matches;
-  }
 
   function initNav() {
     const toggle = document.querySelector("[data-nav-toggle]");
@@ -29,11 +23,7 @@
         backdrop.hidden = !open;
       }
       document.body.classList.toggle("nav-open", open);
-      if (isMobileViewport()) {
-        nav.setAttribute("aria-hidden", open ? "false" : "true");
-      } else {
-        nav.removeAttribute("aria-hidden");
-      }
+      nav.setAttribute("aria-hidden", open ? "false" : "true");
     }
 
     function close() {
@@ -41,9 +31,6 @@
     }
 
     toggle.addEventListener("click", function () {
-      if (!isMobileViewport()) {
-        return;
-      }
       const expanded = toggle.getAttribute("aria-expanded") === "true";
       setOpen(!expanded);
     });
@@ -59,18 +46,7 @@
       }
     });
 
-    window.matchMedia(MOBILE_MQ).addEventListener("change", function (ev) {
-      if (!ev.matches) {
-        close();
-        nav.removeAttribute("aria-hidden");
-      } else if (!nav.classList.contains("is-open")) {
-        nav.setAttribute("aria-hidden", "true");
-      }
-    });
-
-    if (isMobileViewport() && !nav.classList.contains("is-open")) {
-      nav.setAttribute("aria-hidden", "true");
-    }
+    nav.setAttribute("aria-hidden", "true");
   }
 
   if (document.readyState === "loading") {

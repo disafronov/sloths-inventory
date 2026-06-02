@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-02 09:13+0000\n"
+"POT-Creation-Date: 2026-06-02 09:55+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/templates/admin/base_site.html:14 src/common/templates/base.html:109
+#: src/templates/admin/base_site.html:14 src/common/templates/base.html:126
 #, python-format
 msgid "Your timezone could not be detected. Times are displayed in %(tz)s."
 msgstr ""
@@ -109,7 +109,7 @@ msgstr ""
 msgid "Sloths Inventory"
 msgstr ""
 
-#: src/common/templates/base.html:23
+#: src/common/templates/base.html:24
 msgid "Menu"
 msgstr ""
 
@@ -117,36 +117,36 @@ msgstr ""
 msgid "Main navigation"
 msgstr ""
 
-#: src/common/templates/base.html:58
+#: src/common/templates/base.html:75
 msgid "Language"
 msgstr ""
 
-#: src/common/templates/base.html:73
+#: src/common/templates/base.html:90
 msgid "My items"
 msgstr ""
 
-#: src/common/templates/base.html:78
+#: src/common/templates/base.html:95
 msgid "Previously with me"
 msgstr ""
 
-#: src/common/templates/base.html:83
+#: src/common/templates/base.html:100
 msgid "My locations"
 msgstr ""
 
-#: src/common/templates/base.html:88 src/common/templates/profile.html:4
+#: src/common/templates/base.html:105 src/common/templates/profile.html:4
 #: src/common/templates/profile.html:6
 msgid "Profile"
 msgstr ""
 
-#: src/common/templates/base.html:94
+#: src/common/templates/base.html:111
 msgid "Admin"
 msgstr ""
 
-#: src/common/templates/base.html:98
+#: src/common/templates/base.html:115
 msgid "Logout"
 msgstr ""
 
-#: src/common/templates/base.html:101 src/common/templates/login.html:4
+#: src/common/templates/base.html:118 src/common/templates/login.html:4
 #: src/common/templates/login.html:6 src/common/templates/login.html:12
 msgid "Login"
 msgstr ""
