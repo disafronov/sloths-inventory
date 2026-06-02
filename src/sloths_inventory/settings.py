@@ -255,8 +255,7 @@ LOGOUT_REDIRECT_URL = "/"
 # https://docs.djangoproject.com/en/5.2/topics/email/
 
 EMAIL_BACKEND = env.str(
-    "EMAIL_BACKEND",
-    default="django.core.mail.backends.smtp.EmailBackend",
+    "EMAIL_BACKEND", default="common.email_backends.AsyncEmailBackend"
 )
 EMAIL_HOST = env.str("EMAIL_HOST", default="")
 EMAIL_PORT = _env_int("EMAIL_PORT", default=587)
