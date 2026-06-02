@@ -118,6 +118,7 @@ INSTALLED_APPS = [
     "catalogs",
     "inventory",
     "health",
+    "django_q",
 ]
 
 MIDDLEWARE = [
@@ -274,6 +275,16 @@ EMAIL_RETRY_BASE_DELAY_SECONDS = _env_float(
     "EMAIL_RETRY_BASE_DELAY_SECONDS", default=60.0
 )
 EMAIL_RETRY_BACKOFF_FACTOR = _env_float("EMAIL_RETRY_BACKOFF_FACTOR", default=2.0)
+
+# django-q2 task queue — PostgreSQL ORM broker (no Redis required)
+Q_CLUSTER = {
+    "name": env.str("Q_CLUSTER_NAME", default="sloths_inventory"),
+    "workers": _env_int("Q_WORKERS", default=1),
+    "timeout": _env_int("Q_TIMEOUT", default=60),
+    "retry": _env_int("Q_RETRY", default=120),
+    "orm": "default",
+    "sync": not _env_bool("Q_ASYNC", default=True),
+}
 
 # Site URL for email links (required for password reset emails)
 SITE_URL = env.str("SITE_URL", default="")
