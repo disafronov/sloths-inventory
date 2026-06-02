@@ -108,16 +108,12 @@ msgid "Your account is not linked to a responsible person profile."
 msgstr "Ваш аккаунт не привязан к профилю ответственного."
 
 #: src/common/notifications.py:47
-#, fuzzy
-#| msgid ""
-#| "Your account is not linked to a responsible person profile yet. Please "
-#| "contact an administrator."
 msgid ""
 "Your account is not linked to a responsible person profile yet. Please "
 "contact the administration."
 msgstr ""
-"Ваш аккаунт ещё не привязан к профилю ответственного. Обратитесь к "
-"администрации."
+"Ваш аккаунт ещё не привязан к профилю ответственного. Пожалуйста, "
+"обратитесь к администрации."
 
 #: src/common/templates/base.html:7 src/common/templates/base.html:16
 #: src/common/templates/login.html:4 src/common/templates/profile.html:4
@@ -145,8 +141,8 @@ msgid "Previously my items"
 msgstr "Были у меня"
 
 #: src/common/templates/base.html:83
-msgid "Locations"
-msgstr "Расположения"
+msgid "My locations"
+msgstr "Мои расположения"
 
 #: src/common/templates/base.html:88 src/common/templates/profile.html:4
 #: src/common/templates/profile.html:6

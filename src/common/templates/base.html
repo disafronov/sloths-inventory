@@ -80,7 +80,7 @@
                             href="{% url 'catalogs:location-list' %}"
                             class="button{% if request.resolver_match.url_name == 'location-list' or request.resolver_match.url_name == 'location-create' or request.resolver_match.url_name == 'location-edit' or request.resolver_match.url_name == 'location-delete' %} button--active{% endif %}"
                             {% if request.resolver_match.url_name == 'location-list' or request.resolver_match.url_name == 'location-create' or request.resolver_match.url_name == 'location-edit' or request.resolver_match.url_name == 'location-delete' %}aria-current="page"{% endif %}
-                        >{% trans "Locations" %}</a>
+                        >{% trans "My locations" %}</a>
                         <a
                             href="{% url 'common:profile' %}"
                             class="button{% if request.resolver_match.url_name == 'profile' %} button--active{% endif %}"
