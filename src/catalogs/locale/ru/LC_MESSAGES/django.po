@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: catalogs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-02 08:27+0000\n"
+"POT-Creation-Date: 2026-06-02 08:50+0000\n"
 "PO-Revision-Date: 2024-03-19 00:28+0300\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
@@ -141,7 +141,7 @@ msgid "Are you sure you want to delete “%(name)s”?"
 msgstr "Вы уверены, что хотите удалить «%(name)s»?"
 
 #: src/catalogs/templates/catalogs/location_confirm_delete.html:19
-#: src/catalogs/templates/catalogs/location_list.html:29
+#: src/catalogs/templates/catalogs/location_list.html:25
 msgid "Delete"
 msgstr "Удалить"
 
@@ -183,41 +183,40 @@ msgid "My locations"
 msgstr "Мои расположения"
 
 #: src/catalogs/templates/catalogs/location_list.html:10
-#: src/catalogs/views.py:67 src/catalogs/views.py:104 src/catalogs/views.py:155
-msgid "Your account is not linked to a responsible person profile yet."
-msgstr "Ваша учётная запись ещё не привязана к профилю ответственного лица."
-
-#: src/catalogs/templates/catalogs/location_list.html:14
 msgid "Search locations"
 msgstr "Поиск расположений"
 
-#: src/catalogs/templates/catalogs/location_list.html:15
+#: src/catalogs/templates/catalogs/location_list.html:11
 msgid "Search by location name…"
 msgstr "Поиск по названию…"
 
-#: src/catalogs/templates/catalogs/location_list.html:21
+#: src/catalogs/templates/catalogs/location_list.html:17
 msgid "Personal locations list"
 msgstr "Список личных расположений"
 
-#: src/catalogs/templates/catalogs/location_list.html:28
+#: src/catalogs/templates/catalogs/location_list.html:24
 msgid "Edit"
 msgstr "Редактировать"
 
-#: src/catalogs/templates/catalogs/location_list.html:39
+#: src/catalogs/templates/catalogs/location_list.html:35
 msgid "No locations found."
 msgstr "Расположения не найдены."
 
-#: src/catalogs/templates/catalogs/location_list.html:41
+#: src/catalogs/templates/catalogs/location_list.html:37
 msgid "You have no personal locations yet."
 msgstr "У вас ещё нет личных расположений."
 
-#: src/catalogs/templates/catalogs/location_list.html:48
+#: src/catalogs/templates/catalogs/location_list.html:44
 msgid "Add location"
 msgstr "Добавить расположение"
 
 #: src/catalogs/views.py:21
 msgid "Location name is required."
 msgstr "Название расположения обязательно."
+
+#: src/catalogs/views.py:67 src/catalogs/views.py:104 src/catalogs/views.py:155
+msgid "Your account is not linked to a responsible person profile yet."
+msgstr "Ваша учётная запись ещё не привязана к профилю ответственного лица."
 
 #: src/catalogs/views.py:89
 #, python-format

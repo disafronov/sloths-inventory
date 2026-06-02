@@ -1029,6 +1029,11 @@ def test_item_change_page_no_lock_without_responsible_past_window() -> None:
     )
 
     staff_user = _staff_user_with_item_admin_permissions("staff-item-draft-old")
+    Responsible.objects.create(
+        last_name="Staff",
+        first_name="Test",
+        user=staff_user,
+    )
     client = Client()
     client.force_login(staff_user)
     url = reverse("admin:inventory_item_change", args=[item.pk])

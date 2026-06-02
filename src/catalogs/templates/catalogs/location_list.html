@@ -6,10 +6,6 @@
 {% block heading %}{% trans "My locations" %}{% endblock %}
 
 {% block content %}
-{% if responsible is None %}
-    <p>{% trans "Your account is not linked to a responsible person profile yet." %}</p>
-{% endif %}
-
 {% if show_search %}
 {% trans "Search locations" as search_aria %}
 {% trans "Search by location name…" as search_placeholder %}
