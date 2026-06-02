@@ -130,8 +130,8 @@ msgid "Previously my items"
 msgstr "Previously with me"
 
 #: src/common/templates/base.html:83
-msgid "Locations"
-msgstr "Locations"
+msgid "My locations"
+msgstr "My locations"
 
 #: src/common/templates/base.html:88 src/common/templates/profile.html:4
 #: src/common/templates/profile.html:6
