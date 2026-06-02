@@ -454,6 +454,10 @@ body.nav-open {
   margin-top: var(--space-row);
 }
 
+.page-stack > .form-actions {
+  margin-top: 0;
+}
+
 .item-card .form-actions {
   margin-top: var(--space-row);
 }
