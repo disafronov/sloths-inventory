@@ -1,3 +1,9 @@
+## [3.1.0-rc.1](https://github.com/disafronov/sloths-inventory/compare/v3.0.1-rc.2...v3.1.0-rc.1) (2026-06-02)
+
+### Features
+
+* add change-status form for item status changes ([e788764](https://github.com/disafronov/sloths-inventory/commit/e7887644a4b9882c9ccfb51f809c97158cbfcd37))
+
 ## [3.0.1-rc.2](https://github.com/disafronov/sloths-inventory/compare/v3.0.1-rc.1...v3.0.1-rc.2) (2026-06-02)
 
 ### Bug Fixes
