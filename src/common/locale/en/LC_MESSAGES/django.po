@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-02 08:56+0000\n"
+"POT-Creation-Date: 2026-06-02 09:13+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -167,10 +167,9 @@ msgstr "Confirm your email address change"
 
 #: src/common/templates/emails/email_change_body.html:12
 #: src/common/templates/emails/email_changed_notification_body.html:12
-#, fuzzy, python-format
-#| msgid "Hello %(username)s,"
+#, python-format
 msgid "Hello <strong>%(username)s</strong>,"
-msgstr "Hello %(username)s,"
+msgstr ""
 
 #: src/common/templates/emails/email_change_body.html:14
 #: src/common/templates/emails/email_change_body.txt:3
@@ -179,10 +178,8 @@ msgstr "You have requested to change your email address in Sloths Inventory."
 
 #: src/common/templates/emails/email_change_body.html:17
 #: src/common/templates/emails/email_changed_notification_body.html:18
-#, fuzzy
-#| msgid "New email address"
 msgid "New email address:"
-msgstr "New email address"
+msgstr ""
 
 #: src/common/templates/emails/email_change_body.html:20
 msgid "To confirm this change, please click the button below:"
@@ -286,10 +283,8 @@ msgstr ""
 "successfully changed."
 
 #: src/common/templates/emails/email_changed_notification_body.html:17
-#, fuzzy
-#| msgid "Previous email address: %(email)s"
 msgid "Previous email address:"
-msgstr "Previous email address: %(email)s"
+msgstr ""
 
 #: src/common/templates/emails/email_changed_notification_body.html:23
 msgid "Security Notice"
