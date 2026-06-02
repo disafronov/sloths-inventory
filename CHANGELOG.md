@@ -1,3 +1,9 @@
+## [3.1.0-rc.2](https://github.com/disafronov/sloths-inventory/compare/v3.1.0-rc.1...v3.1.0-rc.2) (2026-06-02)
+
+### Bug Fixes
+
+* redirect to profile when no responsible profile is linked ([0da12c6](https://github.com/disafronov/sloths-inventory/commit/0da12c676cd86ddcaac1e235164c9486746ac0df))
+
 ## [3.1.0-rc.1](https://github.com/disafronov/sloths-inventory/compare/v3.0.1-rc.2...v3.1.0-rc.1) (2026-06-02)
 
 ### Features
