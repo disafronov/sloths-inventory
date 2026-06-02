@@ -28,12 +28,12 @@ def _stop(procs: list[subprocess.Popen[bytes]]) -> None:
 def _supervise(procs: list[subprocess.Popen[bytes]]) -> None:
     """Set up signal handlers and poll until a child exits, then stop survivors."""
 
-    def _on_sigterm(signum: int, frame: object) -> None:
+    def _on_sigterm(_signum: int, _frame: object) -> None:
         """Planned stop (orchestrator/systemd): stop children gracefully, exit 0."""
         _stop(procs)
         sys.exit(0)
 
-    def _on_sigint(signum: int, frame: object) -> None:
+    def _on_sigint(_signum: int, _frame: object) -> None:
         """SIGINT: stop all children, then re-raise for correct exit code."""
         _stop(procs)
         signal.signal(signal.SIGINT, signal.SIG_DFL)
@@ -58,13 +58,17 @@ class Command(BaseCommand):
 
     def handle(self, *args: object, **options: object) -> None:
         """Launch child processes and hand off to the supervisor loop."""
+        from django.conf import settings
+
         _supervise(
             [
                 subprocess.Popen(  # nosec B603 — fixed args, no user input
-                    [sys.executable, "manage.py", "qcluster"]
+                    [sys.executable, "manage.py", "qcluster"],
+                    cwd=settings.BASE_DIR,
                 ),
                 subprocess.Popen(  # nosec B603 B607 — fixed venv path, no user input
-                    ["gunicorn", "sloths_inventory.wsgi"]
+                    ["gunicorn", "sloths_inventory.wsgi"],
+                    cwd=settings.BASE_DIR,
                 ),
             ]
         )

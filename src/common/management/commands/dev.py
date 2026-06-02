@@ -15,13 +15,17 @@ class Command(BaseCommand):
 
     def handle(self, *args: object, **options: object) -> None:  # pragma: no cover
         """Launch child processes and hand off to the supervisor loop."""
+        from django.conf import settings
+
         _supervise(
             [
                 subprocess.Popen(  # nosec B603 — fixed args, no user input
-                    [sys.executable, "manage.py", "qcluster"]
+                    [sys.executable, "manage.py", "qcluster"],
+                    cwd=settings.BASE_DIR,
                 ),
                 subprocess.Popen(  # nosec B603 — fixed args, no user input
-                    [sys.executable, "manage.py", "runserver", "0.0.0.0:8000"]
+                    [sys.executable, "manage.py", "runserver", "0.0.0.0:8000"],
+                    cwd=settings.BASE_DIR,
                 ),
             ]
         )
