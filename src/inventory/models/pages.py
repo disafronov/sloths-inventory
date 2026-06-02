@@ -283,9 +283,8 @@ def _filter_operations_for_viewer(
     """
     A viewer always sees operations where they are the responsible person.
     Additionally, handoff operations (responsible changed) and status
-    changes are visible.  Only pure location changes by someone else
+    changes are visible.      Only pure location changes by someone else
     (same responsible, same status) are excluded.
-    Foreign handoff operations carry no location field.
     """
 
     ops = list(operations_qs.order_by("created_at", "id"))
