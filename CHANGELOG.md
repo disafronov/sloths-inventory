@@ -1,3 +1,10 @@
+## [3.0.1-rc.2](https://github.com/disafronov/sloths-inventory/compare/v3.0.1-rc.1...v3.0.1-rc.2) (2026-06-02)
+
+### Bug Fixes
+
+* correct location cache invalidation for Django 5.2 ([fdd943a](https://github.com/disafronov/sloths-inventory/commit/fdd943ae9e7e8c78528e3d263af1db098effe6c2))
+* replace fragile string matching on ValidationError with exc.code in accept_transfer ([c3f21b2](https://github.com/disafronov/sloths-inventory/commit/c3f21b2c9937adca5959e92b39c011612c3dc42a))
+
 ## [3.0.1-rc.1](https://github.com/disafronov/sloths-inventory/compare/v3.0.0...v3.0.1-rc.1) (2026-06-02)
 
 ### Bug Fixes
