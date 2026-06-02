@@ -300,9 +300,6 @@ def _filter_operations_for_viewer(
             result.append(op)
         prev_resp_id = op.responsible_id
         prev_status_id = op.status_id
-    for op in result:
-        if op.responsible_id != viewer_responsible_id:
-            op.location = None  # type: ignore[assignment]
     result.reverse()
     return result
 
@@ -393,6 +390,11 @@ def resolve_item_history_context(
             ),
             viewer_responsible_id=responsible.pk,
         )
+
+    location_cache = Operation._meta.get_field("location")
+    for op in operations:
+        if op.responsible_id != responsible.pk:
+            location_cache.set_cached_value(op, None)
 
     pending_transfer = PendingTransfer.objects.active_offer_for_item(item)
     if pending_transfer is not None:
