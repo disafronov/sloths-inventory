@@ -1,3 +1,21 @@
+## [3.1.0](https://github.com/disafronov/sloths-inventory/compare/v3.0.0...v3.1.0) (2026-06-02)
+
+### Features
+
+* add change-status form for item status changes ([84fb44f](https://github.com/disafronov/sloths-inventory/commit/84fb44fdf6c866f0d54277f9994d2fff89da0294))
+
+### Bug Fixes
+
+* correct location cache invalidation for Django 5.2 ([c3b4551](https://github.com/disafronov/sloths-inventory/commit/c3b455161aad5adb66b5311f01b7aede809a7336))
+* i18n ([062e817](https://github.com/disafronov/sloths-inventory/commit/062e81724b31ace014171cfa96d6d20c785c4a5c))
+* i18n tests ([53c7624](https://github.com/disafronov/sloths-inventory/commit/53c762426462834a8d3ffb0396ce56673b23294d))
+* **i18n:** rename menu to "My locations", fix fuzzy PO marker blocking Russian translations, add missing "please" ([d0d6dc2](https://github.com/disafronov/sloths-inventory/commit/d0d6dc23d5bece8c112283c133456668eb485b0c))
+* **i18n:** tighten PO validation, purge redundant EN msgstr and copy overrides ([9967bce](https://github.com/disafronov/sloths-inventory/commit/9967bce37fe32e995e6f7dfa9efa2bbb88178f94))
+* location button ([853b479](https://github.com/disafronov/sloths-inventory/commit/853b479f287c423e7ef044df8638c5f85f216496))
+* redirect to profile when no responsible profile is linked ([a7ce883](https://github.com/disafronov/sloths-inventory/commit/a7ce88306bfecf04b5a09073d177cf28f659790d))
+* replace fragile string matching on ValidationError with exc.code in accept_transfer ([05b67d6](https://github.com/disafronov/sloths-inventory/commit/05b67d6b0d04bebab85d294eff9d2f8fb9b7be01))
+* **ui:** clean up user-menu layout, full-width language selector, remove 420px nav cap ([4b07321](https://github.com/disafronov/sloths-inventory/commit/4b073214b07bc74b11d710ea4d67d8a252de2e3c))
+
 ## [3.1.0-rc.2](https://github.com/disafronov/sloths-inventory/compare/v3.1.0-rc.1...v3.1.0-rc.2) (2026-06-02)
 
 ### Bug Fixes
