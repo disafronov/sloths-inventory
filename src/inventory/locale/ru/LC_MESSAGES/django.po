@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventory\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-02 08:50+0000\n"
+"POT-Creation-Date: 2026-06-02 10:34+0000\n"
 "PO-Revision-Date: 2024-03-19 00:40+0300\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
@@ -202,28 +202,28 @@ msgstr "Срок действия должен быть в будущем"
 msgid "An active transfer already exists for this item"
 msgstr "Для этой вещи уже есть активная передача"
 
-#: src/inventory/models/pending_transfer.py:242
-#: src/inventory/models/pending_transfer.py:280
-#: src/inventory/models/pending_transfer.py:315
+#: src/inventory/models/pending_transfer.py:243
+#: src/inventory/models/pending_transfer.py:285
+#: src/inventory/models/pending_transfer.py:320
 msgid "Transfer is not active"
 msgstr "Передача неактивна."
 
-#: src/inventory/models/pending_transfer.py:248
+#: src/inventory/models/pending_transfer.py:251
 #: src/inventory/views/transfer_views.py:82
 msgid "Cannot accept transfer for an item without operations"
 msgstr "Нельзя принять передачу для вещи без записей в журнале."
 
-#: src/inventory/models/pending_transfer.py:256
+#: src/inventory/models/pending_transfer.py:260
 msgid "Cannot accept transfer: sender no longer holds the item."
 msgstr ""
 "Нельзя принять передачу: отправитель больше не является ответственным по "
 "журналу."
 
-#: src/inventory/models/pending_transfer.py:308
+#: src/inventory/models/pending_transfer.py:313
 msgid "Expiration window must be non-negative"
 msgstr "Окно истечения должно быть неотрицательным"
 
-#: src/inventory/models/pending_transfer.py:317
+#: src/inventory/models/pending_transfer.py:322
 msgid "Only the sender may update the transfer"
 msgstr "Изменять передачу может только отправитель"
 
@@ -459,11 +459,11 @@ msgstr "Предложение передачи обновлено."
 msgid "Transfer offer submitted."
 msgstr "Предложение передачи отправлено."
 
-#: src/inventory/views/transfer_views.py:288
+#: src/inventory/views/transfer_views.py:290
 msgid "Transfer accepted."
 msgstr "Передача принята."
 
-#: src/inventory/views/transfer_views.py:327
+#: src/inventory/views/transfer_views.py:329
 msgid "Transfer offer closed."
 msgstr "Предложение передачи закрыто."
 

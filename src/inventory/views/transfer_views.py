@@ -275,15 +275,17 @@ def accept_transfer(request: HttpRequest, *, transfer_id: int) -> HttpResponse:
     try:
         transfer.accept()
     except ValidationError as exc:
-        # Inactive transfer case should redirect (original behavior)
-        if "Transfer is not active" in str(exc):
-            error_msg = validation_error_user_message(exc)
-            messages.error(request, error_msg)
-            return redirect("inventory:item-history", item_id=transfer.item_id)
-        # Other validation errors should be shown to the user and redirect back
-        logger.exception("ValidationError while accepting transfer id=%s", transfer_id)
         error_msg = validation_error_user_message(exc)
         messages.error(request, error_msg)
+        if getattr(exc, "code", None) == "transfer_inactive":
+            logger.warning(
+                "Transfer %s became inactive before accept could complete",
+                transfer_id,
+            )
+        else:
+            logger.exception(
+                "ValidationError while accepting transfer id=%s", transfer_id
+            )
         return redirect("inventory:item-history", item_id=transfer.item_id)
     messages.success(request, _("Transfer accepted."))
     return redirect("inventory:item-history", item_id=transfer.item_id)

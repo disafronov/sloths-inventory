@@ -239,13 +239,17 @@ class PendingTransfer(BaseModel):
             Item.objects.select_for_update().only("id").get(pk=self.item_id)
             transfer = PendingTransfer.objects.select_for_update().get(pk=self.pk)
             if not transfer.is_active:
-                raise ValidationError(_("Transfer is not active"))
+                raise ValidationError(
+                    _("Transfer is not active"),
+                    code="transfer_inactive",
+                )
 
             item = Item.objects.get(pk=transfer.item_id)
             current_op = item.current_operation
             if current_op is None:
                 raise ValidationError(
-                    _("Cannot accept transfer for an item without operations")
+                    _("Cannot accept transfer for an item without operations"),
+                    code="no_current_operation",
                 )
             # The offer is valid only while the journal head still names the sender.
             # Ownership may move while a stale PendingTransfer row stays active (e.g.
@@ -253,7 +257,8 @@ class PendingTransfer(BaseModel):
             # receiver.
             if current_op.responsible_id != transfer.from_responsible_id:
                 raise ValidationError(
-                    _("Cannot accept transfer: sender no longer holds the item.")
+                    _("Cannot accept transfer: sender no longer holds the item."),
+                    code="sender_no_longer_holds_item",
                 )
 
             transfer.accepted_at = timezone.now()
