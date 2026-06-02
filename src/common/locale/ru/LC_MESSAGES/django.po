@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-01 12:59+0000\n"
+"POT-Creation-Date: 2026-06-02 08:27+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,7 +20,7 @@ msgstr ""
 "n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
 "(n%100>=11 && n%100<=14)? 2 : 3);\n"
 
-#: src/templates/admin/base_site.html:14 src/common/templates/base.html:107
+#: src/templates/admin/base_site.html:14 src/common/templates/base.html:109
 #, python-format
 msgid "Your timezone could not be detected. Times are displayed in %(tz)s."
 msgstr ""
@@ -125,20 +125,20 @@ msgstr "Расположения"
 msgid "Profile"
 msgstr "Профиль"
 
-#: src/common/templates/base.html:93
+#: src/common/templates/base.html:94
 msgid "Admin"
 msgstr "Админка"
 
-#: src/common/templates/base.html:96
+#: src/common/templates/base.html:98
 msgid "Logout"
 msgstr "Выйти"
 
-#: src/common/templates/base.html:99 src/common/templates/login.html:4
+#: src/common/templates/base.html:101 src/common/templates/login.html:4
 #: src/common/templates/login.html:6 src/common/templates/login.html:12
 msgid "Login"
 msgstr "Войти"
 
-#: src/common/templates/base.html:113
+#: src/common/templates/base.html:115
 #, python-format
 msgid ""
 "Your account has no email address. <a href=\"%(url)s#email\">Add one in your "
