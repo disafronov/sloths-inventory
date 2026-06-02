@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventory\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-02 10:34+0000\n"
+"POT-Creation-Date: 2026-06-02 10:38+0000\n"
 "PO-Revision-Date: 2024-03-19 00:40+0300\n"
 "Last-Translator: \n"
 "Language-Team: English\n"
@@ -202,7 +202,7 @@ msgid "Transfer is not active"
 msgstr ""
 
 #: src/inventory/models/pending_transfer.py:251
-#: src/inventory/views/transfer_views.py:82
+#: src/inventory/views/transfer_views.py:236
 msgid "Cannot accept transfer for an item without operations"
 msgstr ""
 
@@ -429,29 +429,30 @@ msgstr ""
 msgid "New location is required."
 msgstr ""
 
-#: src/inventory/views/transfer_views.py:39
+#: src/inventory/views/transfer_views.py:118
+msgid "Transfer offer updated."
+msgstr ""
+
+#: src/inventory/views/transfer_views.py:145
+msgid "Transfer offer submitted."
+msgstr ""
+
+#: src/inventory/views/transfer_views.py:217
+#: src/inventory/views/transfer_views.py:303
 msgid "This transfer offer is no longer active."
 msgstr ""
 
-#: src/inventory/views/transfer_views.py:57
+#: src/inventory/views/transfer_views.py:247
 msgid ""
 "The inventory record changed since this page was loaded. Refresh the page "
 "and try again."
 msgstr ""
 
-#: src/inventory/views/transfer_views.py:160
-msgid "Transfer offer updated."
-msgstr ""
-
-#: src/inventory/views/transfer_views.py:187
-msgid "Transfer offer submitted."
-msgstr ""
-
-#: src/inventory/views/transfer_views.py:290
+#: src/inventory/views/transfer_views.py:268
 msgid "Transfer accepted."
 msgstr ""
 
-#: src/inventory/views/transfer_views.py:329
+#: src/inventory/views/transfer_views.py:313
 msgid "Transfer offer closed."
 msgstr ""
 
