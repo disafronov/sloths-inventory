@@ -86,11 +86,13 @@
                             class="button{% if request.resolver_match.url_name == 'profile' %} button--active{% endif %}"
                             {% if request.resolver_match.url_name == 'profile' %}aria-current="page"{% endif %}
                         >{% trans "Profile" %}</a>
-                        <a
-                            href="{% url 'admin:index' %}"
-                            class="button{% if request.path|slice:':7' == '/admin/' %} button--active{% endif %}"
-                            {% if request.path|slice:':7' == '/admin/' %}aria-current="page"{% endif %}
-                        >{% trans "Admin" %}</a>
+                        {% if user.is_staff %}
+                            <a
+                                href="{% url 'admin:index' %}"
+                                class="button{% if request.resolver_match and request.resolver_match.namespace == 'admin' %} button--active{% endif %}"
+                                {% if request.resolver_match and request.resolver_match.namespace == 'admin' %}aria-current="page"{% endif %}
+                            >{% trans "Admin" %}</a>
+                        {% endif %}
                         <form method="post" action="{% url 'common:logout' %}?next=/" class="logout-form">
                             {% csrf_token %}
                             <button type="submit" class="button">{% trans "Logout" %}</button>
