@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: catalogs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-01 13:33+0000\n"
+"POT-Creation-Date: 2026-06-02 08:27+0000\n"
 "PO-Revision-Date: 2024-03-19 00:28+0300\n"
 "Last-Translator: \n"
 "Language-Team: English\n"
@@ -210,7 +210,7 @@ msgstr "No locations found."
 msgid "You have no personal locations yet."
 msgstr "You have no personal locations yet."
 
-#: src/catalogs/templates/catalogs/location_list.html:47
+#: src/catalogs/templates/catalogs/location_list.html:48
 msgid "Add location"
 msgstr "Add location"
 
