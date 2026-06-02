@@ -20,31 +20,31 @@ msgstr ""
 #: src/inventory/templates/inventory/item_history.html:106
 #: src/inventory/templates/inventory/my_items.html:62
 msgid "Status"
-msgstr "Status"
+msgstr ""
 
 #: src/inventory/admin/__init__.py:58 src/inventory/models/operation.py:37
 #: src/inventory/templates/inventory/_transfer_card.html:19
 #: src/inventory/templates/inventory/item_history.html:101
 #: src/inventory/templates/inventory/my_items.html:58
 msgid "Location"
-msgstr "Location"
+msgstr ""
 
 #: src/inventory/admin/__init__.py:63 src/inventory/admin/__init__.py:554
 #: src/inventory/templates/inventory/item_history.html:96
 msgid "Responsible Person"
-msgstr "Responsible Person"
+msgstr ""
 
 #: src/inventory/admin/__init__.py:234 src/inventory/models/operation.py:41
 msgid "Operation"
-msgstr "Operation"
+msgstr ""
 
 #: src/inventory/admin/__init__.py:255 src/inventory/admin/__init__.py:364
 msgid "Editing restrictions"
-msgstr "Editing restrictions"
+msgstr ""
 
 #: src/inventory/apps.py:8
 msgid "Inventory"
-msgstr "Inventory"
+msgstr ""
 
 #: src/inventory/list_query_helpers.py:49
 msgid "On hand"
@@ -56,7 +56,7 @@ msgstr ""
 #: src/inventory/templates/inventory/change_location.html:5
 #: src/inventory/templates/inventory/transfer_create.html:5
 msgid "Inventory number"
-msgstr "Inventory number"
+msgstr ""
 
 #: src/inventory/models/item.py:102
 #: src/inventory/templates/inventory/_item_header_card.html:8
@@ -64,7 +64,7 @@ msgstr "Inventory number"
 #: src/inventory/templates/inventory/my_items.html:50
 #: src/inventory/templates/inventory/previous_items.html:37
 msgid "Device"
-msgstr "Device"
+msgstr ""
 
 #: src/inventory/models/item.py:105
 #: src/inventory/templates/inventory/_item_header_card.html:12
@@ -72,44 +72,44 @@ msgstr "Device"
 #: src/inventory/templates/inventory/my_items.html:54
 #: src/inventory/templates/inventory/previous_items.html:41
 msgid "Serial number"
-msgstr "Serial number"
+msgstr ""
 
 #: src/inventory/models/item.py:111 src/inventory/models/operation.py:29
 #: src/inventory/models/pending_transfer.py:67
 msgid "Item"
-msgstr "Item"
+msgstr ""
 
 #: src/inventory/models/item.py:112
 msgid "Items"
-msgstr "Items"
+msgstr ""
 
 #: src/inventory/models/item.py:161
 msgid "Inventory number cannot be empty"
-msgstr "Inventory number cannot be empty"
+msgstr ""
 
 #: src/inventory/models/item.py:244
 msgid "Cannot change location for an item without operations"
-msgstr "Cannot change location for an item without operations"
+msgstr ""
 
 #: src/inventory/models/item.py:249
 msgid "New location must be different from current location."
-msgstr "New location must be different from current location."
+msgstr ""
 
 #: src/inventory/models/item.py:257
 msgid "Location changes must be recorded by the current accountable person."
-msgstr "Location changes must be recorded by the current accountable person."
+msgstr ""
 
 #: src/inventory/models/operation.py:34
 msgid "Responsible"
-msgstr "Responsible"
+msgstr ""
 
 #: src/inventory/models/operation.py:42
 msgid "Operations"
-msgstr "Operations"
+msgstr ""
 
 #: src/inventory/models/operation.py:96
 msgid "Only the latest operation for this item can be edited"
-msgstr "Only the latest operation for this item can be edited"
+msgstr ""
 
 #: src/inventory/models/operation.py:110
 #, python-format
@@ -128,7 +128,7 @@ msgstr[1] ""
 
 #: src/inventory/models/operation.py:153
 msgid "Operation item cannot be changed"
-msgstr "Operation item cannot be changed"
+msgstr ""
 
 #: src/inventory/models/operation.py:196
 msgid "Personal location belongs to another responsible person."
@@ -148,98 +148,98 @@ msgstr ""
 
 #: src/inventory/models/pending_transfer.py:72
 msgid "From"
-msgstr "From"
+msgstr ""
 
 #: src/inventory/models/pending_transfer.py:78
 #: src/inventory/templates/inventory/transfer_create.html:25
 msgid "To"
-msgstr "To"
+msgstr ""
 
 #: src/inventory/models/pending_transfer.py:83
 msgid "Expires at"
-msgstr "Expires at"
+msgstr ""
 
 #: src/inventory/models/pending_transfer.py:84
 msgid "Optional. Transfers are ignored after expiration."
-msgstr "Optional. Transfers are ignored after expiration."
+msgstr ""
 
 #: src/inventory/models/pending_transfer.py:89
 msgid "Accepted at"
-msgstr "Accepted at"
+msgstr ""
 
 #: src/inventory/models/pending_transfer.py:94
 msgid "Cancelled at"
-msgstr "Cancelled at"
+msgstr ""
 
 #: src/inventory/models/pending_transfer.py:100
 msgid "Pending transfer"
-msgstr "Pending transfer"
+msgstr ""
 
 #: src/inventory/models/pending_transfer.py:101
 msgid "Pending transfers"
-msgstr "Pending transfers"
+msgstr ""
 
 #: src/inventory/models/pending_transfer.py:148
 msgid "Transfer receiver must be different"
-msgstr "Transfer receiver must be different"
+msgstr ""
 
 #: src/inventory/models/pending_transfer.py:152
 msgid "Transfer cannot be accepted and cancelled"
-msgstr "Transfer cannot be accepted and cancelled"
+msgstr ""
 
 #: src/inventory/models/pending_transfer.py:155
 msgid "Expiration must be in the future"
-msgstr "Expiration must be in the future"
+msgstr ""
 
 #: src/inventory/models/pending_transfer.py:165
 msgid "An active transfer already exists for this item"
-msgstr "An active transfer already exists for this item"
+msgstr ""
 
 #: src/inventory/models/pending_transfer.py:242
 #: src/inventory/models/pending_transfer.py:280
 #: src/inventory/models/pending_transfer.py:315
 msgid "Transfer is not active"
-msgstr "Transfer is not active"
+msgstr ""
 
 #: src/inventory/models/pending_transfer.py:248
 #: src/inventory/views/transfer_views.py:82
 msgid "Cannot accept transfer for an item without operations"
-msgstr "Cannot accept transfer for an item without operations"
+msgstr ""
 
 #: src/inventory/models/pending_transfer.py:256
 msgid "Cannot accept transfer: sender no longer holds the item."
-msgstr "Cannot accept transfer: sender no longer holds the item."
+msgstr ""
 
 #: src/inventory/models/pending_transfer.py:308
 msgid "Expiration window must be non-negative"
-msgstr "Expiration window must be non-negative"
+msgstr ""
 
 #: src/inventory/models/pending_transfer.py:317
 msgid "Only the sender may update the transfer"
-msgstr "Only the sender may update the transfer"
+msgstr ""
 
 #: src/inventory/templates/inventory/_item_header_card.html:2
 #: src/inventory/templates/inventory/transfer_create.html:19
 msgid "Item details"
-msgstr "Item details"
+msgstr ""
 
 #: src/inventory/templates/inventory/_transfer_card.html:27
 msgid "Transfer party"
-msgstr "Transfer party"
+msgstr ""
 
 #: src/inventory/templates/inventory/_transfer_card.html:30
 #: src/inventory/templates/inventory/item_history.html:22
 msgid "Incoming transfer from"
-msgstr "Incoming transfer from"
+msgstr ""
 
 #: src/inventory/templates/inventory/_transfer_card.html:33
 #: src/inventory/templates/inventory/item_history.html:25
 msgid "Outgoing transfer for"
-msgstr "Outgoing transfer for"
+msgstr ""
 
 #: src/inventory/templates/inventory/_transfer_expiry_row.html:5
 msgid "Offer expires"
-msgstr "Offer expires"
+msgstr ""
 
 #: src/inventory/templates/inventory/change_location.html:5
 #: src/inventory/templates/inventory/change_location.html:8
@@ -247,7 +247,7 @@ msgstr "Offer expires"
 #: src/inventory/templates/inventory/change_location.html:52
 #: src/inventory/templates/inventory/item_history.html:80
 msgid "Change location"
-msgstr "Change location"
+msgstr ""
 
 #: src/inventory/templates/inventory/change_location.html:5
 #: src/inventory/templates/inventory/item_history.html:4
@@ -255,159 +255,159 @@ msgstr "Change location"
 #: src/inventory/templates/inventory/previous_items.html:4
 #: src/inventory/templates/inventory/transfer_create.html:5
 msgid "Sloths Inventory"
-msgstr "Sloths Inventory"
+msgstr ""
 
 #: src/inventory/templates/inventory/change_location.html:21
 msgid "Current location"
-msgstr "Current location"
+msgstr ""
 
 #: src/inventory/templates/inventory/change_location.html:25
 msgid "New location"
-msgstr "New location"
+msgstr ""
 
 #: src/inventory/templates/inventory/change_location.html:31
 msgid "Type to filter locations…"
-msgstr "Type to filter locations…"
+msgstr ""
 
 #: src/inventory/templates/inventory/change_location.html:41
 #: src/inventory/templates/inventory/item_history.html:36
 #: src/inventory/templates/inventory/item_history.html:111
 #: src/inventory/templates/inventory/transfer_create.html:66
 msgid "Notes"
-msgstr "Notes"
+msgstr ""
 
 #: src/inventory/templates/inventory/change_location.html:48
 #: src/inventory/templates/inventory/transfer_create.html:73
 msgid "Optional: details (e.g. missing parts, charger, etc.)"
-msgstr "Optional: details (e.g. missing parts, charger, etc.)"
+msgstr ""
 
 #: src/inventory/templates/inventory/change_location.html:56
 #: src/inventory/templates/inventory/item_history.html:68
 #: src/inventory/templates/inventory/transfer_create.html:78
 msgid "Cancel"
-msgstr "Cancel"
+msgstr ""
 
 #: src/inventory/templates/inventory/item_history.html:4
 #: src/inventory/templates/inventory/item_history.html:6
 #: src/inventory/templates/inventory/item_history.html:9
 msgid "Item history"
-msgstr "Item history"
+msgstr ""
 
 #: src/inventory/templates/inventory/item_history.html:52
 msgid "Accept"
-msgstr "Accept"
+msgstr ""
 
 #: src/inventory/templates/inventory/item_history.html:57
 msgid "Decline"
-msgstr "Decline"
+msgstr ""
 
 #: src/inventory/templates/inventory/item_history.html:65
 msgid "Edit"
-msgstr "Edit"
+msgstr ""
 
 #: src/inventory/templates/inventory/item_history.html:76
 msgid "Item actions"
-msgstr "Item actions"
+msgstr ""
 
 #: src/inventory/templates/inventory/item_history.html:85
 msgid "Hand over"
-msgstr "Hand over"
+msgstr ""
 
 #: src/inventory/templates/inventory/item_history.html:119
 msgid "No operations found."
-msgstr "No operations found."
+msgstr ""
 
 #: src/inventory/templates/inventory/my_items.html:4
 #: src/inventory/templates/inventory/my_items.html:6
 msgid "My items"
-msgstr "My items"
+msgstr ""
 
 #: src/inventory/templates/inventory/my_items.html:10
 #: src/inventory/templates/inventory/previous_items.html:10
 msgid "Search items"
-msgstr "Search items"
+msgstr ""
 
 #: src/inventory/templates/inventory/my_items.html:11
 #: src/inventory/templates/inventory/previous_items.html:17
 msgid "Search by inventory number, serial, model…"
-msgstr "Search by inventory number, serial, model…"
+msgstr ""
 
 #: src/inventory/templates/inventory/my_items.html:15
-msgid "My items list kind"
-msgstr "My items list sections"
+msgid "My items list sections"
+msgstr ""
 
 #: src/inventory/templates/inventory/my_items.html:20
 msgid "All"
-msgstr "All"
+msgstr ""
 
 #: src/inventory/templates/inventory/my_items.html:25
 msgid "Incoming"
-msgstr "Incoming"
+msgstr ""
 
 #: src/inventory/templates/inventory/my_items.html:30
 msgid "Owned"
-msgstr "Owned"
+msgstr ""
 
 #: src/inventory/templates/inventory/my_items.html:35
 msgid "Outgoing"
-msgstr "Outgoing"
+msgstr ""
 
 #: src/inventory/templates/inventory/my_items.html:40
 msgid "My items list"
-msgstr "My items list"
+msgstr ""
 
 #: src/inventory/templates/inventory/my_items.html:77
-msgid "No items found."
-msgstr "You have no such items."
+msgid "You have no such items."
+msgstr ""
 
 #: src/inventory/templates/inventory/my_items.html:79
 msgid "You have no items."
-msgstr "You have no items."
+msgstr ""
 
 #: src/inventory/templates/inventory/previous_items.html:4
 #: src/inventory/templates/inventory/previous_items.html:6
-msgid "Previously my items"
-msgstr "Previously with me"
+msgid "Previously with me"
+msgstr ""
 
 #: src/inventory/templates/inventory/previous_items.html:11
 #: src/inventory/templates/inventory/previous_items.html:19
 msgid "Search"
-msgstr "Search"
+msgstr ""
 
 #: src/inventory/templates/inventory/previous_items.html:21
 msgid "Clear"
-msgstr "Clear"
+msgstr ""
 
 #: src/inventory/templates/inventory/previous_items.html:27
-msgid "Previously my items list"
-msgstr "Previously my items list"
+msgid "Previously with me list"
+msgstr ""
 
 #: src/inventory/templates/inventory/previous_items.html:45
 msgid "Last on you"
-msgstr "Last on you"
+msgstr ""
 
 #: src/inventory/templates/inventory/previous_items.html:60
-msgid "No previously held items found."
-msgstr "You had no such items."
+msgid "You had no such items."
+msgstr ""
 
 #: src/inventory/templates/inventory/previous_items.html:62
 msgid "You have no previously held items."
-msgstr "You have no previously held items."
+msgstr ""
 
 #: src/inventory/templates/inventory/transfer_create.html:5
 #: src/inventory/templates/inventory/transfer_create.html:8
 #: src/inventory/templates/inventory/transfer_create.html:12
 #: src/inventory/templates/inventory/transfer_create.html:77
 msgid "Transfer"
-msgstr "Transfer"
+msgstr ""
 
 #: src/inventory/templates/inventory/transfer_create.html:24
 msgid "A transfer offer is already pending."
-msgstr "A transfer offer is already pending."
+msgstr ""
 
 #: src/inventory/templates/inventory/transfer_create.html:35
 msgid "Back"
-msgstr "Back"
+msgstr ""
 
 #: src/inventory/templates/inventory/transfer_create.html:44
 #, python-format
@@ -419,43 +419,41 @@ msgstr[1] "If you send this offer, it expires %(hours)s hours after sending."
 
 #: src/inventory/templates/inventory/transfer_create.html:52
 msgid "New responsible"
-msgstr "New responsible"
+msgstr ""
 
 #: src/inventory/templates/inventory/transfer_create.html:58
 msgid "Type to filter people…"
-msgstr "Type to filter people…"
+msgstr ""
 
 #: src/inventory/views/item_views.py:17
 msgid "New location is required."
-msgstr "New location is required."
+msgstr ""
 
 #: src/inventory/views/transfer_views.py:39
 msgid "This transfer offer is no longer active."
-msgstr "This transfer offer is no longer active."
+msgstr ""
 
 #: src/inventory/views/transfer_views.py:57
 msgid ""
 "The inventory record changed since this page was loaded. Refresh the page "
 "and try again."
 msgstr ""
-"The inventory record changed since this page was loaded. Refresh the page "
-"and try again."
 
 #: src/inventory/views/transfer_views.py:160
 msgid "Transfer offer updated."
-msgstr "Transfer offer updated."
+msgstr ""
 
 #: src/inventory/views/transfer_views.py:187
 msgid "Transfer offer submitted."
-msgstr "Transfer offer submitted."
+msgstr ""
 
 #: src/inventory/views/transfer_views.py:288
 msgid "Transfer accepted."
-msgstr "Transfer accepted."
+msgstr ""
 
 #: src/inventory/views/transfer_views.py:327
 msgid "Transfer offer closed."
-msgstr "Transfer offer closed."
+msgstr ""
 
 #~ msgid "Your account is not linked to a responsible person profile yet."
 #~ msgstr "Your account is not linked to a responsible person profile yet."

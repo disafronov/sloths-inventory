@@ -17,40 +17,40 @@ msgstr ""
 
 #: src/devices/apps.py:8 src/devices/models.py:22
 msgid "Devices"
-msgstr "Devices"
+msgstr ""
 
 #: src/devices/attributes.py:15 src/devices/models.py:12
 msgid "Category"
-msgstr "Category"
+msgstr ""
 
 #: src/devices/attributes.py:16
 msgid "Categories"
-msgstr "Categories"
+msgstr ""
 
 #: src/devices/attributes.py:36 src/devices/models.py:16
 msgid "Manufacturer"
-msgstr "Manufacturer"
+msgstr ""
 
 #: src/devices/attributes.py:37
 msgid "Manufacturers"
-msgstr "Manufacturers"
+msgstr ""
 
 #: src/devices/attributes.py:57 src/devices/models.py:18
 msgid "Model"
-msgstr "Model"
+msgstr ""
 
 #: src/devices/attributes.py:58
 msgid "Models"
-msgstr "Models"
+msgstr ""
 
 #: src/devices/attributes.py:78 src/devices/models.py:14
 msgid "Type"
-msgstr "Type"
+msgstr ""
 
 #: src/devices/attributes.py:79
 msgid "Types"
-msgstr "Types"
+msgstr ""
 
 #: src/devices/models.py:21
 msgid "Device"
-msgstr "Device"
+msgstr ""

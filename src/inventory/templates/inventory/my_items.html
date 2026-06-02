@@ -12,7 +12,7 @@
 {% url 'inventory:my-items' as search_clear_url %}
 {% include "common/_search_form.html" with search_query=query search_aria=search_aria search_placeholder=search_placeholder search_clear_url=search_clear_url search_kind_value=list_kind %}
 
-<nav class="my-items-kind-tabs" aria-label="{% trans 'My items list kind' %}">
+<nav class="my-items-kind-tabs" aria-label="{% trans 'My items list sections' %}">
     <a
         href="{% url 'inventory:my-items' %}{% if query %}?q={{ query|urlencode }}{% endif %}"
         class="button button--secondary button--sm{% if list_kind == 'all' %} button--active{% endif %}"
@@ -74,7 +74,7 @@
 {% if responsible is not None %}
     {% if not incoming_transfers and not items and not outgoing_transfers %}
         {% if show_search %}
-            <p>{% trans "No items found." %}</p>
+            <p>{% trans "You have no such items." %}</p>
         {% else %}
             <p>{% trans "You have no items." %}</p>
         {% endif %}
