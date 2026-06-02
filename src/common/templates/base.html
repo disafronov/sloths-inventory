@@ -49,7 +49,7 @@
                                     decoding="async"
                                 >
                             </span>
-                            <span class="user-menu__user-name">{{ user.username }}</span>
+                            <span class="user-menu__user-name">{% if user.get_full_name %}{{ user.get_full_name }} ({% endif %}{{ user.username }}{% if user.get_full_name %}){% endif %}</span>
                         </span>
                     {% endif %}
                     <form action="{% url 'common:set_language' %}" method="post" class="language-form">
