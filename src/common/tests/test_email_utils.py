@@ -99,16 +99,16 @@ class TestSendEmailAsync:
         mock_retry.assert_not_called()
 
     @override_settings(EMAIL_SEND_ASYNC=True)
-    def test_spawns_daemon_thread_when_async_enabled(self):
-        with patch("common.email_utils.threading.Thread") as mock_thread_cls:
-            instance = mock_thread_cls.return_value
+    def test_enqueues_task_when_async_enabled(self):
+        with patch("common.email_utils.async_task") as mock_task:
             send_email_async("subj", "body", "a@example.com", "<p>html</p>")
-        mock_thread_cls.assert_called_once_with(
-            target=_send_with_retry,
-            args=("subj", "body", ["a@example.com"], "<p>html</p>"),
-            daemon=True,
+        mock_task.assert_called_once_with(
+            "common.email_utils._send_with_retry",
+            "subj",
+            "body",
+            ["a@example.com"],
+            "<p>html</p>",
         )
-        instance.start.assert_called_once()
 
     @override_settings(EMAIL_SEND_ASYNC=False, **_RETRY_0)
     def test_calls_retry_directly_when_async_disabled(self):
