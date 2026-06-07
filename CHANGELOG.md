@@ -1,3 +1,13 @@
+## [3.3.0](https://github.com/disafronov/sloths-inventory/compare/v3.2.0...v3.3.0) (2026-06-07)
+
+### Features
+
+* bump ([6494398](https://github.com/disafronov/sloths-inventory/commit/64943980f11d5eb67c45c14963cd2b5992ed3c72))
+
+### Bug Fixes
+
+* pip audit ([352ed5e](https://github.com/disafronov/sloths-inventory/commit/352ed5ea9573246ed95e076c7b75cf6522f25e74))
+
 ## [3.3.0-rc.1](https://github.com/disafronov/sloths-inventory/compare/v3.2.0...v3.3.0-rc.1) (2026-06-07)
 
 ### Features
