@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-02 13:42+0000\n"
+"POT-Creation-Date: 2026-06-07 22:33+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,11 +17,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-
-#: src/templates/admin/base_site.html:14 src/common/templates/base.html:126
-#, python-format
-msgid "Your timezone could not be detected. Times are displayed in %(tz)s."
-msgstr ""
 
 #: src/common/admin.py:56
 msgid "Additional information"
@@ -149,6 +144,11 @@ msgstr ""
 #: src/common/templates/base.html:118 src/common/templates/login.html:4
 #: src/common/templates/login.html:6 src/common/templates/login.html:12
 msgid "Login"
+msgstr ""
+
+#: src/common/templates/base.html:126 src/templates/admin/base_site.html:14
+#, python-format
+msgid "Your timezone could not be detected. Times are displayed in %(tz)s."
 msgstr ""
 
 #: src/common/templates/common/_search_form.html:14

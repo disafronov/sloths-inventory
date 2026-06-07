@@ -32,7 +32,7 @@ class TimezoneMiddleware:
                 # We attach this attribute dynamically to the request object
                 # to communicate detection status to the context processor.
                 request.timezone_detected = True  # type: ignore[attr-defined]
-            except (ZoneInfoNotFoundError, KeyError):
+            except ZoneInfoNotFoundError, KeyError:
                 # Fallback to server default if the provided timezone is invalid.
                 timezone.deactivate()
                 request.timezone_detected = False  # type: ignore[attr-defined]

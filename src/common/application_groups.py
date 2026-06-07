@@ -262,7 +262,7 @@ def _on_post_migrate(sender: AppConfig, **kwargs: object) -> None:
     del sender, kwargs
     try:
         enforce_application_groups()
-    except (OperationalError, ProgrammingError):
+    except OperationalError, ProgrammingError:
         # Mirrors the old ``ready()`` guard: empty or partial DB during odd setups.
         pass
 

@@ -117,7 +117,7 @@ class EmailChangeConfirmView(View):
             uid = force_str(urlsafe_base64_decode(uidb64))
             user = User.objects.get(pk=uid)
             new_email_decoded = force_str(urlsafe_base64_decode(new_email))
-        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        except TypeError, ValueError, OverflowError, User.DoesNotExist:
             user = None
             new_email_decoded = None
 
