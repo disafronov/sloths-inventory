@@ -41,3 +41,6 @@ env.docker
 src/**/tests/
 src/conftest.py
 src/sloths_inventory/settings_pytest.py
+
+#
+.env
