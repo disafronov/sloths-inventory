@@ -286,7 +286,7 @@ class Responsible(CatalogCorrectionWindowMixin, BaseModel):
         try:
             to_responsible_id = int(raw_to_responsible_id)
             receiver = cls.objects.get(pk=to_responsible_id)
-        except (cls.DoesNotExist, ValueError):
+        except cls.DoesNotExist, ValueError:
             raise ValidationError(gettext("New responsible is invalid."))
         if receiver.pk == sender.pk:
             raise ValidationError(gettext("New responsible must be different."))

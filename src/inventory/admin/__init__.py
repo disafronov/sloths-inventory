@@ -429,7 +429,7 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
                 elif self.data.get("responsible"):
                     try:
                         responsible_id = int(self.data["responsible"])
-                    except (ValueError, TypeError):
+                    except ValueError, TypeError:
                         pass
                 if responsible_id is not None:
                     self.fields["location"].queryset = Location.objects.filter(
