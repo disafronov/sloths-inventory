@@ -35,4 +35,10 @@ CSRF_TRUSTED_ORIGINS = [o for o in CSRF_TRUSTED_ORIGINS if o]  # noqa: F405
 EMAIL_SEND_ASYNC = False
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 
+# Keep secure flags off during tests to avoid HTTPS redirects and
+# Secure-only cookies in the test client.
+SECURE_SSL_REDIRECT = False
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+
 INVENTORY_CORRECTION_WINDOW_MINUTES = 10
