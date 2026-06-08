@@ -2327,7 +2327,7 @@ version = "15.0.0"
 
 [[package]]
 name = "sloths-inventory"
-version = "3.3.1"
+version = "3.3.2rc1"
 
   [package.source]
   virtual = "."
