@@ -53,9 +53,9 @@ if DEBUG:
 else:
     SECRET_KEY = env.str("SECRET_KEY")
 
-SECURE_SSL_REDIRECT = _env_bool("SECURE_SSL_REDIRECT", default=False)
-SESSION_COOKIE_SECURE = _env_bool("SESSION_COOKIE_SECURE", default=False)
-CSRF_COOKIE_SECURE = _env_bool("CSRF_COOKIE_SECURE", default=False)
+SECURE_SSL_REDIRECT = _env_bool("SECURE_SSL_REDIRECT", default=not DEBUG)
+SESSION_COOKIE_SECURE = _env_bool("SESSION_COOKIE_SECURE", default=not DEBUG)
+CSRF_COOKIE_SECURE = _env_bool("CSRF_COOKIE_SECURE", default=not DEBUG)
 
 _secure_proxy_ssl_header_name = os.environ.get(
     "SECURE_PROXY_SSL_HEADER_NAME", ""
