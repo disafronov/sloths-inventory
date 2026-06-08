@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventory\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-02 13:31+0000\n"
+"POT-Creation-Date: 2026-06-08 21:31+0000\n"
 "PO-Revision-Date: 2024-03-19 00:40+0300\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
@@ -211,32 +211,32 @@ msgstr "Передача не может одновременно быть пр�
 msgid "Expiration must be in the future"
 msgstr "Срок действия должен быть в будущем"
 
-#: src/inventory/models/pending_transfer.py:165
+#: src/inventory/models/pending_transfer.py:167
 msgid "An active transfer already exists for this item"
 msgstr "Для этой вещи уже есть активная передача"
 
-#: src/inventory/models/pending_transfer.py:243
-#: src/inventory/models/pending_transfer.py:285
-#: src/inventory/models/pending_transfer.py:320
+#: src/inventory/models/pending_transfer.py:245
+#: src/inventory/models/pending_transfer.py:287
+#: src/inventory/models/pending_transfer.py:322
 msgid "Transfer is not active"
 msgstr "Передача неактивна."
 
-#: src/inventory/models/pending_transfer.py:251
+#: src/inventory/models/pending_transfer.py:253
 #: src/inventory/views/transfer_views.py:236
 msgid "Cannot accept transfer for an item without operations"
 msgstr "Нельзя принять передачу для вещи без записей в журнале."
 
-#: src/inventory/models/pending_transfer.py:260
+#: src/inventory/models/pending_transfer.py:262
 msgid "Cannot accept transfer: sender no longer holds the item."
 msgstr ""
 "Нельзя принять передачу: отправитель больше не является ответственным по "
 "журналу."
 
-#: src/inventory/models/pending_transfer.py:313
+#: src/inventory/models/pending_transfer.py:315
 msgid "Expiration window must be non-negative"
 msgstr "Окно истечения должно быть неотрицательным"
 
-#: src/inventory/models/pending_transfer.py:322
+#: src/inventory/models/pending_transfer.py:324
 msgid "Only the sender may update the transfer"
 msgstr "Изменять передачу может только отправитель"
 
