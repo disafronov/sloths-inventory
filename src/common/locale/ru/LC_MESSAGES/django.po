@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-08 21:43+0000\n"
+"POT-Creation-Date: 2026-06-08 22:07+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -736,16 +736,13 @@ msgid "Change Email"
 msgstr "Изменить email"
 
 #: src/common/views.py:73
-#, fuzzy, python-format
-#| msgid ""
-#| "A confirmation email has been sent to %(email)s. Please check your email "
-#| "to confirm the change."
+#, python-format
 msgid ""
 "A confirmation email has been queued for delivery to %(email)s. Please check "
 "your email to confirm the change."
 msgstr ""
-"Письмо с подтверждением отправлено на %(email)s. Пожалуйста, проверьте почту "
-"для подтверждения изменения."
+"Письмо с подтверждением поставлено в очередь доставки на %(email)s. "
+"Пожалуйста, проверьте почту для подтверждения изменения."
 
 #: src/common/views.py:78
 #, python-format

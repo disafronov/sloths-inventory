@@ -4,6 +4,7 @@ import pytest
 from django.contrib.auth import get_user_model
 from django.core import mail
 from django.test import Client
+from django.test.utils import override_settings
 from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
@@ -87,6 +88,31 @@ class TestProfileView:
         assert len(mail.outbox) == 1
         assert mail.outbox[0].to == ["new@example.com"]
         assert "Confirm your email address change" in mail.outbox[0].subject
+
+    @override_settings(EMAIL_SEND_ASYNC=True)
+    def test_email_change_sends_asynchronously_shows_queued_message(
+        self, client: Client, django_user_model
+    ):
+        """With async enabled, success message should say 'queued' not 'sent'."""
+        django_user_model.objects.create_user(
+            username="testuser", email="old@example.com", password="testpass123"
+        )
+        client.login(username="testuser", password="testpass123")
+
+        response = client.post(
+            reverse("common:profile"),
+            {
+                "email_submit": "1",
+                "new_email": "new@example.com",
+                "new_email_confirm": "new@example.com",
+            },
+            follow=True,
+        )
+
+        assert response.status_code == 200
+        content = response.content.decode()
+        assert "queued" in content
+        assert "has been sent" not in content
 
     def test_email_change_validation_same_email(
         self, client: Client, django_user_model
