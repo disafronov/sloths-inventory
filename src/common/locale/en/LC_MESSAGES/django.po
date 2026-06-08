@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-07 22:34+0000\n"
+"POT-Creation-Date: 2026-06-08 21:43+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -699,23 +699,30 @@ msgstr ""
 #: src/common/views.py:73
 #, python-format
 msgid ""
+"A confirmation email has been queued for delivery to %(email)s. Please check "
+"your email to confirm the change."
+msgstr ""
+
+#: src/common/views.py:78
+#, python-format
+msgid ""
 "A confirmation email has been sent to %(email)s. Please check your email to "
 "confirm the change."
 msgstr ""
 
-#: src/common/views.py:96
+#: src/common/views.py:100
 msgid "Your password has been changed successfully."
 msgstr ""
 
-#: src/common/views.py:136
+#: src/common/views.py:140
 msgid "This email address is already in use by another account."
 msgstr ""
 
-#: src/common/views.py:145
+#: src/common/views.py:149
 msgid "Your email address has been changed successfully."
 msgstr ""
 
-#: src/common/views.py:155
+#: src/common/views.py:159
 msgid ""
 "The email confirmation link is invalid or has expired. Please request a new "
 "email change."
