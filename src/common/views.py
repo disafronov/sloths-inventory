@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING, Any, cast
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import (
     get_user_model,
@@ -67,14 +68,17 @@ class ProfileView(LoginRequiredMixin, TemplateView):
         if email_form.is_valid():
             new_email = email_form.cleaned_data["new_email"]
             send_email_change_confirmation(user, new_email)
-            messages.success(
-                request,
-                _(
+            if settings.EMAIL_SEND_ASYNC:
+                msg = _(
+                    "A confirmation email has been queued for delivery to "
+                    "%(email)s. Please check your email to confirm the change."
+                ) % {"email": new_email}
+            else:
+                msg = _(
                     "A confirmation email has been sent to %(email)s. "
                     "Please check your email to confirm the change."
-                )
-                % {"email": new_email},
-            )
+                ) % {"email": new_email}
+            messages.success(request, msg)
             return redirect("common:profile")
         # Render form with errors
         return render(
