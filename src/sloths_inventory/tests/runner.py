@@ -16,5 +16,4 @@ class PytestTestRunner(DiscoverRunner):
         raise SystemExit(
             "Django test runner is disabled in this project.\n"
             "Run tests with: `make test` (or `make all`).\n"
-            "If you need coverage: `make test-coverage`.\n"
         )
