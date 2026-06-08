@@ -816,6 +816,43 @@ def test_pending_transfer_clean_rejects_second_active_transfer_for_item() -> Non
 
 
 @pytest.mark.django_db
+def test_pending_transfer_clean_ignores_expired_transfer_for_item() -> None:
+    """Expired transfer should not block new transfer creation."""
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    status = Status.objects.create(name="S1")
+    location = Location.objects.create(name="Moscow")
+    sender = Responsible.objects.create(last_name="Ivanov", first_name="Ivan")
+    receiver1 = Responsible.objects.create(last_name="Petrov", first_name="Petr")
+    receiver2 = Responsible.objects.create(last_name="Sidorov", first_name="Sid")
+
+    item = Item.objects.create(inventory_number="INV-XFER-EXPIRED-UNIQ", device=device)
+    Operation.objects.create(
+        item=item, status=status, responsible=sender, location=location
+    )
+
+    expired = PendingTransfer.objects.create(
+        item=item, from_responsible=sender, to_responsible=receiver1
+    )
+    # Bypass clean() to set expires_at in the past
+    PendingTransfer.objects.filter(pk=expired.pk).update(
+        expires_at=timezone.now() - timedelta(seconds=1)
+    )
+    another = PendingTransfer(
+        item=item, from_responsible=sender, to_responsible=receiver2
+    )
+    another.full_clean()
+
+
+@pytest.mark.django_db
 def test_pending_transfer_deadline_edge_gradient_t() -> None:
     """CSS pressure ratio follows elapsed time between created_at and expires_at."""
 

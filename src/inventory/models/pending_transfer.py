@@ -155,9 +155,11 @@ class PendingTransfer(BaseModel):
             raise ValidationError({"expires_at": _("Expiration must be in the future")})
 
         if self._state.adding and self.item_id:
+            now = timezone.now()
             active_exists = (
                 PendingTransfer.objects.filter(item_id=self.item_id)
                 .filter(accepted_at__isnull=True, cancelled_at__isnull=True)
+                .filter(Q(expires_at__isnull=True) | Q(expires_at__gt=now))
                 .exists()
             )
             if active_exists:
