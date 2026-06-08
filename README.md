@@ -114,8 +114,8 @@ docker compose up -d
 Notes:
 
 - `docker compose` in this repository is intended to run **PostgreSQL** and a
-  local **MailHog** SMTP catcher (UI at `http://localhost:8025`, SMTP on `:1025`)
-  for local development.
+  local **Mailpit** SMTP catcher (UI at `http://localhost:8025`, SMTP on
+  host port `1026` → container port `1025`) for local development.
 - Run Django locally with `make run` and point it to the Postgres instance via
   env vars (see `env.example`).
 - The Docker image itself starts the application with **Gunicorn** (see
@@ -204,7 +204,8 @@ See `env.example` for a complete list of supported variables.
     offers created from the user UI get `expires_at` at creation. Set to `0` to
     disable automatic expiry unless set manually in the admin)
 - **Email**
-  - `EMAIL_BACKEND` (default: `django.core.mail.backends.smtp.EmailBackend`; use
+  - `EMAIL_BACKEND` (default:
+    `common.email_backends.AsyncEmailBackend`; use
     `django.core.mail.backends.console.EmailBackend` for local development)
   - `EMAIL_HOST`
   - `EMAIL_PORT` (default: `587`)
@@ -220,7 +221,8 @@ See `env.example` for a complete list of supported variables.
   - `EMAIL_RETRY_BASE_DELAY_SECONDS` (default: `60`)
   - `EMAIL_RETRY_BACKOFF_FACTOR` (default: `2`)
   - `SITE_URL`: base URL used for links in emails (e.g. `http://localhost:8000`);
-    required for password reset and email change confirmation links
+    **must be set explicitly** — no default; without it, email change confirmation
+    links will be relative and broken
 
 ## Email notifications
 
