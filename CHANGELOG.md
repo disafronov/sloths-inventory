@@ -1,3 +1,9 @@
+## [3.3.2-rc.1](https://github.com/disafronov/sloths-inventory/compare/v3.3.1...v3.3.2-rc.1) (2026-06-08)
+
+### Bug Fixes
+
+* default SECURE_SSL_REDIRECT, SESSION_COOKIE_SECURE, CSRF_COOKIE_SECURE to not DEBUG ([434efe7](https://github.com/disafronov/sloths-inventory/commit/434efe79dbf4b1e4cf26028056f096b54284c3ee))
+
 ## [3.3.1](https://github.com/disafronov/sloths-inventory/compare/v3.3.0...v3.3.1) (2026-06-08)
 
 ### Bug Fixes
