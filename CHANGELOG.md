@@ -1,3 +1,10 @@
+## [3.3.1](https://github.com/disafronov/sloths-inventory/compare/v3.3.0...v3.3.1) (2026-06-08)
+
+### Bug Fixes
+
+* expired PendingTransfer no longer blocks new transfers in clean() ([2fa0457](https://github.com/disafronov/sloths-inventory/commit/2fa04570d37e97ad19a7ecd32b73ab4120c3f9f0))
+* honestly say email is queued when async backend is used ([d9aa64b](https://github.com/disafronov/sloths-inventory/commit/d9aa64bbbd01acdc34375daee95ee2b08216a73f))
+
 ## [3.3.1-rc.1](https://github.com/disafronov/sloths-inventory/compare/v3.3.0...v3.3.1-rc.1) (2026-06-08)
 
 ### Bug Fixes
