@@ -297,15 +297,15 @@ wheels = [
 
 [[package]]
 name = "django-q2"
-version = "1.11.0"
+version = "1.11.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
     { name = "django-picklefield" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/38/37/8265a74647c09b7671be2c5abdf073103228bba26569abb2c3043ce7c863/django_q2-1.11.0.tar.gz", hash = "sha256:e742fe73f311d7693435916526dcfe1ec5e44f4511530afc0d6f731708045bbd", size = 100288, upload-time = "2026-08-14T00:36:34.84Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/c8/6d/d5e103f31e64d61ad20da154200105d9f80a8e7b582afe80a377c70a1e3e/django_q2-1.11.1.tar.gz", hash = "sha256:640caf961f9098f26e00a22b743c4eb63da681a5390829b1ed951db677866e67", size = 100892, upload-time = "2026-08-26T02:47:43.592Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e3/22/8c1915ba47a9688e498794220cf1803176720d800362b47e61a4ce4d089d/django_q2-1.11.0-py3-none-any.whl", hash = "sha256:1719abf3449dc0e2e0329ef8ebdea55e43e8d90ae7d7c41e51124cc4382e73b6", size = 129335, upload-time = "2026-08-14T00:36:33.436Z" },
+    { url = "https://files.pythonhosted.org/packages/aa/77/5448ec49605848eae6d6812994e71a312c2535821cf93853e1756e0b26a8/django_q2-1.11.1-py3-none-any.whl", hash = "sha256:b7e7cc030811babc1824de6c5888faec9e84ecd21572401bfdf48770ea67805f", size = 129780, upload-time = "2026-08-26T02:47:42.108Z" },
 ]
 
 [[package]]
