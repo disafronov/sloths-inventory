@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: catalogs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-02 08:50+0000\n"
+"POT-Creation-Date: 2026-10-09 14:33+0000\n"
 "PO-Revision-Date: 2024-03-19 00:28+0300\n"
 "Last-Translator: \n"
 "Language-Team: English\n"
@@ -15,29 +15,25 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/catalogs/admin.py:42 src/catalogs/models.py:49
+#: src/catalogs/admin.py:41 src/catalogs/models.py:49
 msgid "Location"
 msgstr ""
 
-#: src/catalogs/admin.py:46 src/catalogs/models.py:43
-#: src/catalogs/models.py:186
+#: src/catalogs/admin.py:45 src/catalogs/models.py:43
+#: src/catalogs/models.py:233
 msgid "Responsible"
 msgstr ""
 
-#: src/catalogs/admin.py:49
+#: src/catalogs/admin.py:48
 #, python-format
 msgid "Global: %(key)s"
 msgstr ""
 
-#: src/catalogs/admin.py:72 src/catalogs/models.py:131
-#: src/catalogs/models.py:142
+#: src/catalogs/admin.py:71 src/catalogs/models.py:178
+#: src/catalogs/models.py:189
 msgid ""
 "This system location is required for transfers and cannot be changed or "
 "deleted."
-msgstr ""
-
-#: src/catalogs/admin.py:111
-msgid "Editing restrictions"
 msgstr ""
 
 #: src/catalogs/apps.py:8
@@ -52,72 +48,72 @@ msgstr ""
 msgid "Locations"
 msgstr ""
 
-#: src/catalogs/models.py:92
+#: src/catalogs/models.py:92 src/catalogs/models.py:128
 msgid "On hand"
 msgstr ""
 
-#: src/catalogs/models.py:98
+#: src/catalogs/models.py:98 src/catalogs/models.py:148
 msgid "System"
 msgstr ""
 
-#: src/catalogs/models.py:100
+#: src/catalogs/models.py:100 src/catalogs/models.py:152
 msgid "Common"
 msgstr ""
 
-#: src/catalogs/models.py:101
+#: src/catalogs/models.py:101 src/catalogs/models.py:154
 msgid "Personal"
 msgstr ""
 
-#: src/catalogs/models.py:113
+#: src/catalogs/models.py:160
 #, python-format
 msgid "%(name)s (%(scope)s)"
 msgstr ""
 
-#: src/catalogs/models.py:169
+#: src/catalogs/models.py:216
 msgid "Last name"
 msgstr ""
 
-#: src/catalogs/models.py:170
+#: src/catalogs/models.py:217
 msgid "First name"
 msgstr ""
 
-#: src/catalogs/models.py:172
+#: src/catalogs/models.py:219
 msgid "Middle name"
 msgstr ""
 
-#: src/catalogs/models.py:175
+#: src/catalogs/models.py:222
 msgid "Employee ID"
 msgstr ""
 
-#: src/catalogs/models.py:182
+#: src/catalogs/models.py:229
 msgid "User"
 msgstr ""
 
-#: src/catalogs/models.py:187
+#: src/catalogs/models.py:234
 msgid "Responsibles"
 msgstr ""
 
-#: src/catalogs/models.py:222
+#: src/catalogs/models.py:269
 msgid "The linked user must have an email address."
 msgstr ""
 
-#: src/catalogs/models.py:285
+#: src/catalogs/models.py:332
 msgid "New responsible is required."
 msgstr ""
 
-#: src/catalogs/models.py:290
+#: src/catalogs/models.py:337
 msgid "New responsible is invalid."
 msgstr ""
 
-#: src/catalogs/models.py:292
+#: src/catalogs/models.py:339
 msgid "New responsible must be different."
 msgstr ""
 
-#: src/catalogs/models.py:304
+#: src/catalogs/models.py:351
 msgid "Status"
 msgstr ""
 
-#: src/catalogs/models.py:305
+#: src/catalogs/models.py:352
 msgid "Statuses"
 msgstr ""
 

@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: catalogs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-02 08:50+0000\n"
+"POT-Creation-Date: 2026-10-09 14:33+0000\n"
 "PO-Revision-Date: 2024-03-19 00:28+0300\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
@@ -16,32 +16,28 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
 
-#: src/catalogs/admin.py:42 src/catalogs/models.py:49
+#: src/catalogs/admin.py:41 src/catalogs/models.py:49
 msgid "Location"
 msgstr "Расположение"
 
-#: src/catalogs/admin.py:46 src/catalogs/models.py:43
-#: src/catalogs/models.py:186
+#: src/catalogs/admin.py:45 src/catalogs/models.py:43
+#: src/catalogs/models.py:233
 msgid "Responsible"
 msgstr "Ответственный"
 
-#: src/catalogs/admin.py:49
+#: src/catalogs/admin.py:48
 #, python-format
 msgid "Global: %(key)s"
 msgstr "Общее: %(key)s"
 
-#: src/catalogs/admin.py:72 src/catalogs/models.py:131
-#: src/catalogs/models.py:142
+#: src/catalogs/admin.py:71 src/catalogs/models.py:178
+#: src/catalogs/models.py:189
 msgid ""
 "This system location is required for transfers and cannot be changed or "
 "deleted."
 msgstr ""
 "Это системное расположение необходимо для передач и не может быть изменено "
 "или удалено."
-
-#: src/catalogs/admin.py:111
-msgid "Editing restrictions"
-msgstr "Ограничения редактирования"
 
 #: src/catalogs/apps.py:8
 msgid "Catalogs"
@@ -55,72 +51,72 @@ msgstr "Название"
 msgid "Locations"
 msgstr "Расположения"
 
-#: src/catalogs/models.py:92
+#: src/catalogs/models.py:92 src/catalogs/models.py:128
 msgid "On hand"
 msgstr "На руках"
 
-#: src/catalogs/models.py:98
+#: src/catalogs/models.py:98 src/catalogs/models.py:148
 msgid "System"
 msgstr "Системная"
 
-#: src/catalogs/models.py:100
+#: src/catalogs/models.py:100 src/catalogs/models.py:152
 msgid "Common"
 msgstr "Общая"
 
-#: src/catalogs/models.py:101
+#: src/catalogs/models.py:101 src/catalogs/models.py:154
 msgid "Personal"
 msgstr "Личная"
 
-#: src/catalogs/models.py:113
+#: src/catalogs/models.py:160
 #, python-format
 msgid "%(name)s (%(scope)s)"
 msgstr "%(name)s (%(scope)s)"
 
-#: src/catalogs/models.py:169
+#: src/catalogs/models.py:216
 msgid "Last name"
 msgstr "Фамилия"
 
-#: src/catalogs/models.py:170
+#: src/catalogs/models.py:217
 msgid "First name"
 msgstr "Имя"
 
-#: src/catalogs/models.py:172
+#: src/catalogs/models.py:219
 msgid "Middle name"
 msgstr "Отчество"
 
-#: src/catalogs/models.py:175
+#: src/catalogs/models.py:222
 msgid "Employee ID"
 msgstr "Табельный номер"
 
-#: src/catalogs/models.py:182
+#: src/catalogs/models.py:229
 msgid "User"
 msgstr "Пользователь"
 
-#: src/catalogs/models.py:187
+#: src/catalogs/models.py:234
 msgid "Responsibles"
 msgstr "Ответственные"
 
-#: src/catalogs/models.py:222
+#: src/catalogs/models.py:269
 msgid "The linked user must have an email address."
 msgstr "У привязанного пользователя должен быть указан email."
 
-#: src/catalogs/models.py:285
+#: src/catalogs/models.py:332
 msgid "New responsible is required."
 msgstr "Новый ответственный обязателен."
 
-#: src/catalogs/models.py:290
+#: src/catalogs/models.py:337
 msgid "New responsible is invalid."
 msgstr "Новый ответственный некорректен."
 
-#: src/catalogs/models.py:292
+#: src/catalogs/models.py:339
 msgid "New responsible must be different."
 msgstr "Новый ответственный должен отличаться."
 
-#: src/catalogs/models.py:304
+#: src/catalogs/models.py:351
 msgid "Status"
 msgstr "Статус"
 
-#: src/catalogs/models.py:305
+#: src/catalogs/models.py:352
 msgid "Statuses"
 msgstr "Статусы"
 

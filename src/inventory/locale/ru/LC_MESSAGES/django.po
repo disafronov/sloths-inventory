@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventory\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-08 21:31+0000\n"
+"POT-Creation-Date: 2026-10-09 14:36+0000\n"
 "PO-Revision-Date: 2024-03-19 00:40+0300\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
@@ -16,40 +16,32 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
 
-#: src/inventory/admin/__init__.py:53 src/inventory/models/operation.py:31
+#: src/inventory/admin/__init__.py:56 src/inventory/models/operation.py:30
 #: src/inventory/templates/inventory/_transfer_card.html:23
 #: src/inventory/templates/inventory/item_history.html:110
 #: src/inventory/templates/inventory/my_items.html:62
 msgid "Status"
 msgstr "Статус"
 
-#: src/inventory/admin/__init__.py:58 src/inventory/models/operation.py:37
+#: src/inventory/admin/__init__.py:61 src/inventory/models/operation.py:36
 #: src/inventory/templates/inventory/_transfer_card.html:19
 #: src/inventory/templates/inventory/item_history.html:105
 #: src/inventory/templates/inventory/my_items.html:58
 msgid "Location"
 msgstr "Местоположение"
 
-#: src/inventory/admin/__init__.py:63 src/inventory/admin/__init__.py:554
+#: src/inventory/admin/__init__.py:66 src/inventory/admin/__init__.py:540
 #: src/inventory/templates/inventory/item_history.html:100
 msgid "Responsible Person"
 msgstr "Ответственный"
 
-#: src/inventory/admin/__init__.py:234 src/inventory/models/operation.py:41
+#: src/inventory/admin/__init__.py:228 src/inventory/models/operation.py:40
 msgid "Operation"
 msgstr "Назначение"
-
-#: src/inventory/admin/__init__.py:255 src/inventory/admin/__init__.py:364
-msgid "Editing restrictions"
-msgstr "Ограничения на правку"
 
 #: src/inventory/apps.py:8
 msgid "Inventory"
 msgstr "Инвентарь"
-
-#: src/inventory/list_query_helpers.py:49
-msgid "On hand"
-msgstr ""
 
 #: src/inventory/models/item.py:99
 #: src/inventory/templates/inventory/_item_card_title_inventory_number.html:3
@@ -76,8 +68,8 @@ msgstr "Устройство"
 msgid "Serial number"
 msgstr "Серийный номер"
 
-#: src/inventory/models/item.py:111 src/inventory/models/operation.py:29
-#: src/inventory/models/pending_transfer.py:67
+#: src/inventory/models/item.py:111 src/inventory/models/operation.py:28
+#: src/inventory/models/pending_transfer.py:66
 msgid "Item"
 msgstr "Вещь"
 
@@ -89,45 +81,45 @@ msgstr "Вещи"
 msgid "Inventory number cannot be empty"
 msgstr "Инвентарный номер не может быть пустым"
 
-#: src/inventory/models/item.py:244
+#: src/inventory/models/item.py:260
 msgid "Cannot change location for an item without operations"
 msgstr "Нельзя сменить местоположение у вещи без записей в журнале."
 
-#: src/inventory/models/item.py:249
+#: src/inventory/models/item.py:265
 msgid "New location must be different from current location."
 msgstr "Новое местоположение должно отличаться от текущего."
 
-#: src/inventory/models/item.py:257
+#: src/inventory/models/item.py:276
 msgid "Location changes must be recorded by the current accountable person."
 msgstr ""
 "Смену местоположения может зафиксировать только текущий ответственный по "
 "журналу."
 
-#: src/inventory/models/item.py:283
+#: src/inventory/models/item.py:292
 msgid "Cannot change status for an item without operations"
 msgstr "Нельзя сменить статус у вещи без записей в журнале."
 
-#: src/inventory/models/item.py:288
+#: src/inventory/models/item.py:297
 msgid "New status must be different from current status."
 msgstr "Новый статус должен отличаться от текущего."
 
-#: src/inventory/models/item.py:294
+#: src/inventory/models/item.py:308
 msgid "Status changes must be recorded by the current accountable person."
 msgstr "Сменить статус может только текущий ответственный по журналу."
 
-#: src/inventory/models/operation.py:34
+#: src/inventory/models/operation.py:33
 msgid "Responsible"
 msgstr "Ответственный"
 
-#: src/inventory/models/operation.py:42
+#: src/inventory/models/operation.py:41
 msgid "Operations"
 msgstr "Назначения"
 
-#: src/inventory/models/operation.py:96
+#: src/inventory/models/operation.py:95
 msgid "Only the latest operation for this item can be edited"
 msgstr "Можно редактировать только последнее назначение для этой вещи"
 
-#: src/inventory/models/operation.py:110
+#: src/inventory/models/operation.py:109
 #, python-format
 msgid ""
 "The correction window (%(minutes)d minute) has expired. To make changes, "
@@ -145,98 +137,86 @@ msgstr[2] ""
 "Истекло окно исправления (%(minutes)d минут). Для изменения — обратитесь к "
 "администратору."
 
-#: src/inventory/models/operation.py:153
+#: src/inventory/models/operation.py:152
 msgid "Operation item cannot be changed"
 msgstr "Нельзя изменить вещь в назначении"
 
-#: src/inventory/models/operation.py:196
+#: src/inventory/models/operation.py:195
 msgid "Personal location belongs to another responsible person."
 msgstr ""
 
-#: src/inventory/models/pages.py:50
-msgid "System"
-msgstr ""
-
-#: src/inventory/models/pages.py:52
-msgid "Common"
-msgstr ""
-
-#: src/inventory/models/pages.py:53
-msgid "Personal"
-msgstr ""
-
-#: src/inventory/models/pending_transfer.py:72
+#: src/inventory/models/pending_transfer.py:71
 msgid "From"
 msgstr "От кого"
 
-#: src/inventory/models/pending_transfer.py:78
+#: src/inventory/models/pending_transfer.py:77
 #: src/inventory/templates/inventory/transfer_create.html:25
 msgid "To"
 msgstr "Кому"
 
-#: src/inventory/models/pending_transfer.py:83
+#: src/inventory/models/pending_transfer.py:82
 msgid "Expires at"
 msgstr "Действительно до"
 
-#: src/inventory/models/pending_transfer.py:84
+#: src/inventory/models/pending_transfer.py:83
 msgid "Optional. Transfers are ignored after expiration."
 msgstr ""
 "Необязательно. После указанного момента передача считается недействительной."
 
-#: src/inventory/models/pending_transfer.py:89
+#: src/inventory/models/pending_transfer.py:88
 msgid "Accepted at"
 msgstr "Время принятия"
 
-#: src/inventory/models/pending_transfer.py:94
+#: src/inventory/models/pending_transfer.py:93
 msgid "Cancelled at"
 msgstr "Время отмены"
 
-#: src/inventory/models/pending_transfer.py:100
+#: src/inventory/models/pending_transfer.py:99
 msgid "Pending transfer"
 msgstr "Передача в ожидании"
 
-#: src/inventory/models/pending_transfer.py:101
+#: src/inventory/models/pending_transfer.py:100
 msgid "Pending transfers"
 msgstr "Передачи в ожидании"
 
-#: src/inventory/models/pending_transfer.py:148
+#: src/inventory/models/pending_transfer.py:147
 msgid "Transfer receiver must be different"
 msgstr "Получатель передачи должен отличаться от отправителя"
 
-#: src/inventory/models/pending_transfer.py:152
+#: src/inventory/models/pending_transfer.py:151
 msgid "Transfer cannot be accepted and cancelled"
 msgstr "Передача не может одновременно быть принятой и отменённой"
 
-#: src/inventory/models/pending_transfer.py:155
+#: src/inventory/models/pending_transfer.py:154
 msgid "Expiration must be in the future"
 msgstr "Срок действия должен быть в будущем"
 
-#: src/inventory/models/pending_transfer.py:167
+#: src/inventory/models/pending_transfer.py:164
 msgid "An active transfer already exists for this item"
 msgstr "Для этой вещи уже есть активная передача"
 
-#: src/inventory/models/pending_transfer.py:245
-#: src/inventory/models/pending_transfer.py:287
-#: src/inventory/models/pending_transfer.py:322
+#: src/inventory/models/pending_transfer.py:241
+#: src/inventory/models/pending_transfer.py:283
+#: src/inventory/models/pending_transfer.py:318
 msgid "Transfer is not active"
 msgstr "Передача неактивна."
 
-#: src/inventory/models/pending_transfer.py:253
-#: src/inventory/views/transfer_views.py:236
+#: src/inventory/models/pending_transfer.py:249
+#: src/inventory/views/transfer_views.py:255
 msgid "Cannot accept transfer for an item without operations"
 msgstr "Нельзя принять передачу для вещи без записей в журнале."
 
-#: src/inventory/models/pending_transfer.py:262
+#: src/inventory/models/pending_transfer.py:258
 msgid "Cannot accept transfer: sender no longer holds the item."
 msgstr ""
 "Нельзя принять передачу: отправитель больше не является ответственным по "
 "журналу."
 
-#: src/inventory/models/pending_transfer.py:315
+#: src/inventory/models/pending_transfer.py:311
 msgid "Expiration window must be non-negative"
 msgstr "Окно истечения должно быть неотрицательным"
 
-#: src/inventory/models/pending_transfer.py:324
+#: src/inventory/models/pending_transfer.py:320
 msgid "Only the sender may update the transfer"
 msgstr "Изменять передачу может только отправитель"
 
@@ -476,24 +456,23 @@ msgstr "Начните вводить, чтобы отфильтровать л�
 msgid "New location is required."
 msgstr "Нужно выбрать новое местоположение."
 
-#: src/inventory/views/item_views.py:146
+#: src/inventory/views/item_views.py:160
 msgid "New status is required."
 msgstr "Нужно выбрать новый статус."
 
-#: src/inventory/views/transfer_views.py:118
-msgid "Transfer offer updated."
-msgstr "Предложение передачи обновлено."
-
-#: src/inventory/views/transfer_views.py:145
-msgid "Transfer offer submitted."
-msgstr "Предложение передачи отправлено."
-
-#: src/inventory/views/transfer_views.py:217
-#: src/inventory/views/transfer_views.py:303
+#: src/inventory/views/transfer_views.py:81
 msgid "This transfer offer is no longer active."
 msgstr "Это предложение передачи больше не действует."
 
-#: src/inventory/views/transfer_views.py:247
+#: src/inventory/views/transfer_views.py:161
+msgid "Transfer offer updated."
+msgstr "Предложение передачи обновлено."
+
+#: src/inventory/views/transfer_views.py:188
+msgid "Transfer offer submitted."
+msgstr "Предложение передачи отправлено."
+
+#: src/inventory/views/transfer_views.py:266
 msgid ""
 "The inventory record changed since this page was loaded. Refresh the page "
 "and try again."
@@ -501,10 +480,10 @@ msgstr ""
 "Запись инвентаря изменилась с момента загрузки страницы. Обновите страницу и "
 "попробуйте снова."
 
-#: src/inventory/views/transfer_views.py:268
+#: src/inventory/views/transfer_views.py:287
 msgid "Transfer accepted."
 msgstr "Передача принята."
 
-#: src/inventory/views/transfer_views.py:313
+#: src/inventory/views/transfer_views.py:310
 msgid "Transfer offer closed."
 msgstr "Предложение передачи закрыто."
