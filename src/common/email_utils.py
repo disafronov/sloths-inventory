@@ -58,22 +58,18 @@ def send_email_change_confirmation(user: Any, new_email: str) -> None:
         },
     )
     confirmation_url = f"{settings.SITE_URL}{path}"
-    context = {
-        "user": user,
-        "new_email": new_email,
-        "confirmation_url": confirmation_url,
-    }
-    subject = render_to_string(
-        "emails/email_change_subject.txt", {"user": user}
-    ).strip()
-    text_body = render_to_string("emails/email_change_body.txt", context)
-    html_body = render_to_string("emails/email_change_body.html", context)
-    send_mail(
-        subject=subject,
-        message=text_body,
-        from_email=None,
-        recipient_list=[new_email],
-        html_message=html_body,
+    # Subject templates use only ``{% trans %}`` (no context variables), so the
+    # shared body context renders them identically to ``{"user": user}``.
+    send_transfer_email(
+        "emails/email_change_subject.txt",
+        "emails/email_change_body.txt",
+        {
+            "user": user,
+            "new_email": new_email,
+            "confirmation_url": confirmation_url,
+        },
+        new_email,
+        html_template="emails/email_change_body.html",
     )
 
 
@@ -82,16 +78,11 @@ def send_email_changed_notification(user: Any, old_email: str, new_email: str) -
 
     Sent after successful email change confirmation as a security measure.
     """
-    context = {"user": user, "old_email": old_email, "new_email": new_email}
-    subject = render_to_string(
-        "emails/email_changed_notification_subject.txt", {"user": user}
-    ).strip()
-    text_body = render_to_string("emails/email_changed_notification_body.txt", context)
-    html_body = render_to_string("emails/email_changed_notification_body.html", context)
-    send_mail(
-        subject=subject,
-        message=text_body,
-        from_email=None,
-        recipient_list=[old_email],
-        html_message=html_body,
+    # Subject templates use only ``{% trans %}`` (no context variables); see above.
+    send_transfer_email(
+        "emails/email_changed_notification_subject.txt",
+        "emails/email_changed_notification_body.txt",
+        {"user": user, "old_email": old_email, "new_email": new_email},
+        old_email,
+        html_template="emails/email_changed_notification_body.html",
     )
