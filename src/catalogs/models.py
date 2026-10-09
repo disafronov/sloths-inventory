@@ -5,7 +5,7 @@ from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import ValidationError
 from django.db import models, transaction
-from django.db.models import Q, QuerySet
+from django.db.models import Case, CharField, Q, QuerySet, Value, When
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
@@ -107,6 +107,53 @@ class Location(CatalogCorrectionWindowMixin, NamedModel):
         if self.is_global_location:
             return "common"
         return "personal"
+
+    @classmethod
+    def display_name_case(cls, *, relation: str = "location") -> Case:
+        """
+        Return a ``Case`` resolving an operation's location display name.
+
+        System locations (global ``ON_HAND`` rows) render as ``"On hand"``;
+        all other rows render their stored name. ``relation`` is the FK path
+        from the outer model to ``Location`` (``"location"`` on ``Operation``
+        querysets). Mirrors :meth:`display_name` for ORM annotations.
+        """
+
+        return Case(
+            When(
+                **{
+                    f"{relation}__responsible__isnull": True,
+                    f"{relation}__name": cls.ON_HAND,
+                },
+                then=Value(gettext("On hand")),
+            ),
+            default=f"{relation}__name",
+            output_field=CharField(),
+        )
+
+    @classmethod
+    def scope_label_case(cls, *, relation: str = "location") -> Case:
+        """
+        Return a ``Case`` resolving System / Common / Personal scope labels.
+
+        Mirrors :meth:`scope_label` for ORM annotations; keep both aligned.
+        """
+
+        return Case(
+            When(
+                **{
+                    f"{relation}__responsible__isnull": True,
+                    f"{relation}__name": cls.ON_HAND,
+                },
+                then=Value(gettext("System")),
+            ),
+            When(
+                **{f"{relation}__responsible__isnull": True},
+                then=Value(gettext("Common")),
+            ),
+            default=Value(gettext("Personal")),
+            output_field=CharField(),
+        )
 
     @property
     def display_name_with_scope(self) -> str:
