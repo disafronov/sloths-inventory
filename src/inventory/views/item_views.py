@@ -8,7 +8,7 @@ from django.shortcuts import redirect, render
 from django.utils.translation import gettext_lazy as _
 
 from catalogs.models import Location, Responsible, Status
-from inventory.models import Item, resolve_item_history_context
+from inventory.models import Item, Operation, resolve_item_history_context
 from inventory.presentation import validation_error_user_message
 
 
@@ -17,6 +17,30 @@ class ChangeLocationForm(forms.Form):
         error_messages={"required": _("New location is required.")}
     )
     notes = forms.CharField(required=False, strip=True)
+
+
+def _get_owned_item_with_operation(
+    request: HttpRequest, item_id: int
+) -> tuple[Responsible, Item, Operation]:
+    """
+    Resolve the item owned by the current user plus its journal head.
+
+    Raises ``Http404`` for unlinked users, foreign items, and items without
+    operations (the journal head defines what can be changed).
+    """
+
+    responsible = Responsible.linked_profile_for_user(request.user)
+    if responsible is None:
+        raise Http404
+
+    item = Item.objects.owned_by(responsible).filter(pk=item_id).first()
+    if item is None:
+        raise Http404
+
+    current_op = item.current_operation
+    if current_op is None:
+        raise Http404  # pragma: no cover
+    return responsible, item, current_op
 
 
 def _render_change_location(
@@ -82,17 +106,7 @@ def change_location(request: HttpRequest, *, item_id: int) -> HttpResponse:
     GET: Display the location change form.
     POST: Create a new operation with the updated location.
     """
-    responsible = Responsible.linked_profile_for_user(request.user)
-    if responsible is None:
-        raise Http404
-
-    item = Item.objects.owned_by(responsible).filter(pk=item_id).first()
-    if item is None:
-        raise Http404
-
-    current_op = item.current_operation
-    if current_op is None:
-        raise Http404  # pragma: no cover
+    responsible, item, current_op = _get_owned_item_with_operation(request, item_id)
 
     if request.method == "POST":
         form = ChangeLocationForm(request.POST)
@@ -181,17 +195,7 @@ def change_status(request: HttpRequest, *, item_id: int) -> HttpResponse:
     GET: Display the status change form.
     POST: Create a new operation with the updated status.
     """
-    responsible = Responsible.linked_profile_for_user(request.user)
-    if responsible is None:
-        raise Http404
-
-    item = Item.objects.owned_by(responsible).filter(pk=item_id).first()
-    if item is None:
-        raise Http404
-
-    current_op = item.current_operation
-    if current_op is None:
-        raise Http404  # pragma: no cover
+    responsible, item, current_op = _get_owned_item_with_operation(request, item_id)
 
     if request.method == "POST":
         form = ChangeStatusForm(request.POST)
