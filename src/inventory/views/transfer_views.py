@@ -44,6 +44,49 @@ def _redirect_with_message(
     return redirect("inventory:my-items")
 
 
+def _get_participant_transfer(
+    request: HttpRequest, transfer_id: int, *, receiver_only: bool = False
+) -> tuple[Responsible, PendingTransfer] | HttpResponse:
+    """
+    Resolve the transfer offer the current user may act on.
+
+    Raises ``Http404`` for non-POST requests, unlinked users, unknown offers,
+    and outsiders; returns a redirect response when the offer is no longer
+    active. ``receiver_only`` additionally restricts the action to the offer
+    receiver (accept flow — only the receiver confirms the handoff).
+    """
+
+    if request.method != "POST":
+        raise Http404
+
+    responsible = Responsible.linked_profile_for_user(request.user)
+    if responsible is None:
+        raise Http404
+
+    transfer = get_object_or_404(
+        PendingTransfer.objects.select_related(
+            "item", "to_responsible", "from_responsible"
+        ),
+        pk=transfer_id,
+    )
+    if responsible.pk not in {
+        transfer.from_responsible_id,
+        transfer.to_responsible_id,
+    }:
+        raise Http404
+    if not transfer.is_active:
+        return _redirect_with_message(
+            request,
+            responsible,
+            _("This transfer offer is no longer active."),
+            level="warning",
+            item_id=transfer.item_id,
+        )
+    if receiver_only and transfer.to_responsible_id != responsible.pk:
+        raise Http404
+    return responsible, transfer
+
+
 @login_required
 def create_transfer(request: HttpRequest, *, item_id: int) -> HttpResponse:
     """
@@ -192,34 +235,10 @@ def accept_transfer(request: HttpRequest, *, transfer_id: int) -> HttpResponse:
     to prevent race conditions with stale UI state.
     """
 
-    if request.method != "POST":
-        raise Http404
-
-    responsible = Responsible.linked_profile_for_user(request.user)
-    if responsible is None:
-        raise Http404
-
-    transfer = get_object_or_404(
-        PendingTransfer.objects.select_related(
-            "item", "to_responsible", "from_responsible"
-        ),
-        pk=transfer_id,
-    )
-    if responsible.pk not in {
-        transfer.from_responsible_id,
-        transfer.to_responsible_id,
-    }:
-        raise Http404
-    if not transfer.is_active:
-        return _redirect_with_message(
-            request,
-            responsible,
-            _("This transfer offer is no longer active."),
-            level="warning",
-            item_id=transfer.item_id,
-        )
-    if transfer.to_responsible_id != responsible.pk:
-        raise Http404
+    outcome = _get_participant_transfer(request, transfer_id, receiver_only=True)
+    if isinstance(outcome, HttpResponse):
+        return outcome
+    responsible, transfer = outcome
 
     latest_head = Operation.latest_operation_id_for_item(transfer.item_id)
     raw_baseline = (request.POST.get("journal_head_operation_id") or "").strip()
@@ -278,32 +297,10 @@ def cancel_transfer(request: HttpRequest, *, transfer_id: int) -> HttpResponse:
     Requires a POST request.
     """
 
-    if request.method != "POST":
-        raise Http404
-
-    responsible = Responsible.linked_profile_for_user(request.user)
-    if responsible is None:
-        raise Http404
-
-    transfer = get_object_or_404(
-        PendingTransfer.objects.select_related(
-            "item", "from_responsible", "to_responsible"
-        ),
-        pk=transfer_id,
-    )
-    if responsible.pk not in {
-        transfer.from_responsible_id,
-        transfer.to_responsible_id,
-    }:
-        raise Http404
-    if not transfer.is_active:
-        return _redirect_with_message(
-            request,
-            responsible,
-            _("This transfer offer is no longer active."),
-            level="warning",
-            item_id=transfer.item_id,
-        )
+    outcome = _get_participant_transfer(request, transfer_id)
+    if isinstance(outcome, HttpResponse):
+        return outcome
+    responsible, transfer = outcome
 
     try:
         transfer.cancel()
