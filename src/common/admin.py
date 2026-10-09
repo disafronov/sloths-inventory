@@ -30,6 +30,36 @@ def auth_has_change_permission(
     return admin.ModelAdmin.has_change_permission(model_admin, request, obj)
 
 
+def append_editing_restrictions_panel(
+    model_admin: admin.ModelAdmin,
+    request: HttpRequest,
+    obj: Model | None,
+    fieldsets: list[Any],
+    message: str | None,
+    *,
+    css_class: str,
+) -> list[Any]:
+    """
+    Append an "Editing restrictions" panel explaining why ``obj`` is locked.
+
+    Returns ``fieldsets`` unchanged when there is nothing to report (``message``
+    is None) or when the user lacks model-level change permission (the denial
+    is auth-level, not domain-level, so no domain banner is shown).
+    """
+
+    if message is None:
+        return fieldsets
+    # View-only: no domain-level lock banner (missing ``change_*``, not the window).
+    if obj is not None and not auth_has_change_permission(model_admin, request, obj):
+        return fieldsets
+    desc = format_html('<p class="{}">{}</p>', css_class, message)
+    lock_panel = (
+        _("Editing restrictions"),
+        {"fields": (), "description": desc},
+    )
+    return [*fieldsets, lock_panel]
+
+
 class CatalogReferenceRow(Protocol):
     """
     Structural type for models using ``CatalogCorrectionWindowMixin``.
@@ -167,17 +197,14 @@ class CatalogReferenceAdminMixin(admin.ModelAdmin):
         message = self._catalog_correction_window_lock_user_message(
             request, cast(CatalogReferenceRow, obj)
         )
-        if message is None:
-            return fieldsets
-        # View-only: no domain-level lock banner (missing ``change_*``, not the window).
-        if not auth_has_change_permission(self, request, obj):
-            return fieldsets
-        desc = format_html('<p class="catalog-correction-window-lock">{}</p>', message)
-        lock_panel = (
-            _("Editing restrictions"),
-            {"fields": (), "description": desc},
+        return append_editing_restrictions_panel(
+            self,
+            request,
+            obj,
+            fieldsets,
+            message,
+            css_class="catalog-correction-window-lock",
         )
-        return [*fieldsets, lock_panel]
 
 
 class NamedModelAdmin(CatalogReferenceAdminMixin, BaseAdmin):
