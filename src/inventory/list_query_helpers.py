@@ -12,8 +12,7 @@ loading order predictable when this module is imported from page builders.
 
 from __future__ import annotations
 
-from django.db.models import Case, CharField, OuterRef, Subquery, Value, When
-from django.utils.translation import gettext
+from django.db.models import OuterRef, Subquery
 
 
 def _latest_operation_subquery(*, item_ref: str, field: str) -> Subquery:
@@ -41,17 +40,7 @@ def latest_operation_location_name_subquery(*, item_ref: str) -> Subquery:
     return Subquery(
         Operation.objects.filter(item_id=OuterRef(item_ref))
         .order_by("-created_at", "-id")
-        .annotate(
-            location_display_name=Case(
-                When(
-                    location__responsible__isnull=True,
-                    location__name=Location.ON_HAND,
-                    then=Value(gettext("On hand")),
-                ),
-                default="location__name",
-                output_field=CharField(),
-            )
-        )
+        .annotate(location_display_name=Location.display_name_case())
         .values("location_display_name")[:1]
     )
 

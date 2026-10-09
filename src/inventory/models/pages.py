@@ -11,17 +11,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, cast
 
-from django.db.models import (
-    Case,
-    CharField,
-    OuterRef,
-    Q,
-    QuerySet,
-    Subquery,
-    Value,
-    When,
-)
-from django.utils.translation import gettext
+from django.db.models import OuterRef, Q, QuerySet, Subquery
 
 from catalogs.models import Responsible
 from inventory.list_query_helpers import (
@@ -42,18 +32,7 @@ def _latest_operation_location_scope_subquery(*, item_ref: str) -> Subquery:
     return Subquery(
         Operation.objects.filter(item_id=OuterRef(item_ref))
         .order_by("-created_at", "-id")
-        .annotate(
-            location_scope=Case(
-                When(
-                    location__responsible__isnull=True,
-                    location__name=Location.ON_HAND,
-                    then=Value(gettext("System")),
-                ),
-                When(location__responsible__isnull=True, then=Value(gettext("Common"))),
-                default=Value(gettext("Personal")),
-                output_field=CharField(),
-            )
-        )
+        .annotate(location_scope=Location.scope_label_case())
         .values("location_scope")[:1]
     )
 
