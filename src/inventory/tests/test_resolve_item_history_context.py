@@ -136,3 +136,45 @@ def test_resolve_item_history_sets_accept_journal_head_for_receiver() -> None:
     ctx = resolve_item_history_context(receiver, item.pk)
     assert ctx is not None
     assert ctx.accept_journal_head_operation_id == op.pk
+
+
+@pytest.mark.django_db
+def test_resolve_item_history_receiver_item_get_miss() -> None:
+    """
+    Receiver branch calls ``Item.objects.with_device_relations().get``; a miss
+    maps to ``None`` (same HTTP outcome as unknown items).
+    """
+
+    category = Category.objects.create(name="Laptops")
+    device_type = Type.objects.create(name="Laptop")
+    manufacturer = Manufacturer.objects.create(name="ACME")
+    device_model = Model.objects.create(name="Model X")
+    device = Device.objects.create(
+        category=category,
+        type=device_type,
+        manufacturer=manufacturer,
+        model=device_model,
+    )
+    status = Status.objects.create(name="In stock")
+    location = Location.objects.create(name="Moscow")
+    owner = Responsible.objects.create(last_name="Own", first_name="Er")
+    receiver = Responsible.objects.create(last_name="Recv", first_name="Er")
+
+    item = Item.objects.create(inventory_number="INV-RES-DEL", device=device)
+    Operation.objects.create(
+        item=item,
+        status=status,
+        responsible=owner,
+        location=location,
+    )
+    PendingTransfer.objects.create(
+        item=item,
+        from_responsible=owner,
+        to_responsible=receiver,
+        notes="",
+    )
+
+    mqs = MagicMock()
+    mqs.get.side_effect = Item.DoesNotExist
+    with patch.object(Item.objects, "with_device_relations", return_value=mqs):
+        assert resolve_item_history_context(receiver, item.pk) is None
