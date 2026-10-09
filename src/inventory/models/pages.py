@@ -303,92 +303,123 @@ def _filter_operations_for_viewer(
     return result
 
 
-def resolve_item_history_context(
+def _get_item_with_relations(item_id: int) -> Item | None:
+    """
+    Fetch an item with device relations for history views.
+
+    Returns ``None`` when the row is already gone (defensive: ``item_id`` may
+    race with concurrent deletions).
+    """
+
+    try:
+        # cast: django-stubs widen custom QuerySet chains to Any.
+        return cast(Item, Item.objects.with_device_relations().get(pk=item_id))
+    except Item.DoesNotExist:  # pragma: no cover
+        return None
+
+
+def _viewer_operations(item: Item, viewer_responsible_id: int) -> list[Operation]:
+    """Return viewer-visible operations for ``item`` with relations prefetched."""
+
+    return _filter_operations_for_viewer(
+        Operation.objects.filter(item=item).select_related(
+            "status", "responsible", "location"
+        ),
+        viewer_responsible_id=viewer_responsible_id,
+    )
+
+
+def _resolve_receiver_history(
     responsible: Responsible, item_id: int
-) -> ItemHistoryContext | None:
+) -> tuple[Item, list[Operation]] | None:
     """
-    Resolve item, operations, and optional pending transfer for the history page.
+    Resolve history for the receiver of an active incoming transfer offer.
 
-    Returns ``None`` when the viewer must not see this item (caller maps to
-    HTTP 404). Implements owner, incoming-offer receiver, and former-owner slice
-    rules in one place so views and other entry points stay aligned.
+    Returns ``None`` when there is no active offer addressed to this viewer.
     """
 
-    item_qs = Item.objects.owned_by(responsible)
-    item = item_qs.filter(pk=item_id).first()
-    is_owner = item is not None
-
+    pending_for_me = (
+        PendingTransfer.offers_visible_in_ui()
+        .filter(
+            item_id=item_id,
+            to_responsible=responsible,
+        )
+        .order_by("-created_at", "-id")
+        .first()
+    )
+    if pending_for_me is None or not pending_for_me.is_active:
+        return None
+    item = _get_item_with_relations(item_id)
     if item is None:
-        pending_for_me = (
-            PendingTransfer.offers_visible_in_ui()
-            .filter(
-                item_id=item_id,
-                to_responsible=responsible,
-            )
-            .order_by("-created_at", "-id")
-            .first()
+        return None
+    operations = _viewer_operations(item, responsible.pk)
+    if not operations:
+        return None
+    return item, operations
+
+
+def _resolve_former_owner_history(
+    responsible: Responsible, item_id: int
+) -> tuple[Item, list[Operation]] | None:
+    """
+    Resolve the history slice for a former owner: operations up to and
+    including the handoff that moved the item away.
+
+    Returns ``None`` when the viewer never held this item.
+    """
+
+    last_mine = (
+        Operation.objects.filter(item_id=item_id, responsible=responsible)
+        .order_by("-created_at", "-id")
+        .first()
+    )
+    if last_mine is None:
+        return None
+
+    item = _get_item_with_relations(item_id)
+    if item is None:
+        return None
+
+    handoff = (
+        Operation.objects.filter(item_id=item_id)
+        .filter(
+            Q(created_at__gt=last_mine.created_at)
+            | Q(created_at=last_mine.created_at, id__gt=last_mine.id)
         )
-        if pending_for_me is not None and pending_for_me.is_active:
-            try:
-                item = Item.objects.with_device_relations().get(pk=item_id)
-            except Item.DoesNotExist:  # pragma: no cover
-                # Defensive: ``item_id`` may race with concurrent deletions.
-                return None
-            operations = _filter_operations_for_viewer(
-                Operation.objects.filter(item=item).select_related(
-                    "status", "responsible", "location"
-                ),
-                viewer_responsible_id=responsible.pk,
-            )
-            if not operations:
-                return None
-        else:
-            last_mine = (
-                Operation.objects.filter(item_id=item_id, responsible=responsible)
-                .order_by("-created_at", "-id")
-                .first()
-            )
-            if last_mine is None:
-                return None
-
-            try:
-                item = Item.objects.with_device_relations().get(pk=item_id)
-            except Item.DoesNotExist:  # pragma: no cover
-                # Defensive: same race window as the pending-receiver branch.
-                return None
-
-            handoff = (
-                Operation.objects.filter(item_id=item_id)
-                .filter(
-                    Q(created_at__gt=last_mine.created_at)
-                    | Q(created_at=last_mine.created_at, id__gt=last_mine.id)
-                )
-                .order_by("created_at", "id")
-                .first()
-            )
-            if handoff is None:
-                raise AssertionError(
-                    "Invariant violation: former-owner flow requires "
-                    "a handoff operation"
-                )
-            ops_filter = Q(created_at__lt=last_mine.created_at) | Q(
-                created_at=last_mine.created_at, id__lte=last_mine.id
-            )
-            ops_filter |= Q(pk=handoff.pk)
-
-            operations = _filter_operations_for_viewer(
-                Operation.objects.filter(item=item)
-                .filter(ops_filter)
-                .select_related("status", "responsible", "location"),
-                viewer_responsible_id=responsible.pk,
-            )
-    else:
-        operations = _filter_operations_for_viewer(
-            Operation.objects.filter(item=item).select_related(
-                "status", "responsible", "location"
-            ),
-            viewer_responsible_id=responsible.pk,
+        .order_by("created_at", "id")
+        .first()
+    )
+    if handoff is None:
+        raise AssertionError(
+            "Invariant violation: former-owner flow requires a handoff operation"
         )
+    ops_filter = Q(created_at__lt=last_mine.created_at) | Q(
+        created_at=last_mine.created_at, id__lte=last_mine.id
+    )
+    ops_filter |= Q(pk=handoff.pk)
+
+    operations = _filter_operations_for_viewer(
+        Operation.objects.filter(item=item)
+        .filter(ops_filter)
+        .select_related("status", "responsible", "location"),
+        viewer_responsible_id=responsible.pk,
+    )
+    return item, operations
+
+
+def _finalize_history_context(
+    responsible: Responsible,
+    item: Item,
+    operations: list[Operation],
+    *,
+    is_owner: bool,
+) -> ItemHistoryContext:
+    """
+    Attach transfer visibility and the accept journal head to resolved history.
+
+    Hides foreign locations (a viewer must not learn where someone else keeps
+    the item) and exposes the pending transfer only to its participants.
+    """
 
     location_cache = Operation._meta.get_field("location")
     for op in operations:
@@ -417,3 +448,36 @@ def resolve_item_history_context(
         pending_transfer=pending_transfer,
         accept_journal_head_operation_id=accept_head,
     )
+
+
+def resolve_item_history_context(
+    responsible: Responsible, item_id: int
+) -> ItemHistoryContext | None:
+    """
+    Resolve item, operations, and optional pending transfer for the history page.
+
+    Returns ``None`` when the viewer must not see this item (caller maps to
+    HTTP 404). Implements owner, incoming-offer receiver, and former-owner slice
+    rules in one place so views and other entry points stay aligned.
+    """
+
+    item_qs = Item.objects.owned_by(responsible)
+    item = item_qs.filter(pk=item_id).first()
+    if item is not None:
+        return _finalize_history_context(
+            responsible,
+            item,
+            _viewer_operations(item, responsible.pk),
+            is_owner=True,
+        )
+
+    receiver = _resolve_receiver_history(responsible, item_id)
+    if receiver is not None:
+        item, operations = receiver
+        return _finalize_history_context(responsible, item, operations, is_owner=False)
+
+    former = _resolve_former_owner_history(responsible, item_id)
+    if former is None:
+        return None
+    item, operations = former
+    return _finalize_history_context(responsible, item, operations, is_owner=False)
