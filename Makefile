@@ -12,12 +12,14 @@ PYTHON_VERSION := $(shell tr -d '[:space:]' < .python-version)
 #
 # - `env.example` provides defaults and documents available settings.
 # - `.env` (if present) overrides `env.example` for local development.
+#   It is included with `-include` so a missing or unreadable file
+#   (e.g. restrictive permissions) does not break the run; defaults apply.
 ifeq ($(strip $(CI)),)
     ifneq (,$(wildcard .env))
         ifneq (,$(wildcard env.example))
             include env.example
         endif
-        include .env
+        -include .env
     else
         ifneq (,$(wildcard env.example))
             include env.example
