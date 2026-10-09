@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any
 
 from django.core.exceptions import ValidationError
-from django.db import models, transaction
+from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import ngettext
 
@@ -13,11 +12,11 @@ from common.edit_window import (
     inventory_correction_window_minutes,
     is_within_inventory_correction_window,
 )
-from common.models import BaseModel
+from common.models import BaseModel, SerializedSaveMixin
 from inventory.models.item import Item
 
 
-class Operation(BaseModel):
+class Operation(SerializedSaveMixin, BaseModel):
     """
     Journal row for item state (append-only stream).
 
@@ -196,40 +195,36 @@ class Operation(BaseModel):
             {"location": _("Personal location belongs to another responsible person.")}
         )
 
-    def save(self, *args: Any, **kwargs: Any) -> None:
+    def _lock_rows_for_update(self) -> None:
         """
-        Save the operation with concurrency-safe append-only enforcement.
+        Serialize all operation writes per item.
 
-        We serialize all operation writes per item by taking a row-level lock on
-        the related Item inside a transaction. This makes the "only the latest
-        operation may be edited" rule deterministic even under concurrent inserts
-        and edits.
-
-        Before persisting, we capture the previous responsible so the post_save
-        signal can determine who to notify without an extra round-trip after commit.
+        We take a row-level lock on the related Item inside a transaction. This
+        makes the "only the latest operation may be edited" rule deterministic
+        even under concurrent inserts and edits.
         """
 
-        with transaction.atomic():
-            # Lock the item row to serialize concurrent updates for the same item.
-            Item.objects.select_for_update().only("id").get(pk=self.item_id)
+        Item.objects.select_for_update().only("id").get(pk=self.item_id)
 
-            if self._state.adding:
-                prev = (
-                    Operation.objects.filter(item_id=self.item_id)
-                    .order_by("-created_at", "-id")
-                    .only("responsible_id")
-                    .first()
-                )
-                self._pre_save_responsible_id: int | None = (
-                    prev.responsible_id if prev else None
-                )
-            else:
-                prev_op = Operation.objects.only("responsible_id").get(pk=self.pk)
-                self._pre_save_responsible_id = prev_op.responsible_id
+    def _capture_pre_save_state(self) -> None:
+        """
+        Capture the previous responsible so the post_save signal can determine
+        who to notify without an extra round-trip after commit.
+        """
 
-            # Ensure `clean()` runs on updates as well (admin and any other code path).
-            self.full_clean()
-            return super().save(*args, **kwargs)
+        if self._state.adding:
+            prev = (
+                Operation.objects.filter(item_id=self.item_id)
+                .order_by("-created_at", "-id")
+                .only("responsible_id")
+                .first()
+            )
+            self._pre_save_responsible_id: int | None = (
+                prev.responsible_id if prev else None
+            )
+        else:
+            prev_op = Operation.objects.only("responsible_id").get(pk=self.pk)
+            self._pre_save_responsible_id = prev_op.responsible_id
 
     def __str__(self) -> str:
         return f"{self.item} - {self.status} ({self.location})"

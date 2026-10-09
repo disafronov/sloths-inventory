@@ -12,7 +12,11 @@ from django.urls import path
 from django.utils.translation import gettext_lazy as _
 
 from catalogs.models import Location
-from common.admin import BaseAdmin, append_editing_restrictions_panel
+from common.admin import (
+    BaseAdmin,
+    append_editing_restrictions_panel,
+    bypass_window_form,
+)
 from common.edit_window import is_within_inventory_correction_window
 from inventory.models import Item, Operation, PendingTransfer
 
@@ -191,18 +195,9 @@ class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
 
         form_class = super().get_form(request, obj, change=change, **kwargs)
         user = getattr(request, "user", None)
-
-        class ItemAdminForm(form_class):  # type: ignore[misc, valid-type]
-            def __init__(self, *args: Any, **kwargs: Any) -> None:
-                super().__init__(*args, **kwargs)
-                if getattr(user, "is_superuser", False) and self.instance.pk:
-                    setattr(
-                        self.instance,
-                        "_bypass_item_correction_window",
-                        True,
-                    )
-
-        return ItemAdminForm
+        return bypass_window_form(
+            form_class, user, flag_name="_bypass_item_correction_window"
+        )
 
     def get_queryset(self, request: HttpRequest) -> QuerySet[Item]:
         """
