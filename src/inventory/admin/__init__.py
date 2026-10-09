@@ -9,11 +9,10 @@ from django.contrib import admin
 from django.db.models import Model, Q, QuerySet
 from django.http import HttpRequest
 from django.urls import path
-from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
 from catalogs.models import Location
-from common.admin import BaseAdmin, auth_has_change_permission
+from common.admin import BaseAdmin, append_editing_restrictions_panel
 from common.edit_window import is_within_inventory_correction_window
 from inventory.models import Item, Operation, PendingTransfer
 
@@ -245,17 +244,14 @@ class ItemAdmin(BaseAdmin, CurrentFieldMixin, DeviceFieldsMixin):
             return fieldsets
         item = cast(Item, obj)
         message = self._item_correction_window_lock_user_message(request, item)
-        if message is None:
-            return fieldsets
-        # Skip lock copy for view-only users (denial is auth-level, not domain-level).
-        if not auth_has_change_permission(self, request, item):
-            return fieldsets
-        desc = format_html('<p class="item-correction-window-lock">{}</p>', message)
-        lock_panel = (
-            _("Editing restrictions"),
-            {"fields": (), "description": desc},
+        return append_editing_restrictions_panel(
+            self,
+            request,
+            item,
+            fieldsets,
+            message,
+            css_class="item-correction-window-lock",
         )
-        return [*fieldsets, lock_panel]
 
 
 class LocationAutocomplete(autocomplete.Select2QuerySetView):
@@ -352,19 +348,14 @@ class OperationAdmin(BaseAdmin, DeviceFieldsMixin):
             return fieldsets
         op = cast(Operation, obj)
         message = self._operation_correction_window_lock_user_message(request, op)
-        if message is None:
-            return fieldsets
-        # Skip lock copy for view-only users (denial is auth-level, not domain-level).
-        if not auth_has_change_permission(self, request, op):
-            return fieldsets
-        desc = format_html(
-            '<p class="operation-correction-window-lock">{}</p>', message
+        return append_editing_restrictions_panel(
+            self,
+            request,
+            op,
+            fieldsets,
+            message,
+            css_class="operation-correction-window-lock",
         )
-        lock_panel = (
-            _("Editing restrictions"),
-            {"fields": (), "description": desc},
-        )
-        return [*fieldsets, lock_panel]
 
     def formfield_for_foreignkey(
         self, db_field: Any, request: HttpRequest, **kwargs: Any

@@ -3,7 +3,6 @@ from typing import Any
 from django.contrib import admin
 from django.db.models import Model, QuerySet
 from django.http import HttpRequest
-from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
 from common.admin import (
@@ -11,7 +10,7 @@ from common.admin import (
     CatalogReferenceAdminMixin,
     CatalogReferenceRow,
     NamedModelAdmin,
-    auth_has_change_permission,
+    append_editing_restrictions_panel,
 )
 
 from .models import Location, Responsible, Status
@@ -102,16 +101,14 @@ class LocationAdmin(NamedModelAdmin):
             main_fields = [display_map.get(f, f) for f in main_fields]
             fieldsets[0] = (fieldsets[0][0], {"fields": main_fields})
         message = self.system_location_lock_message(obj)
-        if message is None:
-            return fieldsets
-        if not auth_has_change_permission(self, request, obj):
-            return fieldsets
-        desc = format_html('<p class="catalog-correction-window-lock">{}</p>', message)
-        lock_panel = (
-            _("Editing restrictions"),
-            {"fields": (), "description": desc},
+        return append_editing_restrictions_panel(
+            self,
+            request,
+            obj,
+            fieldsets,
+            message,
+            css_class="catalog-correction-window-lock",
         )
-        return [*fieldsets, lock_panel]
 
     def get_queryset(self, request: HttpRequest) -> QuerySet[Location]:
         qs = super().get_queryset(request)
