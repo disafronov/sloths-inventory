@@ -1,3 +1,9 @@
+## [3.3.4-rc.3](https://github.com/disafronov/sloths-inventory/compare/v3.3.4-rc.2...v3.3.4-rc.3) (2026-10-09)
+
+### Bug Fixes
+
+* tolerate missing or unreadable .env in Makefile ([97271cd](https://github.com/disafronov/sloths-inventory/commit/97271cdca19ef817addf7f6361872135ca549c39))
+
 ## [3.3.4-rc.2](https://github.com/disafronov/sloths-inventory/compare/v3.3.4-rc.1...v3.3.4-rc.2) (2026-10-08)
 
 ## [3.3.4-rc.1](https://github.com/disafronov/sloths-inventory/compare/v3.3.3...v3.3.4-rc.1) (2026-10-08)
