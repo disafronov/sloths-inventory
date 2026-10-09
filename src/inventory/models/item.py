@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, Optional, cast, overload
 
 from django.core.exceptions import ValidationError
-from django.db import models, transaction
+from django.db import models
 from django.db.models import OuterRef, Q, Subquery
 from django.utils.translation import gettext_lazy as _
 
@@ -12,7 +12,7 @@ from common.edit_window import (
     catalog_entry_correction_window_expired_user_message,
     is_within_inventory_correction_window,
 )
-from common.models import BaseModel
+from common.models import BaseModel, SerializedSaveMixin
 from devices.models import Device
 
 if TYPE_CHECKING:
@@ -78,7 +78,7 @@ class ItemQuerySet(models.QuerySet):
         )
 
 
-class Item(BaseModel):
+class Item(SerializedSaveMixin, BaseModel):
     """
     Inventory unit (device instance).
 
@@ -176,20 +176,6 @@ class Item(BaseModel):
                 type(self).item_correction_window_expired_user_message(),
                 code="item_correction_window_expired",
             )
-
-    def save(self, *args: Any, **kwargs: Any) -> None:
-        """
-        Persist after validation.
-
-        Takes a row lock on updates so concurrent saves cannot race past ``clean()``
-        window checks (same pattern as ``Operation.save``).
-        """
-
-        with transaction.atomic():
-            if not self._state.adding:
-                Item.objects.select_for_update().only("id").get(pk=self.pk)
-            self.full_clean()
-            return super().save(*args, **kwargs)
 
     @property
     def current_operation(self) -> Optional["Operation"]:

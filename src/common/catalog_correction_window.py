@@ -8,21 +8,23 @@ Rows not referenced by inventory data skip the window entirely.
 from typing import Any, cast
 
 from django.core.exceptions import ValidationError
-from django.db import models, transaction
 
 from common.edit_window import (
     catalog_entry_correction_window_expired_user_message,
     is_within_inventory_correction_window,
 )
+from common.models import SerializedSaveMixin
 
 
-class CatalogCorrectionWindowMixin(models.Model):
+class CatalogCorrectionWindowMixin(SerializedSaveMixin):
     """
     Abstract mixin: enforce ``INVENTORY_CORRECTION_WINDOW_MINUTES`` on updates
     when ``is_catalog_reference_in_use()`` is true.
 
     The correction window is anchored on the row's ``created_at`` timestamp
     (immutable), not ``updated_at``, so the window does not reset on each save.
+
+    Row-level save serialization comes from ``SerializedSaveMixin``.
 
     Subclasses must implement ``is_catalog_reference_in_use`` (no DB hits while
     ``_state.adding``).
@@ -64,17 +66,3 @@ class CatalogCorrectionWindowMixin(models.Model):
                 type(self).catalog_correction_window_expired_user_message(),
                 code="catalog_correction_window_expired",
             )
-
-    def save(self, *args: Any, **kwargs: Any) -> None:
-        """
-        Persist after validation with a row lock on updates (same idea as ``Item``).
-        """
-
-        with transaction.atomic():
-            if not self._state.adding:
-                concrete_model_cls = cast(Any, type(self))
-                concrete_model_cls.objects.select_for_update().only("id").get(
-                    pk=self.pk
-                )
-            self.full_clean()
-            return super().save(*args, **kwargs)

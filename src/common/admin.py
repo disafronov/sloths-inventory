@@ -60,6 +60,29 @@ def append_editing_restrictions_panel(
     return [*fieldsets, lock_panel]
 
 
+def bypass_window_form(
+    form_class: type[forms.ModelForm],
+    user: Any,
+    *,
+    flag_name: str,
+) -> type[forms.ModelForm]:
+    """
+    Wrap a ModelForm so superuser edits set ``flag_name`` on the instance.
+
+    The flag must be present before ``form.is_valid()`` runs (which calls
+    ``full_clean()`` on the model), letting ``clean()`` skip the correction
+    window on the trusted admin repair path.
+    """
+
+    class BypassWindowForm(form_class):  # type: ignore[misc, valid-type]
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            super().__init__(*args, **kwargs)
+            if getattr(user, "is_superuser", False) and self.instance.pk:
+                setattr(self.instance, flag_name, True)
+
+    return BypassWindowForm
+
+
 class CatalogReferenceRow(Protocol):
     """
     Structural type for models using ``CatalogCorrectionWindowMixin``.
@@ -181,14 +204,9 @@ class CatalogReferenceAdminMixin(admin.ModelAdmin):
 
         form_class = super().get_form(request, obj, change=change, **kwargs)
         user = getattr(request, "user", None)
-
-        class CatalogAdminForm(form_class):  # type: ignore[misc, valid-type]
-            def __init__(self, *args: Any, **kwargs: Any) -> None:
-                super().__init__(*args, **kwargs)
-                if getattr(user, "is_superuser", False) and self.instance.pk:
-                    setattr(self.instance, "_bypass_catalog_correction_window", True)
-
-        return CatalogAdminForm
+        return bypass_window_form(
+            form_class, user, flag_name="_bypass_catalog_correction_window"
+        )
 
     def get_fieldsets(self, request: HttpRequest, obj: Model | None = None) -> Any:
         fieldsets = list(super().get_fieldsets(request, obj))

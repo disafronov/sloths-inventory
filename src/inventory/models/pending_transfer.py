@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from datetime import datetime, timedelta
-from typing import Any
 
 from django.core.exceptions import ValidationError
 from django.db import models, transaction
@@ -10,7 +9,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from catalogs.models import Location, Responsible
-from common.models import BaseModel
+from common.models import BaseModel, SerializedSaveMixin
 from inventory.models.item import Item
 
 
@@ -54,7 +53,7 @@ class PendingTransferQuerySet(models.QuerySet):
         )
 
 
-class PendingTransfer(BaseModel):
+class PendingTransfer(SerializedSaveMixin, BaseModel):
     """
     Pending item transfer that requires receiver confirmation.
 
@@ -167,27 +166,26 @@ class PendingTransfer(BaseModel):
                     _("An active transfer already exists for this item")
                 )
 
-    def save(self, *args: Any, **kwargs: Any) -> None:
+    def _lock_rows_for_update(self) -> None:
         """
-        Save the transfer with per-item serialization.
+        Serialize pending transfers per item (same row as ``Operation``).
 
-        We lock the related Item row to avoid creating multiple concurrent
-        pending transfers for the same item under race conditions.
+        This avoids creating multiple concurrent pending transfers for the
+        same item under race conditions.
         """
 
-        with transaction.atomic():
-            Item.objects.select_for_update().only("id").get(pk=self.item_id)
+        Item.objects.select_for_update().only("id").get(pk=self.item_id)
 
-            if not self._state.adding:
-                prev = PendingTransfer.objects.only(
-                    "to_responsible_id", "accepted_at", "cancelled_at"
-                ).get(pk=self.pk)
-                self._pre_save_to_responsible_id: int | None = prev.to_responsible_id
-                self._pre_save_accepted_at = prev.accepted_at
-                self._pre_save_cancelled_at = prev.cancelled_at
+    def _capture_pre_save_state(self) -> None:
+        """Snapshot transfer fields needed by the post_save notifier."""
 
-            self.full_clean()
-            return super().save(*args, **kwargs)
+        if not self._state.adding:
+            prev = PendingTransfer.objects.only(
+                "to_responsible_id", "accepted_at", "cancelled_at"
+            ).get(pk=self.pk)
+            self._pre_save_to_responsible_id: int | None = prev.to_responsible_id
+            self._pre_save_accepted_at = prev.accepted_at
+            self._pre_save_cancelled_at = prev.cancelled_at
 
     @classmethod
     def create_offer(
