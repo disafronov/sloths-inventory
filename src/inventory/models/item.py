@@ -225,6 +225,38 @@ class Item(BaseModel):
     current_location = CurrentOperationValue("location")
     current_responsible = CurrentOperationValue("responsible")
 
+    def _append_operation(
+        self,
+        current_op: "Operation",
+        *,
+        responsible: Responsible,
+        status: Status,
+        location: Location,
+        notes: str,
+        foreign_actor_message: str,
+    ) -> "Operation":
+        """
+        Append a journal operation for the given next state.
+
+        The inventory state is derived from append-only ``Operation`` records.
+        The journal head defines the accountable party (same rule as transfer
+        acceptance); callers must not append a move under another identity.
+        Message texts stay with the callers so gettext msgids do not change.
+        """
+
+        from inventory.models.operation import Operation
+
+        if responsible.pk != current_op.responsible_id:
+            raise ValidationError(foreign_actor_message)
+
+        return Operation.objects.create(
+            item=self,
+            status=status,
+            responsible=responsible,
+            location=location,
+            notes=notes,
+        )
+
     def change_location(
         self, *, responsible: Responsible, location: Location, notes: str = ""
     ) -> "Operation":
@@ -235,8 +267,6 @@ class Item(BaseModel):
         an item's location is represented by appending a new operation that keeps
         the current status and responsible person while updating the location.
         """
-
-        from inventory.models.operation import Operation
 
         current_op = self.current_operation
         if current_op is None:
@@ -249,24 +279,19 @@ class Item(BaseModel):
                 _("New location must be different from current location.")
             )
 
-        # Align with transfer acceptance: the journal head defines the accountable
-        # party; callers must not append a location move under another identity.
-        if responsible.pk != current_op.responsible_id:
-            raise ValidationError(
+        return self._append_operation(
+            current_op,
+            responsible=responsible,
+            status=current_op.status,
+            location=location,
+            notes=notes,
+            foreign_actor_message=str(
                 _(
                     "Location changes must be recorded by the current "
                     "accountable person."
                 )
-            )
-
-        op = Operation.objects.create(
-            item=self,
-            status=current_op.status,
-            responsible=responsible,
-            location=location,
-            notes=notes,
+            ),
         )
-        return op
 
     def change_status(
         self, *, responsible: Responsible, status: Status, notes: str = ""
@@ -274,8 +299,6 @@ class Item(BaseModel):
         """
         Append a status-changing operation for this item.
         """
-
-        from inventory.models.operation import Operation
 
         current_op = self.current_operation
         if current_op is None:
@@ -288,19 +311,16 @@ class Item(BaseModel):
                 _("New status must be different from current status.")
             )
 
-        if responsible.pk != current_op.responsible_id:
-            raise ValidationError(
+        return self._append_operation(
+            current_op,
+            responsible=responsible,
+            status=status,
+            location=current_op.location,
+            notes=notes,
+            foreign_actor_message=str(
                 _(
                     "Status changes must be recorded by the current "
                     "accountable person."
                 )
-            )
-
-        op = Operation.objects.create(
-            item=self,
-            status=status,
-            responsible=responsible,
-            location=current_op.location,
-            notes=notes,
+            ),
         )
-        return op
