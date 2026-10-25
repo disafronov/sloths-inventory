@@ -2,7 +2,12 @@
 
 ## Overview
 
-Django-based inventory application.
+Django equipment inventory centered on an append-only operation journal:
+ownership and location changes are recorded as operations rather than simply
+overwriting current state. Transfer workflows use PostgreSQL concurrency
+control, while history visibility depends on the user's relationship to each
+item. Older operations are immutable; the current head can be corrected under
+explicit rules.
 
 The primary user-facing interface is a simple "My items" page that shows the
 equipment currently assigned to the logged-in user and allows viewing the item
