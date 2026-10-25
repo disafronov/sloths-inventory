@@ -1,3 +1,9 @@
+## [3.3.4-rc.6](https://github.com/disafronov/sloths-inventory/compare/v3.3.4-rc.5...v3.3.4-rc.6) (2026-10-25)
+
+### Bug Fixes
+
+* **release:** sign generated releases as GitHub Actions ([3bef46f](https://github.com/disafronov/sloths-inventory/commit/3bef46fcb95b1a5118a0c92b0feead74cc63050a))
+
 ## [3.3.4-rc.5](https://github.com/disafronov/sloths-inventory/compare/v3.3.4-rc.4...v3.3.4-rc.5) (2026-10-23)
 
 ## [3.3.4-rc.4](https://github.com/disafronov/sloths-inventory/compare/v3.3.4-rc.3...v3.3.4-rc.4) (2026-10-23)
