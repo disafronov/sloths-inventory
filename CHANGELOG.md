@@ -1,3 +1,9 @@
+## [3.3.4-rc.7](https://github.com/disafronov/sloths-inventory/compare/v3.3.4-rc.6...v3.3.4-rc.7) (2026-10-26)
+
+### Bug Fixes
+
+* align semantic-release policy and committer sign-off ([0a4a3de](https://github.com/disafronov/sloths-inventory/commit/0a4a3de8bb3f902c00d74d903f5b3e58e8274aa5))
+
 ## [3.3.4-rc.6](https://github.com/disafronov/sloths-inventory/compare/v3.3.4-rc.5...v3.3.4-rc.6) (2026-10-25)
 
 ### Bug Fixes
