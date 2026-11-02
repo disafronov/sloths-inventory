@@ -1,3 +1,27 @@
+## [3.3.4](https://github.com/disafronov/sloths-inventory/compare/v3.3.3...v3.3.4) (2026-11-02)
+
+### Bug Fixes
+
+* align semantic-release policy and committer sign-off ([0a4a3de](https://github.com/disafronov/sloths-inventory/commit/0a4a3de8bb3f902c00d74d903f5b3e58e8274aa5))
+* **release:** sign generated releases as GitHub Actions ([3bef46f](https://github.com/disafronov/sloths-inventory/commit/3bef46fcb95b1a5118a0c92b0feead74cc63050a))
+* tolerate missing or unreadable .env in Makefile ([97271cd](https://github.com/disafronov/sloths-inventory/commit/97271cdca19ef817addf7f6361872135ca549c39))
+
+### Code Refactoring
+
+* bump deps ([85a05b4](https://github.com/disafronov/sloths-inventory/commit/85a05b4381c24d7ecf43af8089f2aaab8758efd2))
+* centralize location scope display expressions ([ad9300a](https://github.com/disafronov/sloths-inventory/commit/ad9300ae23714a137d53e0de61dc2bd4493d8951))
+* centralize serialized save and bypass-window forms ([c7bf34f](https://github.com/disafronov/sloths-inventory/commit/c7bf34f8566e35810211cdf1d9f864bee18ad977))
+* ci ([13876b8](https://github.com/disafronov/sloths-inventory/commit/13876b8959dd36031069b5c8299af549a37c9730))
+* deps ([6b588bb](https://github.com/disafronov/sloths-inventory/commit/6b588bb6b1708a920fd7dbd1fab88f5eac8964e7))
+* deps & audit ([17bc687](https://github.com/disafronov/sloths-inventory/commit/17bc687a6d56d6bd6cc2f3b5246591e967c18b6d))
+* merge Item state-change methods via _append_operation ([7a4715a](https://github.com/disafronov/sloths-inventory/commit/7a4715aae9e52bae502634cdaac437e64f9688ca))
+* reuse transfer mail sender and visible-offer filter ([eddd228](https://github.com/disafronov/sloths-inventory/commit/eddd228990c2b48ccca0f7203a1e11bd2d14b666))
+* share editing-restrictions panel across admins ([fa0404e](https://github.com/disafronov/sloths-inventory/commit/fa0404e91be4c842221564d2cfa5c59c3eb08c0f))
+* share owned-item lookup in item views ([5aa79c5](https://github.com/disafronov/sloths-inventory/commit/5aa79c561a0c592c8b50f1e4fe334e87c0764fee))
+* share participant-transfer guard in transfer views ([977543b](https://github.com/disafronov/sloths-inventory/commit/977543bbe43e3598981ca44ce85f3f20c40ccb2a))
+* split resolve_item_history_context into focused helpers ([c192eb8](https://github.com/disafronov/sloths-inventory/commit/c192eb8b08224d097829d6a5e8b1028e7549628b))
+* use default semantic-release configuration ([267f2cb](https://github.com/disafronov/sloths-inventory/commit/267f2cbb8e64aaf56b5ba1392590cb20900fd5e8))
+
 ## [3.3.4-rc.7](https://github.com/disafronov/sloths-inventory/compare/v3.3.4-rc.6...v3.3.4-rc.7) (2026-10-26)
 
 ### Bug Fixes
