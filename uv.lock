@@ -918,7 +918,7 @@ wheels = [
 
 [[package]]
 name = "sloths-inventory"
-version = "3.3.4"
+version = "3.3.5"
 source = { virtual = "." }
 dependencies = [
     { name = "django" },

@@ -1,3 +1,9 @@
+## [3.3.5](https://github.com/disafronov/sloths-inventory/compare/v3.3.4...v3.3.5) (2026-11-07)
+
+### Code Refactoring
+
+* deps ([969cc9c](https://github.com/disafronov/sloths-inventory/commit/969cc9cfe070f80a064d9628425c5335ca9a03f6))
+
 ## [3.3.4](https://github.com/disafronov/sloths-inventory/compare/v3.3.3...v3.3.4) (2026-11-02)
 
 ### Bug Fixes
