@@ -1,3 +1,9 @@
+## [3.3.8](https://github.com/disafronov/sloths-inventory/compare/v3.3.7...v3.3.8) (2026-11-20)
+
+### Code Refactoring
+
+* deps ([eaecc7f](https://github.com/disafronov/sloths-inventory/commit/eaecc7f0cafe22dccdebeb8bc72ce79aba7a4273))
+
 ## [3.3.7](https://github.com/disafronov/sloths-inventory/compare/v3.3.6...v3.3.7) (2026-11-18)
 
 ### Code Refactoring
